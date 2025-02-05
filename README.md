@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+MVP Plan for Teach.me
+✅ Core Features
+User Authentication (NextAuth.js or Clerk)
 
-## Getting Started
+Users sign up, log in, and manage their accounts.
+Authenticated users can create and manage classes.
+Class Management
 
-First, run the development server:
+Users can create, edit, and delete classes.
+Each class contains a title, description, and materials.
+PDF Upload & Storage (UploadThing)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Users upload PDFs to a class.
+Store PDF metadata in Convex and the actual files in UploadThing.
+AI-Generated Test from PDFs
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+A button next to uploaded PDFs to "Generate Test".
+Backend AI processes the PDF and generates MCQs, fill-in-the-blanks, and short answers.
+Users can take the test and see their scores & history.
+Analytics & Tracking
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Convex stores test results and user engagement stats.
+Use PostHog or Plausible for broader app usage tracking.
+📌 Tech Stack for MVP
+✅ Frontend: Next.js + Tailwind
+✅ Backend: Convex
+✅ Storage: UploadThing (for PDFs)
+✅ Auth: NextAuth.js or Clerk
+✅ AI Integration: TBD (OpenAI API, LangChain, or custom model)
+✅ Deployment: Netlify (initially for free hosting)
+✅ Analytics: Convex for user stats + PostHog/Plausible for tracking
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+🚀 Next Steps
+1️⃣ Initialize GitHub repo & set up Next.js with Convex & UploadThing.
+2️⃣ Choose & implement authentication (NextAuth.js or Clerk).
+3️⃣ Build UI for class management & PDF uploads.
+4️⃣ Set up AI pipeline for test generation.
+5️⃣ Deploy to Netlify & integrate analytics.

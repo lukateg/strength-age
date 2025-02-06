@@ -1,6 +1,12 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FileText, Users, BookOpen, Brain } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { FileText, Users, BookOpen, Brain } from "lucide-react";
 
 export default function Home() {
   return (
@@ -8,7 +14,9 @@ export default function Home() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-4xl font-bold">Welcome to Teach-me</h1>
-          <p className="text-muted-foreground mt-2">Your AI-powered learning assistant</p>
+          <p className="text-muted-foreground mt-2">
+            Your AI-powered learning assistant
+          </p>
         </div>
         <Button>Create New Class</Button>
       </div>
@@ -25,7 +33,9 @@ export default function Home() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Study Materials</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Study Materials
+            </CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -34,7 +44,9 @@ export default function Home() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Tests Generated</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Tests Generated
+            </CardTitle>
             <Brain className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -43,7 +55,9 @@ export default function Home() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Active Students</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Active Students
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -56,7 +70,9 @@ export default function Home() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Classes</CardTitle>
-            <CardDescription>Your recently created or modified classes</CardDescription>
+            <CardDescription>
+              Your recently created or modified classes
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -64,7 +80,7 @@ export default function Home() {
                 "Advanced Mathematics",
                 "World History",
                 "Physics 101",
-                "Literature Classics"
+                "Literature Classics",
               ].map((className) => (
                 <div
                   key={className}
@@ -74,7 +90,9 @@ export default function Home() {
                     <BookOpen className="h-4 w-4 mr-2 text-muted-foreground" />
                     <span>{className}</span>
                   </div>
-                  <Button variant="ghost" size="sm">View</Button>
+                  <Button variant="ghost" size="sm">
+                    View
+                  </Button>
                 </div>
               ))}
             </div>
@@ -84,7 +102,9 @@ export default function Home() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Tests</CardTitle>
-            <CardDescription>Latest AI-generated tests from your materials</CardDescription>
+            <CardDescription>
+              Latest AI-generated tests from your materials
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -92,7 +112,7 @@ export default function Home() {
                 "Calculus Chapter 1",
                 "World War II Overview",
                 "Newton's Laws",
-                "Shakespeare's Sonnets"
+                "Shakespeare's Sonnets",
               ].map((testName) => (
                 <div
                   key={testName}
@@ -102,7 +122,9 @@ export default function Home() {
                     <Brain className="h-4 w-4 mr-2 text-muted-foreground" />
                     <span>{testName}</span>
                   </div>
-                  <Button variant="ghost" size="sm">View Results</Button>
+                  <Button variant="ghost" size="sm">
+                    View Results
+                  </Button>
                 </div>
               ))}
             </div>
@@ -110,5 +132,5 @@ export default function Home() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

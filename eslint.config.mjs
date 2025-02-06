@@ -24,6 +24,7 @@ const eslintConfig = [
     languageOptions: {
       parserOptions: {
         project: true, // Enables project-based type-checking
+        tsconfigRootDir: __dirname,
       },
     },
     rules: {

@@ -1,7 +1,15 @@
-"use client"
+"use client";
 
-import { UserNav } from "./user-nav"
-import { ModeToggle } from "./mode-toggle"
+import { UserNav } from "./user-nav";
+import { ModeToggle } from "./mode-toggle";
+
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 
 export function Header() {
   return (
@@ -11,7 +19,16 @@ export function Header() {
           <ModeToggle />
           <UserNav />
         </div>
+
+        {/* Saved for dev purposes  */}
+        <SignedOut>
+          <SignInButton />
+          <SignUpButton />
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
       </div>
     </div>
-  )
+  );
 }

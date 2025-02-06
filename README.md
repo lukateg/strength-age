@@ -1,4 +1,13 @@
-MVP Plan for Teach.me
+# Teach-me
+
+## TODO
+
+- [ ] Set up Convec and data model
+- [ ] Set up Clerk and auth
+
+--------------------------------------------------------------------------------------
+
+# MVP Plan for Teach.me
 ✅ Core Features
 User Authentication (NextAuth.js or Clerk)
 

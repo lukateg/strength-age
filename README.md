@@ -2,8 +2,11 @@
 
 ## TODO
 
-- [ ] Set up Convec and data model
-- [ ] Set up Clerk and auth
+- [ ] Set up Convec and data model ---- done
+- [ ] Set up Clerk and auth ----------- done
+- [ ] Create landing page ------------- done
+- [ ] Redirect user to dashboard if logged in
+
 
 --------------------------------------------------------------------------------------
 

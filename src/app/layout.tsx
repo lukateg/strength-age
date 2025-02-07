@@ -3,13 +3,13 @@ import "./globals.css";
 import type { Metadata } from "next";
 
 import { Inter } from "next/font/google";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/header";
 import Sidebar from "@/components/sidebar";
 
-import { ConvexClientProvider } from "@/providers/ConvexClientProvider";
 import { ClerkProvider } from "@clerk/nextjs";
+import { ConvexClientProvider } from "@/providers/convex-client-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 

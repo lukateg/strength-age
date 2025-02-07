@@ -6,10 +6,8 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/header";
-import Sidebar from "@/components/sidebar";
 
 import { ClerkProvider } from "@clerk/nextjs";
-import { ConvexClientProvider } from "@/providers/convex-client-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,23 +26,21 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={inter.className}>
-          <ConvexClientProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <div className="flex h-screen">
-                <Sidebar />
-                <div className="flex-1 flex flex-col">
-                  <Header />
-                  <main className="flex-1 overflow-y-auto">{children}</main>
-                </div>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="flex h-screen flex-col">
+              <Header />
+
+              <div className="flex-1 flex flex-col">
+                <main className="flex-1 overflow-y-auto">{children}</main>
               </div>
-              <Toaster />
-            </ThemeProvider>
-          </ConvexClientProvider>
+            </div>
+            <Toaster />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

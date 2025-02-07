@@ -1,8 +1,8 @@
-import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import Sidebar from "@/components/sidebar";
 
 import { ConvexClientProvider } from "@/providers/convex-client-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (

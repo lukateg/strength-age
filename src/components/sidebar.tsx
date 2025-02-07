@@ -12,10 +12,10 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const navigation = [
-    { name: "Dashboard", href: "/", icon: Home },
-    { name: "My Classes", href: "/classes", icon: BookOpen },
-    { name: "Test Generator", href: "/tests", icon: Brain },
-    { name: "Settings", href: "/settings", icon: Settings },
+    { name: "Dashboard", href: "/app", icon: Home },
+    { name: "My Classes", href: "/app/classes", icon: BookOpen },
+    { name: "Test Generator", href: "/app/tests", icon: Brain },
+    { name: "Settings", href: "/app/settings", icon: Settings },
   ];
 
   return (

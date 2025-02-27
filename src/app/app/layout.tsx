@@ -4,6 +4,9 @@ import Sidebar from "@/components/sidebar";
 import { ConvexClientProvider } from "@/providers/convex-client-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 
+// TODO:
+// - Remove theme provider and maybe toaster
+
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <ConvexClientProvider>

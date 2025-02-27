@@ -9,17 +9,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Headphones, Brain } from "lucide-react";
 
-export default function ClassPage({}: { params: { id: string } }) {
+export default function ClassPage() {
   return (
     <div className="container mx-auto p-6">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-4xl font-bold">Advanced Mathematics</h1>
-          <p className="text-muted-foreground mt-2">Professor: John Doe</p>
-        </div>
-        <Button>Upload Material</Button>
-      </div>
-
       <Tabs defaultValue="materials" className="space-y-6">
         <TabsList>
           <TabsTrigger value="materials">Materials</TabsTrigger>

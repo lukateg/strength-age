@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { useSession } from "@clerk/nextjs";
 import { useUploadThing } from "@/hooks/use-upload-thing";
 
-import { api } from "convex/_generated/api";
+import { api } from "convex/_generated/api.js";
 
 import { Cloud, File, Loader2, UploadCloud, X } from "lucide-react";
 

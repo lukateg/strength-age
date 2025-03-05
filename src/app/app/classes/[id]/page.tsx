@@ -10,61 +10,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MaterialsSectionComponent from "./components/materials-section";
 
 import { FileText, Headphones, Brain } from "lucide-react";
+import LessonsSectionComponent from "./components/lessons-section";
 
 // TODO:
-// - create lections page that will be a list of lections made of uploaded materials
 // - only section materials should have upload material button
 // - upload material button page should have a dropdown menu of lections to be linked when uploading materials (fetch lections from API)
 
-// - create materials page, fetch the data from API and display the materials
+// - create lessons page that will be a list of lections made of uploaded materials
+// - add button for adding lessons and display existing lessons
+// - add new-lesson page that will hook up uploaded materials with specific lesson
 
 export default async function ClassPage() {
   return (
     <div className="container mx-auto p-6">
       <Tabs defaultValue="materials" className="space-y-6">
         <TabsList>
-          <TabsTrigger value="lections">Lections</TabsTrigger>
+          <TabsTrigger value="lessons">Lessons</TabsTrigger>
           <TabsTrigger value="materials">Materials</TabsTrigger>
           <TabsTrigger value="audio">Audio Lessons</TabsTrigger>
           <TabsTrigger value="tests">Tests</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="lections" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Course Materials</CardTitle>
-              <CardDescription>
-                PDF documents and study materials
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {[
-                  "Chapter 1 - Introduction to Calculus",
-                  "Chapter 2 - Derivatives",
-                  "Chapter 3 - Integrals",
-                ].map((material) => (
-                  <div
-                    key={material}
-                    className="flex items-center justify-between p-4 border rounded-lg"
-                  >
-                    <div className="flex items-center">
-                      <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-                      <span>{material}</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        View
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        Generate Test
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="lessons" className="space-y-4">
+          <LessonsSectionComponent />
         </TabsContent>
 
         <TabsContent value="materials" className="space-y-4">

@@ -9,7 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import { Upload, Plus, X } from "lucide-react";
+import { X, File } from "lucide-react";
+import FileUploadComponent from "@/components/file-upload";
+import { useClass } from "@/providers/class-context-provider";
+import Link from "next/link";
 
 // TODO:
 // - add validation
@@ -18,19 +21,22 @@ import { Upload, Plus, X } from "lucide-react";
 // - add success state
 // - create a reusable upload material component and use it here and in the materials section
 
-interface Material {
-  id: string;
-  name: string;
-  size: string;
-}
+// - ON SUBMIT: add uploadThing logic and on complete update convex database with new lesson
+
+// interface Material {
+//   id: string;
+//   name: string;
+//   size: string;
+// }
 
 interface LessonFormData {
   lessonName: string;
   lessonDescription: string;
-  materials: Material[];
+  materials: File[];
 }
 
 export default function NewLessonPage() {
+  const { classId } = useClass();
   const { register, handleSubmit, control, setValue, watch } =
     useForm<LessonFormData>({
       defaultValues: {
@@ -42,23 +48,18 @@ export default function NewLessonPage() {
 
   const materials = watch("materials", []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const newMaterials = Array.from(e.target.files).map((file) => ({
-        id: Math.random().toString(36).substr(2, 9),
-        name: file.name,
-        size: (file.size / 1024 / 1024).toFixed(2) + " MB",
-      }));
+  const handleFileChange = (newMaterials: File[]) => {
+    if (newMaterials.length) {
       setValue("materials", [...materials, ...newMaterials], {
         shouldValidate: true,
       });
     }
   };
 
-  const removeMaterial = (id: string) => {
+  const removeMaterial = (name: string) => {
     setValue(
       "materials",
-      materials.filter((material) => material.id !== id),
+      materials.filter((material) => material.name !== name),
       { shouldValidate: true }
     );
   };
@@ -102,57 +103,31 @@ export default function NewLessonPage() {
           <Controller
             name="materials"
             control={control}
-            render={() => (
-              <div className="flex items-center gap-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full h-24 border-dashed"
-                  onClick={() =>
-                    document.getElementById("file-upload")?.click()
-                  }
-                >
-                  <div className="flex flex-col items-center gap-2">
-                    <Upload className="h-6 w-6" />
-                    <span>Upload Materials</span>
-                    <span className="text-xs text-muted-foreground">
-                      Drag and drop or click to upload
-                    </span>
-                  </div>
-                </Button>
-                <input
-                  id="file-upload"
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-              </div>
-            )}
+            render={() => <FileUploadComponent onDrop={handleFileChange} />}
           />
 
           {materials.length > 0 && (
-            <ScrollArea className="h-[200px] w-full rounded-md border p-4">
-              <div className="space-y-2">
-                {materials.map((material) => (
+            <ScrollArea className="h-[300px] w-full rounded-md border p-4">
+              <div className="mt-8 space-y-4">
+                {materials.map((file, index) => (
                   <div
-                    key={material.id}
-                    className="flex items-center justify-between p-2 rounded-lg bg-secondary"
+                    key={index}
+                    className="flex items-center justify-between p-4 bg-muted rounded-lg"
                   >
-                    <div className="flex items-center gap-2">
-                      <Plus className="h-4 w-4" />
-                      <span className="text-sm font-medium">
-                        {material.name}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        ({material.size})
-                      </span>
+                    <div className="flex items-center gap-4">
+                      <File className="h-8 w-8 text-primary" />
+                      <div>
+                        <p className="font-medium">{file.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {(file.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                      </div>
                     </div>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8"
-                      onClick={() => removeMaterial(material.id)}
+                      onClick={() => removeMaterial(file.name)}
+                      // disabled={isUploading}
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -165,8 +140,8 @@ export default function NewLessonPage() {
 
         {/* Form Actions */}
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline">
-            Cancel
+          <Button type="button" variant="outline" asChild>
+            <Link href={`/app/classes/${classId}`}>Cancel</Link>
           </Button>
           <Button type="submit">Create Lesson</Button>
         </div>

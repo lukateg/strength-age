@@ -23,7 +23,7 @@ import LessonsSectionComponent from "./components/lessons-section";
 export default async function ClassPage() {
   return (
     <div className="container mx-auto p-6">
-      <Tabs defaultValue="materials" className="space-y-6">
+      <Tabs defaultValue="lessons" className="space-y-6">
         <TabsList>
           <TabsTrigger value="lessons">Lessons</TabsTrigger>
           <TabsTrigger value="materials">Materials</TabsTrigger>

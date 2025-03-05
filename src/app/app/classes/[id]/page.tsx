@@ -7,19 +7,29 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import MaterialsSectionComponent from "./components/materials-section";
+
 import { FileText, Headphones, Brain } from "lucide-react";
 
-export default function ClassPage() {
+// TODO:
+// - create lections page that will be a list of lections made of uploaded materials
+// - only section materials should have upload material button
+// - upload material button page should have a dropdown menu of lections to be linked when uploading materials (fetch lections from API)
+
+// - create materials page, fetch the data from API and display the materials
+
+export default async function ClassPage() {
   return (
     <div className="container mx-auto p-6">
       <Tabs defaultValue="materials" className="space-y-6">
         <TabsList>
+          <TabsTrigger value="lections">Lections</TabsTrigger>
           <TabsTrigger value="materials">Materials</TabsTrigger>
           <TabsTrigger value="audio">Audio Lessons</TabsTrigger>
           <TabsTrigger value="tests">Tests</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="materials" className="space-y-4">
+        <TabsContent value="lections" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Course Materials</CardTitle>
@@ -55,6 +65,10 @@ export default function ClassPage() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="materials" className="space-y-4">
+          <MaterialsSectionComponent />
         </TabsContent>
 
         <TabsContent value="audio" className="space-y-4">

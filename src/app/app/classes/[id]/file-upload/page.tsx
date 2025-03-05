@@ -2,13 +2,6 @@
 
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { useMutation } from "convex/react";
-import { useParams } from "next/navigation";
-import { useSession } from "@clerk/nextjs";
-import { useUploadThing } from "@/hooks/use-upload-thing";
-
-// import { api } from "convex/_generated/api.js";
-import { api } from "../../../../../../convex/_generated/api";
 
 import { Cloud, File, Loader2, UploadCloud, X } from "lucide-react";
 
@@ -23,33 +16,37 @@ import {
 } from "@/components/ui/card";
 
 import { toast } from "@/hooks/use-toast";
+import { useUploadThing } from "@/hooks/use-upload-thing";
+import { useClass } from "@/providers/class-context-provider";
 
 // TODO:
 // - fix case when multiple files are added for upload
 // - add error handling
 // - add max length
+// - add pdf name when uploading so it can be shown on the materials page
 
 // - remove support for TXT, DOCX and others and lower the size limit
 
 export const FileUploadPage = () => {
+  const { uploadPDFMutation, classId } = useClass();
   const [files, setFiles] = useState<File[]>([]);
-  const { id } = useParams();
-  const session = useSession();
 
   const { startUpload, isUploading } = useUploadThing("pdfUploader", {
     onClientUploadComplete: (res) => {
       if (res && res.length > 0) {
-        void savePdf({
-          userId: res[0]?.serverData.uploadedBy,
-          classId: id,
-          fileUrl: res[0]?.ufsUrl,
-        });
-        setFiles([]);
-        toast({
-          title: "Success",
-          description: "Uploaded successfully.",
-          variant: "default",
-        });
+        if (res[0]?.serverData.uploadedBy) {
+          void uploadPDFMutation({
+            userId: res[0]?.serverData.uploadedBy,
+            classId,
+            fileUrl: res[0]?.ufsUrl,
+          });
+          setFiles([]);
+          toast({
+            title: "Success",
+            description: "Uploaded successfully.",
+            variant: "default",
+          });
+        }
       }
     },
     onUploadError: () => {
@@ -60,8 +57,6 @@ export const FileUploadPage = () => {
       });
     },
   });
-
-  const savePdf = useMutation(api.classes.savePdf);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
@@ -82,20 +77,6 @@ export const FileUploadPage = () => {
   const removeFile = (fileToRemove: File) => {
     setFiles((prevFiles) => prevFiles.filter((file) => file !== fileToRemove));
   };
-
-  if (!session.isSignedIn) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold">
-              You need to be logged in to upload files
-            </h1>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <Card className=" m-4">

@@ -1,11 +1,11 @@
 "use client";
+import { createContext, useContext, useState } from "react";
 
 import { useUser } from "@clerk/nextjs";
-import { api } from "convex/_generated/api";
-import { type PDFType } from "@/types/types";
-import { type ReactMutation, useMutation, useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { type FunctionReference } from "convex/server";
-import { createContext, useContext, useState } from "react";
+import { type ReactMutation, useMutation, useQuery } from "convex/react";
+import { type PDFType } from "@/types/types";
 
 // TODO:
 // 1. Add correct types for mutations

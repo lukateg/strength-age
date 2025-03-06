@@ -23,11 +23,4 @@ export default defineSchema({
     fileUrl: v.string(), // PDF URL
     uploadedAt: v.number(), // Timestamp
   }).index("by_class_user", ["classId", "userId"]), // ✅ Add an index for queries
-
-  lessonPdfs: defineTable({
-    lessonId: v.string(),
-    pdfId: v.string(),
-  })
-    .index("by_lesson", ["lessonId"])
-    .index("by_material", ["pdfId"]),
 });

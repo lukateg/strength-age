@@ -58,12 +58,12 @@ export function ClassProvider({
   const userId = user?.id;
 
   // Fetch materials for the class
-  const materials = useQuery(api.classes.getAllPDFs, { classId, userId });
+  const materials = useQuery(api.materials.getAllPDFs, { classId, userId });
   // TODO: check if queries by both user and class
   const lessons = useQuery(api.lessons.getLessonsByClass, { classId });
 
   // Mutations
-  const uploadPDFMutation = useMutation(api.classes.uploadPdf);
+  const uploadPDFMutation = useMutation(api.materials.uploadPdf);
   const createLessonMutation = useMutation(
     api.lessons.createLessonWithMaterials
   );

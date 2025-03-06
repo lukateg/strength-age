@@ -15,41 +15,19 @@ export default defineSchema({
     description: v.optional(v.string()),
     createdAt: v.number(),
   }).index("by_class", ["classId"]),
-
+  // TODO: check if queries by both user and class
   pdfs: defineTable({
-    classId: v.string(),
-    fileUrl: v.string(),
-    uploadedAt: v.float64(),
-    userId: v.string(),
-  }).index("by_user_course", ["userId", "classId"]), // ✅ Add an index for queries
+    userId: v.string(), // Owner of the PDF
+    classId: v.string(), // Class the PDF belongs to
+    lessonIds: v.optional(v.array(v.string())), // Array of lesson IDs the PDF is linked to
+    fileUrl: v.string(), // PDF URL
+    uploadedAt: v.number(), // Timestamp
+  }).index("by_class_user", ["classId", "userId"]), // ✅ Add an index for queries
 
-  lessonMaterials: defineTable({
+  lessonPdfs: defineTable({
     lessonId: v.string(),
-    materialId: v.string(),
+    pdfId: v.string(),
   })
     .index("by_lesson", ["lessonId"])
-    .index("by_material", ["materialId"]),
+    .index("by_material", ["pdfId"]),
 });
-
-// export default defineSchema({
-//   lessons: defineTable({
-//     classId: v.string(),
-//     title: v.string(),
-//     description: v.optional(v.string()),
-//     createdAt: v.number(),
-//   }).index("by_class", ["classId"]),
-
-//   materials: defineTable({
-//     userId: v.string(),
-//     classId: v.string(),
-//     title: v.string(),
-//     fileUrl: v.string(),
-//     uploadedAt: v.number(),
-//   }).index("by_class", ["classId"]),
-
-//   lessonMaterials: defineTable({
-//     lessonId: v.string(),
-//     materialId: v.string(),
-//   }).index("by_lesson", ["lessonId"])
-//     .index("by_material", ["materialId"]),
-// });

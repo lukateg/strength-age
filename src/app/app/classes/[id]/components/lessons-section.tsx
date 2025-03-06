@@ -1,5 +1,7 @@
 "use client";
+import Link from "next/link";
 
+import { useClass } from "@/providers/class-context-provider";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,19 +11,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { useClass } from "@/providers/class-context-provider";
-
 import { FileText } from "lucide-react";
-import Link from "next/link";
 
 // TODO:
-// - hook up lessons from database and show them
+// - add case when there are no lessons
 
 export default function LessonsSectionComponent() {
-  const { classId } = useClass();
+  const { classId, lessons } = useClass();
 
   // if (isLoading) return <div>Loading materials...</div>;
-  // if (error) return <div>Error: {error}</div>;
+  if (!lessons) return <div>no lessons</div>;
+
   return (
     <Card>
       <CardHeader>
@@ -37,18 +37,14 @@ export default function LessonsSectionComponent() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {[
-            "Chapter 1 - Introduction to Calculus",
-            "Chapter 2 - Derivatives",
-            "Chapter 3 - Integrals",
-          ].map((material) => (
+          {lessons.map((lesson) => (
             <div
-              key={material}
+              key={lesson._id}
               className="flex items-center justify-between p-4 border rounded-lg"
             >
               <div className="flex items-center">
                 <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-                <span>{material}</span>
+                <span>{lesson.title}</span>
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm">

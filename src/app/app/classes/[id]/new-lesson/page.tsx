@@ -24,13 +24,8 @@ import { toast } from "@/hooks/use-toast";
 // - add success state
 // - create a reusable upload material component and use it here and in the materials section
 
-// - ON SUBMIT: add uploadThing logic and on complete update convex database with new lesson
-
-// interface Material {
-//   id: string;
-//   name: string;
-//   size: string;
-// }
+// - ON SUBMIT: handles only case when user adds at least one material, the upload itself calls database to populate it
+// there is not logic that initially checks if there are no materials and then just creates lesson
 
 interface LessonFormData {
   lessonTitle: string;
@@ -63,7 +58,8 @@ export default function NewLessonPage() {
             classId,
             title: lessonTitle,
             description: lessonDescription,
-            materialId: res[0]?.ufsUrl,
+            pdfId: res[0]?.ufsUrl,
+            fileUrl: res[0]?.ufsUrl,
           });
           setValue("materials", [], { shouldValidate: true });
           toast({
@@ -100,7 +96,6 @@ export default function NewLessonPage() {
       { shouldValidate: true }
     );
   };
-
   const onSubmit = (data: LessonFormData) => {
     console.log("Submitted Lesson Data:", data);
     // Handle form submission logic here (API call, etc.)

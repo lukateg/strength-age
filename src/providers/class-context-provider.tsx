@@ -6,6 +6,7 @@ import { api } from "../../convex/_generated/api";
 import { type FunctionReference } from "convex/server";
 import { type ReactMutation, useMutation, useQuery } from "convex/react";
 import { type PDFType } from "@/types/types";
+// import { type Id } from "convex/_generated/dataModel";
 
 // TODO:
 // 1. Add correct types for mutations
@@ -27,6 +28,15 @@ interface ClassContextType {
       string | undefined
     >
   >;
+  createLessonMutation: (args: {
+    userId: string;
+    classId: string;
+    // classId: Id<"classes">;
+    title: string;
+    description?: string;
+    // materialIds?: Id<"pdfs">[];
+    materialId?: string;
+  }) => Promise<string & { __tableName: "lessons" }>;
   isLoading: boolean;
   error: string | null;
 }
@@ -50,6 +60,9 @@ export function ClassProvider({
 
   // Mutations
   const uploadPDFMutation = useMutation(api.classes.uploadPdf);
+  const createLessonMutation = useMutation(
+    api.lessons.createLessonWithMaterials
+  );
   //   const generateTestMutation = useMutation(api.classes.generateTest);
   //   const editMaterialMutation = useMutation(api.classes.editMaterial);
 
@@ -59,6 +72,7 @@ export function ClassProvider({
         classId,
         materials: (materials || []) as PDFType[] | [],
         uploadPDFMutation,
+        createLessonMutation,
         // generateTest,
         // editMaterial,
         isLoading,

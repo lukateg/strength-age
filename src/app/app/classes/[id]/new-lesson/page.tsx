@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm, Controller } from "react-hook-form";
+import Link from "next/link";
 
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,11 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import FileUploadComponent from "@/components/file-upload";
+
+import { useUploadThing } from "@/hooks/use-upload-thing";
+import { useClass } from "@/providers/class-context-provider";
 
 import { X, File } from "lucide-react";
-import FileUploadComponent from "@/components/file-upload";
-import { useClass } from "@/providers/class-context-provider";
-import Link from "next/link";
+import { toast } from "@/hooks/use-toast";
 
 // TODO:
 // - add validation
@@ -30,21 +33,55 @@ import Link from "next/link";
 // }
 
 interface LessonFormData {
-  lessonName: string;
+  lessonTitle: string;
   lessonDescription: string;
   materials: File[];
 }
 
+// const DEFAULT_FORM_VALUES
+
 export default function NewLessonPage() {
-  const { classId } = useClass();
+  const { classId, createLessonMutation } = useClass();
   const { register, handleSubmit, control, setValue, watch } =
     useForm<LessonFormData>({
       defaultValues: {
-        lessonName: "",
+        lessonTitle: "",
         lessonDescription: "",
         materials: [],
       },
     });
+  const { startUpload, isUploading } = useUploadThing("pdfUploader", {
+    onClientUploadComplete: (res) => {
+      if (res && res.length > 0) {
+        if (res[0]?.serverData.uploadedBy) {
+          console.log(control._formValues, "form data");
+          console.log(res, "form res");
+          const { lessonDescription, lessonTitle } =
+            control._formValues as LessonFormData;
+          void createLessonMutation({
+            userId: res[0]?.serverData.uploadedBy,
+            classId,
+            title: lessonTitle,
+            description: lessonDescription,
+            materialId: res[0]?.ufsUrl,
+          });
+          setValue("materials", [], { shouldValidate: true });
+          toast({
+            title: "Success",
+            description: "Uploaded successfully.",
+            variant: "default",
+          });
+        }
+      }
+    },
+    onUploadError: () => {
+      toast({
+        title: "Error",
+        description: "Something went wrong, please try again.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const materials = watch("materials", []);
 
@@ -67,6 +104,7 @@ export default function NewLessonPage() {
   const onSubmit = (data: LessonFormData) => {
     console.log("Submitted Lesson Data:", data);
     // Handle form submission logic here (API call, etc.)
+    void startUpload(materials);
   };
 
   return (
@@ -74,12 +112,14 @@ export default function NewLessonPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Lesson Name */}
         <div className="space-y-2">
-          <Label htmlFor="lessonName">Lesson Name</Label>
+          <Label htmlFor="lessonTitle">Lesson Title</Label>
           <Input
-            id="lessonName"
-            placeholder="Enter lesson name"
+            id="lessonTitle"
+            placeholder="Enter lesson title"
             className="w-full"
-            {...register("lessonName", { required: "Lesson name is required" })}
+            {...register("lessonTitle", {
+              required: "Lesson title is required",
+            })}
           />
         </div>
 

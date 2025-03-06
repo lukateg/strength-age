@@ -5,7 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { api } from "../../convex/_generated/api";
 import { type FunctionReference } from "convex/server";
 import { type ReactMutation, useMutation, useQuery } from "convex/react";
-import { type PDFType } from "@/types/types";
+import { type LessonsType, type PDFType } from "@/types/types";
 // import { type Id } from "convex/_generated/dataModel";
 
 // TODO:
@@ -15,6 +15,7 @@ import { type PDFType } from "@/types/types";
 interface ClassContextType {
   classId: string;
   materials: PDFType[]; // Replace `any` with your material type
+  lessons: LessonsType[] | undefined;
   uploadPDFMutation: ReactMutation<
     FunctionReference<
       "mutation",
@@ -35,7 +36,8 @@ interface ClassContextType {
     title: string;
     description?: string;
     // materialIds?: Id<"pdfs">[];
-    materialId?: string;
+    fileUrl: string;
+    pdfId?: string;
   }) => Promise<string & { __tableName: "lessons" }>;
   isLoading: boolean;
   error: string | null;
@@ -56,25 +58,24 @@ export function ClassProvider({
   const userId = user?.id;
 
   // Fetch materials for the class
-  const materials = useQuery(api.classes.getPDFs, { classId, userId });
+  const materials = useQuery(api.classes.getAllPDFs, { classId, userId });
+  // TODO: check if queries by both user and class
+  const lessons = useQuery(api.lessons.getLessonsByClass, { classId });
 
   // Mutations
   const uploadPDFMutation = useMutation(api.classes.uploadPdf);
   const createLessonMutation = useMutation(
     api.lessons.createLessonWithMaterials
   );
-  //   const generateTestMutation = useMutation(api.classes.generateTest);
-  //   const editMaterialMutation = useMutation(api.classes.editMaterial);
 
   return (
     <ClassContext.Provider
       value={{
         classId,
-        materials: (materials || []) as PDFType[] | [],
+        materials: materials as PDFType[] | [],
+        lessons: lessons as LessonsType[] | undefined,
         uploadPDFMutation,
         createLessonMutation,
-        // generateTest,
-        // editMaterial,
         isLoading,
         error,
       }}

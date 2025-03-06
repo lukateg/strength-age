@@ -13,25 +13,30 @@ export const uploadPdf = mutation({
   },
 });
 
-export const getPDFs = query({
-  args: {
+export const getAllPDFs = query({
+  args: v.object({
     classId: v.string(),
     userId: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    if (!args.userId) {
+  }),
+  handler: async ({ db }, { classId, userId }) => {
+    if (!userId) {
       return []; // Return an empty array if userId is not provided
     }
-    const materials = await ctx.db
+    return await db
       .query("pdfs")
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("classId"), args.classId),
-          q.eq(q.field("userId"), args.userId)
-        )
-      )
+      .withIndex("by_class_user", (q) => q.eq("classId", classId))
       .collect();
-
-    return materials as unknown;
   },
 });
+
+// export const getLessonPDFs = query({
+//   args: v.object({
+//     lessonId: v.string(),
+//   }),
+//   handler: async ({ db }, { lessonId }) => {
+//     return await db
+//       .query("pdfs")
+//       .filter((q) => q.contains("lessonIds", lessonId)) // ✅ Check if lessonId exists in array
+//       .collect();
+//   },
+// });

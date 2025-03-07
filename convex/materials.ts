@@ -20,7 +20,7 @@ export const getAllPDFs = query({
   }),
   handler: async ({ db }, { classId, userId }) => {
     if (!userId) {
-      return []; // Return an empty array if userId is not provided
+      return [];
     }
     return await db
       .query("pdfs")
@@ -29,14 +29,12 @@ export const getAllPDFs = query({
   },
 });
 
-// export const getLessonPDFs = query({
-//   args: v.object({
-//     lessonId: v.string(),
-//   }),
-//   handler: async ({ db }, { lessonId }) => {
-//     return await db
-//       .query("pdfs")
-//       .filter((q) => q.contains("lessonIds", lessonId)) // ✅ Check if lessonId exists in array
-//       .collect();
-//   },
-// });
+export const getLessonPDFs = query({
+  args: {
+    lessonId: v.string(),
+  },
+  handler: async ({ db }, { lessonId }) => {
+    const allPDFs = await db.query("pdfs").collect();
+    return allPDFs.filter((pdf) => pdf.lessonIds?.includes(lessonId));
+  },
+});

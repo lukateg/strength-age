@@ -9,16 +9,17 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MaterialsSectionComponent from "./components/materials-section";
 
-import { FileText, Headphones, Brain } from "lucide-react";
+import { Headphones, Brain } from "lucide-react";
 import LessonsSectionComponent from "./components/lessons-section";
 
 // TODO:
 // - only section materials should have upload material button
 // - upload material button page should have a dropdown menu of lections to be linked when uploading materials (fetch lections from API)
 
-// - create lessons page that will be a list of lections made of uploaded materials
-// - add button for adding lessons and display existing lessons
-// - add new-lesson page that will hook up uploaded materials with specific lesson
+// - add switch to create-new-lesson page so user can choose between uploading materials or picking from already uploaded ones
+// - add create new class logic
+// - add delete everything logic
+// - add logic for add materials to lesson (open the upload materials page and just have dropdown menu of materials to pick from with specific class preselected)
 
 export default async function ClassPage() {
   return (

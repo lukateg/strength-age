@@ -15,12 +15,15 @@ export default defineSchema({
     description: v.optional(v.string()),
     createdAt: v.number(),
   }).index("by_class", ["classId"]),
+
   // TODO: check if queries by both user and class
   pdfs: defineTable({
-    userId: v.string(), // Owner of the PDF
-    classId: v.string(), // Class the PDF belongs to
+    userId: v.string(),
+    classId: v.string(),
     lessonIds: v.optional(v.array(v.string())), // Array of lesson IDs the PDF is linked to
-    fileUrl: v.string(), // PDF URL
-    uploadedAt: v.number(), // Timestamp
-  }).index("by_class_user", ["classId", "userId"]), // ✅ Add an index for queries
+    fileUrl: v.string(),
+    uploadedAt: v.number(),
+  })
+    .index("by_class_user", ["classId", "userId"]) // ✅ Add an index for queries
+    .index("by_lessonId", ["lessonIds"]), // Index for lessonIds
 });

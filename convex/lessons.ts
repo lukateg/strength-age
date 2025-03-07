@@ -21,13 +21,11 @@ export const createLessonWithMaterials = mutation({
     description: v.optional(v.string()),
     pdfId: v.optional(v.string()), // Allow optional materials
     fileUrl: v.string(),
-    // materialIds: v.optional(v.array(v.string())), // Allow optional materials
   }),
   handler: async (
     { db },
     { userId, classId, title, description, pdfId, fileUrl }
   ) => {
-    // 1️⃣ Create the lesson
     const lessonId = await db.insert("lessons", {
       userId,
       classId,
@@ -46,13 +44,26 @@ export const createLessonWithMaterials = mutation({
         lessonIds: [lessonId],
         uploadedAt: Date.now(),
       });
-      // await db.insert("lessonPdfs", { lessonId, pdfId });
-      // await Promise.all(
-      //   pdfIds.map((pdfId) => db.insert("lessonPdfs", { lessonId, pdfId }))
-      // );
     }
 
     return lessonId;
+  },
+});
+
+export const getLessonData = query({
+  args: v.object({
+    lessonId: v.id("lessons"),
+  }),
+  handler: async ({ db }, { lessonId }) => {
+    const lesson = await db.get(lessonId);
+
+    // TODO: - since we initially load all pdfs already, we can move this logic to context and avoid fetching all pdfs and duplicating logic
+    const allPDFs = await db.query("pdfs").collect();
+    const lessonPDFs = allPDFs.filter((pdf) =>
+      pdf.lessonIds?.includes(lessonId)
+    );
+
+    return { lesson, lessonPDFs };
   },
 });
 

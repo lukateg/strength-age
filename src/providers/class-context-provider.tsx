@@ -57,6 +57,7 @@ export function ClassProvider({
   const { user } = useUser(); // Clerk provides the logged-in user
   const userId = user?.id;
 
+  // TODO: Maybe remove queries from the context so they dont run initially, and instead when the component mounts
   // Fetch materials for the class
   const materials = useQuery(api.materials.getAllPDFs, { classId, userId });
   // TODO: check if queries by both user and class

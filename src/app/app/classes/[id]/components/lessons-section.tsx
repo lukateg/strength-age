@@ -48,7 +48,9 @@ export default function LessonsSectionComponent() {
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm">
-                  View
+                  <Link href={`/app/classes/${classId}/lessons/${lesson._id}`}>
+                    View
+                  </Link>
                 </Button>
                 <Button variant="outline" size="sm">
                   Generate Test

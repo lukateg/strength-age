@@ -9,7 +9,7 @@ import {
 import { BookOpen, Plus } from "lucide-react";
 import Link from "next/link";
 
-export const ClassesPage = () => {
+export function ClassesPage() {
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-8">
@@ -19,10 +19,12 @@ export const ClassesPage = () => {
             Manage your classes and materials
           </p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          Create New Class
-        </Button>
+        <Link href="/app/classes/new-class">
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Create New Class
+          </Button>
+        </Link>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -76,6 +78,6 @@ export const ClassesPage = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ClassesPage;

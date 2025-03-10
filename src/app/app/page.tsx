@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -6,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
 import { FileText, Users, BookOpen, Brain } from "lucide-react";
 
 export default function Home() {
@@ -18,7 +21,9 @@ export default function Home() {
             Your AI-powered learning assistant
           </p>
         </div>
-        <Button>Create New Class</Button>
+        <Button>
+          <Link href="/app/classes/new-class">Create New Class</Link>
+        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">

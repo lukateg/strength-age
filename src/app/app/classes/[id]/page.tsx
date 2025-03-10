@@ -8,9 +8,9 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MaterialsSectionComponent from "./components/materials-section";
+import LessonsSectionComponent from "./components/lessons-section";
 
 import { Headphones, Brain } from "lucide-react";
-import LessonsSectionComponent from "./components/lessons-section";
 
 // TODO:
 // - only section materials should have upload material button

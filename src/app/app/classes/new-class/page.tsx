@@ -8,17 +8,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useClass } from "@/providers/class-context-provider";
+import { useClasses } from "@/providers/classes-provider";
+import { useRouter } from "next/navigation";
 
 interface ClassFormData {
   title: string;
   description: string;
 }
 
-// const DEFAULT_FORM_VALUES
+// TODO:
+// - add error handling and loading
 
 export default function NewClassPage() {
-  // const { createClassMutation } = useClass();
+  const router = useRouter();
+  const { createClassMutation } = useClasses();
   const { register, handleSubmit } = useForm<ClassFormData>({
     defaultValues: {
       title: "",
@@ -27,9 +30,7 @@ export default function NewClassPage() {
   });
 
   const onSubmit = (data: ClassFormData) => {
-    console.log("Submitted Lesson Data:", data);
-    // Handle form submission logic here (API call, etc.)
-    // void createClassMutation(data);
+    void createClassMutation(data).then(() => router.push("/app/classes"));
   };
 
   return (

@@ -1,3 +1,8 @@
+"use client";
+
+import Link from "next/link";
+import { useClasses } from "@/providers/classes-provider";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -6,10 +11,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
 import { BookOpen, Plus } from "lucide-react";
-import Link from "next/link";
 
 export function ClassesPage() {
+  const { classes } = useClasses();
+
+  if (!classes) {
+    return <div> Loading...</div>;
+  }
+
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-8">
@@ -28,29 +39,7 @@ export function ClassesPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {[
-          {
-            title: "Advanced Mathematics",
-            description: "Calculus and Advanced Algebra",
-            materials: 12,
-            tests: 5,
-            id: "class-1",
-          },
-          {
-            title: "World History",
-            description: "Ancient Civilizations to Modern Era",
-            materials: 8,
-            tests: 3,
-            id: "class-2",
-          },
-          {
-            title: "Physics 101",
-            description: "Introduction to Physics",
-            materials: 15,
-            tests: 7,
-            id: "class-3",
-          },
-        ].map((classItem) => (
+        {classes.map((classItem) => (
           <Card key={classItem.title}>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -61,11 +50,11 @@ export function ClassesPage() {
             </CardHeader>
             <CardContent>
               <div className="flex justify-between text-sm text-muted-foreground mb-4">
-                <span>{classItem.materials} Materials</span>
-                <span>{classItem.tests} Tests</span>
+                <span>15 Materials</span>
+                <span>7 Tests</span>
               </div>
               <div className="flex gap-2">
-                <Link href={`/app/classes/${classItem.id}`}>
+                <Link href={`/app/classes/${classItem._id}`}>
                   <Button className="w-full" variant="outline">
                     View Class
                   </Button>

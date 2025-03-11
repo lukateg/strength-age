@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 
 import { Headphones } from "lucide-react";
+import Link from "next/link";
 
 export default function LessonMaterialsSectionComponent() {
   const { lessonId }: { lessonId: Id<"lessons"> } = useParams();
@@ -30,30 +31,18 @@ export default function LessonMaterialsSectionComponent() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{lesson?.title}</CardTitle>
-        <CardDescription>{lesson?.description}</CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>{lesson?.title}</CardTitle>
+          <CardDescription>{lesson?.description}</CardDescription>
+        </div>
+        <Link
+          href={`/app/classes/${lesson?.classId}/file-upload/${lesson?._id}/file-upload`}
+        >
+          <Button>Add new material</Button>
+        </Link>
       </CardHeader>
       <CardContent>
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {lessonPDFs.map((pdf) => (
-            <Link key={pdf._id} href={`/lessons/${pdf._id}`}>
-              <Card className="p-6 hover:bg-accent transition-colors cursor-pointer">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">
-                      {pdf.fileUrl}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      <FileText className="inline h-4 w-4 mr-1" />
-                      {pdf.uploadedAt} documents
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </Link>
-          ))}
-        </div> */}
         <div className="space-y-4">
           {lessonPDFs.map((pdf) => (
             <div

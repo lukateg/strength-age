@@ -21,6 +21,8 @@ import { Headphones, Brain } from "lucide-react";
 // - add edit everything logic
 // - add logic for add materials to lesson (open the upload materials page and just have dropdown menu of materials to pick from with specific class preselected)
 // - add no materials and no lessons message
+// - fix create lesson without materials
+// - check why uploading calls 3 requests and is so slow
 
 export default async function ClassPage() {
   return (

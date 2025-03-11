@@ -2,8 +2,11 @@
 
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
+import { useForm } from "react-hook-form";
 
-import { Cloud, File, Loader2, UploadCloud, X } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { useUploadThing } from "@/hooks/use-upload-thing";
+import { useClass } from "@/providers/class-context-provider";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,31 +17,51 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
-import { toast } from "@/hooks/use-toast";
-import { useUploadThing } from "@/hooks/use-upload-thing";
-import { useClass } from "@/providers/class-context-provider";
+import { Cloud, File, Loader2, UploadCloud, X } from "lucide-react";
 
 // TODO:
 // - fix case when multiple files are added for upload
 // - add error handling
 // - add max length
 // - add pdf name when uploading so it can be shown on the materials page
+// - refactor component to reusable components and write clean logic for none case
 
 // - remove support for TXT, DOCX and others and lower the size limit
 
 export const FileUploadPage = () => {
-  const { uploadPDFMutation, classId } = useClass();
+  const { uploadPDFMutation, classId, lessons } = useClass();
   const [files, setFiles] = useState<File[]>([]);
+  const form = useForm({ defaultValues: { lesson: "" } });
 
   const { startUpload, isUploading } = useUploadThing("pdfUploader", {
     onClientUploadComplete: (res) => {
       if (res && res.length > 0) {
         if (res[0]?.serverData.uploadedBy) {
+          const lesson = form.getValues("lesson");
+          const lessonIds = lesson === "none" ? [] : [lesson];
+
           void uploadPDFMutation({
             userId: res[0]?.serverData.uploadedBy,
             classId,
             fileUrl: res[0]?.ufsUrl,
+            lessonIds,
           });
           setFiles([]);
           toast({
@@ -86,7 +109,38 @@ export const FileUploadPage = () => {
           Drag and drop your files here or click to browse
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
+        <Form {...form}>
+          <FormField
+            control={form.control}
+            name="lesson"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Lesson</FormLabel>
+                <Select onValueChange={field.onChange} {...field}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="none" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="none">none</SelectItem>
+                    {lessons?.map((lesson) => (
+                      <SelectItem key={lesson._id} value={lesson._id}>
+                        {lesson.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  You can link material to a specific lesson.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </Form>
+
         <div
           {...getRootProps()}
           className={`

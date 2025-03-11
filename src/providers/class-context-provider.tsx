@@ -3,10 +3,13 @@ import { createContext, useContext, useState } from "react";
 
 import { useUser } from "@clerk/nextjs";
 import { api } from "../../convex/_generated/api";
-import { type FunctionReference } from "convex/server";
-import { type ReactMutation, useMutation, useQuery } from "convex/react";
-import { type LessonsType, type PDFType } from "@/types/types";
-// import { type Id } from "convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import {
+  type CreateLessonMutation,
+  type UploadPDFMutation,
+  type LessonsType,
+  type PDFType,
+} from "@/types/types";
 
 // TODO:
 // 1. Add correct types for mutations
@@ -16,29 +19,8 @@ interface ClassContextType {
   classId: string;
   materials: PDFType[]; // Replace `any` with your material type
   lessons: LessonsType[] | undefined;
-  uploadPDFMutation: ReactMutation<
-    FunctionReference<
-      "mutation",
-      "public",
-      {
-        classId: string;
-        fileUrl: string;
-        userId: string;
-      },
-      null,
-      string | undefined
-    >
-  >;
-  createLessonMutation: (args: {
-    userId: string;
-    classId: string;
-    // classId: Id<"classes">;
-    title: string;
-    description?: string;
-    // materialIds?: Id<"pdfs">[];
-    fileUrl: string;
-    pdfId?: string;
-  }) => Promise<string & { __tableName: "lessons" }>;
+  uploadPDFMutation: UploadPDFMutation;
+  createLessonMutation: CreateLessonMutation;
   isLoading: boolean;
   error: string | null;
 }

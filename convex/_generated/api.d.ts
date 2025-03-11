@@ -13,6 +13,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as classes from "../classes.js";
 import type * as lessons from "../lessons.js";
 import type * as materials from "../materials.js";
 
@@ -25,6 +26,7 @@ import type * as materials from "../materials.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  classes: typeof classes;
   lessons: typeof lessons;
   materials: typeof materials;
 }>;

@@ -50,7 +50,7 @@ export type CreateClassMutation = ReactMutation<
   >
 >;
 
-export type CreateLessonMutation = (args: {
+export type createLessonWithMaterialsMutation = (args: {
   userId: string;
   classId: string;
   // classId: Id<"classes">;
@@ -60,3 +60,20 @@ export type CreateLessonMutation = (args: {
   fileUrl: string;
   pdfId?: string;
 }) => Promise<string & { __tableName: "lessons" }>;
+
+export type CreateLessonMutation = ReactMutation<
+  FunctionReference<
+    "mutation",
+    "public",
+    {
+      description?: string | undefined;
+      title: string;
+      userId: string;
+      classId: string;
+    },
+    string & {
+      __tableName: "lessons";
+    },
+    string | undefined
+  >
+>;

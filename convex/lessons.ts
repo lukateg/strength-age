@@ -13,6 +13,25 @@ export const getLessonsByClass = query({
   },
 });
 
+export const createLesson = mutation({
+  args: v.object({
+    userId: v.string(),
+    classId: v.string(),
+    title: v.string(),
+    description: v.optional(v.string()),
+  }),
+  handler: async ({ db }, { userId, classId, title, description }) => {
+    return await db.insert("lessons", {
+      userId,
+      classId,
+      title,
+      description: description ?? "",
+      createdAt: Date.now(), // remove
+    });
+  },
+});
+
+// TODO: separate this into two functions and use createLesson.then(uploadMaterials)
 export const createLessonWithMaterials = mutation({
   args: v.object({
     userId: v.string(),
@@ -31,10 +50,9 @@ export const createLessonWithMaterials = mutation({
       classId,
       title,
       description: description ?? "",
-      createdAt: Date.now(),
+      createdAt: Date.now(), // remove
     });
-    console.log("Created lesson with ID:", lessonId);
-    // 2️⃣ If materials were selected, link them to the lesson
+
     // TODO : Add support for multiple materials, and if there is PDF with same values, this will override lessions
     if (pdfId) {
       await db.insert("pdfs", {

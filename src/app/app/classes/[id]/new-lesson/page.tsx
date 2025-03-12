@@ -36,7 +36,12 @@ interface LessonFormData {
 // const DEFAULT_FORM_VALUES
 
 export default function NewLessonPage() {
-  const { classId, createLessonMutation } = useClass();
+  const {
+    classId,
+    createLessonWithMaterialsMutation,
+    userId,
+    createLessonMutation,
+  } = useClass();
   const { register, handleSubmit, control, setValue, watch } =
     useForm<LessonFormData>({
       defaultValues: {
@@ -49,11 +54,9 @@ export default function NewLessonPage() {
     onClientUploadComplete: (res) => {
       if (res && res.length > 0) {
         if (res[0]?.serverData.uploadedBy) {
-          console.log(control._formValues, "form data");
-          console.log(res, "form res");
           const { lessonDescription, lessonTitle } =
             control._formValues as LessonFormData;
-          void createLessonMutation({
+          void createLessonWithMaterialsMutation({
             userId: res[0]?.serverData.uploadedBy,
             classId,
             title: lessonTitle,
@@ -97,9 +100,22 @@ export default function NewLessonPage() {
     );
   };
   const onSubmit = (data: LessonFormData) => {
-    console.log("Submitted Lesson Data:", data);
-    // Handle form submission logic here (API call, etc.)
-    void startUpload(materials);
+    if (!materials.length && userId) {
+      void createLessonMutation({
+        userId: userId,
+        classId,
+        title: data.lessonTitle,
+        description: data.lessonDescription,
+      });
+      toast({
+        title: "Success",
+        description: "Uploaded successfully.",
+        variant: "default",
+      });
+    }
+    if (materials.length) {
+      void startUpload(materials);
+    }
   };
 
   return (

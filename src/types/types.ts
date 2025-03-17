@@ -32,6 +32,7 @@ export type UploadPDFMutation = ReactMutation<
       fileUrl: string;
       userId: string;
       lessonIds: string[];
+      name: string;
     },
     null,
     string | undefined
@@ -51,15 +52,35 @@ export type CreateClassMutation = ReactMutation<
   >
 >;
 
-export type createLessonWithMaterialsMutation = (args: {
+export type CreateLessonWithExistingMaterialsMutation = ReactMutation<
+  FunctionReference<
+    "mutation",
+    "public",
+    {
+      description?: string | undefined;
+      classId: string;
+      title: string;
+      userId: string;
+      pdfIds: Id<"pdfs">[];
+    },
+    string & {
+      __tableName: "lessons";
+    },
+    string | undefined
+  >
+>;
+
+export type CreateLessonWithNewMaterialsMutation = (args: {
   userId: string;
   classId: string;
   // classId: Id<"classes">;
   title: string;
   description?: string;
   // materialIds?: Id<"pdfs">[];
-  fileUrl: string;
-  pdfId?: string;
+  pdfFiles: {
+    fileUrl: string;
+    name: string;
+  }[];
 }) => Promise<string & { __tableName: "lessons" }>;
 
 export type CreateLessonMutation = ReactMutation<

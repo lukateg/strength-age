@@ -7,14 +7,16 @@ export const uploadPdf = mutation({
     classId: v.string(),
     fileUrl: v.string(),
     lessonIds: v.array(v.string()),
+    name: v.string(),
   },
-  handler: async ({ db }, { userId, classId, fileUrl, lessonIds }) => {
+  handler: async ({ db }, { userId, classId, fileUrl, lessonIds, name }) => {
     await db.insert("pdfs", {
       userId,
       classId,
       fileUrl,
       uploadedAt: Date.now(),
       lessonIds,
+      name,
     });
   },
 });

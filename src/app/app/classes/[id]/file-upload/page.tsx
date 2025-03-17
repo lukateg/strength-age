@@ -64,6 +64,7 @@ export const FileUploadPage = () => {
             classId,
             fileUrl: res[0]?.ufsUrl,
             lessonIds,
+            name: res[0]?.name,
           });
           toast({
             title: "Success",

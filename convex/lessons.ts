@@ -32,20 +32,15 @@ export const createLesson = mutation({
   },
 });
 
-// TODO: separate this into two functions and use createLesson.then(uploadMaterials)
-export const createLessonWithMaterials = mutation({
+export const createLessonWithExistingMaterials = mutation({
   args: v.object({
     userId: v.string(),
     classId: v.string(),
     title: v.string(),
     description: v.optional(v.string()),
-    pdfId: v.optional(v.string()), // Allow optional materials
-    fileUrl: v.string(),
+    pdfIds: v.array(v.id("pdfs")),
   }),
-  handler: async (
-    { db },
-    { userId, classId, title, description, pdfId, fileUrl }
-  ) => {
+  handler: async ({ db }, { userId, classId, title, description, pdfIds }) => {
     const lessonId = await db.insert("lessons", {
       userId,
       classId,
@@ -54,15 +49,64 @@ export const createLessonWithMaterials = mutation({
       createdAt: Date.now(), // remove
     });
 
-    // TODO : Add support for multiple materials, and if there is PDF with same values, this will override lessions
-    if (pdfId) {
-      await db.insert("pdfs", {
-        userId,
-        classId,
-        fileUrl: fileUrl,
-        lessonIds: [lessonId],
-        uploadedAt: Date.now(),
-      });
+    if (pdfIds.length > 0) {
+      for (const pdfId of pdfIds) {
+        const pdf = await db.get(pdfId);
+        if (pdf) {
+          const updatedLessonIds = [...(pdf.lessonIds ?? []), lessonId];
+          await db.patch(pdfId, {
+            lessonIds: updatedLessonIds,
+          });
+        }
+      }
+    }
+
+    return lessonId;
+  },
+});
+// TODO: separate this into two functions and use createLesson.then(uploadMaterials)
+export const createLessonWithNewMaterials = mutation({
+  args: v.object({
+    userId: v.string(),
+    classId: v.string(),
+    title: v.string(),
+    description: v.optional(v.string()),
+    pdfFiles: v.array(
+      v.object({
+        fileUrl: v.string(),
+        name: v.string(),
+      })
+    ),
+  }),
+  handler: async (
+    { db },
+    { userId, classId, title, description, pdfFiles }
+  ) => {
+    // check first if there is already lesson with same title
+    // const existingLesson = await db.query("lessons").filter((q) => q.eq(q.field("title"), title)).first();
+    // if (existingLesson) {
+    //   throw new Error("Lesson with same title already exists");
+    // }
+
+    const lessonId = await db.insert("lessons", {
+      userId,
+      classId,
+      title,
+      description: description ?? "",
+      createdAt: Date.now(), // remove
+    });
+
+    if (pdfFiles.length > 0) {
+      for (const pdf of pdfFiles) {
+        await db.insert("pdfs", {
+          userId,
+          classId,
+          fileUrl: pdf.fileUrl,
+          name: pdf.name,
+          lessonIds: [lessonId],
+          uploadedAt: Date.now(),
+        });
+      }
     }
 
     return lessonId;

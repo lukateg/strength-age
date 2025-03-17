@@ -10,6 +10,7 @@ import {
   type LessonsType,
   type PDFType,
   type CreateLessonMutation,
+  type AddPDFToLessonMutation,
 } from "@/types/types";
 
 // TODO:
@@ -24,6 +25,7 @@ interface ClassContextType {
   uploadPDFMutation: UploadPDFMutation;
   createLessonWithMaterialsMutation: createLessonWithMaterialsMutation;
   createLessonMutation: CreateLessonMutation;
+  addPDFToLessonMutation: AddPDFToLessonMutation;
   isLoading: boolean;
   error: string | null;
 }
@@ -54,6 +56,7 @@ export function ClassProvider({
   const createLessonWithMaterialsMutation = useMutation(
     api.lessons.createLessonWithMaterials
   );
+  const addPDFToLessonMutation = useMutation(api.lessons.addPDFToLesson);
 
   return (
     <ClassContext.Provider
@@ -65,6 +68,7 @@ export function ClassProvider({
         uploadPDFMutation,
         createLessonWithMaterialsMutation,
         createLessonMutation,
+        addPDFToLessonMutation,
         isLoading,
         error,
       }}

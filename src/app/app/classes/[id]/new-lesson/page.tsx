@@ -1,8 +1,8 @@
 "use client";
 
 import { useForm, Controller } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -42,6 +42,7 @@ export default function NewLessonPage() {
     userId,
     createLessonMutation,
   } = useClass();
+  const router = useRouter();
   const { register, handleSubmit, control, setValue, watch } =
     useForm<LessonFormData>({
       defaultValues: {
@@ -64,7 +65,8 @@ export default function NewLessonPage() {
             pdfId: res[0]?.ufsUrl,
             fileUrl: res[0]?.ufsUrl,
           });
-          setValue("materials", [], { shouldValidate: true });
+
+          router.push(`/app/classes/${classId}`);
           toast({
             title: "Success",
             description: "Uploaded successfully.",
@@ -112,6 +114,8 @@ export default function NewLessonPage() {
         description: "Uploaded successfully.",
         variant: "default",
       });
+      // TODO: redirect to the all materials page
+      router.push(`/app/classes/${classId}`);
     }
     if (materials.length) {
       void startUpload(materials);

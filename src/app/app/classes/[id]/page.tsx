@@ -19,10 +19,9 @@ import { Headphones, Brain } from "lucide-react";
 // - add switch to create-new-lesson page so user can choose between uploading materials or picking from already uploaded ones
 // - add delete everything logic
 // - add edit everything logic
-// - add logic for add materials to lesson (open the upload materials page and just have dropdown menu of materials to pick from with specific class preselected)
 // - add no materials and no lessons message
-// - fix create lesson without materials
 // - check why uploading calls 3 requests and is so slow
+// - make upload component reusable
 
 export default async function ClassPage() {
   return (

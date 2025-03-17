@@ -4,12 +4,13 @@ import { type FunctionReference } from "convex/server";
 
 // TODO: Add correct types
 export type PDFType = {
-  _id: string;
+  _id: Id<"pdfs">;
   _creationTime: number;
   classId: string;
   fileUrl: string;
   uploadedAt: number;
   userId: string;
+  lessonIds: string[];
 };
 
 export type LessonsType = {
@@ -74,6 +75,19 @@ export type CreateLessonMutation = ReactMutation<
     string & {
       __tableName: "lessons";
     },
+    string | undefined
+  >
+>;
+
+export type AddPDFToLessonMutation = ReactMutation<
+  FunctionReference<
+    "mutation",
+    "public",
+    {
+      lessonId: string;
+      pdfIds: Id<"pdfs">[];
+    },
+    null,
     string | undefined
   >
 >;

@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 
 export const getLessonsByClass = query({
   args: v.object({
@@ -85,22 +86,22 @@ export const getLessonData = query({
   },
 });
 
-// export const addPDFToLesson = mutation({
-//   args: v.object({
-//     pdfId: v.string(),
-//     lessonId: v.string(),
-//   }),
-//   handler: async ({ db }, { pdfId, lessonId }) => {
-//     const pdf = await db.get(pdfId);
-//     if (!pdf) {
-//       throw new Error("PDF not found");
-//     }
-
-//     // ✅ Add the lessonId to the lessonIds array if it's not already there
-//     await db.patch(pdfId, {
-//       lessonIds: pdf.lessonIds.includes(lessonId)
-//         ? pdf.lessonIds
-//         : [...pdf.lessonIds, lessonId],
-//     });
-//   },
-// });
+// TODO: instead of lesson to the pdf, we should have pdf to the lesson -MAYBE(check theory)
+// TODO: check if this is optimal solution
+export const addPDFToLesson = mutation({
+  args: v.object({
+    pdfIds: v.array(v.id("pdfs")),
+    lessonId: v.string(),
+  }),
+  handler: async ({ db }, { pdfIds, lessonId }) => {
+    for (const pdfId of pdfIds) {
+      const pdf = await db.get(pdfId);
+      if (pdf) {
+        const updatedLessonIds = [...(pdf.lessonIds ?? []), lessonId];
+        await db.patch(pdfId, {
+          lessonIds: updatedLessonIds,
+        });
+      }
+    }
+  },
+});

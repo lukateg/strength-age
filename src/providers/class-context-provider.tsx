@@ -5,13 +5,13 @@ import { useUser } from "@clerk/nextjs";
 import { api } from "../../convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import {
-  type createLessonWithMaterialsMutation,
   type UploadPDFMutation,
   type LessonsType,
   type PDFType,
   type CreateLessonMutation,
   type AddPDFToLessonMutation,
   type CreateLessonWithExistingMaterialsMutation,
+  type CreateLessonWithNewMaterialsMutation,
 } from "@/types/types";
 
 // TODO:
@@ -55,8 +55,8 @@ export function ClassProvider({
   // Mutations
   const uploadPDFMutation = useMutation(api.materials.uploadPdf);
   const createLessonMutation = useMutation(api.lessons.createLesson);
-  const createLessonWithMaterialsMutation = useMutation(
-    api.lessons.createLessonWithMaterials
+  const createLessonWithNewMaterialsMutation = useMutation(
+    api.lessons.createLessonWithNewMaterials
   );
   const addPDFToLessonMutation = useMutation(api.lessons.addPDFToLesson);
   const createLessonWithExistingMaterialsMutation = useMutation(
@@ -71,7 +71,7 @@ export function ClassProvider({
         materials: materials as PDFType[] | [],
         lessons: lessons as LessonsType[] | undefined,
         uploadPDFMutation,
-        createLessonWithMaterialsMutation,
+        createLessonWithNewMaterialsMutation,
         createLessonMutation,
         addPDFToLessonMutation,
         createLessonWithExistingMaterialsMutation,

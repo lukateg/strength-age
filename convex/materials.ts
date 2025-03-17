@@ -5,19 +5,24 @@ export const uploadPdf = mutation({
   args: {
     userId: v.string(),
     classId: v.string(),
-    fileUrl: v.string(),
     lessonIds: v.array(v.string()),
-    name: v.string(),
+    pdfFiles: v.array(
+      v.object({
+        fileUrl: v.string(),
+        name: v.string(),
+      })
+    ),
   },
-  handler: async ({ db }, { userId, classId, fileUrl, lessonIds, name }) => {
-    await db.insert("pdfs", {
-      userId,
-      classId,
-      fileUrl,
-      uploadedAt: Date.now(),
-      lessonIds,
-      name,
-    });
+  handler: async ({ db }, { userId, classId, lessonIds, pdfFiles }) => {
+    for (const pdf of pdfFiles) {
+      await db.insert("pdfs", {
+        userId,
+        classId,
+        lessonIds,
+        fileUrl: pdf.fileUrl,
+        name: pdf.name,
+      });
+    }
   },
 });
 

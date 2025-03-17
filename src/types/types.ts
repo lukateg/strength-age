@@ -29,10 +29,12 @@ export type UploadPDFMutation = ReactMutation<
     "public",
     {
       classId: string;
-      fileUrl: string;
       userId: string;
       lessonIds: string[];
-      name: string;
+      pdfFiles: {
+        fileUrl: string;
+        name: string;
+      }[];
     },
     null,
     string | undefined

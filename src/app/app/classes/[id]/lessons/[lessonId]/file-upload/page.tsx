@@ -62,13 +62,16 @@ export const FileUploadPage = () => {
         if (res[0]?.serverData.uploadedBy) {
           const lesson = form.getValues("lesson");
           const lessonIds = lesson === "none" ? [] : [lesson];
+          const pdfFiles = res.map((pdf) => ({
+            fileUrl: pdf.ufsUrl,
+            name: pdf.name,
+          }));
 
           void uploadPDFMutation({
             userId: res[0]?.serverData.uploadedBy,
             classId,
-            fileUrl: res[0]?.ufsUrl,
             lessonIds,
-            name: res[0]?.name,
+            pdfFiles,
           });
 
           toast({

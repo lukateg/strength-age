@@ -37,7 +37,7 @@ export default function LessonMaterialsSectionComponent() {
           <CardDescription>{lesson?.description}</CardDescription>
         </div>
         <Link
-          href={`/app/classes/${lesson?.classId}/file-upload/${lesson?._id}/file-upload`}
+          href={`/app/classes/${lesson?.classId}/lessons/${lesson?._id}/file-upload`}
         >
           <Button>Add new material</Button>
         </Link>

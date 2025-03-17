@@ -16,13 +16,12 @@ import { Headphones, Brain } from "lucide-react";
 // - only section materials should have upload material button
 // - upload material button page should have a dropdown menu of lections to be linked when uploading materials (fetch lections from API)
 
-// - add switch to create-new-lesson page so user can choose between uploading materials or picking from already uploaded ones
 // - add delete everything logic
 // - add edit everything logic
-// - add logic for add materials to lesson (open the upload materials page and just have dropdown menu of materials to pick from with specific class preselected)
 // - add no materials and no lessons message
-// - fix create lesson without materials
 // - check why uploading calls 3 requests and is so slow
+// - make upload component reusable, there is already a component for it
+// - start cleaning up the code
 
 export default async function ClassPage() {
   return (

@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/form";
 
 import { Cloud, File, Loader2, UploadCloud, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // TODO:
 // - fix case when multiple files are added for upload
@@ -47,6 +48,7 @@ import { Cloud, File, Loader2, UploadCloud, X } from "lucide-react";
 
 export const FileUploadPage = () => {
   const { uploadPDFMutation, classId, lessons } = useClass();
+  const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const form = useForm({ defaultValues: { lesson: "" } });
 
@@ -56,19 +58,24 @@ export const FileUploadPage = () => {
         if (res[0]?.serverData.uploadedBy) {
           const lesson = form.getValues("lesson");
           const lessonIds = lesson === "none" ? [] : [lesson];
+          const pdfFiles = res.map((pdf) => ({
+            fileUrl: pdf.ufsUrl,
+            name: pdf.name,
+          }));
 
           void uploadPDFMutation({
             userId: res[0]?.serverData.uploadedBy,
             classId,
-            fileUrl: res[0]?.ufsUrl,
             lessonIds,
+            pdfFiles,
           });
-          setFiles([]);
           toast({
             title: "Success",
             description: "Uploaded successfully.",
             variant: "default",
           });
+          // TODO: redirect to the all materials page
+          router.push(`/app/classes/${classId}`);
         }
       }
     },

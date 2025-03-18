@@ -36,16 +36,11 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { FileUploadView } from "./components/file-upload-view";
 import { ExistingMaterialsView } from "./components/existing-material-view";
-
+import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 export const FileUploadPage = () => {
   const router = useRouter();
-  const {
-    uploadPDFMutation,
-    classId,
-    lessons,
-    materials,
-    addPDFToLessonMutation,
-  } = useClass();
+  const { uploadPDFMutation, classId, lessons, materials } = useClass();
+  const { addPDFToLesson } = useLessonMutations();
   const [showUploaded, setShowUploaded] = useState(false);
   const { lessonId }: { lessonId: string } = useParams();
 
@@ -55,6 +50,8 @@ export const FileUploadPage = () => {
       selectedMaterials: [] as Id<"pdfs">[],
     },
   });
+
+  // todo: add loading state and pdf mutation custom hook
 
   const { startUpload, isUploading } = useUploadThing("pdfUploader", {
     onClientUploadComplete: (res) => {
@@ -67,6 +64,7 @@ export const FileUploadPage = () => {
             name: pdf.name,
             size: pdf.size,
           }));
+          console.log(pdfFiles, "working");
 
           void uploadPDFMutation({
             userId: res[0]?.serverData.uploadedBy,
@@ -94,19 +92,12 @@ export const FileUploadPage = () => {
     },
   });
 
-  const addPDFToLesson = () => {
+  const handleAddPDFToLesson = () => {
     const selectedMaterials = form.getValues("selectedMaterials");
-    console.log("Selected materials:", selectedMaterials);
 
-    void addPDFToLessonMutation({
+    void addPDFToLesson({
       pdfIds: selectedMaterials,
       lessonId: lessonId,
-    });
-
-    toast({
-      title: "Success",
-      description: "Materials added to lesson successfully.",
-      variant: "default",
     });
 
     router.push(`/app/classes/${classId}/lessons/${lessonId}`);
@@ -171,7 +162,7 @@ export const FileUploadPage = () => {
               materials={materials}
               form={form}
               lessonId={lessonId}
-              addPDFToLesson={addPDFToLesson}
+              addPDFToLesson={handleAddPDFToLesson}
             />
           )}
         </Form>

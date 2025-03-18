@@ -22,6 +22,7 @@ import { Headphones, Brain } from "lucide-react";
 // - check why uploading calls 3 requests and is so slow
 // - make upload component reusable, there is already a component for it
 // - start cleaning up the code
+// - implement custom hooks for all mutations and implement them
 
 export default async function ClassPage() {
   return (

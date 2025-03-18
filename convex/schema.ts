@@ -22,6 +22,7 @@ export default defineSchema({
     lessonIds: v.optional(v.array(v.string())), // Array of lesson IDs the PDF is linked to
     fileUrl: v.string(),
     name: v.optional(v.string()),
+    size: v.optional(v.number()),
     uploadedAt: v.optional(v.number()),
   })
     .index("by_class_user", ["classId", "userId"]) // ✅ Add an index for queries

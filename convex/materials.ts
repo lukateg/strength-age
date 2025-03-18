@@ -10,6 +10,7 @@ export const uploadPdf = mutation({
       v.object({
         fileUrl: v.string(),
         name: v.string(),
+        size: v.number(),
       })
     ),
   },
@@ -21,6 +22,7 @@ export const uploadPdf = mutation({
         lessonIds,
         fileUrl: pdf.fileUrl,
         name: pdf.name,
+        size: pdf.size,
       });
     }
   },

@@ -65,6 +65,7 @@ export const FileUploadPage = () => {
           const pdfFiles = res.map((pdf) => ({
             fileUrl: pdf.ufsUrl,
             name: pdf.name,
+            size: pdf.size,
           }));
 
           void uploadPDFMutation({
@@ -178,5 +179,4 @@ export const FileUploadPage = () => {
     </Card>
   );
 };
-
 export default FileUploadPage;

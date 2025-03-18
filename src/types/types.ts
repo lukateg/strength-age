@@ -3,15 +3,17 @@ import { type ReactMutation } from "convex/react";
 import { type FunctionReference } from "convex/server";
 
 // TODO: Add correct types
-export type PDFType = {
+export interface PDFType {
   _id: Id<"pdfs">;
   _creationTime: number;
   classId: string;
   fileUrl: string;
+  name: string;
+  size: number;
   uploadedAt: number;
   userId: string;
   lessonIds: string[];
-};
+}
 
 export type LessonsType = {
   _id: Id<"lessons">;
@@ -34,6 +36,7 @@ export type UploadPDFMutation = ReactMutation<
       pdfFiles: {
         fileUrl: string;
         name: string;
+        size: number;
       }[];
     },
     null,

@@ -1,8 +1,6 @@
-import { useCallback, useState } from "react";
-import { UploadCloud, X, File } from "lucide-react";
+import { useCallback } from "react";
+import { UploadCloud } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import { Button } from "./ui/button";
-import { ScrollArea } from "./ui/scroll-area";
 
 type FileUploadProps = {
   onDrop?: (files: File[]) => void;
@@ -35,10 +33,6 @@ export default function FileUploadComponent(props: FileUploadProps) {
     },
     maxSize: 20971520, // 20MB
   });
-
-  //   const removeFile = (fileToRemove: File) => {
-  //     setFiles((prevFiles) => prevFiles.filter((file) => file !== fileToRemove));
-  //   };
 
   return (
     <div>

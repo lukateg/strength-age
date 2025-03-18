@@ -36,6 +36,7 @@ import {
 
 import { Cloud, File, Loader2, UploadCloud, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMaterialsMutations } from "@/hooks/use-materials-mutations";
 
 // TODO:
 // - fix case when multiple files are added for upload
@@ -47,7 +48,8 @@ import { useRouter } from "next/navigation";
 // - remove support for TXT, DOCX and others and lower the size limit
 
 export const FileUploadPage = () => {
-  const { uploadPDFMutation, classId, lessons } = useClass();
+  const { classId, lessons } = useClass();
+  const { uploadPDF } = useMaterialsMutations();
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const form = useForm({ defaultValues: { lesson: "" } });
@@ -64,9 +66,7 @@ export const FileUploadPage = () => {
             size: pdf.size,
           }));
 
-          void uploadPDFMutation({
-            userId: res[0]?.serverData.uploadedBy,
-            classId,
+          void uploadPDF({
             lessonIds,
             pdfFiles,
           });

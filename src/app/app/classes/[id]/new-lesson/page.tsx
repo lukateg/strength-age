@@ -24,7 +24,8 @@ import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 import ExistingMaterialsList from "./components/existing-materials-list";
 import UploadMaterialsSection from "./components/upload-materials-section";
 import { type LessonFormData } from "@/types/lesson";
-import { useFileUpload } from "@/hooks/use-upload-thing";
+import { useUploadThing } from "@/hooks/use-upload-thing";
+import { toast } from "@/hooks/use-toast";
 
 export default function NewLessonPage() {
   const router = useRouter();
@@ -51,10 +52,29 @@ export default function NewLessonPage() {
   const uploadedMaterials = watch("uploadedMaterials", []);
   const selectedMaterials = watch("selectedMaterials", []);
 
-  const { startUpload, isUploading } = useFileUpload({
-    onUploadComplete: (files) => {
-      void createWithNewMaterials(form.getValues(), files);
-      router.push(`/app/classes/${classId}`);
+  // this works
+  const { startUpload, isUploading } = useUploadThing("pdfUploader", {
+    onClientUploadComplete: async (res) => {
+      if (res && res.length > 0) {
+        try {
+          await createWithNewMaterials(form.getValues(), res);
+          router.push(`/app/classes/${classId}`);
+        } catch (error) {
+          toast({
+            title: "Error",
+            description:
+              "Failed to create lesson with materials. Please try again.",
+            variant: "destructive",
+          });
+        }
+      }
+    },
+    onUploadError: () => {
+      toast({
+        title: "Error",
+        description: "Something went wrong with the upload. Please try again.",
+        variant: "destructive",
+      });
     },
   });
 
@@ -76,8 +96,12 @@ export default function NewLessonPage() {
         router.push(`/app/classes/${classId}`);
       }
     } catch (error) {
-      // Error handling is done in the hook
       console.error("Failed to create lesson:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create lesson. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -145,7 +169,9 @@ export default function NewLessonPage() {
             <Button type="button" variant="outline" asChild>
               <Link href={`/app/classes/${classId}`}>Cancel</Link>
             </Button>
-            <Button type="submit">Create Lesson</Button>
+            <Button type="submit" disabled={isUploading}>
+              {isUploading ? "Uploading..." : "Create Lesson"}
+            </Button>
           </div>
         </Card>
       </form>

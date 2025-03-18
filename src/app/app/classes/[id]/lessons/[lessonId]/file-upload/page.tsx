@@ -37,11 +37,14 @@ import { Label } from "@/components/ui/label";
 import { FileUploadView } from "./components/file-upload-view";
 import { ExistingMaterialsView } from "./components/existing-material-view";
 import { useLessonMutations } from "@/hooks/use-lesson-mutations";
+import { useMaterialsMutations } from "@/hooks/use-materials-mutations";
+
 export const FileUploadPage = () => {
-  const router = useRouter();
-  const { uploadPDFMutation, classId, lessons, materials } = useClass();
-  const { addPDFToLesson } = useLessonMutations();
   const [showUploaded, setShowUploaded] = useState(false);
+  const router = useRouter();
+  const { lessons, materials, classId } = useClass();
+  const { addPDFToLesson } = useLessonMutations();
+  const { uploadPDF } = useMaterialsMutations();
   const { lessonId }: { lessonId: string } = useParams();
 
   const form = useForm({
@@ -51,35 +54,22 @@ export const FileUploadPage = () => {
     },
   });
 
-  // todo: add loading state and pdf mutation custom hook
-
   const { startUpload, isUploading } = useUploadThing("pdfUploader", {
-    onClientUploadComplete: (res) => {
+    onClientUploadComplete: async (res) => {
       if (res && res.length > 0) {
-        if (res[0]?.serverData.uploadedBy) {
-          const lesson = form.getValues("lesson");
-          const lessonIds = lesson === "none" ? [] : [lesson];
-          const pdfFiles = res.map((pdf) => ({
-            fileUrl: pdf.ufsUrl,
-            name: pdf.name,
-            size: pdf.size,
-          }));
-          console.log(pdfFiles, "working");
-
-          void uploadPDFMutation({
-            userId: res[0]?.serverData.uploadedBy,
-            classId,
-            lessonIds,
-            pdfFiles,
-          });
-
-          toast({
-            title: "Success",
-            description: "Uploaded successfully.",
-            variant: "default",
+        try {
+          await uploadPDF({
+            lessonIds: [lessonId],
+            pdfFiles: res.map((pdf) => ({
+              fileUrl: pdf.ufsUrl,
+              name: pdf.name,
+              size: pdf.size,
+            })),
           });
 
           router.push(`/app/classes/${classId}/lessons/${lessonId}`);
+        } catch (error) {
+          console.error("Error in upload completion:", error);
         }
       }
     },

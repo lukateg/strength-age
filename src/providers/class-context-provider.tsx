@@ -4,11 +4,7 @@ import { createContext, useContext, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { api } from "../../convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-import {
-  type UploadPDFMutation,
-  type LessonsType,
-  type PDFType,
-} from "@/types/types";
+import { type LessonsType, type PDFType } from "@/types/types";
 
 // TODO:
 // 1. Add correct types for mutations
@@ -19,7 +15,6 @@ interface ClassContextType {
   userId?: string;
   materials: PDFType[]; // Replace `any` with your material type
   lessons: LessonsType[] | undefined;
-  uploadPDFMutation: UploadPDFMutation;
   isLoading: boolean;
   error: string | null;
 }
@@ -44,9 +39,6 @@ export function ClassProvider({
   // TODO: check if queries by both user and class
   const lessons = useQuery(api.lessons.getLessonsByClass, { classId });
 
-  // Mutations
-  const uploadPDFMutation = useMutation(api.materials.uploadPdf);
-
   return (
     <ClassContext.Provider
       value={{
@@ -54,7 +46,6 @@ export function ClassProvider({
         userId,
         materials: materials as PDFType[] | [],
         lessons: lessons as LessonsType[] | undefined,
-        uploadPDFMutation,
         isLoading,
         error,
       }}

@@ -9,8 +9,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -22,6 +20,7 @@ import {
 
 import ExistingMaterialsList from "./components/existing-materials-list";
 import UploadMaterialsSection from "./components/upload-materials-section";
+import LabeledSwitch from "@/components/labeled-switch";
 
 import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 import { useUploadThing } from "@/hooks/use-upload-thing";
@@ -58,17 +57,8 @@ export default function NewLessonPage() {
   const { startUpload, isUploading } = useUploadThing("pdfUploader", {
     onClientUploadComplete: async (res) => {
       if (res && res.length > 0) {
-        try {
-          await createWithNewMaterials(form.getValues(), res);
-          router.push(`/app/classes/${classId}`);
-        } catch (error) {
-          toast({
-            title: "Error",
-            description:
-              "Failed to create lesson with materials. Please try again.",
-            variant: "destructive",
-          });
-        }
+        await createWithNewMaterials(form.getValues(), res);
+        router.push(`/app/classes/${classId}`);
       }
     },
     onUploadError: () => {
@@ -81,29 +71,20 @@ export default function NewLessonPage() {
   });
 
   const onSubmit = async (data: LessonFormData) => {
-    try {
-      if (!uploadedMaterials.length && !selectedMaterials.length) {
-        await createBasic(data);
-        router.push(`/app/classes/${classId}`);
-        return;
-      }
+    if (!uploadedMaterials.length && !selectedMaterials.length) {
+      await createBasic(data);
+      router.push(`/app/classes/${classId}`);
+      return;
+    }
 
-      if (uploadedMaterials.length && !showUploaded) {
-        await startUpload(uploadedMaterials);
-        return;
-      }
+    if (uploadedMaterials.length && !showUploaded) {
+      await startUpload(uploadedMaterials);
+      return;
+    }
 
-      if (selectedMaterials.length && showUploaded) {
-        await createWithExistingMaterials(data, selectedMaterials);
-        router.push(`/app/classes/${classId}`);
-      }
-    } catch (error) {
-      console.error("Failed to create lesson:", error);
-      toast({
-        title: "Error",
-        description: "Failed to create lesson. Please try again.",
-        variant: "destructive",
-      });
+    if (selectedMaterials.length && showUploaded) {
+      await createWithExistingMaterials(data, selectedMaterials);
+      router.push(`/app/classes/${classId}`);
     }
   };
 
@@ -143,16 +124,12 @@ export default function NewLessonPage() {
             )}
           />
 
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="select-from-uploaded"
-              checked={showUploaded}
-              onCheckedChange={setShowUploaded}
-            />
-            <Label htmlFor="select-from-uploaded">
-              Select from already uploaded materials
-            </Label>
-          </div>
+          <LabeledSwitch
+            id="select-from-uploaded"
+            checked={showUploaded}
+            onCheckedChange={setShowUploaded}
+            label="Select from already uploaded materials"
+          />
 
           {!showUploaded ? (
             <UploadMaterialsSection

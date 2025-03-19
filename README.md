@@ -6,6 +6,7 @@
 // - add edit everything logic
 // - add no materials and no lessons message
 // - add proper suspense logic for all components
+// - add validation for all forms 
 // - check if all components are server components if possible
 // - check why uploading calls 3 requests and is so slow
 // - start cleaning up the code
@@ -17,6 +18,8 @@
 // - add max length
 // - add validation so user cannot upload same files
 // - remove support for TXT, DOCX and others and lower the size limit
+
+nastavi refactor od lessons foldera
 
 
 # MVP Plan for Teach.me

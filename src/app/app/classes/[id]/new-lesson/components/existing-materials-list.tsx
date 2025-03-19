@@ -2,7 +2,7 @@ import { FormItem } from "@/components/ui/form";
 import { FormField } from "@/components/ui/form";
 
 import ItemsScrollArea from "@/components/items-scroll-area";
-import ScrollAreaItem from "@/components/scroll-area-item";
+import ListItem from "@/components/list-item";
 import CheckboxListItem from "@/components/checkbox-list-item";
 
 import { type ControllerRenderProps, type Control } from "react-hook-form";
@@ -39,7 +39,7 @@ export default function ExistingMaterialsSection({
   return (
     <ItemsScrollArea>
       {allMaterials?.map((pdf) => (
-        <ScrollAreaItem key={pdf._id}>
+        <ListItem key={pdf._id}>
           <FormField
             key={pdf._id}
             control={control}
@@ -60,7 +60,7 @@ export default function ExistingMaterialsSection({
               </FormItem>
             )}
           />
-        </ScrollAreaItem>
+        </ListItem>
       ))}
     </ItemsScrollArea>
   );

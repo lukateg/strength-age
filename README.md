@@ -1,3 +1,24 @@
+# TODO:
+// - only section materials should have upload material button
+// - upload material button page should have a dropdown menu of lections to be linked when uploading materials (fetch lections from API)
+
+// - add delete everything logic
+// - add edit everything logic
+// - add no materials and no lessons message
+// - add proper suspense logic for all components
+// - check if all components are server components if possible
+// - check why uploading calls 3 requests and is so slow
+// - start cleaning up the code
+// - implement custom hooks for all mutations and implement them
+
+// UPLOAD COMPONENT
+// - add error handling
+// - make component really reusable
+// - add max length
+// - add validation so user cannot upload same files
+// - remove support for TXT, DOCX and others and lower the size limit
+
+
 # MVP Plan for Teach.me
 ✅ Core Features
 User Authentication (NextAuth.js or Clerk)

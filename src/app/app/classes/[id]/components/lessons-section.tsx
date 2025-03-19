@@ -11,15 +11,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { FileText } from "lucide-react";
+import ItemsScrollArea from "@/components/items-scroll-area";
+import ListItem from "@/components/list-item";
 
-// TODO:
-// - add case when there are no lessons
+import { FileText } from "lucide-react";
 
 export default function LessonsSectionComponent() {
   const { classId, lessons } = useClass();
 
-  // if (isLoading) return <div>Loading materials...</div>;
   if (!lessons) return <div>no lessons</div>;
 
   return (
@@ -36,12 +35,9 @@ export default function LessonsSectionComponent() {
         <CardDescription>PDF documents and study materials</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <ItemsScrollArea className="h-[650px]">
           {lessons.map((lesson) => (
-            <div
-              key={lesson._id}
-              className="flex items-center justify-between p-4 border rounded-lg"
-            >
+            <ListItem key={lesson._id} variant="outline">
               <div className="flex items-center">
                 <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
                 <span>{lesson.title}</span>
@@ -56,9 +52,9 @@ export default function LessonsSectionComponent() {
                   Generate Test
                 </Button>
               </div>
-            </div>
+            </ListItem>
           ))}
-        </div>
+        </ItemsScrollArea>
       </CardContent>
     </Card>
   );

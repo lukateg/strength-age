@@ -1,5 +1,6 @@
 import ItemsScrollArea from "@/components/items-scroll-area";
-import ScrollAreaItem from "@/components/scroll-area-item";
+import ListItem from "@/components/list-item";
+
 import { Button } from "@/components/ui/button";
 
 import { X, File } from "lucide-react";
@@ -30,7 +31,7 @@ export default function UploadedMaterialsList({
   return (
     <ItemsScrollArea>
       {uploadedMaterials.map((file) => (
-        <ScrollAreaItem key={file.name}>
+        <ListItem key={file.name}>
           <div className="flex items-center gap-4">
             <File className="h-6 w-6 text-primary" />
             <div>
@@ -47,7 +48,7 @@ export default function UploadedMaterialsList({
           >
             <X className="h-4 w-4" />
           </Button>
-        </ScrollAreaItem>
+        </ListItem>
       ))}
     </ItemsScrollArea>
   );

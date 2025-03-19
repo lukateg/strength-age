@@ -12,18 +12,6 @@ import LessonsSectionComponent from "./components/lessons-section";
 
 import { Headphones, Brain } from "lucide-react";
 
-// TODO:
-// - only section materials should have upload material button
-// - upload material button page should have a dropdown menu of lections to be linked when uploading materials (fetch lections from API)
-
-// - add delete everything logic
-// - add edit everything logic
-// - add no materials and no lessons message
-// - check why uploading calls 3 requests and is so slow
-// - make upload component reusable, there is already a component for it
-// - start cleaning up the code
-// - implement custom hooks for all mutations and implement them
-
 export default async function ClassPage() {
   return (
     <div className="container mx-auto p-6">

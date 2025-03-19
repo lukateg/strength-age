@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback } from "react";
 import { UploadCloud } from "lucide-react";
 import { useDropzone } from "react-dropzone";
@@ -6,17 +8,9 @@ type FileUploadProps = {
   onDrop?: (files: File[]) => void;
 };
 
-// TODO:
-// - add error handling
-// - add max length
-// - make component really reusable
-
 export default function FileUploadComponent(props: FileUploadProps) {
-  //   const [files, setFiles] = useState<File[]>([]);
-
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      // setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
       props.onDrop?.(acceptedFiles);
     },
     [props]

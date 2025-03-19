@@ -1,5 +1,7 @@
 "use client";
 
+import ItemsScrollArea from "@/components/items-scroll-area";
+import ListItem from "@/components/list-item";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,10 +16,7 @@ import { useClass } from "@/providers/class-context-provider";
 import { FileText } from "lucide-react";
 
 export default function MaterialsSectionComponent() {
-  const { materials, isLoading, error } = useClass();
-
-  // if (isLoading) return <div>Loading materials...</div>;
-  // if (error) return <div>Error: {error}</div>;
+  const { materials } = useClass();
 
   return (
     <Card>
@@ -26,24 +25,21 @@ export default function MaterialsSectionComponent() {
         <CardDescription>PDF documents and study materials</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {materials.map((material) => (
-            <div
-              key={material._id}
-              className="flex items-center justify-between p-4 border rounded-lg"
-            >
+        <ItemsScrollArea className="h-[650px]">
+          {materials?.map((material) => (
+            <ListItem key={material._id} variant="outline">
               <div className="flex items-center">
                 <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-                <span>{material.fileUrl}</span>
+                <span>{material?.name}</span>
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm">
                   Preview
                 </Button>
               </div>
-            </div>
+            </ListItem>
           ))}
-        </div>
+        </ItemsScrollArea>
       </CardContent>
     </Card>
   );

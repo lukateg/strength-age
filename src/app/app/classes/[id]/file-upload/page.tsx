@@ -23,12 +23,6 @@ import UploadFilesButton from "@/components/upload-files-button";
 import UploadedMaterialsList from "@/components/uploaded-materials-list";
 import SelectFormItem from "@/components/select-form-item";
 
-// TODO:
-// - add max length
-// - add validation so user cannot upload same files
-
-// - remove support for TXT, DOCX and others and lower the size limit
-
 export const FileUploadPage = () => {
   const { classId, lessons } = useClass();
   const { uploadPDF } = useMaterialsMutations();

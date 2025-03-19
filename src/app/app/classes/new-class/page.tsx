@@ -1,36 +1,51 @@
 "use client";
 
 import { useForm } from "react-hook-form";
+import { useClassMutations } from "@/hooks/use-class-mutation";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useClasses } from "@/providers/classes-provider";
-import { useRouter } from "next/navigation";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
-interface ClassFormData {
-  title: string;
-  description: string;
-}
+const formSchema = z.object({
+  title: z.string().min(1, "Class title is required"),
+  description: z.string().min(1, "Class description is required"),
+});
 
-// TODO:
-// - add error handling and loading
+type FormData = z.infer<typeof formSchema>;
 
 export default function NewClassPage() {
   const router = useRouter();
-  const { createClassMutation } = useClasses();
-  const { register, handleSubmit } = useForm<ClassFormData>({
+  const { createClass } = useClassMutations();
+
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       description: "",
     },
   });
 
-  const onSubmit = (data: ClassFormData) => {
-    void createClassMutation(data).then(() => router.push("/app/classes"));
+  const onSubmit = (data: FormData) => {
+    void createClass({
+      title: data.title,
+      description: data.description,
+    }).then(() => router.push("/app/classes"));
   };
 
   return (
@@ -45,39 +60,48 @@ export default function NewClassPage() {
       </div>
 
       <Card className="p-6 mx-auto mt-6">
-        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-2">
-            <Label htmlFor="classTitle">Class Title</Label>
-            <Input
-              id="classTitle"
-              placeholder="Enter class title"
-              className="w-full"
-              {...register("title", {
-                required: "Class title is required",
-              })}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Class Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter class title" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="classDescription">Class Description</Label>
-            <Textarea
-              id="classDescription"
-              placeholder="Enter class description"
-              className="min-h-[120px]"
-              {...register("description", {
-                required: "Class description is required",
-              })}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Class Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Enter class description"
+                      className="min-h-[120px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          {/* Form Actions */}
-          <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" asChild>
-              <Link href={`/app/classes`}>Cancel</Link>
-            </Button>
-            <Button type="submit">Create Class</Button>
-          </div>
-        </form>
+            <div className="flex justify-end gap-4">
+              <Button type="button" variant="outline" asChild>
+                <Link href={`/app/classes`}>Cancel</Link>
+              </Button>
+              <Button type="submit">Create Class</Button>
+            </div>
+          </form>
+        </Form>
       </Card>
     </div>
   );

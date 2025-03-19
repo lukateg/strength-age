@@ -1,12 +1,11 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { createContext, useContext } from "react";
+import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { useUser } from "@clerk/nextjs";
 
-import { type CreateClassMutation } from "@/types/types";
 import { type Id } from "convex/_generated/dataModel";
+import { useUser } from "@clerk/nextjs";
 
 interface ClassesContextType {
   classes:
@@ -17,23 +16,18 @@ interface ClassesContextType {
         title: string;
       }[]
     | undefined;
-  // setClasses: (classes: string[]) => void;
-  createClassMutation: CreateClassMutation;
+  userId: string | undefined;
 }
 
 const ClassContext = createContext<ClassesContextType | null>(null);
 
 export function ClassesProvider({ children }: { children: React.ReactNode }) {
-  // const [classes, setClasses] = useState<string[]>([]);
+  const classes = useQuery(api.classes.getAllClasses);
   const { user } = useUser(); // Clerk provides the logged-in user
   const userId = user?.id;
 
-  const classes = useQuery(api.classes.getAllClasses);
-
-  const createClassMutation = useMutation(api.classes.createClass);
-
   return (
-    <ClassContext.Provider value={{ classes, createClassMutation }}>
+    <ClassContext.Provider value={{ classes, userId }}>
       {children}
     </ClassContext.Provider>
   );

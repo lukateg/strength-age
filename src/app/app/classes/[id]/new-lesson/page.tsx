@@ -20,12 +20,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 import ExistingMaterialsList from "./components/existing-materials-list";
 import UploadMaterialsSection from "./components/upload-materials-section";
-import { type LessonFormData } from "@/types/lesson";
+
+import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 import { useUploadThing } from "@/hooks/use-upload-thing";
 import { toast } from "@/hooks/use-toast";
+
+import { type LessonFormData } from "@/types/lesson";
 
 export default function NewLessonPage() {
   const router = useRouter();

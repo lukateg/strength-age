@@ -3,6 +3,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useClass } from "@/providers/class-context-provider";
 import { toast } from "@/hooks/use-toast";
+import { type ClientUploadedFileData } from "uploadthing/types";
 
 interface UploadPDFParams {
   userId: string;
@@ -22,7 +23,12 @@ export const useMaterialsMutations = () => {
   const uploadPDFMutation = useMutation(api.materials.uploadPdf);
 
   const uploadPDF = useCallback(
-    async (params: Omit<UploadPDFParams, "userId" | "classId">) => {
+    async (params: {
+      lessonId: string;
+      pdfFiles: ClientUploadedFileData<{
+        uploadedBy: string;
+      }>[];
+    }) => {
       try {
         if (!userId) {
           toast({
@@ -32,12 +38,18 @@ export const useMaterialsMutations = () => {
           });
           return;
         }
+        const lessonIds = params.lessonId === "none" ? [] : [params.lessonId];
+        const pdfFiles = params.pdfFiles.map((pdf) => ({
+          fileUrl: pdf.ufsUrl,
+          name: pdf.name,
+          size: pdf.size,
+        }));
 
         const uploadParams: UploadPDFParams = {
           userId,
           classId,
-          lessonIds: params.lessonIds,
-          pdfFiles: params.pdfFiles,
+          lessonIds,
+          pdfFiles,
         };
 
         await uploadPDFMutation(uploadParams);

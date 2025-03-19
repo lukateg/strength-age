@@ -6,7 +6,7 @@ export default function ItemsScrollArea({
   children: React.ReactNode;
 }) {
   return (
-    <ScrollArea className="h-[500px] w-full rounded-md border p-4">
+    <ScrollArea className="h-[340px] w-full rounded-md border p-4">
       <div className="mt-4 space-y-4">{children}</div>
     </ScrollArea>
   );

@@ -5,8 +5,9 @@ import {
 } from "react-hook-form";
 
 import FileUploadComponent from "@/components/file-upload";
-import UploadedMaterialsList from "./uploaded-materials-list";
+import UploadedMaterialsList from "@/components/uploaded-materials-list";
 import { Label } from "@/components/ui/label";
+
 import { type LessonFormData } from "@/types/lesson";
 
 export default function UploadMaterialsSection({

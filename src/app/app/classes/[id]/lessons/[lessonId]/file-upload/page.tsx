@@ -59,12 +59,8 @@ export const FileUploadPage = () => {
       if (res && res.length > 0) {
         try {
           await uploadPDF({
-            lessonIds: [lessonId],
-            pdfFiles: res.map((pdf) => ({
-              fileUrl: pdf.ufsUrl,
-              name: pdf.name,
-              size: pdf.size,
-            })),
+            lessonId,
+            pdfFiles: res,
           });
 
           router.push(`/app/classes/${classId}/lessons/${lessonId}`);

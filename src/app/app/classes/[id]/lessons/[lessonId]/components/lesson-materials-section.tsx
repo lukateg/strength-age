@@ -16,6 +16,8 @@ import {
 
 import { Headphones } from "lucide-react";
 import Link from "next/link";
+import ItemsScrollArea from "@/components/items-scroll-area";
+import ListItem from "@/components/list-item";
 
 export default function LessonMaterialsSectionComponent() {
   const { lessonId }: { lessonId: Id<"lessons"> } = useParams();
@@ -43,22 +45,19 @@ export default function LessonMaterialsSectionComponent() {
         </Link>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <ItemsScrollArea className="h-[650px]">
           {lessonPDFs.map((pdf) => (
-            <div
-              key={pdf._id}
-              className="flex items-center justify-between p-4 border rounded-lg"
-            >
+            <ListItem key={pdf._id} variant="outline">
               <div className="flex items-center">
                 <Headphones className="h-4 w-4 mr-2 text-muted-foreground" />
-                <span>{pdf.fileUrl}</span>
+                <span>{pdf.name}</span>
               </div>
               <Button variant="outline" size="sm">
                 Play
               </Button>
-            </div>
+            </ListItem>
           ))}
-        </div>
+        </ItemsScrollArea>
       </CardContent>
     </Card>
   );

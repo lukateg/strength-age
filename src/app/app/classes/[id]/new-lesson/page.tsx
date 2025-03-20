@@ -18,7 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import ExistingMaterialsList from "./components/existing-materials-list";
+import MaterialsCheckboxList from "./components/materials-checkbox-list";
 import UploadMaterialsSection from "./components/upload-materials-section";
 import LabeledSwitch from "@/components/labeled-switch";
 
@@ -31,7 +31,6 @@ import { type LessonFormData } from "@/types/lesson";
 export default function NewLessonPage() {
   const router = useRouter();
   const [showUploaded, setShowUploaded] = useState(false);
-
   const form = useForm<LessonFormData>({
     defaultValues: {
       lessonTitle: "",
@@ -138,9 +137,20 @@ export default function NewLessonPage() {
               setValue={setValue}
             />
           ) : (
-            <ExistingMaterialsList
-              allMaterials={allMaterials}
+            <FormField
               control={control}
+              name="selectedMaterials"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <MaterialsCheckboxList
+                      allMaterials={allMaterials}
+                      selectedMaterials={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
             />
           )}
 

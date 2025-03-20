@@ -12,6 +12,9 @@
 // - start cleaning up the code
 // - implement custom hooks for all mutations and implement them
 
+// - IMPLEMENT DISABLED WHEN ADDING MATERIALS TO THE LESSONS IF ALREADY IN
+// - create checkboxList component from existin-material-view and existing-materials-list and implement disabled for each item if in list
+
 // UPLOAD COMPONENT
 // - add error handling
 // - make component really reusable

@@ -2,9 +2,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ClassProvider } from "@/providers/class-context-provider";
 
+import { type Id } from "convex/_generated/dataModel";
+
 interface ClassLayoutProps {
   children: React.ReactNode;
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: Id<"classes"> }>;
 }
 
 export async function ClassLayout({ children, params }: ClassLayoutProps) {

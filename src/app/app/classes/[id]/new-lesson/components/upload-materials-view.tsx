@@ -6,11 +6,12 @@ import {
 
 import FileUploadComponent from "@/components/file-upload";
 import UploadedMaterialsList from "@/components/uploaded-materials-list";
+
 import { Label } from "@/components/ui/label";
 
 import { type LessonFormData } from "@/types/lesson";
 
-export default function UploadMaterialsSection({
+export default function UploadMaterialsView({
   control,
   uploadedMaterials,
   setValue,

@@ -108,6 +108,7 @@ export const FileUploadPage = () => {
           startUpload={startUpload}
           uploadedMaterials={uploadedMaterials}
           isUploading={isUploading}
+          className="w-full"
         />
       </CardFooter>
     </Card>

@@ -27,7 +27,7 @@ export const useLessonMutations = () => {
     api.lessons.createLessonWithExistingMaterials
   );
 
-  const createBasic = useCallback(
+  const createLesson = useCallback(
     async (data: LessonFormData) => {
       try {
         if (!userId) return;
@@ -59,7 +59,7 @@ export const useLessonMutations = () => {
     [userId, classId, createLessonMutation]
   );
 
-  const createWithExistingMaterials = useCallback(
+  const createLessonWithExistingMaterials = useCallback(
     async (data: LessonFormData, selectedMaterials: Id<"pdfs">[]) => {
       try {
         if (!userId) return;
@@ -96,7 +96,7 @@ export const useLessonMutations = () => {
     [userId, classId, createLessonWithExistingMaterialsMutation]
   );
 
-  const createWithNewMaterials = useCallback(
+  const createLessonWithNewMaterials = useCallback(
     async (
       data: LessonFormData,
       files: ClientUploadedFileData<{ uploadedBy: string }>[]
@@ -162,9 +162,9 @@ export const useLessonMutations = () => {
   );
 
   return {
-    createBasic,
-    createWithExistingMaterials,
-    createWithNewMaterials,
+    createLesson,
+    createLessonWithExistingMaterials,
+    createLessonWithNewMaterials,
     addPDFToLesson,
     classId,
     allMaterials,

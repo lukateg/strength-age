@@ -3,15 +3,16 @@ import { createContext, useContext, useState } from "react";
 
 import { useUser } from "@clerk/nextjs";
 import { api } from "../../convex/_generated/api";
-import { useMutation, useQuery } from "convex/react";
-import { type LessonsType, type PDFType } from "@/types/types";
+import { useQuery } from "convex/react";
 
+import { type LessonsType, type PDFType } from "@/types/types";
+import { type Id } from "convex/_generated/dataModel";
 // TODO:
 // 1. Add correct types for mutations
 // 2. Add correct loading and error state
 
 interface ClassContextType {
-  classId: string;
+  classId: Id<"classes">;
   userId?: string;
   materials: PDFType[]; // Replace `any` with your material type
   lessons: LessonsType[] | undefined;
@@ -25,7 +26,7 @@ export function ClassProvider({
   classId,
   children,
 }: {
-  classId: string;
+  classId: Id<"classes">;
   children: React.ReactNode;
 }) {
   const [isLoading, setIsLoading] = useState(false);

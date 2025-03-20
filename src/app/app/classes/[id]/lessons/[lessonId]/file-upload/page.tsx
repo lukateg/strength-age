@@ -26,6 +26,9 @@ import SelectFormItem from "@/components/select-form-item";
 
 import { type Id } from "convex/_generated/dataModel";
 
+// TODO :
+// - submit buttons should be the same, "Upload 4 files" and "Add 4 files"
+
 export const FileUploadPage = () => {
   const [showUploaded, setShowUploaded] = useState(false);
   const router = useRouter();

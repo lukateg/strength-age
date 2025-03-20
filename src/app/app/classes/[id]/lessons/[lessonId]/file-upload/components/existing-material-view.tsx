@@ -2,12 +2,14 @@ import { Button } from "@/components/ui/button";
 import { CardFooter } from "@/components/ui/card";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 
+import MaterialsCheckboxList from "@/components/materials-checkbox-list";
+
 import { type UseFormReturn } from "react-hook-form";
 import { type Id } from "convex/_generated/dataModel";
 import { type PDFType } from "@/types/types";
 
 import { Cloud } from "lucide-react";
-import MaterialsCheckboxList from "@/app/app/classes/[id]/new-lesson/components/materials-checkbox-list";
+
 interface ExistingMaterialsViewProps {
   materials: PDFType[];
   form: UseFormReturn<

@@ -1,14 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useState } from "react";
 
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -17,10 +16,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
-import MaterialsCheckboxList from "./components/materials-checkbox-list";
-import UploadMaterialsSection from "./components/upload-materials-section";
+import UploadMaterialsView from "./components/upload-materials-view";
 import LabeledSwitch from "@/components/labeled-switch";
+import SelectMaterialsView from "./components/select-materials-view";
 
 import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 import { useUploadThing } from "@/hooks/use-upload-thing";
@@ -42,9 +43,9 @@ export default function NewLessonPage() {
 
   const { handleSubmit, control, setValue, watch } = form;
   const {
-    createBasic,
-    createWithExistingMaterials,
-    createWithNewMaterials,
+    createLesson,
+    createLessonWithExistingMaterials,
+    createLessonWithNewMaterials,
     classId,
     allMaterials,
   } = useLessonMutations();
@@ -52,11 +53,10 @@ export default function NewLessonPage() {
   const uploadedMaterials = watch("uploadedMaterials", []);
   const selectedMaterials = watch("selectedMaterials", []);
 
-  // this works
   const { startUpload, isUploading } = useUploadThing("pdfUploader", {
     onClientUploadComplete: async (res) => {
       if (res && res.length > 0) {
-        await createWithNewMaterials(form.getValues(), res);
+        await createLessonWithNewMaterials(form.getValues(), res);
         router.push(`/app/classes/${classId}`);
       }
     },
@@ -71,7 +71,7 @@ export default function NewLessonPage() {
 
   const onSubmit = async (data: LessonFormData) => {
     if (!uploadedMaterials.length && !selectedMaterials.length) {
-      await createBasic(data);
+      await createLesson(data);
       router.push(`/app/classes/${classId}`);
       return;
     }
@@ -82,7 +82,7 @@ export default function NewLessonPage() {
     }
 
     if (selectedMaterials.length && showUploaded) {
-      await createWithExistingMaterials(data, selectedMaterials);
+      await createLessonWithExistingMaterials(data, selectedMaterials);
       router.push(`/app/classes/${classId}`);
     }
   };
@@ -131,26 +131,15 @@ export default function NewLessonPage() {
           />
 
           {!showUploaded ? (
-            <UploadMaterialsSection
+            <UploadMaterialsView
               control={control}
               uploadedMaterials={uploadedMaterials}
               setValue={setValue}
             />
           ) : (
-            <FormField
+            <SelectMaterialsView
               control={control}
-              name="selectedMaterials"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <MaterialsCheckboxList
-                      allMaterials={allMaterials}
-                      selectedMaterials={field.value}
-                      onChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
+              allMaterials={allMaterials}
             />
           )}
 
@@ -158,8 +147,16 @@ export default function NewLessonPage() {
             <Button type="button" variant="outline" asChild>
               <Link href={`/app/classes/${classId}`}>Cancel</Link>
             </Button>
+
             <Button type="submit" disabled={isUploading}>
-              {isUploading ? "Uploading..." : "Create Lesson"}
+              {isUploading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating lesson...
+                </>
+              ) : (
+                "Create Lesson"
+              )}
             </Button>
           </div>
         </Card>

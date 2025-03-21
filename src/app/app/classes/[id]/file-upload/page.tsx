@@ -92,7 +92,12 @@ export const FileUploadPage = () => {
         <Controller
           name="uploadedMaterials"
           control={form.control}
-          render={() => <FileUploadComponent onDrop={handleFileChange} />}
+          render={() => (
+            <FileUploadComponent
+              onDrop={handleFileChange}
+              existingFiles={uploadedMaterials}
+            />
+          )}
         />
 
         {!!uploadedMaterials.length && (

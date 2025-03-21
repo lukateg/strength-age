@@ -14,7 +14,7 @@ export default function CheckboxListItem({
   children: React.ReactNode;
 }) {
   return (
-    <ListItem>
+    <ListItem variant={disabled ? "default" : "outline"}>
       <div className="flex items-center gap-4">
         <Checkbox
           checked={checked}

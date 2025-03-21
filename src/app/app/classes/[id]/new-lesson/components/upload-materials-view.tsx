@@ -35,7 +35,12 @@ export default function UploadMaterialsView({
       <Controller
         name="uploadedMaterials"
         control={control}
-        render={() => <FileUploadComponent onDrop={handleFileChange} />}
+        render={() => (
+          <FileUploadComponent
+            onDrop={handleFileChange}
+            existingFiles={uploadedMaterials}
+          />
+        )}
       />
 
       {!!uploadedMaterials.length && (

@@ -14,20 +14,20 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { FileUploadView } from "./components/file-upload-view";
-import { ExistingMaterialsView } from "./components/existing-material-view";
+import { UploadMaterialsView } from "./components/upload-materials-view";
+import { SelectMaterialsView } from "./components/select-materials-view";
 import { Form, FormField } from "@/components/ui/form";
 
+import AddFilesButton from "@/components/ui/add-files-button";
 import LabeledSwitch from "@/components/labeled-switch";
 import SelectFormItem from "@/components/select-form-item";
 
 import { type Id } from "convex/_generated/dataModel";
-
-// TODO :
-// - submit buttons should be the same, "Upload 4 files" and "Add 4 files"
+import UploadFilesButton from "@/components/upload-files-button";
 
 export const FileUploadPage = () => {
   const [showUploaded, setShowUploaded] = useState(false);
@@ -39,10 +39,14 @@ export const FileUploadPage = () => {
 
   const form = useForm({
     defaultValues: {
-      lesson: String(lessonId),
+      lesson: lessonId,
       selectedMaterials: [] as Id<"pdfs">[],
+      uploadedMaterials: [] as File[],
     },
   });
+
+  const uploadedMaterials = form.watch("uploadedMaterials", []);
+  const selectedMaterials = form.watch("selectedMaterials", []);
 
   const { startUpload, isUploading } = useUploadThing("pdfUploader", {
     onClientUploadComplete: async (res) => {
@@ -110,18 +114,34 @@ export const FileUploadPage = () => {
           />
 
           {!showUploaded ? (
-            <FileUploadView
-              isUploading={isUploading}
-              startUpload={startUpload}
+            <UploadMaterialsView
+              setValue={form.setValue}
+              control={form.control}
+              uploadedMaterials={uploadedMaterials}
             />
           ) : (
-            <ExistingMaterialsView
+            <SelectMaterialsView
               materials={materials}
-              form={form}
+              control={form.control}
               lessonId={lessonId}
-              addPDFToLesson={handleAddPDFToLesson}
             />
           )}
+
+          <CardFooter>
+            {showUploaded ? (
+              <AddFilesButton
+                selectedMaterials={selectedMaterials}
+                startAdding={handleAddPDFToLesson}
+              />
+            ) : (
+              <UploadFilesButton
+                className="w-full"
+                startUpload={startUpload}
+                uploadedMaterials={uploadedMaterials}
+                isUploading={isUploading}
+              />
+            )}
+          </CardFooter>
         </Form>
       </CardContent>
     </Card>

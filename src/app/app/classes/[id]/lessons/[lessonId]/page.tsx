@@ -7,7 +7,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import LessonMaterialsSectionComponent from "./components/lesson-materials-section";
+
+import MaterialsSection from "./components/materials-section";
 
 import { Brain } from "lucide-react";
 
@@ -24,7 +25,7 @@ export default function LessonPage({}) {
         </TabsList>
 
         <TabsContent value="lessonMaterials" className="space-y-4">
-          <LessonMaterialsSectionComponent />
+          <MaterialsSection />
         </TabsContent>
 
         <TabsContent value="tests" className="space-y-4">

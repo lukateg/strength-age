@@ -4,6 +4,7 @@ import { api } from "../../../../../../../../convex/_generated/api";
 import { type Id } from "convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,12 +15,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { Headphones } from "lucide-react";
-import Link from "next/link";
 import ItemsScrollArea from "@/components/items-scroll-area";
 import ListItem from "@/components/list-item";
 
-export default function LessonMaterialsSectionComponent() {
+import { Headphones } from "lucide-react";
+
+export default function MaterialsSection() {
   const { lessonId }: { lessonId: Id<"lessons"> } = useParams();
   const lessonData = useQuery(api.lessons.getLessonData, {
     lessonId,

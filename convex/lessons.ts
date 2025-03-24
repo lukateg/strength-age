@@ -105,7 +105,6 @@ export const createLessonWithNewMaterials = mutation({
           fileUrl: pdf.fileUrl,
           name: pdf.name,
           lessonIds: [lessonId],
-          uploadedAt: Date.now(),
           size: pdf.size,
         });
       }

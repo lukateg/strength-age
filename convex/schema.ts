@@ -23,7 +23,6 @@ export default defineSchema({
     fileUrl: v.string(),
     name: v.string(),
     size: v.number(),
-    uploadedAt: v.number(),
   })
     .index("by_class_user", ["classId", "userId"]) // ✅ Add an index for queries
     .index("by_lessonId", ["lessonIds"]), // Index for lessonIds

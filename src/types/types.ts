@@ -10,9 +10,8 @@ export interface PDFType {
   fileUrl: string;
   name: string;
   size: number;
-  uploadedAt: number;
   userId: string;
-  lessonIds?: string[];
+  lessonIds: string[];
 }
 
 export type LessonsType = {

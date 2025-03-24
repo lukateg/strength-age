@@ -11,7 +11,7 @@
 // - add delete everything logic
 // - add edit everything logic
 // - check if all components are server components if possible
-// - check why uploading calls 3 requests and is so slow
+// - check why uploading calls 3 requests and is so slow ///
 
 
 

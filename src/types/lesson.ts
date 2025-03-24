@@ -1,6 +1,9 @@
 import { type Id } from "convex/_generated/dataModel";
 // import { type ClientUploadedFileData } from "uploadthing/types";
 
+// TODO
+// - remove all this types and infer the convex schema
+
 export interface LessonFormData {
   lessonTitle: string;
   lessonDescription: string;
@@ -31,6 +34,7 @@ export interface CreateLessonWithNewMaterialsParams {
   pdfFiles: {
     fileUrl: string;
     name: string;
+    size: number;
   }[];
 }
 

@@ -107,6 +107,7 @@ export const useLessonMutations = () => {
         const pdfFiles = files.map((pdf) => ({
           fileUrl: pdf.ufsUrl,
           name: pdf.name,
+          size: pdf.size,
         }));
 
         const params: CreateLessonWithNewMaterialsParams = {

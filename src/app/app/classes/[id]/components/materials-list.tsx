@@ -1,14 +1,15 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import ListItem from "@/components/list-item";
-import React from "react";
+
 import { FileText, Loader } from "lucide-react";
-import { useClass } from "@/providers/class-context-provider";
 
-export default function MaterialsList() {
-  const { materials } = useClass();
+import { type PDFType } from "@/types/types";
 
+export default function MaterialsList({
+  materials,
+}: {
+  materials?: PDFType[];
+}) {
   if (!materials) {
     return <Loader />;
   }

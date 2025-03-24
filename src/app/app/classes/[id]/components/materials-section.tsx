@@ -1,3 +1,6 @@
+"use client";
+
+import { useClass } from "@/providers/class-context-provider";
 import ItemsScrollArea from "@/components/items-scroll-area";
 import {
   Card,
@@ -14,7 +17,6 @@ import Link from "next/link";
 import { Upload } from "lucide-react";
 
 import { type Id } from "convex/_generated/dataModel";
-
 interface MaterialsSectionComponentProps {
   classId: Id<"classes">;
 }
@@ -22,6 +24,7 @@ interface MaterialsSectionComponentProps {
 export default function MaterialsSectionComponent({
   classId,
 }: MaterialsSectionComponentProps) {
+  const { materials } = useClass();
   return (
     <Card>
       <CardHeader>
@@ -39,7 +42,7 @@ export default function MaterialsSectionComponent({
       </CardHeader>
       <CardContent>
         <ItemsScrollArea className="h-[650px]">
-          <MaterialsList />
+          <MaterialsList materials={materials} />
         </ItemsScrollArea>
       </CardContent>
     </Card>

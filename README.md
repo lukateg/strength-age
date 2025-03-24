@@ -15,6 +15,7 @@
 
 // - each section has its own functionallity button. lessons section -> create lesson, materials section -> upload materials....
 // - each loading component separated into loading state, no items state and items state
+// - remove pdfItems from getLessonData, these need to be separated
 
 # MVP Plan for Teach.me
 ✅ Core Features

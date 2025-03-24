@@ -12,7 +12,7 @@ export interface PDFType {
   size: number;
   uploadedAt: number;
   userId: string;
-  lessonIds: string[];
+  lessonIds?: string[];
 }
 
 export type LessonsType = {

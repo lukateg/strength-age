@@ -75,6 +75,7 @@ export const createLessonWithNewMaterials = mutation({
       v.object({
         fileUrl: v.string(),
         name: v.string(),
+        size: v.number(),
       })
     ),
   }),
@@ -105,6 +106,7 @@ export const createLessonWithNewMaterials = mutation({
           name: pdf.name,
           lessonIds: [lessonId],
           uploadedAt: Date.now(),
+          size: pdf.size,
         });
       }
     }
@@ -130,6 +132,19 @@ export const getLessonData = query({
   },
 });
 
+export const getPDFsByLessonId = query({
+  args: v.object({
+    lessonId: v.id("lessons"),
+  }),
+  handler: async ({ db }, { lessonId }) => {
+    const allPDFs = await db.query("pdfs").collect();
+    const lessonPDFs = allPDFs.filter((pdf) =>
+      pdf.lessonIds?.includes(lessonId)
+    );
+
+    return lessonPDFs;
+  },
+});
 // TODO: instead of lesson to the pdf, we should have pdf to the lesson -MAYBE(check theory)
 // TODO: check if this is optimal solution
 export const addPDFToLesson = mutation({

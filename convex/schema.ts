@@ -12,7 +12,6 @@ export default defineSchema({
     classId: v.string(),
     title: v.string(),
     description: v.optional(v.string()),
-    createdAt: v.number(),
   }).index("by_class", ["classId"]),
 
   // TODO: check if queries by both user and class

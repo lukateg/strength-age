@@ -27,7 +27,6 @@ export const createLesson = mutation({
       classId,
       title,
       description: description ?? "",
-      createdAt: Date.now(), // remove
     });
   },
 });
@@ -46,7 +45,6 @@ export const createLessonWithExistingMaterials = mutation({
       classId,
       title,
       description: description ?? "",
-      createdAt: Date.now(), // remove
     });
 
     if (pdfIds.length > 0) {
@@ -94,7 +92,6 @@ export const createLessonWithNewMaterials = mutation({
       classId,
       title,
       description: description ?? "",
-      createdAt: Date.now(), // remove
     });
 
     if (pdfFiles.length > 0) {

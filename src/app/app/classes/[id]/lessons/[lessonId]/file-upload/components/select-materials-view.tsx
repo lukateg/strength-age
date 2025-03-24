@@ -9,7 +9,7 @@ import { type PDFType } from "@/types/types";
 interface SelectMaterialsViewProps {
   materials: PDFType[];
   control: Control<{
-    lesson: Id<"lessons">;
+    lessonId: Id<"lessons">;
     selectedMaterials: Id<"pdfs">[];
     uploadedMaterials: File[];
   }>;

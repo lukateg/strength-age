@@ -23,8 +23,14 @@ import {
 } from "@/components/ui/form";
 
 const formSchema = z.object({
-  title: z.string().min(1, "Class title is required"),
-  description: z.string().min(1, "Class description is required"),
+  title: z
+    .string()
+    .min(1, "Class title is required")
+    .max(50, "Class title cannot be longer than 50 characters"),
+  description: z
+    .string()
+    .min(1, "Class description is required")
+    .max(200, "Class description cannot be longer than 200 characters"),
 });
 
 type FormData = z.infer<typeof formSchema>;

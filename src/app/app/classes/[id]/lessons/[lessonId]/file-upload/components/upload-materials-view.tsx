@@ -12,12 +12,12 @@ import { type Id } from "convex/_generated/dataModel";
 
 interface UploadMaterialsViewProps {
   setValue: UseFormSetValue<{
-    lesson: Id<"lessons">;
+    lessonId: Id<"lessons">;
     selectedMaterials: Id<"pdfs">[];
     uploadedMaterials: File[];
   }>;
   control: Control<{
-    lesson: Id<"lessons">;
+    lessonId: Id<"lessons">;
     selectedMaterials: Id<"pdfs">[];
     uploadedMaterials: File[];
   }>;

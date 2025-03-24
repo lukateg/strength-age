@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { toast } from "@/hooks/use-toast";
 import { useUploadThing } from "@/hooks/use-upload-thing";
@@ -23,12 +25,24 @@ import UploadFilesButton from "@/components/upload-files-button";
 import UploadedMaterialsList from "@/components/uploaded-materials-list";
 import SelectFormItem from "@/components/select-form-item";
 
+import { type Id } from "convex/_generated/dataModel";
+
+const formSchema = z.object({
+  lessonId: z.custom<Id<"lessons">>(),
+  uploadedMaterials: z
+    .array(z.instanceof(File))
+    .min(1, "Please upload at least one file."),
+});
+
+type FormData = z.infer<typeof formSchema>;
+
 export const FileUploadPage = () => {
   const { classId, lessons } = useClass();
   const { uploadPDF } = useMaterialsMutations();
   const router = useRouter();
-  const form = useForm({
-    defaultValues: { lesson: "", uploadedMaterials: [] as File[] },
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { lessonId: "", uploadedMaterials: [] },
   });
   const { watch, setValue } = form;
 
@@ -38,7 +52,7 @@ export const FileUploadPage = () => {
     onClientUploadComplete: (res) => {
       if (res && res.length > 0) {
         void uploadPDF({
-          lessonId: form.getValues("lesson"),
+          lessonId: form.getValues("lessonId"),
           pdfFiles: res,
         });
 
@@ -75,7 +89,7 @@ export const FileUploadPage = () => {
         <Form {...form}>
           <FormField
             control={form.control}
-            name="lesson"
+            name="lessonId"
             render={({ field }) => (
               <SelectFormItem
                 items={lessons}

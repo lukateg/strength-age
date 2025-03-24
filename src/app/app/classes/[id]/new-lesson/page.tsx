@@ -1,5 +1,6 @@
 "use client";
 
+import * as z from "zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -17,22 +18,41 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 
 import UploadMaterialsView from "./components/upload-materials-view";
 import LabeledSwitch from "@/components/labeled-switch";
 import SelectMaterialsView from "./components/select-materials-view";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 import { useUploadThing } from "@/hooks/use-upload-thing";
 import { toast } from "@/hooks/use-toast";
 
+import { Loader2 } from "lucide-react";
+
 import { type LessonFormData } from "@/types/lesson";
+import { type Id } from "convex/_generated/dataModel";
+
+const formSchema = z.object({
+  lessonTitle: z
+    .string()
+    .min(1, "Lesson title is required")
+    .max(50, "Lesson title cannot be longer than 50 characters"),
+  lessonDescription: z
+    .string()
+    .min(1, "Lesson description is required")
+    .max(200, "Lesson description cannot be longer than 200 characters"),
+  uploadedMaterials: z.array(z.instanceof(File)),
+  selectedMaterials: z.array(z.custom<Id<"pdfs">>()),
+});
+
+type FormData = z.infer<typeof formSchema>;
 
 export default function NewLessonPage() {
   const router = useRouter();
   const [showUploaded, setShowUploaded] = useState(false);
-  const form = useForm<LessonFormData>({
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       lessonTitle: "",
       lessonDescription: "",

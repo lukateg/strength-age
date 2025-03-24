@@ -6,15 +6,9 @@
 // - add edit everything logic
 // - add no materials and no lessons message
 // - add proper suspense logic for all components
-// - add validation for all forms 
 // - check if all components are server components if possible
 // - check why uploading calls 3 requests and is so slow
 // - start cleaning up the code
-// - implement custom hooks for all mutations and implement them
-
-// UPLOAD COMPONENT
-// - remove support for TXT, DOCX and others and lower the size limit
-
 
 # MVP Plan for Teach.me
 ✅ Core Features

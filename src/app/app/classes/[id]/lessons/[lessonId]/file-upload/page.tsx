@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { toast } from "@/hooks/use-toast";
 import { useUploadThing } from "@/hooks/use-upload-thing";
@@ -29,24 +31,43 @@ import SelectFormItem from "@/components/select-form-item";
 import { type Id } from "convex/_generated/dataModel";
 import UploadFilesButton from "@/components/upload-files-button";
 
+const formSchema = (showExistingMaterials: boolean) =>
+  z.object({
+    lessonId: z.custom<Id<"lessons">>(),
+    selectedMaterials: showExistingMaterials
+      ? z
+          .array(z.custom<Id<"pdfs">>())
+          .min(1, "Please select at least one material")
+      : z.array(z.custom<Id<"pdfs">>()),
+    uploadedMaterials: !showExistingMaterials
+      ? z.array(z.instanceof(File)).min(1, "Please upload at least one file")
+      : z.array(z.instanceof(File)),
+  });
+
+type FormData = z.infer<ReturnType<typeof formSchema>>;
+
 export const FileUploadPage = () => {
-  const [showUploaded, setShowUploaded] = useState(false);
+  const [showExistingMaterials, setShowExistingMaterials] = useState(false);
   const router = useRouter();
   const { lessons, materials, classId } = useClass();
   const { addPDFToLesson } = useLessonMutations();
   const { uploadPDF } = useMaterialsMutations();
   const { lessonId }: { lessonId: Id<"lessons"> } = useParams();
 
-  const form = useForm({
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema(showExistingMaterials)),
     defaultValues: {
-      lesson: lessonId,
+      lessonId,
       selectedMaterials: [] as Id<"pdfs">[],
       uploadedMaterials: [] as File[],
     },
   });
 
-  const uploadedMaterials = form.watch("uploadedMaterials", []);
-  const selectedMaterials = form.watch("selectedMaterials", []);
+  const { control, watch, getValues, setValue, clearErrors, handleSubmit } =
+    form;
+
+  const uploadedMaterials = watch("uploadedMaterials", []);
+  const selectedMaterials = watch("selectedMaterials", []);
 
   const { startUpload, isUploading } = useUploadThing("pdfUploader", {
     onClientUploadComplete: async (res) => {
@@ -68,10 +89,10 @@ export const FileUploadPage = () => {
     },
   });
 
-  const handleAddPDFToLesson = () => {
-    const selectedMaterials = form.getValues("selectedMaterials");
+  const handleAddPDFToLesson = async () => {
+    const selectedMaterials = getValues("selectedMaterials");
 
-    void addPDFToLesson({
+    await addPDFToLesson({
       pdfIds: selectedMaterials,
       lessonId: lessonId,
     });
@@ -90,8 +111,8 @@ export const FileUploadPage = () => {
       <CardContent className="space-y-6">
         <Form {...form}>
           <FormField
-            control={form.control}
-            name="lesson"
+            control={control}
+            name="lessonId"
             render={({ field }) => (
               <SelectFormItem
                 {...field}
@@ -108,35 +129,40 @@ export const FileUploadPage = () => {
 
           <LabeledSwitch
             id="select-from-uploaded"
-            checked={showUploaded}
-            onCheckedChange={setShowUploaded}
+            checked={showExistingMaterials}
+            onCheckedChange={(checked) => {
+              setShowExistingMaterials(checked);
+              clearErrors();
+            }}
             label="Select from already uploaded materials"
           />
 
-          {!showUploaded ? (
+          {!showExistingMaterials ? (
             <UploadMaterialsView
-              setValue={form.setValue}
-              control={form.control}
+              setValue={setValue}
+              control={control}
               uploadedMaterials={uploadedMaterials}
             />
           ) : (
             <SelectMaterialsView
               materials={materials}
-              control={form.control}
+              control={control}
               lessonId={lessonId}
             />
           )}
 
           <CardFooter>
-            {showUploaded ? (
+            {showExistingMaterials ? (
               <AddFilesButton
                 selectedMaterials={selectedMaterials}
-                startAdding={handleAddPDFToLesson}
+                startAdding={handleSubmit(handleAddPDFToLesson)}
               />
             ) : (
               <UploadFilesButton
                 className="w-full"
-                startUpload={startUpload}
+                startUpload={() =>
+                  handleSubmit(() => startUpload(uploadedMaterials))()
+                }
                 uploadedMaterials={uploadedMaterials}
                 isUploading={isUploading}
               />

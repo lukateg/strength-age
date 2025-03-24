@@ -12,7 +12,14 @@ import LessonsSectionComponent from "./components/lessons-section";
 
 import { Headphones, Brain } from "lucide-react";
 
-export default async function ClassPage() {
+import { type Id } from "convex/_generated/dataModel";
+
+export default async function ClassPage({
+  params,
+}: {
+  params: Promise<{ id: Id<"classes"> }>;
+}) {
+  const { id } = await params;
   return (
     <div className="container mx-auto p-6">
       <Tabs defaultValue="lessons" className="space-y-6">
@@ -24,11 +31,11 @@ export default async function ClassPage() {
         </TabsList>
 
         <TabsContent value="lessons" className="space-y-4">
-          <LessonsSectionComponent />
+          <LessonsSectionComponent classId={id} />
         </TabsContent>
 
         <TabsContent value="materials" className="space-y-4">
-          <MaterialsSectionComponent />
+          <MaterialsSectionComponent classId={id} />
         </TabsContent>
 
         <TabsContent value="audio" className="space-y-4">

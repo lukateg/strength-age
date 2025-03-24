@@ -1,4 +1,7 @@
 # TODO:
+
+// - think about removing a context and just using queries because you have live updates and sockets
+
 // - only section materials should have upload material button
 // - upload material button page should have a dropdown menu of lections to be linked when uploading materials (fetch lections from API)
 
@@ -9,6 +12,9 @@
 // - check if all components are server components if possible
 // - check why uploading calls 3 requests and is so slow
 // - start cleaning up the code
+
+// - each section has its own functionallity button. lessons section -> create lesson, materials section -> upload materials....
+// - each loading component separated into loading state, no items state and items state
 
 # MVP Plan for Teach.me
 ✅ Core Features

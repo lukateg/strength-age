@@ -1,8 +1,4 @@
-"use client";
-
 import ItemsScrollArea from "@/components/items-scroll-area";
-import ListItem from "@/components/list-item";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,35 +6,40 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-import { useClass } from "@/providers/class-context-provider";
+import MaterialsList from "./materials-list";
+import Link from "next/link";
 
-import { FileText } from "lucide-react";
+import { Upload } from "lucide-react";
 
-export default function MaterialsSectionComponent() {
-  const { materials } = useClass();
+import { type Id } from "convex/_generated/dataModel";
 
+interface MaterialsSectionComponentProps {
+  classId: Id<"classes">;
+}
+
+export default function MaterialsSectionComponent({
+  classId,
+}: MaterialsSectionComponentProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Course Materials</CardTitle>
+        <div className="flex justify-between">
+          <CardTitle>Course Materials</CardTitle>
+
+          <Button asChild>
+            <Link href={`/app/classes/${classId}/file-upload`}>
+              <Upload className="h-4 w-4 mr-2" />
+              Upload Materials
+            </Link>
+          </Button>
+        </div>
         <CardDescription>PDF documents and study materials</CardDescription>
       </CardHeader>
       <CardContent>
         <ItemsScrollArea className="h-[650px]">
-          {materials?.map((material) => (
-            <ListItem key={material._id} variant="outline">
-              <div className="flex items-center">
-                <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-                <span>{material?.name}</span>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  Preview
-                </Button>
-              </div>
-            </ListItem>
-          ))}
+          <MaterialsList />
         </ItemsScrollArea>
       </CardContent>
     </Card>

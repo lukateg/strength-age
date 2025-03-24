@@ -22,6 +22,7 @@ import { Headphones } from "lucide-react";
 
 export default function MaterialsSection() {
   const { lessonId }: { lessonId: Id<"lessons"> } = useParams();
+  // TODO check this useQuery
   const lessonData = useQuery(api.lessons.getLessonData, {
     lessonId,
   });

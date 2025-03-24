@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ClassProvider } from "@/providers/class-context-provider";
 
 import { type Id } from "convex/_generated/dataModel";
+import { Pencil } from "lucide-react";
 
 interface ClassLayoutProps {
   children: React.ReactNode;
@@ -21,9 +22,12 @@ export async function ClassLayout({ children, params }: ClassLayoutProps) {
             </Link>
             <p className="text-muted-foreground mt-2">Professor: John Doe</p>
           </div>
-          <Link href={`/app/classes/${id}/file-upload`}>
-            <Button>Upload Material</Button>
-          </Link>
+          {/* <Link href={`/app/classes/${id}/file-upload`}> */}
+          <Button>
+            <Pencil className="h-4 w-4 mr-2" />
+            Edit Class
+          </Button>
+          {/* </Link> */}
         </div>
         {children}
       </div>

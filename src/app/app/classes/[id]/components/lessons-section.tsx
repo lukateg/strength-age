@@ -1,7 +1,4 @@
-"use client";
 import Link from "next/link";
-
-import { useClass } from "@/providers/class-context-provider";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,17 +7,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
+import LessonsList from "./lessons-list";
 import ItemsScrollArea from "@/components/items-scroll-area";
-import ListItem from "@/components/list-item";
 
-import { FileText } from "lucide-react";
+import { type Id } from "convex/_generated/dataModel";
 
-export default function LessonsSectionComponent() {
-  const { classId, lessons } = useClass();
+import { Plus } from "lucide-react";
+interface LessonsSectionProps {
+  classId: Id<"classes">;
+}
 
-  if (!lessons) return <div>no lessons</div>;
-
+export default async function LessonsSectionComponent({
+  classId,
+}: LessonsSectionProps) {
   return (
     <Card>
       <CardHeader>
@@ -28,7 +27,8 @@ export default function LessonsSectionComponent() {
           <CardTitle>Course Lessons</CardTitle>
           <Button asChild>
             <Link href={`/app/classes/${classId}/new-lesson`}>
-              Create new Lesson
+              <Plus className="h-4 w-4 mr-2" />
+              Create Lesson
             </Link>
           </Button>
         </div>
@@ -36,24 +36,7 @@ export default function LessonsSectionComponent() {
       </CardHeader>
       <CardContent>
         <ItemsScrollArea className="h-[650px]">
-          {lessons.map((lesson) => (
-            <ListItem key={lesson._id} variant="outline">
-              <div className="flex items-center">
-                <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-                <span>{lesson.title}</span>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  <Link href={`/app/classes/${classId}/lessons/${lesson._id}`}>
-                    View
-                  </Link>
-                </Button>
-                <Button variant="outline" size="sm">
-                  Generate Test
-                </Button>
-              </div>
-            </ListItem>
-          ))}
+          <LessonsList />
         </ItemsScrollArea>
       </CardContent>
     </Card>

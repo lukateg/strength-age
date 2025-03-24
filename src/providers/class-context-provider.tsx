@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
 
 import { useUser } from "@clerk/nextjs";
 import { api } from "../../convex/_generated/api";
@@ -14,10 +14,8 @@ import { type Id } from "convex/_generated/dataModel";
 interface ClassContextType {
   classId: Id<"classes">;
   userId?: string;
-  materials: PDFType[]; // Replace `any` with your material type
+  materials: PDFType[] | undefined; // Replace `any` with your material type
   lessons: LessonsType[] | undefined;
-  isLoading: boolean;
-  error: string | null;
 }
 
 const ClassContext = createContext<ClassContextType | null>(null);
@@ -29,8 +27,6 @@ export function ClassProvider({
   classId: Id<"classes">;
   children: React.ReactNode;
 }) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const { user } = useUser(); // Clerk provides the logged-in user
   const userId = user?.id;
 
@@ -45,10 +41,8 @@ export function ClassProvider({
       value={{
         classId,
         userId,
-        materials: materials as PDFType[] | [],
+        materials: materials as PDFType[] | undefined,
         lessons: lessons as LessonsType[] | undefined,
-        isLoading,
-        error,
       }}
     >
       {children}

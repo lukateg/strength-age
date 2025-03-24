@@ -17,6 +17,7 @@ import {
 
 import ItemsScrollArea from "@/components/items-scroll-area";
 import ListItem from "@/components/list-item";
+import Loader from "@/components/loader";
 
 import { Headphones } from "lucide-react";
 
@@ -28,7 +29,7 @@ export default function MaterialsSection() {
   });
 
   if (!lessonData) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   const { lesson, lessonPDFs } = lessonData;

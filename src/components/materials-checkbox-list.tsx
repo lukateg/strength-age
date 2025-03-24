@@ -6,7 +6,7 @@ import { type PDFType } from "@/types/types";
 import { type CheckedState } from "@radix-ui/react-checkbox";
 
 interface MaterialsCheckboxListProps {
-  allMaterials: PDFType[];
+  allMaterials?: PDFType[];
   selectedMaterials: Id<"pdfs">[];
   onChange: (value: Id<"pdfs">[]) => void;
   shouldDisableItem?: (pdf: PDFType) => boolean;

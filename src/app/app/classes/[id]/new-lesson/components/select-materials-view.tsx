@@ -12,7 +12,7 @@ export default function SelectMaterialsView({
   allMaterials,
 }: {
   control: Control<LessonFormData>;
-  allMaterials: PDFType[];
+  allMaterials?: PDFType[];
 }) {
   return (
     <div className="space-y-4">

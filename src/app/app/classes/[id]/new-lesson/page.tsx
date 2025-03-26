@@ -1,60 +1,58 @@
 "use client";
 
-import {
-  useForm,
-  Controller,
-  type ControllerRenderProps,
-} from "react-hook-form";
-import { useRouter } from "next/navigation";
+import * as z from "zod";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import FileUploadComponent from "@/components/file-upload";
 
+import UploadMaterialsView from "./components/upload-materials-view";
+import LabeledSwitch from "@/components/labeled-switch";
+import SelectMaterialsView from "./components/select-materials-view";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 import { useUploadThing } from "@/hooks/use-upload-thing";
-import { useClass } from "@/providers/class-context-provider";
-
-import { X, File } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
-import { FormField, FormItem, FormControl, Form } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
-import { type CheckedState } from "@radix-ui/react-checkbox";
+
+import { Loader2 } from "lucide-react";
+
+import { type LessonFormData } from "@/types/lesson";
 import { type Id } from "convex/_generated/dataModel";
 
-// TODO:
-// - add validation
-// - add error handling
-// - add loading state
-// - add success state
-// - create a reusable upload material component and use it here and in the materials section
+const formSchema = z.object({
+  lessonTitle: z
+    .string()
+    .min(1, "Lesson title is required")
+    .max(50, "Lesson title cannot be longer than 50 characters"),
+  lessonDescription: z
+    .string()
+    .min(1, "Lesson description is required")
+    .max(200, "Lesson description cannot be longer than 200 characters"),
+  uploadedMaterials: z.array(z.instanceof(File)),
+  selectedMaterials: z.array(z.custom<Id<"pdfs">>()),
+});
 
-interface LessonFormData {
-  lessonTitle: string;
-  lessonDescription: string;
-  uploadedMaterials: File[];
-  selectedMaterials: Id<"pdfs">[];
-}
-
-// const DEFAULT_FORM_VALUES
+type FormData = z.infer<typeof formSchema>;
 
 export default function NewLessonPage() {
-  const {
-    classId,
-    createLessonWithNewMaterialsMutation,
-    userId,
-    createLessonMutation,
-    createLessonWithExistingMaterialsMutation,
-    materials: allMaterials,
-  } = useClass();
   const router = useRouter();
   const [showUploaded, setShowUploaded] = useState(false);
-  const form = useForm<LessonFormData>({
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       lessonTitle: "",
       lessonDescription: "",
@@ -63,240 +61,123 @@ export default function NewLessonPage() {
     },
   });
 
-  const { register, handleSubmit, control, setValue, watch } = form;
+  const { handleSubmit, control, setValue, watch } = form;
+  const {
+    createLesson,
+    createLessonWithExistingMaterials,
+    createLessonWithNewMaterials,
+    classId,
+    allMaterials,
+  } = useLessonMutations();
+
+  const uploadedMaterials = watch("uploadedMaterials", []);
+  const selectedMaterials = watch("selectedMaterials", []);
 
   const { startUpload, isUploading } = useUploadThing("pdfUploader", {
-    onClientUploadComplete: (res) => {
+    onClientUploadComplete: async (res) => {
       if (res && res.length > 0) {
-        if (res[0]?.serverData.uploadedBy) {
-          const { lessonDescription, lessonTitle } =
-            control._formValues as LessonFormData;
-          const pdfFiles = res.map((pdf) => ({
-            fileUrl: pdf.ufsUrl,
-            name: pdf.name,
-          }));
-          void createLessonWithNewMaterialsMutation({
-            userId: res[0]?.serverData.uploadedBy,
-            classId,
-            title: lessonTitle,
-            description: lessonDescription,
-            pdfFiles,
-          });
-
-          router.push(`/app/classes/${classId}`);
-          toast({
-            title: "Success",
-            description: "Uploaded successfully.",
-            variant: "default",
-          });
-        }
+        await createLessonWithNewMaterials(form.getValues(), res);
+        router.push(`/app/classes/${classId}`);
       }
     },
     onUploadError: () => {
       toast({
         title: "Error",
-        description: "Something went wrong, please try again.",
+        description: "Something went wrong with the upload. Please try again.",
         variant: "destructive",
       });
     },
   });
 
-  const uploadedMaterials = watch("uploadedMaterials", []);
-  const selectedMaterials = watch("selectedMaterials", []);
-
-  const handleFileChange = (newMaterials: File[]) => {
-    if (newMaterials.length) {
-      setValue("uploadedMaterials", [...uploadedMaterials, ...newMaterials], {
-        shouldValidate: true,
-      });
-    }
-  };
-
-  const removeMaterial = (name: string) => {
-    setValue(
-      "uploadedMaterials",
-      uploadedMaterials.filter((material) => material.name !== name),
-      { shouldValidate: true }
-    );
-  };
-  const onSubmit = (data: LessonFormData) => {
-    if (!userId) return;
-
+  const onSubmit = async (data: LessonFormData) => {
     if (!uploadedMaterials.length && !selectedMaterials.length) {
-      console.log("no materials case");
-      void createLessonMutation({
-        userId,
-        classId,
-        title: data.lessonTitle,
-        description: data.lessonDescription,
-      });
-      toast({
-        title: "Success",
-        description: "Lesson created successfully.",
-        variant: "default",
-      });
+      await createLesson(data);
       router.push(`/app/classes/${classId}`);
       return;
     }
 
     if (uploadedMaterials.length && !showUploaded) {
-      console.log("uploaded materials case");
-      void startUpload(uploadedMaterials);
+      await startUpload(uploadedMaterials);
       return;
     }
 
     if (selectedMaterials.length && showUploaded) {
-      console.log("existing materials case");
-      void createLessonWithExistingMaterialsMutation({
-        userId,
-        classId,
-        title: data.lessonTitle,
-        description: data.lessonDescription,
-        pdfIds: selectedMaterials,
-      }).then(() => {
-        toast({
-          title: "Success",
-          description: "Lesson created with existing materials.",
-          variant: "default",
-        });
-        router.push(`/app/classes/${classId}`);
-      });
+      await createLessonWithExistingMaterials(data, selectedMaterials);
+      router.push(`/app/classes/${classId}`);
     }
-  };
-
-  const toggleCheckedMaterial = (
-    checked: CheckedState,
-    pdfId: Id<"pdfs">,
-    field: ControllerRenderProps<LessonFormData, "selectedMaterials">
-  ) => {
-    return checked
-      ? field.onChange([...field.value, pdfId])
-      : field.onChange(field.value?.filter((value) => value !== pdfId));
   };
 
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card className="p-6 mx-auto mt-6 space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="lessonTitle">Lesson Title</Label>
-            <Input
-              id="lessonTitle"
-              placeholder="Enter lesson title"
-              className="w-full"
-              {...register("lessonTitle", {
-                required: "Lesson title is required",
-              })}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="lessonTitle"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Lesson Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter lesson title" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          {/* Lesson Description */}
-          <div className="space-y-2">
-            <Label htmlFor="lessonDescription">Lesson Description</Label>
-            <Textarea
-              id="lessonDescription"
-              placeholder="Enter lesson description"
-              className="min-h-[120px]"
-              {...register("lessonDescription", {
-                required: "Lesson description is required",
-              })}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="lessonDescription"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Lesson Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Enter lesson description"
+                    className="min-h-[120px]"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="select-from-uploaded"
-              checked={showUploaded}
-              onCheckedChange={setShowUploaded}
-            />
-            <Label htmlFor="select-from-uploaded">
-              Select from already uploaded materials
-            </Label>
-          </div>
+          <LabeledSwitch
+            id="select-from-uploaded"
+            checked={showUploaded}
+            onCheckedChange={setShowUploaded}
+            label="Select from already uploaded materials"
+          />
 
           {!showUploaded ? (
-            <div className="space-y-4">
-              <Label>Materials</Label>
-
-              <Controller
-                name="uploadedMaterials"
-                control={control}
-                render={() => <FileUploadComponent onDrop={handleFileChange} />}
-              />
-
-              {uploadedMaterials.length > 0 && (
-                <ScrollArea className="h-[300px] w-full rounded-md border p-4">
-                  <div className="mt-8 space-y-4">
-                    {uploadedMaterials.map((file, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-4 bg-muted rounded-lg"
-                      >
-                        <div className="flex items-center gap-4">
-                          <File className="h-8 w-8 text-primary" />
-                          <div>
-                            <p className="font-medium">{file.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {(file.size / 1024 / 1024).toFixed(2)} MB
-                            </p>
-                          </div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeMaterial(file.name)}
-                          // disabled={isUploading}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-              )}
-            </div>
+            <UploadMaterialsView
+              control={control}
+              uploadedMaterials={uploadedMaterials}
+              setValue={setValue}
+            />
           ) : (
-            <div className="space-y-4">
-              {allMaterials?.map((pdf) => (
-                <FormField
-                  key={pdf._id}
-                  control={control}
-                  name="selectedMaterials"
-                  render={({ field }) => (
-                    <FormItem
-                      key={pdf._id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex items-center gap-4">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(pdf._id)}
-                            onCheckedChange={(checked) =>
-                              toggleCheckedMaterial(checked, pdf._id, field)
-                            }
-                          />
-                        </FormControl>
-                        <div className="flex items-center">
-                          <Label className="cursor-pointer">
-                            {pdf.fileUrl}
-                          </Label>
-                        </div>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-              ))}
-            </div>
+            <SelectMaterialsView
+              control={control}
+              allMaterials={allMaterials}
+            />
           )}
 
-          {/* File Upload */}
-
-          {/* Form Actions */}
           <div className="flex justify-end gap-4">
             <Button type="button" variant="outline" asChild>
               <Link href={`/app/classes/${classId}`}>Cancel</Link>
             </Button>
-            <Button type="submit">Create Lesson</Button>
+
+            <Button type="submit" disabled={isUploading}>
+              {isUploading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating lesson...
+                </>
+              ) : (
+                "Create Lesson"
+              )}
+            </Button>
           </div>
         </Card>
       </form>

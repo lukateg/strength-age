@@ -4,6 +4,7 @@ import { api } from "../../../../../../../../convex/_generated/api";
 import { type Id } from "convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,17 +15,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { Headphones } from "lucide-react";
-import Link from "next/link";
+import ItemsScrollArea from "@/components/items-scroll-area";
+import MaterialsList from "@/app/app/classes/[id]/components/materials-list";
+import Loader from "@/components/loader";
 
-export default function LessonMaterialsSectionComponent() {
+export default function MaterialsSection() {
   const { lessonId }: { lessonId: Id<"lessons"> } = useParams();
+  // TODO check this useQuery
   const lessonData = useQuery(api.lessons.getLessonData, {
     lessonId,
   });
 
   if (!lessonData) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   const { lesson, lessonPDFs } = lessonData;
@@ -43,22 +46,9 @@ export default function LessonMaterialsSectionComponent() {
         </Link>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {lessonPDFs.map((pdf) => (
-            <div
-              key={pdf._id}
-              className="flex items-center justify-between p-4 border rounded-lg"
-            >
-              <div className="flex items-center">
-                <Headphones className="h-4 w-4 mr-2 text-muted-foreground" />
-                <span>{pdf.fileUrl}</span>
-              </div>
-              <Button variant="outline" size="sm">
-                Play
-              </Button>
-            </div>
-          ))}
-        </div>
+        <ItemsScrollArea className="h-[650px]">
+          <MaterialsList materials={lessonPDFs} />
+        </ItemsScrollArea>
       </CardContent>
     </Card>
   );

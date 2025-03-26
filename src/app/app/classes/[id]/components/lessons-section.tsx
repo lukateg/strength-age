@@ -1,7 +1,4 @@
-"use client";
 import Link from "next/link";
-
-import { useClass } from "@/providers/class-context-provider";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,18 +7,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import LessonsList from "./lessons-list";
+import ItemsScrollArea from "@/components/items-scroll-area";
 
-import { FileText } from "lucide-react";
+import { type Id } from "convex/_generated/dataModel";
 
-// TODO:
-// - add case when there are no lessons
+import { Plus } from "lucide-react";
+interface LessonsSectionProps {
+  classId: Id<"classes">;
+}
 
-export default function LessonsSectionComponent() {
-  const { classId, lessons } = useClass();
-
-  // if (isLoading) return <div>Loading materials...</div>;
-  if (!lessons) return <div>no lessons</div>;
-
+export default async function LessonsSectionComponent({
+  classId,
+}: LessonsSectionProps) {
   return (
     <Card>
       <CardHeader>
@@ -29,36 +27,17 @@ export default function LessonsSectionComponent() {
           <CardTitle>Course Lessons</CardTitle>
           <Button asChild>
             <Link href={`/app/classes/${classId}/new-lesson`}>
-              Create new Lesson
+              <Plus className="h-4 w-4 mr-2" />
+              Create Lesson
             </Link>
           </Button>
         </div>
         <CardDescription>PDF documents and study materials</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {lessons.map((lesson) => (
-            <div
-              key={lesson._id}
-              className="flex items-center justify-between p-4 border rounded-lg"
-            >
-              <div className="flex items-center">
-                <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-                <span>{lesson.title}</span>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  <Link href={`/app/classes/${classId}/lessons/${lesson._id}`}>
-                    View
-                  </Link>
-                </Button>
-                <Button variant="outline" size="sm">
-                  Generate Test
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ItemsScrollArea className="h-[650px]">
+          <LessonsList />
+        </ItemsScrollArea>
       </CardContent>
     </Card>
   );

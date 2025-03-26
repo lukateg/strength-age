@@ -12,18 +12,14 @@ import LessonsSectionComponent from "./components/lessons-section";
 
 import { Headphones, Brain } from "lucide-react";
 
-// TODO:
-// - only section materials should have upload material button
-// - upload material button page should have a dropdown menu of lections to be linked when uploading materials (fetch lections from API)
+import { type Id } from "convex/_generated/dataModel";
 
-// - add delete everything logic
-// - add edit everything logic
-// - add no materials and no lessons message
-// - check why uploading calls 3 requests and is so slow
-// - make upload component reusable, there is already a component for it
-// - start cleaning up the code
-
-export default async function ClassPage() {
+export default async function ClassPage({
+  params,
+}: {
+  params: Promise<{ id: Id<"classes"> }>;
+}) {
+  const { id } = await params;
   return (
     <div className="container mx-auto p-6">
       <Tabs defaultValue="lessons" className="space-y-6">
@@ -35,11 +31,11 @@ export default async function ClassPage() {
         </TabsList>
 
         <TabsContent value="lessons" className="space-y-4">
-          <LessonsSectionComponent />
+          <LessonsSectionComponent classId={id} />
         </TabsContent>
 
         <TabsContent value="materials" className="space-y-4">
-          <MaterialsSectionComponent />
+          <MaterialsSectionComponent classId={id} />
         </TabsContent>
 
         <TabsContent value="audio" className="space-y-4">

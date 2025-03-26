@@ -1,65 +1,107 @@
+"use client";
+
 import { useCallback, useState } from "react";
-import { UploadCloud, X, File } from "lucide-react";
-import { useDropzone } from "react-dropzone";
-import { Button } from "./ui/button";
-import { ScrollArea } from "./ui/scroll-area";
+import { UploadCloud, AlertCircle } from "lucide-react";
+import { useDropzone, type FileRejection } from "react-dropzone";
+import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+
+// TODO
+// - make this component work with internal state without controls passed
 
 type FileUploadProps = {
   onDrop?: (files: File[]) => void;
+  maxFiles?: number;
+  maxSize?: number;
+  existingFiles: File[];
 };
 
-// TODO:
-// - add error handling
-// - add max length
-// - make component really reusable
+export default function FileUploadComponent({
+  onDrop,
+  maxFiles = 10,
+  maxSize = 20971520, // 20MB
+  existingFiles,
+}: FileUploadProps) {
+  const [error, setError] = useState<string | null>(null);
 
-export default function FileUploadComponent(props: FileUploadProps) {
-  //   const [files, setFiles] = useState<File[]>([]);
+  const handleDrop = useCallback(
+    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+      setError(null);
 
-  const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      // setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
-      props.onDrop?.(acceptedFiles);
+      if (rejectedFiles.length > 0) {
+        const message =
+          rejectedFiles[0]?.errors[0]?.message ?? "An unknown error occurred";
+        setError(message);
+        toast({
+          title: "File Error",
+          description: message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      onDrop?.(acceptedFiles);
     },
-    [props]
+    [onDrop]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
+    onDrop: handleDrop,
     accept: {
       "application/pdf": [".pdf"],
-      "application/msword": [".doc"],
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        [".docx"],
-      "text/plain": [".txt"],
+      // "application/msword": [".doc"],
+      // "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+      //   [".docx"],
+      // "text/plain": [".txt"],
     },
-    maxSize: 20971520, // 20MB
+    maxSize,
+    maxFiles,
+    validator: (file) => {
+      if (
+        existingFiles.some(
+          (existingFile) =>
+            existingFile.name === file.name && existingFile.size === file.size
+        )
+      ) {
+        return {
+          code: "duplicate-file",
+          message: `File "${file.name}" has already been uploaded`,
+        };
+      }
+
+      if (existingFiles.length >= maxFiles) {
+        return {
+          code: "too-many-files",
+          message: `You can only upload up to ${maxFiles} files in total`,
+        };
+      }
+
+      return null;
+    },
   });
 
-  //   const removeFile = (fileToRemove: File) => {
-  //     setFiles((prevFiles) => prevFiles.filter((file) => file !== fileToRemove));
-  //   };
-
   return (
-    <div>
+    <div className="space-y-2">
       <div
         {...getRootProps()}
-        className={`
-      border-2 border-dashed rounded-lg p-8 text-center cursor-pointer
-      transition-colors duration-200 ease-in-out
-      ${
-        isDragActive
-          ? "border-primary bg-primary/5"
-          : "border-muted-foreground/25 hover:border-primary"
-      }
-    `}
+        className={cn(
+          "border-2 border-dashed rounded-lg p-8 text-center cursor-pointer",
+          "transition-colors duration-200 ease-in-out",
+          isDragActive && "border-primary bg-primary/5",
+          error && "border-destructive bg-destructive/5",
+          !isDragActive &&
+            !error &&
+            "border-muted-foreground/25 hover:border-primary"
+        )}
       >
         <input {...getInputProps()} />
         <div className="flex flex-col items-center gap-4">
           <UploadCloud
-            className={`h-12 w-12 ${
-              isDragActive ? "text-primary" : "text-muted-foreground"
-            }`}
+            className={cn(
+              "h-12 w-12",
+              isDragActive && "text-primary",
+              error ? "text-destructive" : "text-muted-foreground"
+            )}
           />
           {isDragActive ? (
             <p className="text-lg font-medium">Drop the files here...</p>
@@ -69,10 +111,18 @@ export default function FileUploadComponent(props: FileUploadProps) {
             </p>
           )}
           <p className="text-sm text-muted-foreground">
-            Supported files: PDF, DOC, DOCX, TXT (Max 20MB)
+            Supported files: PDF (Max 20MB)
+            {/* Supported files: PDF, DOC, DOCX, TXT (Max 20MB) */}
           </p>
         </div>
       </div>
+
+      {error && (
+        <div className="flex items-center gap-2 text-sm text-destructive">
+          <AlertCircle className="h-4 w-4" />
+          <span>{error}</span>
+        </div>
+      )}
     </div>
   );
 }

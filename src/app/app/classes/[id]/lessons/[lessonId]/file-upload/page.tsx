@@ -1,87 +1,83 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { toast } from "@/hooks/use-toast";
 import { useUploadThing } from "@/hooks/use-upload-thing";
+import { useLessonMutations } from "@/hooks/use-lesson-mutations";
+import { useMaterialsMutations } from "@/hooks/use-materials-mutations";
 import { useClass } from "@/providers/class-context-provider";
-import { useRouter, useParams } from "next/navigation";
-
-import { type Id } from "convex/_generated/dataModel";
 
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { FileUploadView } from "./components/file-upload-view";
-import { ExistingMaterialsView } from "./components/existing-material-view";
+import { UploadMaterialsView } from "./components/upload-materials-view";
+import { SelectMaterialsView } from "./components/select-materials-view";
+import { Form, FormField } from "@/components/ui/form";
+
+import AddFilesButton from "@/components/ui/add-files-button";
+import LabeledSwitch from "@/components/labeled-switch";
+import SelectFormItem from "@/components/select-form-item";
+
+import { type Id } from "convex/_generated/dataModel";
+import UploadFilesButton from "@/components/upload-files-button";
+
+const formSchema = (showExistingMaterials: boolean) =>
+  z.object({
+    lessonId: z.custom<Id<"lessons">>(),
+    selectedMaterials: showExistingMaterials
+      ? z
+          .array(z.custom<Id<"pdfs">>())
+          .min(1, "Please select at least one material")
+      : z.array(z.custom<Id<"pdfs">>()),
+    uploadedMaterials: !showExistingMaterials
+      ? z.array(z.instanceof(File)).min(1, "Please upload at least one file")
+      : z.array(z.instanceof(File)),
+  });
+
+type FormData = z.infer<ReturnType<typeof formSchema>>;
 
 export const FileUploadPage = () => {
+  const [showExistingMaterials, setShowExistingMaterials] = useState(false);
   const router = useRouter();
-  const {
-    uploadPDFMutation,
-    classId,
-    lessons,
-    materials,
-    addPDFToLessonMutation,
-  } = useClass();
-  const [showUploaded, setShowUploaded] = useState(false);
-  const { lessonId }: { lessonId: string } = useParams();
+  const { lessons, materials, classId } = useClass();
+  const { addPDFToLesson } = useLessonMutations();
+  const { uploadPDF } = useMaterialsMutations();
+  const { lessonId }: { lessonId: Id<"lessons"> } = useParams();
 
-  const form = useForm({
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema(showExistingMaterials)),
     defaultValues: {
-      lesson: String(lessonId),
+      lessonId,
       selectedMaterials: [] as Id<"pdfs">[],
+      uploadedMaterials: [] as File[],
     },
   });
 
+  const { control, watch, getValues, setValue, clearErrors, handleSubmit } =
+    form;
+
+  const uploadedMaterials = watch("uploadedMaterials", []);
+  const selectedMaterials = watch("selectedMaterials", []);
+
   const { startUpload, isUploading } = useUploadThing("pdfUploader", {
-    onClientUploadComplete: (res) => {
+    onClientUploadComplete: async (res) => {
       if (res && res.length > 0) {
-        if (res[0]?.serverData.uploadedBy) {
-          const lesson = form.getValues("lesson");
-          const lessonIds = lesson === "none" ? [] : [lesson];
-          const pdfFiles = res.map((pdf) => ({
-            fileUrl: pdf.ufsUrl,
-            name: pdf.name,
-          }));
+        await uploadPDF({
+          lessonId,
+          pdfFiles: res,
+        });
 
-          void uploadPDFMutation({
-            userId: res[0]?.serverData.uploadedBy,
-            classId,
-            lessonIds,
-            pdfFiles,
-          });
-
-          toast({
-            title: "Success",
-            description: "Uploaded successfully.",
-            variant: "default",
-          });
-
-          router.push(`/app/classes/${classId}/lessons/${lessonId}`);
-        }
+        router.push(`/app/classes/${classId}/lessons/${lessonId}`);
       }
     },
     onUploadError: () => {
@@ -93,26 +89,19 @@ export const FileUploadPage = () => {
     },
   });
 
-  const addPDFToLesson = () => {
-    const selectedMaterials = form.getValues("selectedMaterials");
-    console.log("Selected materials:", selectedMaterials);
+  const handleAddPDFToLesson = async () => {
+    const selectedMaterials = getValues("selectedMaterials");
 
-    void addPDFToLessonMutation({
+    await addPDFToLesson({
       pdfIds: selectedMaterials,
       lessonId: lessonId,
-    });
-
-    toast({
-      title: "Success",
-      description: "Materials added to lesson successfully.",
-      variant: "default",
     });
 
     router.push(`/app/classes/${classId}/lessons/${lessonId}`);
   };
 
   return (
-    <Card className=" m-4">
+    <Card className="m-4">
       <CardHeader>
         <CardTitle>Upload Files</CardTitle>
         <CardDescription>
@@ -122,61 +111,66 @@ export const FileUploadPage = () => {
       <CardContent className="space-y-6">
         <Form {...form}>
           <FormField
-            control={form.control}
-            name="lesson"
+            control={control}
+            name="lessonId"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Lesson</FormLabel>
-                <Select onValueChange={field.onChange} {...field} disabled>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a lesson" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="none">none</SelectItem>
-                    {lessons?.map((lesson) => (
-                      <SelectItem key={lesson._id} value={lesson._id}>
-                        {lesson.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  You can link material to a specific lesson.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
+              <SelectFormItem
+                {...field}
+                items={lessons}
+                label="Lesson"
+                placeholder="Select a lesson"
+                defaultValue="none"
+                onChange={field.onChange}
+                description="You can link material to a specific lesson."
+                disabled
+              />
             )}
           />
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="select-from-uploaded"
-              checked={showUploaded}
-              onCheckedChange={setShowUploaded}
-            />
-            <Label htmlFor="select-from-uploaded">
-              Select from already uploaded materials
-            </Label>
-          </div>
 
-          {!showUploaded ? (
-            <FileUploadView
-              isUploading={isUploading}
-              startUpload={startUpload}
+          <LabeledSwitch
+            id="select-from-uploaded"
+            checked={showExistingMaterials}
+            onCheckedChange={(checked) => {
+              setShowExistingMaterials(checked);
+              clearErrors();
+            }}
+            label="Select from already uploaded materials"
+          />
+
+          {!showExistingMaterials ? (
+            <UploadMaterialsView
+              setValue={setValue}
+              control={control}
+              uploadedMaterials={uploadedMaterials}
             />
           ) : (
-            <ExistingMaterialsView
+            <SelectMaterialsView
               materials={materials}
-              form={form}
+              control={control}
               lessonId={lessonId}
-              addPDFToLesson={addPDFToLesson}
             />
           )}
+
+          <CardFooter>
+            {showExistingMaterials ? (
+              <AddFilesButton
+                selectedMaterials={selectedMaterials}
+                startAdding={handleSubmit(handleAddPDFToLesson)}
+              />
+            ) : (
+              <UploadFilesButton
+                className="w-full"
+                startUpload={() =>
+                  handleSubmit(() => startUpload(uploadedMaterials))()
+                }
+                uploadedMaterials={uploadedMaterials}
+                isUploading={isUploading}
+              />
+            )}
+          </CardFooter>
         </Form>
       </CardContent>
     </Card>
   );
 };
-
 export default FileUploadPage;

@@ -1,6 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { useClass } from "@/providers/class-context-provider";
+import ItemsScrollArea from "@/components/items-scroll-area";
 import {
   Card,
   CardContent,
@@ -8,42 +9,41 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-import { useClass } from "@/providers/class-context-provider";
+import MaterialsList from "./materials-list";
+import Link from "next/link";
 
-import { FileText } from "lucide-react";
+import { Upload } from "lucide-react";
 
-export default function MaterialsSectionComponent() {
-  const { materials, isLoading, error } = useClass();
+import { type Id } from "convex/_generated/dataModel";
+interface MaterialsSectionComponentProps {
+  classId: Id<"classes">;
+}
 
-  // if (isLoading) return <div>Loading materials...</div>;
-  // if (error) return <div>Error: {error}</div>;
-
+export default function MaterialsSectionComponent({
+  classId,
+}: MaterialsSectionComponentProps) {
+  const { materials } = useClass();
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Course Materials</CardTitle>
+        <div className="flex justify-between">
+          <CardTitle>Course Materials</CardTitle>
+
+          <Button asChild>
+            <Link href={`/app/classes/${classId}/file-upload`}>
+              <Upload className="h-4 w-4 mr-2" />
+              Upload Materials
+            </Link>
+          </Button>
+        </div>
         <CardDescription>PDF documents and study materials</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {materials.map((material) => (
-            <div
-              key={material._id}
-              className="flex items-center justify-between p-4 border rounded-lg"
-            >
-              <div className="flex items-center">
-                <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-                <span>{material.fileUrl}</span>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  Preview
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ItemsScrollArea className="h-[650px]">
+          <MaterialsList materials={materials} />
+        </ItemsScrollArea>
       </CardContent>
     </Card>
   );

@@ -1,35 +1,21 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
 
 import { useUser } from "@clerk/nextjs";
 import { api } from "../../convex/_generated/api";
-import { useMutation, useQuery } from "convex/react";
-import {
-  type UploadPDFMutation,
-  type LessonsType,
-  type PDFType,
-  type CreateLessonMutation,
-  type AddPDFToLessonMutation,
-  type CreateLessonWithExistingMaterialsMutation,
-  type CreateLessonWithNewMaterialsMutation,
-} from "@/types/types";
+import { useQuery } from "convex/react";
 
+import { type LessonsType, type PDFType } from "@/types/types";
+import { type Id } from "convex/_generated/dataModel";
 // TODO:
 // 1. Add correct types for mutations
 // 2. Add correct loading and error state
 
 interface ClassContextType {
-  classId: string;
+  classId: Id<"classes">;
   userId?: string;
-  materials: PDFType[]; // Replace `any` with your material type
+  materials: PDFType[] | undefined; // Replace `any` with your material type
   lessons: LessonsType[] | undefined;
-  uploadPDFMutation: UploadPDFMutation;
-  createLessonWithNewMaterialsMutation: CreateLessonWithNewMaterialsMutation;
-  createLessonMutation: CreateLessonMutation;
-  addPDFToLessonMutation: AddPDFToLessonMutation;
-  createLessonWithExistingMaterialsMutation: CreateLessonWithExistingMaterialsMutation;
-  isLoading: boolean;
-  error: string | null;
 }
 
 const ClassContext = createContext<ClassContextType | null>(null);
@@ -38,11 +24,9 @@ export function ClassProvider({
   classId,
   children,
 }: {
-  classId: string;
+  classId: Id<"classes">;
   children: React.ReactNode;
 }) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const { user } = useUser(); // Clerk provides the logged-in user
   const userId = user?.id;
 
@@ -52,31 +36,13 @@ export function ClassProvider({
   // TODO: check if queries by both user and class
   const lessons = useQuery(api.lessons.getLessonsByClass, { classId });
 
-  // Mutations
-  const uploadPDFMutation = useMutation(api.materials.uploadPdf);
-  const createLessonMutation = useMutation(api.lessons.createLesson);
-  const createLessonWithNewMaterialsMutation = useMutation(
-    api.lessons.createLessonWithNewMaterials
-  );
-  const addPDFToLessonMutation = useMutation(api.lessons.addPDFToLesson);
-  const createLessonWithExistingMaterialsMutation = useMutation(
-    api.lessons.createLessonWithExistingMaterials
-  );
-
   return (
     <ClassContext.Provider
       value={{
         classId,
         userId,
-        materials: materials as PDFType[] | [],
+        materials: materials as PDFType[] | undefined,
         lessons: lessons as LessonsType[] | undefined,
-        uploadPDFMutation,
-        createLessonWithNewMaterialsMutation,
-        createLessonMutation,
-        addPDFToLessonMutation,
-        createLessonWithExistingMaterialsMutation,
-        isLoading,
-        error,
       }}
     >
       {children}

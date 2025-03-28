@@ -15,6 +15,7 @@ import { Headphones } from "lucide-react";
 import { type Id } from "convex/_generated/dataModel";
 
 import TestsSection from "./components/tests-section";
+
 export default async function ClassPage({
   params,
 }: {

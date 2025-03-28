@@ -12,6 +12,12 @@
 // - check why uploading calls 3 requests and is so slow ///
 // - change new-class/lesson to create-class/lesson
 
+// for selecting the lessons for test generation use table for lessons. 
+// e.g. in table render all lessons. 
+// --- single lesson -> table acts like radio button (after selecting one element disable all other)
+// --- multiple lesson -> table acts like checkbox list (after selecting all elements trigger selecting whole class testing)
+// --- class test -> table selects all checkboxes in table and disables unchecking
+
 # MVP Plan for Teach.me
 ✅ Core Features
 User Authentication (NextAuth.js or Clerk)

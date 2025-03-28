@@ -25,4 +25,19 @@ export default defineSchema({
   })
     .index("by_class_user", ["classId", "userId"]) // ✅ Add an index for queries
     .index("by_lessonId", ["lessonIds"]), // Index for lessonIds
+
+  tests: defineTable({
+    userId: v.string(),
+    classId: v.string(),
+    title: v.string(),
+    description: v.string(),
+    questions: v.array(
+      v.object({
+        questionText: v.string(),
+        questionType: v.string(),
+        availableAnswers: v.array(v.string()),
+        correctAnswer: v.array(v.string()),
+      })
+    ),
+  }),
 });

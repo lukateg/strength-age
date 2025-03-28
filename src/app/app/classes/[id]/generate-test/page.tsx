@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,7 +24,14 @@ import {
   SplitSquareHorizontal,
   Settings2,
 } from "lucide-react";
-
+import { FormField } from "@/components/ui/form";
+import { FormControl, FormItem } from "@/components/ui/form";
+import ItemsScrollArea from "@/components/items-scroll-area";
+import CheckboxListItem from "@/components/checkbox-list-item";
+import { useClass } from "@/providers/class-context-provider";
+import { type Id } from "convex/_generated/dataModel";
+import { api } from "../../../../../../convex/_generated/api";
+import { useQuery } from "convex/react";
 type TestFormValues = {
   testName: string;
   description: string;
@@ -34,16 +41,15 @@ type TestFormValues = {
   difficulty: number;
   questionTypes: string[];
   lessonQuestions: Record<string, number>;
+  lessons: Id<"lessons">[];
 };
 
 export default function CreateTest() {
-  const {
-    register,
-    watch,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<TestFormValues>({
+  //   const lessonsById = useQuery(api.lessons.getPDFsByLessonId, {
+  //     lessonId: classId as Id<"lessons">,
+  //   });
+  const { lessons } = useClass();
+  const form = useForm<TestFormValues>({
     defaultValues: {
       scope: "single",
       distribution: "equal",
@@ -55,8 +61,11 @@ export default function CreateTest() {
         "2": 10,
         "3": 10,
       },
+      lessons: [],
     },
   });
+
+  const { control, watch, setValue, handleSubmit, register } = form;
 
   const scope = watch("scope");
   const distribution = watch("distribution");
@@ -73,14 +82,25 @@ export default function CreateTest() {
   const questionTypes = [
     { id: "multiple-choice", label: "Multiple Choice" },
     { id: "true-false", label: "True/False" },
-    { id: "fill-blanks", label: "Fill in the Blanks" },
+    // { id: "fill-blanks", label: "Fill in the Blanks" },
     { id: "short-answer", label: "Short Answer" },
-    { id: "mixed", label: "Mixed (AI-generated)" },
+    // { id: "mixed", label: "Mixed (AI-generated)" },
   ];
 
-  const onSubmit = (data: TestFormValues) => {
-    console.log(data, "working");
-    // Handle form submission
+  const onSubmit = async (formData: TestFormValues) => {
+    const response = await fetch("/api/generateTest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        lessonId: formData.lessons[0],
+        questionAmount: 10,
+      }),
+    });
+
+    // TODO: add schema type
+    const data = (await response.json()) as { response: string };
+
+    console.log("Generated Test:", data);
   };
 
   const renderQuestionConfiguration = () => {
@@ -188,137 +208,189 @@ export default function CreateTest() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <form onSubmit={handleSubmit(onSubmit)} className="mx-auto space-y-8">
-        <div className="grid gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-              <CardDescription>
-                Set the basic details for your test
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="test-name">Test Name (optional)</Label>
-                <Input
-                  id="test-name"
-                  placeholder="Enter test name or let AI generate one"
-                  {...register("testName")}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="test-description">Description (optional)</Label>
-                <Textarea
-                  id="test-description"
-                  placeholder="Add a description to help organize your tests"
-                  className="resize-none"
-                  {...register("description")}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Test Scope</CardTitle>
-              <CardDescription>
-                Select what content to include in the test
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <RadioGroup
-                value={scope}
-                onValueChange={(value) =>
-                  setValue("scope", value as "single" | "multiple" | "whole")
-                }
-                className="grid gap-4"
-              >
-                <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors">
-                  <RadioGroupItem value="single" id="single" />
-                  <Label htmlFor="single" className="flex items-center gap-2">
-                    <BookOpen className="h-4 w-4" />
-                    Single Lesson
-                  </Label>
+      <Form {...form}>
+        <form onSubmit={handleSubmit(onSubmit)} className="mx-auto space-y-8">
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Basic Information</CardTitle>
+                <CardDescription>
+                  Set the basic details for your test
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="test-name">Test Name (optional)</Label>
+                  <Input
+                    id="test-name"
+                    placeholder="Enter test name or let AI generate one"
+                    {...register("testName")}
+                  />
                 </div>
-                <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors">
-                  <RadioGroupItem value="multiple" id="multiple" />
-                  <Label htmlFor="multiple" className="flex items-center gap-2">
-                    <School className="h-4 w-4" />
-                    Multiple Lessons
+                <div className="space-y-2">
+                  <Label htmlFor="test-description">
+                    Description (optional)
                   </Label>
+                  <Textarea
+                    id="test-description"
+                    placeholder="Add a description to help organize your tests"
+                    className="resize-none"
+                    {...register("description")}
+                  />
                 </div>
-                <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors">
-                  <RadioGroupItem value="whole" id="whole" />
-                  <Label htmlFor="whole" className="flex items-center gap-2">
-                    <Brain className="h-4 w-4" />
-                    Whole Class
-                  </Label>
-                </div>
-              </RadioGroup>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Question Configuration</CardTitle>
-              <CardDescription>
-                Configure the number and types of questions
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {renderQuestionConfiguration()}
-
-              <div className="space-y-4">
-                <Label>Question Types</Label>
-                <ScrollArea className="h-[200px] rounded-md border p-4">
-                  <div className="space-y-4">
-                    {questionTypes.map((type) => (
-                      <div
-                        key={type.id}
-                        className="flex items-center space-x-2"
-                      >
-                        <Checkbox
-                          id={type.id}
-                          {...register("questionTypes")}
-                          value={type.id}
-                        />
-                        <label
-                          htmlFor={type.id}
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          {type.label}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </div>
-
-              <div className="space-y-4">
-                <Label>Difficulty Level: {difficulty}%</Label>
-                <Slider
-                  value={[difficulty]}
+            <Card>
+              <CardHeader>
+                <CardTitle>Test Scope</CardTitle>
+                <CardDescription>
+                  Select what content to include in the test
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RadioGroup
+                  value={scope}
                   onValueChange={(value) =>
-                    setValue("difficulty", value[0] ?? 0)
+                    setValue("scope", value as "single" | "multiple" | "whole")
                   }
-                  max={100}
-                  step={10}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>Easy</span>
-                  <span>Medium</span>
-                  <span>Hard</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                  className="grid gap-4"
+                >
+                  <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors">
+                    <RadioGroupItem value="single" id="single" />
+                    <Label htmlFor="single" className="flex items-center gap-2">
+                      <BookOpen className="h-4 w-4" />
+                      Single Lesson
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors">
+                    <RadioGroupItem value="multiple" id="multiple" />
+                    <Label
+                      htmlFor="multiple"
+                      className="flex items-center gap-2"
+                    >
+                      <School className="h-4 w-4" />
+                      Multiple Lessons
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors">
+                    <RadioGroupItem value="whole" id="whole" />
+                    <Label htmlFor="whole" className="flex items-center gap-2">
+                      <Brain className="h-4 w-4" />
+                      Whole Class
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </CardContent>
+            </Card>
 
-          <Button type="submit" size="lg" className="w-full">
-            Generate Test
-          </Button>
-        </div>
-      </form>
+            {/* LESSONS SELECTION */}
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Lessons Selection</CardTitle>
+                <CardDescription>
+                  Select the lessons you want to include in the test
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={control}
+                  name="lessons"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <ItemsScrollArea>
+                          {lessons?.map((lesson) => (
+                            <CheckboxListItem
+                              key={lesson._id}
+                              checked={field.value.includes(lesson._id)}
+                              onCheckedChange={(checked) =>
+                                field.onChange(
+                                  checked
+                                    ? [...field.value, lesson._id]
+                                    : field.value.filter(
+                                        (id) => id !== lesson._id
+                                      )
+                                )
+                              }
+                              //   disabled={shouldDisableItem?.(pdf)}
+                            >
+                              <div>
+                                <p className="font-base">{lesson.title}</p>
+                              </div>
+                            </CheckboxListItem>
+                          ))}
+                        </ItemsScrollArea>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Question Configuration</CardTitle>
+                <CardDescription>
+                  Configure the number and types of questions
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {renderQuestionConfiguration()}
+
+                <div className="space-y-4">
+                  <Label>Question Types</Label>
+                  <ScrollArea className="h-[200px] rounded-md border p-4">
+                    <div className="space-y-4">
+                      {questionTypes.map((type) => (
+                        <div
+                          key={type.id}
+                          className="flex items-center space-x-2"
+                        >
+                          <Checkbox
+                            id={type.id}
+                            {...register("questionTypes")}
+                            value={type.id}
+                          />
+                          <label
+                            htmlFor={type.id}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {type.label}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+
+                <div className="space-y-4">
+                  <Label>Difficulty Level: {difficulty}%</Label>
+                  <Slider
+                    value={[difficulty]}
+                    onValueChange={(value) =>
+                      setValue("difficulty", value[0] ?? 0)
+                    }
+                    max={100}
+                    step={10}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Easy</span>
+                    <span>Medium</span>
+                    <span>Hard</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Button type="submit" size="lg" className="w-full">
+              Generate Test
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }

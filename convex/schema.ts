@@ -35,7 +35,7 @@ export default defineSchema({
       v.object({
         questionText: v.string(),
         questionType: v.string(),
-        availableAnswers: v.array(v.string()),
+        availableAnswers: v.optional(v.array(v.string())),
         correctAnswer: v.array(v.string()),
       })
     ),

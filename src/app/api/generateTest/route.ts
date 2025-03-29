@@ -5,7 +5,7 @@ import { api } from "convex/_generated/api";
 import axios from "axios";
 import pdfParse from "pdf-parse";
 import { type Id } from "convex/_generated/dataModel";
-import { z } from "zod";
+import { testSchema } from "@/lib/schemas";
 
 const getFormatForType = (type: string) => {
   if (type === "multiple_choice") {
@@ -34,7 +34,7 @@ const getFormatForType = (type: string) => {
   return null;
 };
 
-const selectedTypes = ["multiple_choice", "true_false"]; // Example from user input
+// const selectedTypes = ["multiple_choice", "true_false"]; // Example from user input
 // TODO: check if needed / Add this to use Node.js runtime
 export const runtime = "nodejs";
 
@@ -45,45 +45,15 @@ if (!process.env.GEMINI_API_KEY) {
 // Initialize with API version
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Zod schemas for data validation
-const multipleChoiceSchema = z.object({
-  questionText: z.string(),
-  questionType: z.literal("multiple_choice"),
-  availableAnswers: z.array(z.string()).min(2), // Ensure at least two options
-  correctAnswer: z.array(z.string()).min(1), // Ensure at least one correct answer
-});
-
-const trueFalseSchema = z.object({
-  questionText: z.string(),
-  questionType: z.literal("true_false"),
-  availableAnswers: z.array(z.literal("True").or(z.literal("False"))).length(2), // Exactly two options: "True" and "False"
-  correctAnswer: z.array(z.literal("True").or(z.literal("False"))).min(1), // At least one correct answer, either "True" or "False"
-});
-
-const shortAnswerSchema = z.object({
-  questionText: z.string(),
-  questionType: z.literal("short_answer"),
-  correctAnswer: z.array(z.string()).length(1), //  Exactly one correct answer
-});
-
-const questionSchema = z.union([
-  multipleChoiceSchema,
-  trueFalseSchema,
-  shortAnswerSchema,
-]);
-
-const testSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  questions: z.array(questionSchema).min(1), // Ensure at least one question
-});
-
 export async function POST(req: NextRequest) {
   try {
-    const { lessonId, questionAmount } = (await req.json()) as {
-      lessonId?: Id<"lessons">;
-      questionAmount?: number;
-    };
+    const { lessonId, questionAmount, questionTypes, difficulty } =
+      (await req.json()) as {
+        lessonId?: Id<"lessons">;
+        questionAmount?: number;
+        questionTypes: string[];
+        difficulty: number;
+      };
 
     if (!lessonId || !questionAmount) {
       return Response.json(
@@ -146,15 +116,15 @@ export async function POST(req: NextRequest) {
     const outputExample = {
       title: "Generated or user-provided title",
       description: "Generated or user-provided description",
-      questions: selectedTypes.map((type) => getFormatForType(type)),
+      questions: questionTypes.map((type) => getFormatForType(type)),
     };
     const prompt = `
     You are an AI designed to create quizzes in JSON format.
     Your task is to generate a quiz based on the provided lesson materials, ensuring the quiz adheres strictly to a predefined JSON schema.
 
     **Instructions:**
-
-    2.  **Question Types:** The quiz should only include the following question types: ${selectedTypes.join(
+    1.  **Difficulty Level:** On a scale of 0 to 100, the quiz should be at the difficulty level of ${difficulty}%.
+    2.  **Question Types:** The quiz should only include the following question types: ${questionTypes.join(
       ", "
     )}.
     3.  **Multiple Choice:** For multiple-choice questions, provide 4 answer options, with at least one and potentially multiple correct answers.
@@ -178,19 +148,17 @@ export async function POST(req: NextRequest) {
         // TODO: add schema type
         // responseSchema: testSchema,
       },
-    }); // Specify the model
+    });
 
     // Generate test using Gemini
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
-    console.log("Raw Gemini Response:", responseText); // Log raw response for debugging.
 
     try {
       const parsedData = JSON.parse(responseText) as Record<string, unknown>;
       const validatedData = testSchema.parse(parsedData); // Validate the parsed JSON
 
       return Response.json({ response: validatedData }); // Return validated data
-      // return Response.json({ response: parsedData }); // Return validated data
     } catch (parseError) {
       console.error("Error parsing or validating JSON:", parseError);
       return Response.json(

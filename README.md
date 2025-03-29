@@ -18,6 +18,14 @@
 // --- multiple lesson -> table acts like checkbox list (after selecting all elements trigger selecting whole class testing)
 // --- class test -> table selects all checkboxes in table and disables unchecking
 
+// -- Refactor form
+// -- create proper retry logic when calling AI
+// -- refactor create test route
+// -- extract logic for parsing the PDF
+// -- hook up all form inputs to the AI route
+// -- implement proper lesson/class selection in form (tanstack table maybe)
+
+
 # MVP Plan for Teach.me
 ✅ Core Features
 User Authentication (NextAuth.js or Clerk)

@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { LessonSelectView } from "./components/lesson-select-view";
 import { useClass } from "@/providers/class-context-provider";
 
 import QuestionConfigurationView from "./components/question-configuration-view";
-import SelectLessonView from "./components/select-lesson-view";
 import TestScopeView from "./components/test-scope-view";
 import BasicInformationView from "./components/basic-information-view";
 
@@ -60,15 +60,7 @@ export default function CreateTest() {
   // const difficulty = watch("difficulty");
 
   const onSubmit = async (formData: TestFormValues) => {
-    console.log(
-      {
-        lessonId: formData.lessons[0],
-        questionAmount: formData.questionAmount,
-        questionTypes: formData.questionTypes,
-        difficulty: formData.difficulty,
-      },
-      "route params"
-    );
+    console.log(formData, "form data");
     const response = await fetch("/api/generateTest", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -102,7 +94,7 @@ export default function CreateTest() {
 
             <TestScopeView scope={scope} setValue={setValue} />
 
-            <SelectLessonView control={control} lessons={lessons} />
+            <LessonSelectView lessons={lessons} control={control} />
 
             <QuestionConfigurationView
               control={control}

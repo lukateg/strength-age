@@ -6,7 +6,7 @@ import { api } from "../../convex/_generated/api";
 import { useQuery } from "convex/react";
 
 import { type LessonsType, type PDFType } from "@/types/types";
-import { type Id } from "convex/_generated/dataModel";
+import { type Doc, type Id } from "convex/_generated/dataModel";
 // TODO:
 // 1. Add correct types for mutations
 // 2. Add correct loading and error state
@@ -16,6 +16,7 @@ interface ClassContextType {
   userId?: string;
   materials: PDFType[] | undefined; // Replace `any` with your material type
   lessons: LessonsType[] | undefined;
+  tests: Doc<"tests">[] | undefined;
 }
 
 const ClassContext = createContext<ClassContextType | null>(null);
@@ -35,6 +36,7 @@ export function ClassProvider({
   const materials = useQuery(api.materials.getAllPDFs, { classId, userId });
   // TODO: check if queries by both user and class
   const lessons = useQuery(api.lessons.getLessonsByClass, { classId });
+  const tests = useQuery(api.tests.getAllTests, { classId });
 
   return (
     <ClassContext.Provider
@@ -43,6 +45,7 @@ export function ClassProvider({
         userId,
         materials: materials as PDFType[] | undefined,
         lessons: lessons as LessonsType[] | undefined,
+        tests: tests,
       }}
     >
       {children}

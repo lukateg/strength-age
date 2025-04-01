@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 export const createTest = mutation({
   args: {
@@ -25,5 +25,18 @@ export const createTest = mutation({
       classId: args.classId,
     });
     return testId;
+  },
+});
+
+export const getAllTests = query({
+  args: {
+    classId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const tests = await ctx.db
+      .query("tests")
+      .filter((q) => q.eq(q.field("classId"), args.classId))
+      .collect();
+    return tests;
   },
 });

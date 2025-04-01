@@ -11,7 +11,7 @@ import { Progress } from "@/components/ui/progress";
 
 import { testData } from "@/lib/mock-data";
 
-export type Question = {
+export type TestQuestion = {
   questionText: string;
   questionType: "multiple_choice" | "short_answer" | "true_false";
   availableAnswers?: string[];
@@ -39,7 +39,7 @@ export default function TestPage() {
     }));
   };
 
-  const renderQuestion = (question: Question, index: number) => {
+  const renderQuestion = (question: TestQuestion, index: number) => {
     const globalIndex = startIndex + index;
 
     switch (question.questionType) {

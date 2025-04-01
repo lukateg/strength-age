@@ -1,4 +1,4 @@
-import { Question } from "@/app/app/tests/[testId]/page";
+import { type TestQuestion } from "@/app/app/tests/[testId]/page";
 
 export const testData = {
   title: "JavaScript Fundamentals Quiz",
@@ -69,5 +69,5 @@ export const testData = {
         "Returns a string indicating the data type of a variable",
       ],
     },
-  ] as Question[],
+  ] as TestQuestion[],
 };

@@ -1,3 +1,9 @@
+"use client";
+
+import Link from "next/link";
+
+import { useClass } from "@/providers/class-context-provider";
+
 import {
   Card,
   CardContent,
@@ -5,13 +11,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+
 import ItemsScrollArea from "@/components/items-scroll-area";
 import TestsList from "./tests-list";
 
+import { Upload } from "lucide-react";
+
 export default function TestsSection({ classId }: { classId: string }) {
+  const { tests } = useClass();
+
   return (
     <Card>
       <CardHeader>
@@ -31,7 +40,7 @@ export default function TestsSection({ classId }: { classId: string }) {
       </CardHeader>
       <CardContent>
         <ItemsScrollArea className="h-[650px]">
-          <TestsList />
+          <TestsList tests={tests} />
         </ItemsScrollArea>
       </CardContent>
     </Card>

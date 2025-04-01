@@ -25,6 +25,10 @@
 // -- hook up all form inputs to the AI route
 // -- implement proper lesson/class selection in form (tanstack table maybe)
 
+-- ADD tanstack table for lessons selection
+-- hook up test page with real AI data
+-- implement view tests page so you can open already generated test to not use AI tokens 
+
 
 # MVP Plan for Teach.me
 ✅ Core Features

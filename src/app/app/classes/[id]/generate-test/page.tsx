@@ -89,7 +89,7 @@ export default function CreateTest() {
       classId,
     });
 
-    // router.push(`/app/classes/${classId}/tests/${testId}`);
+    router.push(`/app/tests/${testId}`);
     console.log("Test ID:", testId);
   };
 

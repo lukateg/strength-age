@@ -30,7 +30,7 @@ export default defineSchema({
     userId: v.string(),
     classId: v.string(),
     title: v.string(),
-    description: v.string(),
+    description: v.optional(v.string()),
     questions: v.array(
       v.object({
         questionText: v.string(),

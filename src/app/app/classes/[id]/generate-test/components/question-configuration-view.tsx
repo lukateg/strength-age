@@ -75,25 +75,7 @@ export default function QuestionConfigurationView({
           watch,
           setValue,
         })}
-        {distribution === "equal" ? (
-          <div className="space-y-4">
-            <Label>Total Questions: {questionAmount}</Label>
-            <Slider
-              value={[questionAmount]}
-              onValueChange={(value) =>
-                setValue("questionAmount", value[0] ?? 0)
-              }
-              max={50}
-              min={5}
-              step={5}
-              className="w-full"
-            />
-            <p className="text-sm text-muted-foreground">
-              Each lesson will have{" "}
-              {Math.floor(questionAmount / SELECTED_LESSONS.length)} questions
-            </p>
-          </div>
-        ) : (
+        {distribution === "custom" ? (
           <div className="space-y-4">
             <Label>Questions per Lesson</Label>
             <div className="space-y-4">
@@ -121,6 +103,24 @@ export default function QuestionConfigurationView({
                 (a, b) => (typeof b === "number" ? a + b : a),
                 0
               )}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <Label>Total Questions: {questionAmount}</Label>
+            <Slider
+              value={[questionAmount]}
+              onValueChange={(value) =>
+                setValue("questionAmount", value[0] ?? 0)
+              }
+              max={50}
+              min={5}
+              step={5}
+              className="w-full"
+            />
+            <p className="text-sm text-muted-foreground">
+              Each lesson will have{" "}
+              {Math.floor(questionAmount / SELECTED_LESSONS.length)} questions
             </p>
           </div>
         )}
@@ -232,13 +232,13 @@ const renderQuestionConfiguration = ({
                 </span>
               </Label>
             </div>
-            <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors">
+            {/* <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors">
               <RadioGroupItem value="custom" id="custom" />
               <Label htmlFor="custom" className="flex items-center gap-2">
                 <Settings2 className="h-4 w-4" />
                 Custom per lesson
               </Label>
-            </div>
+            </div> */}
             <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors">
               <RadioGroupItem value="proportional" id="proportional" />
               <Label htmlFor="proportional" className="flex items-center gap-2">

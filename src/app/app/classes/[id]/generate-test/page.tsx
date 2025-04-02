@@ -62,7 +62,7 @@ export default function CreateTest() {
   const onSubmit = async (formData: TestFormValues) => {
     // console.log(formData, "form data");
     if (formData.lessons.length === 1) {
-      const response = await fetch("/api/generateTest", {
+      const response = await fetch("/api/generateTestFromLesson", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -87,7 +87,7 @@ export default function CreateTest() {
           questionAmount: formData.questionAmount,
           questionTypes: formData.questionTypes,
           difficulty: formData.difficulty,
-          distribution: formData.distribution,
+          questionDistribution: formData.distribution,
         }),
       });
       const data = (await response.json()) as { response: testType };

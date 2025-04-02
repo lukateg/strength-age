@@ -65,13 +65,13 @@ export async function POST(req: NextRequest) {
       questionAmount,
       questionTypes,
       difficulty,
-      distribution,
+      questionDistribution,
     } = (await req.json()) as {
       lessonIds?: Id<"lessons">[];
       questionAmount?: number;
       questionTypes: string[];
       difficulty: number;
-      distribution: string;
+      questionDistribution: "equal" | "proportional"; // Specify the allowed values
     };
 
     if (!lessonIds || !questionAmount) {
@@ -80,11 +80,6 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-
-    // Calculate questions per lesson
-    const questionsPerLesson = Math.floor(questionAmount / lessonIds.length);
-    // Handle any remaining questions (if questionAmount isn't perfectly divisible)
-    const remainingQuestions = questionAmount % lessonIds.length;
 
     // Fetch PDFs for each lesson and store them in nested arrays
     const lessonPdfs = await Promise.all(
@@ -172,15 +167,73 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // Calculate questions per lesson based on distribution type
+    let questionsPerLesson: number[] = [];
+    if (questionDistribution === "proportional") {
+      // First, get all text content and calculate total length
+      const allTexts = filteredTexts.map((lessonTexts) =>
+        lessonTexts.join("\n\n")
+      );
+      const totalLength = allTexts.reduce((sum, text) => sum + text.length, 0);
+      // Calculate proportional questions for each lesson
+      questionsPerLesson = allTexts.map((text) => {
+        const proportion = text.length / totalLength;
+        return Math.round(questionAmount * proportion);
+      });
+
+      // Adjust for rounding errors to ensure total equals questionAmount
+      const totalAllocated = questionsPerLesson.reduce(
+        (sum, num) => sum + num,
+        0
+      );
+      const difference = questionAmount - totalAllocated;
+
+      if (difference !== 0) {
+        // Add or subtract the difference from the longest lesson
+        const longestLessonIndex = allTexts.findIndex(
+          (text) => text.length === Math.max(...allTexts.map((t) => t.length))
+        );
+
+        // Add type guard to ensure index exists
+        if (
+          longestLessonIndex !== -1 &&
+          questionsPerLesson[longestLessonIndex] !== undefined
+        ) {
+          questionsPerLesson[longestLessonIndex] += difference;
+        } else {
+          // Fallback: distribute remaining questions to the first lesson
+          if (
+            questionsPerLesson.length > 0 &&
+            questionsPerLesson[0] !== undefined
+          ) {
+            questionsPerLesson[0] += difference;
+          } else {
+            // If we somehow have no valid elements in the array, log an error
+            console.error(
+              "Unable to allocate remaining questions - invalid array state"
+            );
+          }
+        }
+      }
+    } else {
+      // Equal distribution (existing logic)
+      const baseQuestionsPerLesson = Math.floor(
+        questionAmount / lessonIds.length
+      );
+      const remainingQuestions = questionAmount % lessonIds.length;
+
+      questionsPerLesson = lessonIds.map((_, index) =>
+        index < remainingQuestions
+          ? baseQuestionsPerLesson + 1
+          : baseQuestionsPerLesson
+      );
+    }
+
     // Process each lesson's filtered texts and generate AI responses
     const aiResponses = await Promise.all(
       filteredTexts.map(async (lessonTexts, index) => {
         const combinedText = lessonTexts.join("\n\n");
-        // Add extra question to first few lessons if there are remaining questions
-        const currentLessonQuestions =
-          index < remainingQuestions
-            ? questionsPerLesson + 1
-            : questionsPerLesson;
+        const currentLessonQuestions = questionsPerLesson[index];
 
         const prompt = `
           You are an AI designed to create quizzes in JSON format.

@@ -9,6 +9,17 @@ import { testSchema } from "@/lib/schemas";
 import { type NextRequest } from "next/server";
 import { type Id } from "convex/_generated/dataModel";
 
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = shuffled[i]!;
+    shuffled[i] = shuffled[j]!;
+    shuffled[j] = temp;
+  }
+  return shuffled;
+}
+
 const getFormatForType = (type: string) => {
   if (type === "multiple_choice") {
     return {
@@ -69,6 +80,12 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Calculate questions per lesson
+    const questionsPerLesson = Math.floor(questionAmount / lessonIds.length);
+    // Handle any remaining questions (if questionAmount isn't perfectly divisible)
+    const remainingQuestions = questionAmount % lessonIds.length;
+
     // Fetch PDFs for each lesson and store them in nested arrays
     const lessonPdfs = await Promise.all(
       lessonIds.map(async (lessonId) => {
@@ -78,12 +95,6 @@ export async function POST(req: NextRequest) {
         return pdfsForLesson; // Each element will be an array of PDFs for that lesson
       })
     );
-
-    // Flatten into single array for processing
-    // const pdfs = lessonPdfs.flat();
-    // const pdfs = await fetchQuery(api.lessons.getPDFsByLessonId, {
-    //   lessonId: lessonIds[0]!,
-    // });
 
     if (!lessonPdfs.length) {
       return Response.json(
@@ -163,21 +174,26 @@ export async function POST(req: NextRequest) {
 
     // Process each lesson's filtered texts and generate AI responses
     const aiResponses = await Promise.all(
-      filteredTexts.map(async (lessonTexts) => {
+      filteredTexts.map(async (lessonTexts, index) => {
         const combinedText = lessonTexts.join("\n\n");
+        // Add extra question to first few lessons if there are remaining questions
+        const currentLessonQuestions =
+          index < remainingQuestions
+            ? questionsPerLesson + 1
+            : questionsPerLesson;
 
         const prompt = `
           You are an AI designed to create quizzes in JSON format.
-          Your task is to generate a quiz based on the provided lesson materials, ensuring the quiz adheres strictly to a predefined JSON schema.
-
+          Your task is to generate exactly ${currentLessonQuestions} questions based on the provided lesson materials.
+          The questions must be strictly based on the content from this specific lesson material only.
+          
           **Instructions:**
-          1.  **Difficulty Level:** On a scale of 0 to 100, the quiz should be at the difficulty level of ${difficulty}%.
-          2.  **Question Types:** The quiz should only include the following question types: ${questionTypes.join(", ")}.
-          3.  **Multiple Choice:** For multiple-choice questions, provide 4 answer options, with at least one and potentially multiple correct answers.
-          4.  **True/False:**  For true/false questions, use "True" and "False" as the only answer options.
-          5.  **Content:** The quiz questions must be based on the lesson content provided.
-          6.  **Title and Description:**  If the user hasn't provided a title or description, generate a relevant title and description for the quiz.
-          7.  **Question Count:** Generate exactly ${questionAmount} questions.
+          1.  **Difficulty Level:** ${difficulty}%
+          2.  **Question Types:** ${questionTypes.join(", ")}
+          3.  **Question Count:** Generate exactly ${currentLessonQuestions} questions
+          4.  **Multiple Choice:** For multiple-choice questions, provide 4 answer options, with at least one and potentially multiple correct answers.
+          5.  **True/False:**  For true/false questions, use "True" and "False" as the only answer options.
+          6.  **Content:** The quiz questions must be based on the lesson content provided.
 
           **Example Output:**
           ${JSON.stringify(outputExample, null, 2)}
@@ -193,8 +209,8 @@ export async function POST(req: NextRequest) {
             string,
             unknown
           >;
-          return parsedData;
-          //   return testSchema.parse(parsedData);
+          const validatedData = testSchema.parse(parsedData);
+          return validatedData;
         } catch (error) {
           console.error("Error generating quiz for lesson:", error);
           return null;
@@ -203,18 +219,30 @@ export async function POST(req: NextRequest) {
     );
 
     // Filter out any failed generations
-    // const successfulResponses = aiResponses.filter(
-    //   (response): response is NonNullable<typeof response> => response !== null
-    // );
+    const successfulResponses = aiResponses.filter(
+      (response): response is NonNullable<typeof response> => response !== null
+    );
 
-    // if (!successfulResponses.length) {
-    //   return Response.json(
-    //     { error: "Failed to generate any valid quizzes" },
-    //     { status: 500 }
-    //   );
-    // }
+    if (!successfulResponses.length) {
+      return Response.json(
+        { error: "Failed to generate any valid quizzes" },
+        { status: 500 }
+      );
+    }
 
-    return Response.json({ response: aiResponses });
+    const allQuestions = aiResponses.flatMap(
+      (response) => response?.questions ?? []
+    );
+    const shuffledQuestions = shuffleArray(allQuestions);
+
+    // Combine all questions into a single test
+    const combinedTest = {
+      title: "Comprehensive Test", // You can generate a better title
+      description: "Test covering multiple lessons", // You can generate a better description
+      questions: shuffledQuestions,
+    };
+
+    return Response.json({ response: combinedTest });
     // return Response.json({ response: successfulResponses });
   } catch (error) {
     console.error("Error generating test:", error);

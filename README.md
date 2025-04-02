@@ -23,11 +23,21 @@
 // -- refactor create test route
 // -- extract logic for parsing the PDF
 // -- hook up all form inputs to the AI route
-// -- implement proper lesson/class selection in form (tanstack table maybe)
-
--- ADD tanstack table for lessons selection
--- hook up test page with real AI data
 -- implement view tests page so you can open already generated test to not use AI tokens 
+
+TOMOROW:
+-- implement multiple lessons test generating
+-- implement custom question number per lesson
+-- add Proportional Question Allocation
+-- add chunking text prompt
+
+LATER:
+-- implement loading when generating test
+-- implement test review
+-- store review in database
+
+LATER: 
+-- implement responsive menu and mobile version and start implementing test generator page
 
 
 # MVP Plan for Teach.me

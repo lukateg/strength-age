@@ -239,6 +239,16 @@ const renderQuestionConfiguration = ({
                 Custom per lesson
               </Label>
             </div>
+            <div className="flex items-center space-x-2 rounded-lg border p-4 hover:bg-muted/50 transition-colors">
+              <RadioGroupItem value="proportional" id="proportional" />
+              <Label htmlFor="proportional" className="flex items-center gap-2">
+                <Settings2 className="h-4 w-4" />
+                Proportional per lesson
+                <span className="text-sm text-muted-foreground">
+                  (let AI decide how many questions per lesson)
+                </span>
+              </Label>
+            </div>
           </RadioGroup>
         </div>
       </>

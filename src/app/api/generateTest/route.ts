@@ -47,23 +47,24 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
-    const { lessonId, questionAmount, questionTypes, difficulty } =
+    const { lessonIds, questionAmount, questionTypes, difficulty } =
       (await req.json()) as {
-        lessonId?: Id<"lessons">;
+        lessonIds?: Id<"lessons">[];
         questionAmount?: number;
         questionTypes: string[];
         difficulty: number;
       };
 
-    if (!lessonId || !questionAmount) {
+    if (!lessonIds || !questionAmount) {
       return Response.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
+    // Flatten array of arrays into single array of PDFs
     const pdfs = await fetchQuery(api.lessons.getPDFsByLessonId, {
-      lessonId,
+      lessonId: lessonIds[0]!,
     });
 
     if (!pdfs.length) {

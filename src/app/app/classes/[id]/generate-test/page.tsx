@@ -60,29 +60,47 @@ export default function CreateTest() {
   // const difficulty = watch("difficulty");
 
   const onSubmit = async (formData: TestFormValues) => {
-    console.log(formData, "form data");
-    const response = await fetch("/api/generateTest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        lessonId: formData.lessons[0],
-        questionAmount: formData.questionAmount,
-        questionTypes: formData.questionTypes,
-        difficulty: formData.difficulty,
-      }),
-    });
+    // console.log(formData, "form data");
+    if (formData.lessons.length === 1) {
+      const response = await fetch("/api/generateTest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lessonIds: formData.lessons,
+          questionAmount: formData.questionAmount,
+          questionTypes: formData.questionTypes,
+          difficulty: formData.difficulty,
+        }),
+      });
 
-    // TODO: add schema type
-    const data = (await response.json()) as { response: testType };
-    console.log("Generated Test:", data);
+      // TODO: add schema type
+      const data = (await response.json()) as { response: testType };
+      console.log("Generated Test:", data);
+    }
+    if (formData.lessons.length > 1) {
+      // TODO: add type safety when calling the api
+      const response = await fetch("/api/generateTestFromLessons", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lessonIds: formData.lessons,
+          questionAmount: formData.questionAmount,
+          questionTypes: formData.questionTypes,
+          difficulty: formData.difficulty,
+          distribution: formData.distribution,
+        }),
+      });
+      const data = (await response.json()) as { response: testType };
+      console.log("Generated Test:", data);
+    }
 
-    const testId = await createTest({
-      ...data.response,
-      classId,
-    });
+    // const testId = await createTest({
+    //   ...data.response,
+    //   classId,
+    // });
 
-    router.push(`/app/tests/${testId}`);
-    console.log("Test ID:", testId);
+    // router.push(`/app/tests/${testId}`);
+    // console.log("Test ID:", testId);
   };
 
   return (

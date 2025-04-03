@@ -31,7 +31,7 @@ TOMOROW:
 -- add chunking text prompt
 
 LATER:
--- implement loading when generating test
+-- implement loading when generating tes
 -- implement test review
 -- store review in database
 

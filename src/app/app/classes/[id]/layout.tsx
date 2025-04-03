@@ -10,7 +10,10 @@ interface ClassLayoutProps {
   params: Promise<{ id: Id<"classes"> }>;
 }
 
-export async function ClassLayout({ children, params }: ClassLayoutProps) {
+export default async function ClassLayout({
+  children,
+  params,
+}: ClassLayoutProps) {
   const { id } = await params;
   return (
     <ClassProvider classId={id}>
@@ -34,5 +37,3 @@ export async function ClassLayout({ children, params }: ClassLayoutProps) {
     </ClassProvider>
   );
 }
-
-export default ClassLayout;

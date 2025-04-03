@@ -2,17 +2,41 @@
 
 // - think about removing a context and just using queries because you have live updates and sockets
 
-// - only section materials should have upload material button
+// - implement custom question number per lesson
 // - upload material button page should have a dropdown menu of lections to be linked when uploading materials (fetch lections from API)
 // - each section has its own functionallity button. lessons section -> create lesson, materials section -> upload materials....
-// - each loading component separated into loading state, no items state and items state
 // - remove pdfItems from getLessonData, these need to be separated
 
 // - add delete everything logic
 // - add edit everything logic
 // - check if all components are server components if possible
 // - check why uploading calls 3 requests and is so slow ///
+// - change new-class/lesson to create-class/lesson
 
+// for selecting the lessons for test generation use table for lessons. 
+// e.g. in table render all lessons. 
+// --- single lesson -> table acts like radio button (after selecting one element disable all other)
+// --- multiple lesson -> table acts like checkbox list (after selecting all elements trigger selecting whole class testing)
+// --- class test -> table selects all checkboxes in table and disables unchecking
+
+// -- Refactor form
+// -- create proper retry logic when calling AI
+// -- refactor create test route
+// -- extract logic for parsing the PDF
+// -- hook up all form inputs to the AI route
+-- implement view tests page so you can open already generated test to not use AI tokens 
+-- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
+
+TOMOROW:
+-- add chunking text prompt
+
+LATER:
+-- implement loading when generating tes
+-- implement test review
+-- store review in database
+
+LATER: 
+-- implement responsive menu and mobile version and start implementing test generator page
 
 
 # MVP Plan for Teach.me
@@ -53,6 +77,8 @@ Use PostHog or Plausible for broader app usage tracking.
 ✅ Deployment: Netlify (initially for free hosting)
 
 ✅ Analytics: Convex for user stats + PostHog/Plausible for tracking
+
+✅ Hosting: Hostinger + Coolify / vercel / netlify
 
 
 ## 🚀 TODO:

@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 
 import { Plus } from "lucide-react";
 import ClassesList from "./components/classes-list";
-export function ClassesPage() {
+
+export default function ClassesPage() {
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-8">
@@ -25,5 +26,3 @@ export function ClassesPage() {
     </div>
   );
 }
-
-export default ClassesPage;

@@ -1,8 +1,9 @@
 "use client";
 
+import * as z from "zod";
+
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { toast } from "@/hooks/use-toast";
@@ -36,7 +37,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export const FileUploadPage = () => {
+export default function FileUploadPage() {
   const { classId, lessons } = useClass();
   const { uploadPDF } = useMaterialsMutations();
   const router = useRouter();
@@ -132,6 +133,4 @@ export const FileUploadPage = () => {
       </CardFooter>
     </Card>
   );
-};
-
-export default FileUploadPage;
+}

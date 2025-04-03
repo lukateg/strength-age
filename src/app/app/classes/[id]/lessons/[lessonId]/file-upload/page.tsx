@@ -46,7 +46,7 @@ const formSchema = (showExistingMaterials: boolean) =>
 
 type FormData = z.infer<ReturnType<typeof formSchema>>;
 
-export const FileUploadPage = () => {
+export default function FileUploadPage() {
   const [showExistingMaterials, setShowExistingMaterials] = useState(false);
   const router = useRouter();
   const { lessons, materials, classId } = useClass();
@@ -172,5 +172,4 @@ export const FileUploadPage = () => {
       </CardContent>
     </Card>
   );
-};
-export default FileUploadPage;
+}

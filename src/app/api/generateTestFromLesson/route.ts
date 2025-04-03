@@ -1,11 +1,13 @@
-import { type NextRequest } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { fetchQuery } from "convex/nextjs";
-import { api } from "convex/_generated/api";
 import axios from "axios";
 import pdfParse from "pdf-parse";
-import { type Id } from "convex/_generated/dataModel";
+
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { fetchQuery } from "convex/nextjs";
+import { api } from "../../../../convex/_generated/api";
 import { testSchema } from "@/lib/schemas";
+
+import { type NextRequest } from "next/server";
+import { type Id } from "convex/_generated/dataModel";
 
 const getFormatForType = (type: string) => {
   if (type === "multiple_choice") {

@@ -3,7 +3,7 @@ import pdfParse from "pdf-parse";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { fetchQuery } from "convex/nextjs";
-import { api } from "convex/_generated/api";
+import { api } from "../../../../convex/_generated/api";
 import { testSchema } from "@/lib/schemas";
 
 import { type NextRequest } from "next/server";

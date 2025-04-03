@@ -2,6 +2,7 @@
 
 // - think about removing a context and just using queries because you have live updates and sockets
 
+// - implement custom question number per lesson
 // - upload material button page should have a dropdown menu of lections to be linked when uploading materials (fetch lections from API)
 // - each section has its own functionallity button. lessons section -> create lesson, materials section -> upload materials....
 // - remove pdfItems from getLessonData, these need to be separated
@@ -24,11 +25,9 @@
 // -- extract logic for parsing the PDF
 // -- hook up all form inputs to the AI route
 -- implement view tests page so you can open already generated test to not use AI tokens 
+-- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
 
 TOMOROW:
--- implement multiple lessons test generating
--- implement custom question number per lesson
--- add Proportional Question Allocation
 -- add chunking text prompt
 
 LATER:

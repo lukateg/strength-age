@@ -27,8 +27,44 @@ export const questionSchema = z.union([
   shortAnswerSchema,
 ]);
 
+// Add review-specific fields to each question type
+export const reviewMultipleChoiceSchema = multipleChoiceSchema.extend({
+  isCorrect: z.boolean(),
+  answer: z.array(z.string()),
+  feedback: z.string().optional(),
+});
+
+export const reviewTrueFalseSchema = trueFalseSchema.extend({
+  isCorrect: z.boolean(),
+  answer: z.array(z.string()),
+  feedback: z.string().optional(),
+});
+
+export const reviewShortAnswerSchema = shortAnswerSchema.extend({
+  isCorrect: z.boolean(),
+  answer: z.array(z.string()),
+  feedback: z.string().optional(),
+});
+
+export const reviewQuestionSchema = z.union([
+  reviewMultipleChoiceSchema,
+  reviewTrueFalseSchema,
+  reviewShortAnswerSchema,
+]);
+
 export const testSchema = z.object({
   title: z.string(),
   description: z.string(),
   questions: z.array(questionSchema).min(1), // Ensure at least one question
 });
+
+export const testReviewSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  questions: z.array(reviewQuestionSchema).min(1), // Using review question schema
+  testId: z.string(),
+});
+
+export type Test = z.infer<typeof testSchema>;
+export type Question = z.infer<typeof questionSchema>;
+export type TestReview = z.infer<typeof testReviewSchema>;

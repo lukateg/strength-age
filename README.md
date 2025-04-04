@@ -26,14 +26,16 @@
 // -- hook up all form inputs to the AI route
 -- implement view tests page so you can open already generated test to not use AI tokens 
 -- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
-
-TOMOROW:
 -- add chunking text prompt
+
 
 LATER:
 -- implement loading when generating tes
--- implement test review
--- store review in database
+
+TEST REVIEW:
+-- add validation if all questions are answered, right now the logic breaks if they are not
+-- make questions reusable so you can map answers and display in readonly mode
+-- add getTestReview logic
 
 LATER: 
 -- implement responsive menu and mobile version and start implementing test generator page

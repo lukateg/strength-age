@@ -37,9 +37,10 @@ const TEST_ID_20_QUESTIONS = "kh74f5qpv6mmnbypacs2fc2c3h7dbxcm";
 export default function TestPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [answers, setAnswers] = useState<Record<number, string | string[]>>({});
-  const { testId } = useParams();
+  const { testId }: { testId: Id<"tests"> } = useParams();
+
   const test = useQuery(api.tests.getTestById, {
-    testId: testId as Id<"tests">,
+    testId,
   });
   const { createTestReview } = useTestMutations();
   const router = useRouter();
@@ -98,7 +99,7 @@ export default function TestPage() {
         classId: test.classId,
       });
       console.log(testReviewId, "test review id");
-      void router.push(`/app/tests/${testReviewId}/review`);
+      void router.push(`/app/tests/${testId}/review/${testReviewId}`);
     } catch (error) {
       console.error("Error generating test:", error);
       // TODO: Add proper error handling/user feedback

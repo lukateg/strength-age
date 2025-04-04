@@ -1,7 +1,7 @@
 # TODO:
 
 // - think about removing a context and just using queries because you have live updates and sockets
-
+// - since a lot of logic is based on the URLS, implement fallback when user types jibrish in the url so it doesn't break your backedn and frontend
 // - implement custom question number per lesson
 // - upload material button page should have a dropdown menu of lections to be linked when uploading materials (fetch lections from API)
 // - each section has its own functionallity button. lessons section -> create lesson, materials section -> upload materials....

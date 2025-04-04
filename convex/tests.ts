@@ -82,3 +82,13 @@ export const getTestById = query({
     return test;
   },
 });
+
+export const getTestReviewById = query({
+  args: {
+    testReviewId: v.id("testReviews"),
+  },
+  handler: async (ctx, args) => {
+    const testReview = await ctx.db.get(args.testReviewId);
+    return testReview;
+  },
+});

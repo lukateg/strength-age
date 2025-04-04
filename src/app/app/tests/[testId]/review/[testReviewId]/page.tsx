@@ -18,7 +18,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 // TODO: duplicate
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { api } from "../../../../../../../convex/_generated/api";
 import { useQuery } from "convex/react";
 
@@ -63,7 +63,11 @@ function CircularProgress({ value }: { value: number }) {
 }
 
 export default function ReviewPage() {
-  const { testReviewId }: { testReviewId: Id<"testReviews"> } = useParams();
+  const {
+    testReviewId,
+    testId,
+  }: { testReviewId: Id<"testReviews">; testId: Id<"tests"> } = useParams();
+  const router = useRouter();
 
   const testReview = useQuery(api.tests.getTestReviewById, {
     testReviewId,
@@ -77,6 +81,10 @@ export default function ReviewPage() {
   ).length;
   const total = testReview.questions.length;
   const percentage = (score / total) * 100;
+
+  const retakeTest = () => {
+    void router.push(`/app/tests/${testId}`);
+  };
 
   return (
     <div className="bg-background text-foreground p-6">
@@ -101,7 +109,7 @@ export default function ReviewPage() {
                 <Target className="h-6 w-6 text-primary" />
                 <CardTitle>Test Results</CardTitle>
               </div>
-              <Button onClick={() => (window.location.href = "/")}>
+              <Button onClick={retakeTest}>
                 <RotateCcw className="w-4 h-4 mr-2" />
                 Retake Test
               </Button>
@@ -140,21 +148,23 @@ export default function ReviewPage() {
             </div>
 
             <ScrollArea className="h-[400px] pr-4">
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {testReview.questions.map((question, index) => (
-                  <div key={index} className="p-4 rounded-lg border bg-card">
+                  <Card key={question.questionText} className="p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 space-y-2">
                         <div className="flex items-center gap-2">
                           <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm font-medium text-muted-foreground">
+                          <span className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                             Question {index + 1}
                           </span>
                           <Badge variant="outline" className="text-xs">
                             {question.questionType.replace("_", " ")}
                           </Badge>
                         </div>
-                        <p className="text-sm">{question.questionText}</p>
+                        <h2 className="text-xl font-semibold mt-1">
+                          {question.questionText}
+                        </h2>
                       </div>
                       {question.isCorrect ? (
                         <CheckCircle2 className="text-green-500 h-6 w-6 flex-shrink-0" />
@@ -174,7 +184,7 @@ export default function ReviewPage() {
                         {question.correctAnswer.join(", ")}
                       </p>
                     </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
             </ScrollArea>

@@ -29,16 +29,11 @@
 -- add chunking text prompt
 
 
-LATER:
--- implement loading when generating tes
 
-TEST REVIEW:
--- add validation if all questions are answered, right now the logic breaks if they are not
--- make questions reusable so you can map answers and display in readonly mode
--- add getTestReview logic
 
 LATER: 
 -- implement responsive menu and mobile version and start implementing test generator page
+-- implement loading when generating tes
 
 
 # MVP Plan for Teach.me

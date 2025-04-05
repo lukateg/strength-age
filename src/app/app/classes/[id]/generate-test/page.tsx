@@ -60,47 +60,46 @@ export default function CreateTest() {
   // const difficulty = watch("difficulty");
 
   const onSubmit = async (formData: TestFormValues) => {
-    // console.log(formData, "form data");
-    if (formData.lessons.length === 1) {
-      const response = await fetch("/api/generateTestFromLesson", {
+    const isSingleLesson = formData.lessons.length === 1;
+    const endpoint = isSingleLesson
+      ? "/api/generateTestFromLesson"
+      : "/api/generateTestFromLessons";
+
+    const requestBody = {
+      lessonIds: formData.lessons,
+      questionAmount: formData.questionAmount,
+      questionTypes: formData.questionTypes,
+      difficulty: formData.difficulty,
+      ...(isSingleLesson
+        ? {}
+        : { questionDistribution: formData.distribution }),
+    };
+
+    try {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lessonIds: formData.lessons,
-          questionAmount: formData.questionAmount,
-          questionTypes: formData.questionTypes,
-          difficulty: formData.difficulty,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
-      // TODO: add schema type
-      const data = (await response.json()) as { response: testType };
-      console.log("Generated Test:", data);
-    }
-    if (formData.lessons.length > 1) {
-      // TODO: add type safety when calling the api
-      const response = await fetch("/api/generateTestFromLessons", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lessonIds: formData.lessons,
-          questionAmount: formData.questionAmount,
-          questionTypes: formData.questionTypes,
-          difficulty: formData.difficulty,
-          questionDistribution: formData.distribution,
-        }),
+      if (!response.ok) {
+        throw new Error("Failed to generate test");
+      }
+
+      const { response: generatedTest } = (await response.json()) as {
+        response: testType;
+      };
+
+      const testId = await createTest({
+        ...generatedTest,
+        classId,
       });
-      const data = (await response.json()) as { response: testType };
-      console.log("Generated Test:", data);
+
+      router.push(`/app/tests/${testId}`);
+    } catch (error) {
+      console.error("Error generating test:", error);
+      // TODO: Add proper error handling/user feedback
     }
-
-    // const testId = await createTest({
-    //   ...data.response,
-    //   classId,
-    // });
-
-    // router.push(`/app/tests/${testId}`);
-    // console.log("Test ID:", testId);
   };
 
   return (

@@ -40,4 +40,22 @@ export default defineSchema({
       })
     ),
   }),
+  testReviews: defineTable({
+    userId: v.string(),
+    classId: v.string(),
+    title: v.string(),
+    description: v.optional(v.string()),
+    testId: v.string(),
+    questions: v.array(
+      v.object({
+        questionText: v.string(),
+        questionType: v.string(),
+        availableAnswers: v.optional(v.array(v.string())),
+        correctAnswer: v.array(v.string()),
+        isCorrect: v.boolean(),
+        answer: v.union(v.array(v.string()), v.string()),
+        feedback: v.optional(v.string()),
+      })
+    ),
+  }),
 });

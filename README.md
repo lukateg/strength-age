@@ -1,7 +1,7 @@
 # TODO:
 
 // - think about removing a context and just using queries because you have live updates and sockets
-
+// - since a lot of logic is based on the URLS, implement fallback when user types jibrish in the url so it doesn't break your backedn and frontend
 // - implement custom question number per lesson
 // - upload material button page should have a dropdown menu of lections to be linked when uploading materials (fetch lections from API)
 // - each section has its own functionallity button. lessons section -> create lesson, materials section -> upload materials....
@@ -26,17 +26,14 @@
 // -- hook up all form inputs to the AI route
 -- implement view tests page so you can open already generated test to not use AI tokens 
 -- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
-
-TOMOROW:
 -- add chunking text prompt
 
-LATER:
--- implement loading when generating tes
--- implement test review
--- store review in database
+
+
 
 LATER: 
 -- implement responsive menu and mobile version and start implementing test generator page
+-- implement loading when generating tes
 
 
 # MVP Plan for Teach.me

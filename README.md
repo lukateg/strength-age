@@ -3,8 +3,6 @@
 // - think about removing a context and just using queries because you have live updates and sockets
 // - since a lot of logic is based on the URLS, implement fallback when user types jibrish in the url so it doesn't break your backedn and frontend
 // - implement custom question number per lesson
-// - upload material button page should have a dropdown menu of lections to be linked when uploading materials (fetch lections from API)
-// - each section has its own functionallity button. lessons section -> create lesson, materials section -> upload materials....
 // - remove pdfItems from getLessonData, these need to be separated
 
 // - add delete everything logic
@@ -12,12 +10,6 @@
 // - check if all components are server components if possible
 // - check why uploading calls 3 requests and is so slow ///
 // - change new-class/lesson to create-class/lesson
-
-// for selecting the lessons for test generation use table for lessons. 
-// e.g. in table render all lessons. 
-// --- single lesson -> table acts like radio button (after selecting one element disable all other)
-// --- multiple lesson -> table acts like checkbox list (after selecting all elements trigger selecting whole class testing)
-// --- class test -> table selects all checkboxes in table and disables unchecking
 
 // -- Refactor form
 // -- create proper retry logic when calling AI
@@ -27,7 +19,7 @@
 -- implement view tests page so you can open already generated test to not use AI tokens 
 -- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
 -- add chunking text prompt
-
+-- add validation if test title exist so user cannot have two test or test reviews with same name
 
 
 

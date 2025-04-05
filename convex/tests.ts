@@ -92,3 +92,17 @@ export const getTestReviewById = query({
     return testReview;
   },
 });
+
+export const getWeeklyTestReviews = query({
+  handler: async (ctx) => {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const recentReviews = await ctx.db
+      .query("testReviews")
+      .filter((q) => q.gte(q.field("_creationTime"), sevenDaysAgo.getTime()))
+      .collect();
+
+    return recentReviews;
+  },
+});

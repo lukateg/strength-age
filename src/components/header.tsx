@@ -18,7 +18,7 @@ export function Header() {
       <div className="flex h-16 items-center px-4">
         {/* <MobileSidebar /> */}
 
-        <Logo />
+        {/* <Logo /> */}
 
         <div className="ml-auto flex items-center space-x-4">
           {/* Saved for dev purposes  */}

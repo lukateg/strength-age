@@ -56,7 +56,9 @@ export default function ClassesList() {
                   View Class
                 </Button>
               </Link>
-              <Button className="w-full">Generate Test</Button>
+              <Link href={`/app/classes/${classItem._id}/generate-test`}>
+                <Button className="w-full">Generate Test</Button>
+              </Link>
             </div>
           </CardContent>
         </Card>

@@ -60,7 +60,25 @@ export const createTestReview = mutation({
   },
 });
 
-export const getAllTests = query({
+export const getAllTestsByUser = query({
+  args: {
+    userId: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    if (!args.userId) {
+      if (!args.userId) {
+        throw new Error("Not authenticated");
+      }
+    }
+    const tests = await ctx.db
+      .query("tests")
+      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .collect();
+    return tests;
+  },
+});
+
+export const getAllTestsByClassId = query({
   args: {
     classId: v.string(),
   },
@@ -90,6 +108,22 @@ export const getTestReviewById = query({
   handler: async (ctx, args) => {
     const testReview = await ctx.db.get(args.testReviewId);
     return testReview;
+  },
+});
+
+export const getAllTestReviewsByUser = query({
+  args: {
+    userId: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    if (!args.userId) {
+      throw new Error("Not authenticated");
+    }
+    const testReviews = await ctx.db
+      .query("testReviews")
+      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .collect();
+    return testReviews;
   },
 });
 

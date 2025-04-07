@@ -36,7 +36,7 @@ export function ClassProvider({
   const materials = useQuery(api.materials.getAllPDFs, { classId, userId });
   // TODO: check if queries by both user and class
   const lessons = useQuery(api.lessons.getLessonsByClass, { classId });
-  const tests = useQuery(api.tests.getAllTests, { classId });
+  const tests = useQuery(api.tests.getAllTestsByClassId, { classId });
 
   return (
     <ClassContext.Provider

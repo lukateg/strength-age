@@ -1,17 +1,25 @@
+"use client";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { FilePlus2 } from "lucide-react";
 
-import { FileText, Users, BookOpen, Brain } from "lucide-react";
+import { useTests } from "@/providers/tests-provider";
+import TestStats from "./components/test-stats";
+
+import { calculateStats } from "./utils";
+import RecentTests from "./components/recent-tests";
+import RecentReviews from "./components/recent-reviews";
 
 export default function Tests() {
+  const { testsByUser, testReviewsByUser, weeklyTestReviews } = useTests();
+
+  const stats = calculateStats(
+    testReviewsByUser,
+    weeklyTestReviews,
+    testsByUser
+  );
+
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-8">
@@ -22,117 +30,21 @@ export default function Tests() {
           </p>
         </div>
         <Button>
-          <Link href="/app/classes/new-class">Generate Test</Link>
+          <Link href={`/app/tests/generate-test`}>
+            <span className="flex items-center gap-2">
+              <FilePlus2 size={16} />
+              Generate Test
+            </span>
+          </Link>
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Total Tests</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">
-              Global Success Rate
-            </CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">48</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Weekly Streak</CardTitle>
-            <Brain className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">24</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">
-              Weekly Success Rate
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">156</div>
-          </CardContent>
-        </Card>
-      </div>
+      <TestStats stats={stats} />
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Classes</CardTitle>
-            <CardDescription>
-              Your recently created or modified classes
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[
-                "Advanced Mathematics",
-                "World History",
-                "Physics 101",
-                "Literature Classics",
-              ].map((className) => (
-                <div
-                  key={className}
-                  className="flex items-center justify-between p-4 border rounded-lg"
-                >
-                  <div className="flex items-center">
-                    <BookOpen className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span>{className}</span>
-                  </div>
-                  <Button variant="ghost" size="sm">
-                    View
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <RecentTests testsByUser={testsByUser} />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Tests</CardTitle>
-            <CardDescription>
-              Latest AI-generated tests from your materials
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[
-                "Calculus Chapter 1",
-                "World War II Overview",
-                "Newton's Laws",
-                "Shakespeare's Sonnets",
-              ].map((testName) => (
-                <div
-                  key={testName}
-                  className="flex items-center justify-between p-4 border rounded-lg"
-                >
-                  <div className="flex items-center">
-                    <Brain className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span>{testName}</span>
-                  </div>
-                  <Button variant="ghost" size="sm">
-                    View Results
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <RecentReviews testReviewsByUser={testReviewsByUser} />
       </div>
     </div>
   );

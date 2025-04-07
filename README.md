@@ -16,16 +16,25 @@
 // -- refactor create test route
 // -- extract logic for parsing the PDF
 // -- hook up all form inputs to the AI route
--- implement view tests page so you can open already generated test to not use AI tokens 
 -- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
 -- add chunking text prompt
 -- add validation if test title exist so user cannot have two test or test reviews with same name
-
-
+-- add modals on all needed actions
 
 LATER: 
--- implement responsive menu and mobile version and start implementing test generator page
 -- implement loading when generating tes
+-- remove lesson number section and modiffy generating to work based on the length
+-- remove all spinners and add proper suspense skeleton
+-- no tests found not working on generate tests page
+
+-- Finish test generator page
+-- generate test from test page, with dropdown menu to select class and then map fetch the lessons for selection
+-- Implement mobile design
+-- Add delete and edit
+-- maybe add settings page
+-- Add analytics
+-- add payments
+-- check free tier plan and work out permisions and free plan
 
 
 # MVP Plan for Teach.me

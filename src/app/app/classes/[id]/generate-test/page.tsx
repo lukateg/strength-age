@@ -4,6 +4,7 @@ import { useTestMutations } from "@/hooks/use-test-mutation";
 import { useClass } from "@/providers/class-context-provider";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { useLoadingContext } from "@/providers/loading-context";
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ export default function CreateTest() {
   const { lessons, classId } = useClass();
   const { createTest } = useTestMutations();
   const router = useRouter();
+  const { setLoading } = useLoadingContext();
 
   const form = useForm<TestFormValues>({
     defaultValues: {
@@ -60,6 +62,7 @@ export default function CreateTest() {
   // const difficulty = watch("difficulty");
 
   const onSubmit = async (formData: TestFormValues) => {
+    setLoading(true);
     const isSingleLesson = formData.lessons.length === 1;
     const endpoint = isSingleLesson
       ? "/api/generateTestFromLesson"
@@ -94,11 +97,11 @@ export default function CreateTest() {
         ...generatedTest,
         classId,
       });
-
       router.push(`/app/tests/${testId}`);
     } catch (error) {
       console.error("Error generating test:", error);
       // TODO: Add proper error handling/user feedback
+      setLoading(false);
     }
   };
 

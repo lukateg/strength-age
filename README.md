@@ -25,7 +25,6 @@
 
 LATER: 
 -- implement loading when reviewing test
--- remove lesson number section and modiffy generating to work based on the length
 -- remove all spinners and add proper suspense skeleton
 -- no tests found not working on generate tests page
 

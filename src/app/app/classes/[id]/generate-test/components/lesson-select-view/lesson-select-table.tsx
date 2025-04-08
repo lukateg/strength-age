@@ -20,7 +20,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { type ControllerRenderProps } from "react-hook-form";
 import { type TestFormValues } from "../../page";
 import { type LessonsType } from "@/types/types";
-import { type Lesson } from "./lesson-select-view";
+
+export type Lesson = {
+  _id: string;
+  title: string;
+};
 
 export default function LessonSelectTable({
   lessons,

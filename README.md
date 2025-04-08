@@ -20,6 +20,7 @@
 -- add chunking text prompt
 -- add validation if test title exist so user cannot have two test or test reviews with same name
 -- add modals on all needed actions
+-- use const user = await currentUser(); from clerk for all API routes
 
 LATER: 
 -- implement loading when generating tes

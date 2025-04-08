@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -31,7 +31,7 @@ import { useTestMutations } from "@/hooks/use-test-mutation";
 
 import { type TestReview } from "@/lib/schemas";
 import { useRouter } from "next/navigation";
-
+import { useLoadingContext } from "@/providers/loading-context";
 export type TestQuestion = {
   questionText: string;
   questionType: string;
@@ -81,10 +81,17 @@ const createAnswerSchema = (test: Doc<"tests"> | undefined | null) => {
 export default function TestPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const { testId }: { testId: Id<"tests"> } = useParams();
+  const { setLoading } = useLoadingContext();
 
   const test = useQuery(api.tests.getTestById, {
     testId,
   });
+
+  useEffect(() => {
+    if (test) {
+      setLoading(false);
+    }
+  }, [test, setLoading]);
 
   const { createTestReview } = useTestMutations();
   const router = useRouter();

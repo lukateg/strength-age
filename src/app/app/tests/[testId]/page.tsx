@@ -81,17 +81,17 @@ const createAnswerSchema = (test: Doc<"tests"> | undefined | null) => {
 export default function TestPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const { testId }: { testId: Id<"tests"> } = useParams();
-  const { setLoading } = useLoadingContext();
+  const { setLoading, loading } = useLoadingContext();
 
   const test = useQuery(api.tests.getTestById, {
     testId,
   });
 
   useEffect(() => {
-    if (test) {
+    if (test && loading) {
       setLoading(false);
     }
-  }, [test, setLoading]);
+  }, [test, setLoading, loading]);
 
   const { createTestReview } = useTestMutations();
   const router = useRouter();

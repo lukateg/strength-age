@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 // Zod schemas for data validation
 export const multipleChoiceSchema = z.object({
   questionText: z.string(),
@@ -63,6 +62,20 @@ export const testReviewSchema = z.object({
   description: z.string(),
   questions: z.array(reviewQuestionSchema).min(1), // Using review question schema
   testId: z.string(),
+});
+
+export const testFormSchema = z.object({
+  testName: z.string(),
+  description: z.string(),
+  scope: z.enum(["single", "multiple", "whole"]),
+  distribution: z.enum(["equal", "proportional"]),
+  questionAmount: z.number().min(1),
+  difficulty: z.number().min(0).max(100),
+  questionTypes: z
+    .array(z.string())
+    .min(1, "Select at least one question type"),
+  lessonQuestions: z.record(z.string(), z.number()),
+  lessons: z.array(z.string()).min(1, "Select at least one lesson"),
 });
 
 export type Test = z.infer<typeof testSchema>;

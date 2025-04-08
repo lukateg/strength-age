@@ -17,10 +17,10 @@ import {
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { type Lesson } from "./lesson-select-view";
 import { type ControllerRenderProps } from "react-hook-form";
-import { type TestFormValues } from "../page";
+import { type TestFormValues } from "../../page";
 import { type LessonsType } from "@/types/types";
+import { type Lesson } from "./lesson-select-view";
 
 export default function LessonSelectTable({
   lessons,
@@ -150,8 +150,7 @@ export default function LessonSelectTable({
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {field.value.length} of {lessons?.length} row(s) selected.
         </div>
       </div>
     </div>

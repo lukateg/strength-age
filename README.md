@@ -22,15 +22,18 @@
 -- add modals on all needed actions
 -- use const user = await currentUser(); from clerk for all API routes
 -- FIX infinite bottom when scrolling all the way down
+-- Server-Side Rendering with Next.js add preloadQuery for preloading data on the server
+
+-- IN SINGLE CLASS VIEW: add dashboard for number of lessons, pass rate, total tests, test review
+- add navigation for test review alongside existing tests
 
 LATER: 
--- implement loading when reviewing test
--- remove all spinners and add proper suspense skeleton
 -- no tests found not working on generate tests page
 
--- Finish test generator page
 -- generate test from test page, with dropdown menu to select class and then map fetch the lessons for selection
+-- layout reconsiliation
 -- Implement mobile design
+-- remove all spinners and add proper suspense skeleton
 -- Add delete and edit
 -- maybe add settings page
 -- Add analytics

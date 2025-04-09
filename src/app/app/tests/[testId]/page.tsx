@@ -87,12 +87,6 @@ export default function TestPage() {
     testId,
   });
 
-  useEffect(() => {
-    if (test && loading) {
-      setLoading(false);
-    }
-  }, [test, setLoading, loading]);
-
   const { createTestReview } = useTestMutations();
   const router = useRouter();
   const questionsPerPage = 10;
@@ -111,6 +105,7 @@ export default function TestPage() {
     if (!test) {
       return;
     }
+    setLoading(true, "Reviewing test...");
 
     const requestBody = {
       test: test,
@@ -141,6 +136,8 @@ export default function TestPage() {
       void router.push(`/app/tests/${testId}/review/${testReviewId}`);
     } catch (error) {
       console.error("Error generating test:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -281,6 +278,7 @@ export default function TestPage() {
             test={test}
             questionsPerPage={questionsPerPage}
             handleSubmit={form.handleSubmit(onSubmit)}
+            isLoading={loading}
           />
         </form>
       </Form>

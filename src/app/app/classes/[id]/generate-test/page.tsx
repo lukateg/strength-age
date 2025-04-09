@@ -52,7 +52,7 @@ export default function CreateTest() {
   const lessonsLength = watch("lessons").length;
 
   const onSubmit = async (formData: TestFormValues) => {
-    setLoading(true);
+    setLoading(true, "Generating test...");
     const isSingleLesson = formData.lessons.length === 1;
     const endpoint = isSingleLesson
       ? "/api/generateTestFromLesson"
@@ -91,6 +91,7 @@ export default function CreateTest() {
     } catch (error) {
       console.error("Error generating test:", error);
       // TODO: Add proper error handling/user feedback
+    } finally {
       setLoading(false);
     }
   };

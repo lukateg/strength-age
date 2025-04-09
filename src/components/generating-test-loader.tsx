@@ -1,7 +1,7 @@
 import styles from "@/styles/GeneratingLoader.module.css";
 import { X } from "lucide-react";
 
-export default function GeneratingLoader() {
+export default function GeneratingLoader({ message }: { message?: string }) {
   return (
     <div className="border border-neutral-700 bg-zinc-900 font-mono text-base p-4 w-80 shadow-lg rounded relative overflow-hidden box-border">
       <div className="absolute top-0 left-0 right-0 h-10 bg-gray-700 rounded-t px-1.5 flex items-center justify-between">
@@ -16,7 +16,7 @@ export default function GeneratingLoader() {
       </div>
       <div className="h-16">
         <div className={`${styles.text} text-primary mt-8`}>
-          Generating test...
+          {message ?? "Loading..."}
         </div>
       </div>
     </div>

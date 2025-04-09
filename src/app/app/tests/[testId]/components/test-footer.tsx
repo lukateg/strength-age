@@ -8,12 +8,14 @@ export default function TestFooter({
   test,
   questionsPerPage,
   handleSubmit,
+  isLoading,
 }: {
   currentPage: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
   test: Doc<"tests">;
   questionsPerPage: number;
   handleSubmit: () => void;
+  isLoading: boolean;
 }) {
   const totalPages = Math.ceil(test?.questions.length / questionsPerPage);
   //   const isLastPage = test.questions
@@ -44,7 +46,9 @@ export default function TestFooter({
           Next
         </Button>
       ) : (
-        <Button onClick={handleSubmit}>Submit</Button>
+        <Button onClick={handleSubmit} disabled={isLoading}>
+          Submit
+        </Button>
       )}
     </div>
   );

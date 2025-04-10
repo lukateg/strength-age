@@ -1,10 +1,12 @@
-import { type Control } from "react-hook-form";
-import { type TestFormValues } from "../../page";
 import { FormLabel } from "@/components/ui/form";
 import { Slider } from "@/components/ui/slider";
 import { FormControl } from "@/components/ui/form";
 import { FormItem } from "@/components/ui/form";
 import { FormField } from "@/components/ui/form";
+
+import { type Control } from "react-hook-form";
+import { type TestFormValues } from "../../page";
+
 export default function TotalQuestionsSection({
   control,
   lessonsLength,

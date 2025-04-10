@@ -5,36 +5,36 @@
 // - implement custom question number per lesson
 // - remove pdfItems from getLessonData, these need to be separated
 
-// - add delete everything logic
-// - add edit everything logic
 // - check if all components are server components if possible
 // - check why uploading calls 3 requests and is so slow ///
 // - change new-class/lesson to create-class/lesson
 
-// -- Refactor form
+// -- Refactor working test form
 // -- create proper retry logic when calling AI
 // -- refactor create test route
 // -- extract logic for parsing the PDF
-// -- hook up all form inputs to the AI route
 -- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
 -- add chunking text prompt
--- add validation if test title exist so user cannot have two test or test reviews with same name
--- add modals on all needed actions
+-- add validation if test title exist so user cannot have two same entities in database
+
 -- use const user = await currentUser(); from clerk for all API routes
 -- FIX infinite bottom when scrolling all the way down
 -- Server-Side Rendering with Next.js add preloadQuery for preloading data on the server
-
--- IN SINGLE CLASS VIEW: add dashboard for number of lessons, pass rate, total tests, test review
-- add navigation for test review alongside existing tests
 
 LATER: 
 -- no tests found not working on generate tests page
 
 -- generate test from test page, with dropdown menu to select class and then map fetch the lessons for selection
+-- main dashboard connect real data
+IN SINGLE CLASS VIEW:
+-- add navigation for test review alongside existing tests in class navigation
+--  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation
+-- IN TEST PAGE: - add navbar as in class page 
 -- layout reconsiliation
 -- Implement mobile design
 -- remove all spinners and add proper suspense skeleton
 -- Add delete and edit
+-- add modals on all needed actions
 -- maybe add settings page
 -- Add analytics
 -- add payments

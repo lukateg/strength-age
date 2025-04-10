@@ -18,6 +18,8 @@ import { type LessonsType } from "@/types/types";
 import { type Control } from "react-hook-form";
 import { type TestFormValues } from "../../page";
 
+// TODO: usePreloadQuery for lessons, remove props and add suspense and keep this as server component
+
 export function LessonSelectView({
   lessons,
   control,

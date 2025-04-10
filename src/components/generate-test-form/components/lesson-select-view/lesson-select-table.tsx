@@ -21,6 +21,8 @@ import { type ControllerRenderProps } from "react-hook-form";
 import { type TestFormValues } from "@/components/generate-test-form/generate-test-form";
 import { type LessonsType } from "@/types/types";
 
+import { Loader2 } from "lucide-react";
+
 export type Lesson = {
   _id: string;
   title: string;
@@ -40,9 +42,11 @@ export default function LessonSelectTable({
       header: () => (
         <div className="flex justify-center w-[20px]">
           <Checkbox
-            checked={lessons?.every((lesson) =>
-              field.value.includes(lesson._id)
-            )}
+            checked={
+              lessons?.length
+                ? lessons?.every((lesson) => field.value.includes(lesson._id))
+                : false
+            }
             onCheckedChange={(value) =>
               field.onChange(value ? lessons?.map((lesson) => lesson._id) : [])
             }
@@ -88,6 +92,7 @@ export default function LessonSelectTable({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
   });
+
   return (
     <div className="w-full">
       <div className="rounded-md border">
@@ -116,12 +121,19 @@ export default function LessonSelectTable({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody className="h-[300px]">
-            {table.getRowModel().rows?.length ? (
+          <TableBody>
+            {!lessons ? (
+              <TableRow>
+                <TableCell colSpan={columns.length}>
+                  <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="h-[10px] max-h-[10px]"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell

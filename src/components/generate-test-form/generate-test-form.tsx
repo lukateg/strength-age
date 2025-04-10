@@ -29,8 +29,8 @@ export default function GenerateTestForm({
   classes?: Doc<"classes">[];
   classId?: Id<"classes">;
 }) {
-  const { createTest } = useTestMutations();
   const router = useRouter();
+  const { createTest } = useTestMutations();
   const { setLoading } = useLoadingContext();
 
   const form = useForm<TestFormValues>({
@@ -43,11 +43,6 @@ export default function GenerateTestForm({
       difficulty: 50,
       classId: classId ?? "",
       questionTypes: [],
-      lessonQuestions: {
-        "1": 10,
-        "2": 10,
-        "3": 10,
-      },
       lessons: [],
     },
     resolver: zodResolver(testFormSchema),

@@ -43,22 +43,18 @@ export default function LessonSelectView({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {lessons ? (
-          <FormField
-            control={control}
-            name="lessons"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <LessonSelectTable lessons={lessons} field={field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        ) : (
-          <Skeleton className="h-[350px] w-full mb-12" />
-        )}
+        <FormField
+          control={control}
+          name="lessons"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <LessonSelectTable lessons={lessons} field={field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </CardContent>
     </Card>
   );

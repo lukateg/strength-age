@@ -66,9 +66,7 @@ export const getAllTestsByUser = query({
   },
   handler: async (ctx, args) => {
     if (!args.userId) {
-      if (!args.userId) {
-        throw new Error("Not authenticated");
-      }
+      throw new Error("Not authenticated");
     }
     const tests = await ctx.db
       .query("tests")

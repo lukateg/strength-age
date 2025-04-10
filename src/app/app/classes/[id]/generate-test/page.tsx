@@ -1,5 +1,8 @@
 "use client";
 
+import { z as zod } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { useTestMutations } from "@/hooks/use-test-mutation";
 import { useClass } from "@/providers/class-context-provider";
 import { useRouter } from "next/navigation";
@@ -8,29 +11,16 @@ import { useLoadingContext } from "@/providers/loading-context";
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { LessonSelectView } from "./components/lesson-select-view";
+import { LessonSelectView } from "./components/lesson-select-view/lesson-select-view";
 
-import QuestionConfigurationView from "./components/question-configuration-view";
-import TestScopeView from "./components/test-scope-view";
+import QuestionConfigurationView from "./components/question-configuration-view/question-configuration-view";
 import BasicInformationView from "./components/basic-information-view";
 
-import { type Id } from "convex/_generated/dataModel";
 import { type z } from "zod";
-import { type testSchema } from "@/lib/schemas";
+import { testFormSchema, type testSchema } from "@/lib/schemas";
 
-export type TestFormValues = {
-  testName: string;
-  description: string;
-  scope: "single" | "multiple" | "whole";
-  distribution: "equal" | "custom";
-  questionAmount: number;
-  difficulty: number;
-  questionTypes: string[];
-  lessonQuestions: Record<string, number>;
-  lessons: Id<"lessons">[];
-};
-
-export type testType = z.infer<typeof testSchema>;
+export type TestFormValues = z.infer<typeof testFormSchema>;
+export type GeneratedTest = z.infer<typeof testSchema>;
 
 export default function CreateTest() {
   const { lessons, classId } = useClass();
@@ -40,6 +30,8 @@ export default function CreateTest() {
 
   const form = useForm<TestFormValues>({
     defaultValues: {
+      testName: "",
+      description: "",
       scope: "single",
       distribution: "equal",
       questionAmount: 10,
@@ -52,14 +44,12 @@ export default function CreateTest() {
       },
       lessons: [],
     },
+    resolver: zodResolver(testFormSchema),
   });
 
-  const { control, watch, setValue, handleSubmit, register } = form;
+  const { control, watch, handleSubmit } = form;
 
-  const scope = watch("scope");
-  const distribution = watch("distribution");
-  const questionAmount = watch("questionAmount");
-  // const difficulty = watch("difficulty");
+  const lessonsLength = watch("lessons").length;
 
   const onSubmit = async (formData: TestFormValues) => {
     setLoading(true);
@@ -90,7 +80,7 @@ export default function CreateTest() {
       }
 
       const { response: generatedTest } = (await response.json()) as {
-        response: testType;
+        response: GeneratedTest;
       };
 
       const testId = await createTest({
@@ -112,18 +102,11 @@ export default function CreateTest() {
           <div className="grid gap-6">
             <BasicInformationView control={control} />
 
-            <TestScopeView scope={scope} setValue={setValue} />
-
             <LessonSelectView lessons={lessons} control={control} />
 
             <QuestionConfigurationView
               control={control}
-              scope={scope}
-              distribution={distribution}
-              questionAmount={questionAmount}
-              register={register}
-              watch={watch}
-              setValue={setValue}
+              lessonsLength={lessonsLength}
             />
 
             <Button type="submit" size="lg" className="w-full">

@@ -21,10 +21,10 @@
 -- add validation if test title exist so user cannot have two test or test reviews with same name
 -- add modals on all needed actions
 -- use const user = await currentUser(); from clerk for all API routes
+-- FIX infinite bottom when scrolling all the way down
 
 LATER: 
--- implement loading when generating tes
--- remove lesson number section and modiffy generating to work based on the length
+-- implement loading when reviewing test
 -- remove all spinners and add proper suspense skeleton
 -- no tests found not working on generate tests page
 

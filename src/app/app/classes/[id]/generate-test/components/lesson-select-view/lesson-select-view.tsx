@@ -1,6 +1,5 @@
-import { type LessonsType } from "@/types/types";
-import { type Control } from "react-hook-form";
-import { type TestFormValues } from "../page";
+import LessonSelectTable from "./lesson-select-table";
+
 import {
   Card,
   CardTitle,
@@ -8,13 +7,16 @@ import {
   CardHeader,
   CardContent,
 } from "@/components/ui/card";
-import { FormControl, FormField, FormItem } from "@/components/ui/form";
-import LessonSelectTable from "./lesson-select-table";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 
-export type Lesson = {
-  _id: string;
-  title: string;
-};
+import { type LessonsType } from "@/types/types";
+import { type Control } from "react-hook-form";
+import { type TestFormValues } from "../../page";
 
 export function LessonSelectView({
   lessons,
@@ -40,6 +42,7 @@ export function LessonSelectView({
               <FormControl>
                 <LessonSelectTable lessons={lessons} field={field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />

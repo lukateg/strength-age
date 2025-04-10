@@ -8,14 +8,7 @@ import { type Id, type Doc } from "convex/_generated/dataModel";
 import { useUser } from "@clerk/nextjs";
 
 interface ClassesContextType {
-  classes:
-    | {
-        _id: Id<"classes">;
-        _creationTime: number;
-        description?: string | undefined;
-        title: string;
-      }[]
-    | undefined;
+  classes: Doc<"classes">[] | undefined;
   userId: string | undefined;
   testsByUser: Doc<"tests">[] | undefined;
 }

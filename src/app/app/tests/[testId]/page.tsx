@@ -245,7 +245,7 @@ export default function TestPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

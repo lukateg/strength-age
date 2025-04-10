@@ -18,7 +18,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { type ControllerRenderProps } from "react-hook-form";
-import { type TestFormValues } from "../../page";
+import { type TestFormValues } from "@/components/generate-test-form/generate-test-form";
 import { type LessonsType } from "@/types/types";
 
 export type Lesson = {
@@ -116,7 +116,7 @@ export default function LessonSelectTable({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
+          <TableBody className="h-[300px]">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow

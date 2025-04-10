@@ -65,6 +65,7 @@ export const getAllTestsByUser = query({
     userId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    // TODO find out why this is not working
     if (!args.userId) {
       throw new Error("Not authenticated");
     }

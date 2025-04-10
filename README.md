@@ -20,11 +20,11 @@
 -- use const user = await currentUser(); from clerk for all API routes
 -- FIX infinite bottom when scrolling all the way down
 -- Server-Side Rendering with Next.js add preloadQuery for preloading data on the server
+-- find out why clerk is not working properly
 
 LATER: 
 -- no tests found not working on generate tests page
 
--- generate test from test page, with dropdown menu to select class and then map fetch the lessons for selection
 -- main dashboard connect real data
 IN SINGLE CLASS VIEW:
 -- add navigation for test review alongside existing tests in class navigation

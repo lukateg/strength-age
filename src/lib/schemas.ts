@@ -76,7 +76,7 @@ export const testFormSchema = z.object({
   questionTypes: z
     .array(z.string())
     .min(1, "Select at least one question type"),
-  lessonQuestions: z.record(z.string(), z.number()),
+  // lessonQuestions: z.record(z.string(), z.number()),
   lessons: z.array(z.string()).min(1, "Select at least one lesson"),
 });
 

@@ -4,7 +4,7 @@ import { FormItem } from "@/components/ui/form";
 import { Slider } from "@/components/ui/slider";
 
 import { type Control } from "react-hook-form";
-import { type TestFormValues } from "../../page";
+import { type TestFormValues } from "../../generate-test-form";
 
 export default function DifficultyLevelSection({
   control,

@@ -11,7 +11,7 @@ import TotalQuestionsSection from "./total-questions-section";
 import QuestionDistributionSection from "./question-distribution-section";
 import QuestionTypesSection from "./question-types-section";
 
-import { type TestFormValues } from "../../page";
+import { type TestFormValues } from "../../generate-test-form";
 import { type Control } from "react-hook-form";
 
 export default function QuestionConfigurationView({

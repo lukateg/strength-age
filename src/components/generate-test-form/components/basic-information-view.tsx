@@ -12,7 +12,7 @@ import { FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { type Control } from "react-hook-form";
-import { type TestFormValues } from "../page";
+import { type TestFormValues } from "../generate-test-form";
 
 export default function BasicInformationView({
   control,

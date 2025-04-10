@@ -5,7 +5,7 @@ import { FormItem } from "@/components/ui/form";
 import { FormField } from "@/components/ui/form";
 
 import { type Control } from "react-hook-form";
-import { type TestFormValues } from "../../page";
+import { type TestFormValues } from "../../generate-test-form";
 
 export default function TotalQuestionsSection({
   control,

@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FormLabel } from "@/components/ui/form";
 import { FormMessage } from "@/components/ui/form";
 import { type Control } from "react-hook-form";
-import { type TestFormValues } from "../../page";
+import { type TestFormValues } from "../../generate-test-form";
 
 const QUESTION_TYPES = [
   { id: "multiple_choice", label: "Multiple Choice" },

@@ -4,7 +4,7 @@ import { FormControl } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 
 import { type Control } from "react-hook-form";
-import { type TestFormValues } from "../../page";
+import { type TestFormValues } from "../../generate-test-form";
 
 import { Settings2, SplitSquareHorizontal } from "lucide-react";
 

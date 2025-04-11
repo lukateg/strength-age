@@ -15,6 +15,7 @@ import { Headphones } from "lucide-react";
 import { type Id } from "convex/_generated/dataModel";
 
 import TestsSection from "./components/tests-section";
+import TestReviewsSection from "./components/tests-reviews-section";
 
 export default async function ClassPage({
   params,
@@ -30,6 +31,7 @@ export default async function ClassPage({
           <TabsTrigger value="materials">Materials</TabsTrigger>
           <TabsTrigger value="audio">Audio Lessons</TabsTrigger>
           <TabsTrigger value="tests">Tests</TabsTrigger>
+          <TabsTrigger value="test-reviews">Test Reviews</TabsTrigger>
         </TabsList>
 
         <TabsContent value="lessons" className="space-y-4">
@@ -74,6 +76,10 @@ export default async function ClassPage({
 
         <TabsContent value="tests" className="space-y-4">
           <TestsSection classId={id} />
+        </TabsContent>
+
+        <TabsContent value="test-reviews" className="space-y-4">
+          <TestReviewsSection classId={id} />
         </TabsContent>
       </Tabs>
     </div>

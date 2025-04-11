@@ -1,6 +1,7 @@
 import { type Doc } from "convex/_generated/dataModel";
+import { FileText, BookOpen, Brain, Users } from "lucide-react";
 
-export const calculateStats = (
+export const generateStats = (
   testReviewsByUser?: Doc<"testReviews">[],
   weeklyTestReviews?: Doc<"testReviews">[],
   testsByUser?: Doc<"tests">[]
@@ -32,10 +33,30 @@ export const calculateStats = (
   const totalTestLength = testsByUser.length;
   const weeklyTestLength = weeklyTestReviews.length;
 
-  return {
-    averageSuccessRate,
-    averageWeeklySuccessRate,
-    totalTestLength,
-    weeklyTestLength,
-  };
+  return [
+    {
+      title: "Total Tests",
+      icon: BookOpen,
+      value: totalTestLength,
+      description: "Total number of tests taken",
+    },
+    {
+      title: "Global Success Rate",
+      icon: FileText,
+      value: `${averageSuccessRate}%`,
+      description: "Average success rate across all tests",
+    },
+    {
+      title: "Weekly Streak",
+      icon: Brain,
+      value: weeklyTestLength,
+      description: "Number of tests taken this week",
+    },
+    {
+      title: "Weekly Success Rate",
+      icon: Users,
+      value: `${averageWeeklySuccessRate}%`,
+      description: "Average success rate for this week",
+    },
+  ];
 };

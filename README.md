@@ -28,8 +28,11 @@ LATER:
 -- remove all spinners and add proper suspense skeleton
 -- no tests found not working on generate tests page
 
--- Finish test generator page
--- generate test from test page, with dropdown menu to select class and then map fetch the lessons for selection
+IN SINGLE CLASS VIEW:
+-- add navigation for test review alongside existing tests in class navigation
+--  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation
+-- IN TEST PAGE: - add navbar as in class page 
+-- layout reconsiliation
 -- Implement mobile design
 -- Add delete and edit
 -- maybe add settings page

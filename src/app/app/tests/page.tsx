@@ -3,18 +3,18 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { FilePlus2 } from "lucide-react";
-
 import { useTests } from "@/providers/tests-provider";
-import TestStats from "./components/test-stats";
 
-import { calculateStats } from "./utils";
 import RecentTests from "./components/recent-tests";
 import RecentReviews from "./components/recent-reviews";
+import DashboardStats from "../../../components/dashboard-stats";
+
+import { generateStats } from "./utils";
 
 export default function Tests() {
   const { testsByUser, testReviewsByUser, weeklyTestReviews } = useTests();
 
-  const stats = calculateStats(
+  const stats = generateStats(
     testReviewsByUser,
     weeklyTestReviews,
     testsByUser
@@ -39,7 +39,7 @@ export default function Tests() {
         </Button>
       </div>
 
-      <TestStats stats={stats} />
+      <DashboardStats stats={stats} />
 
       <div className="grid gap-6 md:grid-cols-2">
         <RecentTests testsByUser={testsByUser} />

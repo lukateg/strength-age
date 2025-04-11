@@ -37,11 +37,6 @@ export default function CreateTest() {
       questionAmount: 10,
       difficulty: 50,
       questionTypes: [],
-      lessonQuestions: {
-        "1": 10,
-        "2": 10,
-        "3": 10,
-      },
       lessons: [],
     },
     resolver: zodResolver(testFormSchema),

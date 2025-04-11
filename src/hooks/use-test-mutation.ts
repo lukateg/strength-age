@@ -6,9 +6,10 @@ import { toast } from "@/hooks/use-toast";
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { type Id } from "../../convex/_generated/dataModel";
 
 type CreateTestParams = z.infer<typeof testSchema> & {
-  classId: string;
+  classId: Id<"classes">;
 };
 
 type CreateTestReviewParams = z.infer<typeof testReviewSchema> & {
@@ -66,7 +67,6 @@ export const useTestMutations = () => {
           });
           return;
         }
-        console.log(params, "working");
         const testReviewId = await createTestReviewMutation({
           userId,
           testId: params.testId,

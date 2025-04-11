@@ -13,7 +13,7 @@ export interface PDFType {
   userId: string;
   lessonIds: string[];
 }
-
+// TODO: remove and ad Doc<"lessons">
 export type LessonsType = {
   _id: Id<"lessons">;
   _creationTime: number;
@@ -21,7 +21,6 @@ export type LessonsType = {
   classId: string;
   userId: string;
   title: string;
-  createdAt: number;
 };
 
 export type UploadPDFMutation = ReactMutation<

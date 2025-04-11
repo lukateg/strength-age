@@ -5,41 +5,47 @@
 // - implement custom question number per lesson
 // - remove pdfItems from getLessonData, these need to be separated
 
-// - add delete everything logic
-// - add edit everything logic
 // - check if all components are server components if possible
 // - check why uploading calls 3 requests and is so slow ///
 // - change new-class/lesson to create-class/lesson
 
-// -- Refactor form
+// -- Refactor working test form
 // -- create proper retry logic when calling AI
 // -- refactor create test route
 // -- extract logic for parsing the PDF
-// -- hook up all form inputs to the AI route
 -- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
 -- add chunking text prompt
--- add validation if test title exist so user cannot have two test or test reviews with same name
--- add modals on all needed actions
+-- add validation if test title exist so user cannot have two same entities in database
+
 -- use const user = await currentUser(); from clerk for all API routes
 -- FIX infinite bottom when scrolling all the way down
+-- Server-Side Rendering with Next.js add preloadQuery for preloading data on the server
+-- find out why clerk is not working properly
+-- make loader always appear when loading test and work with css and not mounting for slow animation
 
 LATER: 
--- implement loading when reviewing test
--- remove all spinners and add proper suspense skeleton
 -- no tests found not working on generate tests page
 
 IN SINGLE CLASS VIEW:
 -- add navigation for test review alongside existing tests in class navigation
---  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation
 -- IN TEST PAGE: - add navbar as in class page 
 -- layout reconsiliation
+-- remove all spinners and add proper suspense skeleton
 -- Implement mobile design
+-- remove all spinners and add proper suspense skeleton
 -- Add delete and edit
+-- add modals on all needed actions
 -- maybe add settings page
 -- Add analytics
 -- add payments
 -- check free tier plan and work out permisions and free plan
 
+NEW TASK:
+- filter recent tests and test reviews to take only tests from last week
+- add navbar to tests page and add tests and add all tests and all reviews section
+
+MAYBE IN FUTURE
+--  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation to single class page
 
 # MVP Plan for Teach.me
 ✅ Core Features

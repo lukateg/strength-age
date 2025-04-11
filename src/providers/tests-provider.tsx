@@ -15,6 +15,7 @@ interface TestsContextType {
   testsByUser: Doc<"tests">[] | undefined;
   testReviewsByUser: Doc<"testReviews">[] | undefined;
   weeklyTestReviews: Doc<"testReviews">[] | undefined;
+  weeklyTests: Doc<"tests">[] | undefined;
 }
 
 const TestsContext = createContext<TestsContextType | null>(null);
@@ -28,6 +29,7 @@ export function TestsProvider({ children }: { children: React.ReactNode }) {
     userId,
   });
   const weeklyTestReviews = useQuery(api.tests.getWeeklyTestReviews);
+  const weeklyTests = useQuery(api.tests.getWeeklyTests);
 
   return (
     <TestsContext.Provider
@@ -36,6 +38,7 @@ export function TestsProvider({ children }: { children: React.ReactNode }) {
         testsByUser,
         testReviewsByUser,
         weeklyTestReviews,
+        weeklyTests,
       }}
     >
       {children}

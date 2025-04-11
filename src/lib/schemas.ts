@@ -1,3 +1,4 @@
+import { Id } from "convex/_generated/dataModel";
 import { z } from "zod";
 // Zod schemas for data validation
 export const multipleChoiceSchema = z.object({
@@ -67,6 +68,7 @@ export const testReviewSchema = z.object({
 export const testFormSchema = z.object({
   testName: z.string(),
   description: z.string(),
+  classId: z.custom<Id<"classes">>((val) => val !== undefined && val !== ""),
   scope: z.enum(["single", "multiple", "whole"]),
   distribution: z.enum(["equal", "proportional"]),
   questionAmount: z.number().min(1),

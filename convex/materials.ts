@@ -29,7 +29,7 @@ export const uploadPdf = mutation({
 });
 
 // TODO: rename to getAllPDFsByClassId
-export const getAllPDFs = query({
+export const getPdfsByClassId = query({
   args: v.object({
     classId: v.string(),
     userId: v.optional(v.string()),

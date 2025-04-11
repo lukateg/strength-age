@@ -17,7 +17,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         enableSystem
         disableTransitionOnChange
       >
-        <div className="flex h-screen ">
+        <div className="flex h-screen">
           <div className="hidden md:flex">
             <Sidebar />
           </div>

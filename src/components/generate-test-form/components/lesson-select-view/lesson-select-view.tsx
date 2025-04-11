@@ -1,5 +1,5 @@
 import LessonSelectTable from "./lesson-select-table";
-
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
   CardTitle,
@@ -14,17 +14,26 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { type LessonsType } from "@/types/types";
 import { type Control } from "react-hook-form";
-import { type TestFormValues } from "../../page";
+import { type TestFormValues } from "@/components/generate-test-form/generate-test-form";
+import { type Id } from "convex/_generated/dataModel";
 
-export function LessonSelectView({
-  lessons,
+import { api } from "../../../../../convex/_generated/api";
+import { useQuery } from "convex/react";
+// TODO: usePreloadQuery for lessons, remove props and add suspense and keep this as server component
+
+export default function LessonSelectView({
+  // lessons,
   control,
+  classId,
 }: {
-  lessons?: LessonsType[];
+  // lessons?: LessonsType[];
   control: Control<TestFormValues>;
+  classId: Id<"classes">;
 }) {
+  const lessons = useQuery(api.lessons.getLessonsByClass, {
+    classId,
+  });
   return (
     <Card>
       <CardHeader>

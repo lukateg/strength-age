@@ -1,0 +1,47 @@
+"use client";
+
+import { FileText } from "lucide-react";
+import { useTests } from "@/providers/tests-provider";
+import Link from "next/link";
+
+import ListItem from "@/components/list-item";
+
+import { Button } from "@/components/ui/button";
+import Loader from "@/components/loader";
+
+export default function TestsList() {
+  const { testsByUser } = useTests();
+
+  if (!testsByUser) {
+    return <Loader />;
+  }
+
+  if (testsByUser.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <h3 className="text-lg font-medium">No Tests Yet</h3>
+        <p className="text-muted-foreground mt-2">
+          Create your first test to get started!
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {testsByUser.map((test) => (
+        <ListItem key={test._id} variant="outline">
+          <div className="flex items-center">
+            <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
+            <span>{test.title}</span>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm">
+              <Link href={`/app/tests/${test._id}`}>Retake Test</Link>
+            </Button>
+          </div>
+        </ListItem>
+      ))}
+    </>
+  );
+}

@@ -126,6 +126,18 @@ export const getAllTestReviewsByUser = query({
   },
 });
 
+export const getTestReviewsByClassId = query({
+  args: {
+    classId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const testReviews = await ctx.db
+      .query("testReviews")
+      .filter((q) => q.eq(q.field("classId"), args.classId))
+      .collect();
+    return testReviews;
+  },
+});
 export const getWeeklyTestReviews = query({
   handler: async (ctx) => {
     const sevenDaysAgo = new Date();
@@ -137,5 +149,19 @@ export const getWeeklyTestReviews = query({
       .collect();
 
     return recentReviews;
+  },
+});
+
+export const getWeeklyTests = query({
+  handler: async (ctx) => {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const recentTests = await ctx.db
+      .query("tests")
+      .filter((q) => q.gte(q.field("_creationTime"), sevenDaysAgo.getTime()))
+      .collect();
+
+    return recentTests;
   },
 });

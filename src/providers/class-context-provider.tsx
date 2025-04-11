@@ -33,7 +33,7 @@ export function ClassProvider({
 
   // TODO: Maybe remove queries from the context so they dont run initially, and instead when the component mounts
   // Fetch materials for the class
-  const materials = useQuery(api.materials.getAllPDFs, { classId, userId });
+  const materials = useQuery(api.materials.getPdfsByClassId, { classId });
   // TODO: check if queries by both user and class
   const lessons = useQuery(api.lessons.getLessonsByClass, { classId });
   const tests = useQuery(api.tests.getAllTestsByClassId, { classId });

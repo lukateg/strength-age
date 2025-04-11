@@ -21,15 +21,16 @@
 -- FIX infinite bottom when scrolling all the way down
 -- Server-Side Rendering with Next.js add preloadQuery for preloading data on the server
 -- find out why clerk is not working properly
+-- make loader always appear when loading test and work with css and not mounting for slow animation
 
 LATER: 
 -- no tests found not working on generate tests page
 
 IN SINGLE CLASS VIEW:
 -- add navigation for test review alongside existing tests in class navigation
---  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation
 -- IN TEST PAGE: - add navbar as in class page 
 -- layout reconsiliation
+-- remove all spinners and add proper suspense skeleton
 -- Implement mobile design
 -- remove all spinners and add proper suspense skeleton
 -- Add delete and edit
@@ -39,6 +40,12 @@ IN SINGLE CLASS VIEW:
 -- add payments
 -- check free tier plan and work out permisions and free plan
 
+NEW TASK:
+- filter recent tests and test reviews to take only tests from last week
+- add navbar to tests page and add tests and add all tests and all reviews section
+
+MAYBE IN FUTURE
+--  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation to single class page
 
 # MVP Plan for Teach.me
 ✅ Core Features

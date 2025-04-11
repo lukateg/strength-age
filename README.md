@@ -25,7 +25,6 @@
 LATER: 
 -- no tests found not working on generate tests page
 
--- main dashboard connect real data
 IN SINGLE CLASS VIEW:
 -- add navigation for test review alongside existing tests in class navigation
 --  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation

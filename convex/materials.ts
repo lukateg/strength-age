@@ -28,6 +28,7 @@ export const uploadPdf = mutation({
   },
 });
 
+// TODO: rename to getAllPDFsByClassId
 export const getAllPDFs = query({
   args: v.object({
     classId: v.string(),
@@ -40,6 +41,21 @@ export const getAllPDFs = query({
     return await db
       .query("pdfs")
       .withIndex("by_class_user", (q) => q.eq("classId", classId))
+      .collect();
+  },
+});
+
+export const getAllPDFsByUser = query({
+  args: v.object({
+    userId: v.optional(v.string()),
+  }),
+  handler: async ({ db }, { userId }) => {
+    if (!userId) {
+      throw new Error("User ID is required");
+    }
+    return await db
+      .query("pdfs")
+      .filter((q) => q.eq(q.field("userId"), userId))
       .collect();
   },
 });

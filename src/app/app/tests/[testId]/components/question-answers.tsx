@@ -9,9 +9,10 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
-import { type createAnswerSchema, type TestQuestion } from "../page";
+import { type TestQuestion } from "../page";
 import { type UseFormReturn } from "react-hook-form";
 import { type z } from "zod";
+import { type createAnswerSchema } from "@/lib/schemas";
 
 export default function renderQuestion({
   question,

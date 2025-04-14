@@ -36,7 +36,7 @@ export const getPdfsByClassId = query({
   }),
   handler: async ({ db }, { classId, userId }) => {
     if (!userId) {
-      return [];
+      throw new Error("User ID is required");
     }
     return await db
       .query("pdfs")

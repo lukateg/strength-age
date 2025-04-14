@@ -14,6 +14,7 @@ import { api } from "../../../../../convex/_generated/api";
 
 import TestFooter from "./components/test-footer";
 import QuestionAnswers from "./components/question-answers";
+import TestSkeleton from "./components/test-skeleton";
 
 import { useTestMutations } from "@/hooks/use-test-mutation";
 import { useLoadingContext } from "@/providers/loading-context";
@@ -21,45 +22,15 @@ import { useLoadingContext } from "@/providers/loading-context";
 import { type TestReview } from "@/lib/schemas";
 import { useRouter } from "next/navigation";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { createAnswerSchema } from "@/lib/schemas";
 
-import { type Id, type Doc } from "../../../../../convex/_generated/dataModel";
+import { type Id } from "../../../../../convex/_generated/dataModel";
 
 export type TestQuestion = {
   questionText: string;
   questionType: string;
   availableAnswers?: string[];
   correctAnswer: string[];
-};
-
-// const TEST_ID_10_QUESTIONS = "kh750ayw0qrzk19gq21ht9kk657daak6";
-// const TEST_ID_20_QUESTIONS = "kh74f5qpv6mmnbypacs2fc2c3h7dbxcm";
-
-export const createAnswerSchema = (test: Doc<"tests"> | undefined | null) => {
-  if (!test) return z.object({});
-
-  const answerFields: Record<string, z.ZodTypeAny> = {};
-
-  test.questions.forEach((question: TestQuestion, index: number) => {
-    switch (question.questionType) {
-      case "true_false":
-      case "short_answer":
-        answerFields[`question-${index}`] = z
-          .string({
-            required_error: "Answer is required",
-          })
-          .min(1, { message: "Answer is required" });
-        break;
-      case "multiple_choice":
-        answerFields[`question-${index}`] = z
-          .array(z.string(), {
-            required_error: "Select at least one answer",
-          })
-          .min(1, { message: "Select at least one answer" });
-        break;
-    }
-  });
-
-  return z.object(answerFields);
 };
 
 export default function TestPage() {
@@ -126,10 +97,9 @@ export default function TestPage() {
   };
 
   if (!test) {
-    return <div>Test not found</div>;
+    return <TestSkeleton />;
   }
 
-  console.log(currentQuestions);
   return (
     <ScrollArea>
       <Form {...form}>

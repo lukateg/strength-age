@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function TestReviewSkeleton() {
@@ -8,9 +7,9 @@ export default function TestReviewSkeleton() {
         <Skeleton className="h-20 w-full" />
       </div>
 
-      <Card>
+      <div>
         <Skeleton className="h-96 w-full" />
-      </Card>
+      </div>
     </>
   );
 }

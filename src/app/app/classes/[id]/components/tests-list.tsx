@@ -4,6 +4,7 @@ import ListItem from "@/components/list-item";
 import { FileText, Loader } from "lucide-react";
 
 import { type Doc } from "convex/_generated/dataModel";
+import Link from "next/link";
 
 export default function TestsList({ tests }: { tests?: Doc<"tests">[] }) {
   if (!tests) {
@@ -30,8 +31,8 @@ export default function TestsList({ tests }: { tests?: Doc<"tests">[] }) {
             <span>{test?.title}</span>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              Preview
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/app/tests/${test._id}`}>Retake test</Link>
             </Button>
           </div>
         </ListItem>

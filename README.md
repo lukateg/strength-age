@@ -1,6 +1,5 @@
 # TODO:
 
-// - think about removing a context and just using queries because you have live updates and sockets
 // - since a lot of logic is based on the URLS, implement fallback when user types jibrish in the url so it doesn't break your backedn and frontend
 // - implement custom question number per lesson
 // - remove pdfItems from getLessonData, these need to be separated
@@ -17,23 +16,21 @@
 -- add chunking text prompt
 -- add validation if test title exist so user cannot have two same entities in database
 
--- use const user = await currentUser(); from clerk for all API routes
--- FIX infinite bottom when scrolling all the way down
+-- use const user = await currentUser(); from clerk for all API routes -- find out why clerk is not working properly -- because we are throwing error when !userId in convex file, sync userId validation-- add error handling when user is not authenticated it breaks the page
+
 -- Server-Side Rendering with Next.js add preloadQuery for preloading data on the server
--- find out why clerk is not working properly
+
 -- make loader always appear when loading test and work with css and not mounting for slow animation
 -- no tests found not working on generate tests page
 
 // hook up classes with real data
-// add pdf preview in browser tab
 // disable submit when not answered on all questions
 // loading logo not working on white theme
 
--- add error handling when user is not authenticated it breaks the page
+
 -- layout reconsiliation
 -- remove all spinners and add proper suspense skeleton
 -- Implement mobile design
--- remove all spinners and add proper suspense skeleton
 -- Add delete and edit
 -- add modals on all needed actions
 -- maybe add settings page
@@ -216,4 +213,3 @@ Freemium Model
 ✅ Unique AI Study Tools – Voice learning, chatbot, and adaptive study plans make it smarter than Quizlet.
 
 ✅ Gamification & Social Learning – Keeps students motivated and engaged.
-

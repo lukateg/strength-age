@@ -25,6 +25,7 @@ export default function MaterialsSectionComponent({
   classId,
 }: MaterialsSectionComponentProps) {
   const { materials } = useClass();
+
   return (
     <Card>
       <CardHeader className="flex flex-row justify-between">

@@ -19,53 +19,58 @@ const Sidebar = () => {
   ];
 
   return (
-    <div
-      className={cn(
-        "flex flex-col h-screen border-r bg-background pt-16",
-        isCollapsed ? "w-16" : "w-64"
-      )}
+    <aside
+      className={cn("h-screen border-r bg-background pt-16 overflow-hidden")}
     >
       <div className="p-4 flex items-center justify-between border-b">
-        {/* {!isCollapsed && (
-          <span className="text-xl font-bold">Teach-me</span>
-        )} */}
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
-          <Layout className="h-4 w-4" />
+          <Layout className="h-6 w-6" />
         </Button>
       </div>
 
-      <div className="flex-1 px-3 py-2">
-        <nav className="space-y-1">
+      <nav
+        className={cn(
+          "flex h-full flex-col justify-between px-4 transition-[width] duration-300 ease-in",
+          isCollapsed ? "w-20" : "w-[220px]"
+        )}
+      >
+        <ul className="flex h-full grow flex-col gap-3 overflow-hidden py-2">
           {navigation.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                pathname === item.href
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                isCollapsed && "justify-center"
-              )}
-            >
-              <item.icon className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
-              {!isCollapsed && <span>{item.name}</span>}
-            </Link>
+            <li key={item.name}>
+              <Link
+                href={item.href}
+                className={cn(
+                  "block px-2 w-full text-sm font-medium rounded-md  overflow-hidden",
+                  pathname === item.href
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                )}
+              >
+                <div className="flex  items-center justify-start gap-3  py-2 overflow-hidden">
+                  <div className="flex h-6 w-6 items-center align-middle">
+                    <item.icon className="w-6 h-6 " />
+                  </div>
+                  <span className="overflow-hidden whitespace-nowrap text-sm">
+                    {item.name}
+                  </span>
+                </div>
+              </Link>
+            </li>
           ))}
-        </nav>
-      </div>
+        </ul>
+      </nav>
 
       <div className="p-4">
         <Button className="w-full" size={isCollapsed ? "icon" : "default"}>
-          <Plus className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-          {!isCollapsed && "New Class"}
+          <Plus className={cn("h-4 w-4")} />
+          {/* {!isCollapsed && "New Class"} */}
         </Button>
       </div>
-    </div>
+    </aside>
   );
 };
 

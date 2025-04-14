@@ -79,7 +79,7 @@ export default function FileUploadPage() {
   };
 
   return (
-    <Card className="m-4">
+    <Card>
       <CardHeader>
         <CardTitle>Upload Files</CardTitle>
         <CardDescription>

@@ -12,15 +12,20 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-import Loader from "@/components/loader";
-
 import { BookOpen } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ClassesList() {
   const { classes } = useClasses();
 
   if (!classes) {
-    return <Loader />;
+    return (
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {[1, 2, 3, 4, 5].map((item) => (
+          <Skeleton key={item} className="h-48 w-full" />
+        ))}
+      </div>
+    );
   }
 
   if (classes.length === 0) {

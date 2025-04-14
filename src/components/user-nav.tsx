@@ -1,8 +1,5 @@
-"use client"
-
-import { CreditCard, LogOut, Settings, User } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +8,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+
+import { CreditCard, LogOut, Settings, User } from "lucide-react";
 
 export function UserNav() {
   return (
@@ -19,7 +18,10 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=100" alt="User" />
+            <AvatarImage
+              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=100"
+              alt="User"
+            />
             <AvatarFallback>JD</AvatarFallback>
           </Avatar>
         </Button>
@@ -28,7 +30,9 @@ export function UserNav() {
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium">John Doe</p>
-            <p className="text-xs text-muted-foreground">john.doe@example.com</p>
+            <p className="text-xs text-muted-foreground">
+              john.doe@example.com
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -53,5 +57,5 @@ export function UserNav() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

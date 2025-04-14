@@ -24,6 +24,11 @@
 -- make loader always appear when loading test and work with css and not mounting for slow animation
 -- no tests found not working on generate tests page
 
+// hook up classes with real data
+// add pdf preview in browser tab
+// disable submit when not answered on all questions
+// loading logo not working on white theme
+
 -- add error handling when user is not authenticated it breaks the page
 -- layout reconsiliation
 -- remove all spinners and add proper suspense skeleton

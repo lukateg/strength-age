@@ -17,6 +17,7 @@ interface ClassContextType {
   materials: PDFType[] | undefined; // Replace `any` with your material type
   lessons: LessonsType[] | undefined;
   tests: Doc<"tests">[] | undefined;
+  testReviews: Doc<"testReviews">[] | undefined;
 }
 
 const ClassContext = createContext<ClassContextType | null>(null);
@@ -37,6 +38,9 @@ export function ClassProvider({
   // TODO: check if queries by both user and class
   const lessons = useQuery(api.lessons.getLessonsByClass, { classId });
   const tests = useQuery(api.tests.getAllTestsByClassId, { classId });
+  const testReviews = useQuery(api.tests.getTestReviewsByClassId, {
+    classId,
+  });
 
   return (
     <ClassContext.Provider
@@ -45,7 +49,8 @@ export function ClassProvider({
         userId,
         materials: materials as PDFType[] | undefined,
         lessons: lessons as LessonsType[] | undefined,
-        tests: tests,
+        tests,
+        testReviews,
       }}
     >
       {children}

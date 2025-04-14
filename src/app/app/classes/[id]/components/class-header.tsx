@@ -1,12 +1,14 @@
 "use client";
 
-import { ArrowLeft, BookOpen, Pencil } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "../../../../../../convex/_generated/api";
 import { useQuery } from "convex/react";
 
 import RedirectBackButton from "@/components/redirect-back-button";
+import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
+
+import { ArrowLeft, BookOpen, Pencil } from "lucide-react";
 
 import { type Id } from "convex/_generated/dataModel";
 
@@ -14,8 +16,9 @@ export default function ClassHeader({ id }: { id: Id<"classes"> }) {
   const classData = useQuery(api.classes.getClassById, { id });
 
   if (!classData) {
-    return <div>Class not found</div>;
+    return <Skeleton className="h-16 w-full" />;
   }
+
   return (
     <div>
       <div className="flex justify-between items-center">
@@ -31,18 +34,13 @@ export default function ClassHeader({ id }: { id: Id<"classes"> }) {
             <p className="text-muted-foreground">{classData.description}</p>
           </div>
         </div>
-        {/* <div>
-        <Link href={`/app/classes/${id}`}>
-          <h1 className="text-4xl font-bold">Advanced Mathematics</h1>
-        </Link>
-        <p className="text-muted-foreground mt-2">Professor: John Doe</p>
-      </div> */}
-        {/* <Link href={`/app/classes/${id}/file-upload`}> */}
-        <Button>
-          <Pencil className="h-4 w-4 mr-2" />
-          Edit Class
-        </Button>
-        {/* </Link> */}
+
+        <FeatureFlagTooltip>
+          <Button disabled>
+            <Pencil className="h-4 w-4 mr-2" />
+            Edit Class
+          </Button>
+        </FeatureFlagTooltip>
       </div>
     </div>
   );

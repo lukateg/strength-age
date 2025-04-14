@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
+
 import ListItem from "@/components/list-item";
+import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 
 import { FileText, Loader } from "lucide-react";
 
@@ -34,9 +36,11 @@ export default function MaterialsList({
             <span>{material?.name}</span>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              Preview
-            </Button>
+            <FeatureFlagTooltip>
+              <Button variant="outline" size="sm" disabled>
+                Preview
+              </Button>
+            </FeatureFlagTooltip>
           </div>
         </ListItem>
       ))}

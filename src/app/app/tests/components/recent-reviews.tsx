@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -15,6 +15,7 @@ import ItemsScrollArea from "@/components/items-scroll-area";
 import { Brain } from "lucide-react";
 
 import { type Doc } from "convex/_generated/dataModel";
+import Link from "next/link";
 
 export default function RecentReviews({
   testReviewsByUser,
@@ -45,16 +46,12 @@ export default function RecentReviews({
                   <Brain className="h-4 w-4 mr-2 text-muted-foreground" />
                   <span>{testReview.title}</span>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    redirect(
-                      `/app/tests/${testReview.testId}/review/${testReview._id}`
-                    );
-                  }}
-                >
-                  View Results
+                <Button variant="ghost" size="sm" asChild>
+                  <Link
+                    href={`/app/tests/${testReview.testId}/review/${testReview._id}`}
+                  >
+                    View Results
+                  </Link>
                 </Button>
               </div>
             ))

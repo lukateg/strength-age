@@ -11,6 +11,12 @@ export const getAllClasses = query({
   },
 });
 
+export const getClassById = query({
+  args: { id: v.id("classes") },
+  handler: async ({ db }, { id }) => {
+    return await db.get(id);
+  },
+});
 export const createClass = mutation({
   args: { title: v.string(), description: v.string() },
   handler: async ({ db }, { title, description }) => {

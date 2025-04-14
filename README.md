@@ -24,6 +24,7 @@
 -- make loader always appear when loading test and work with css and not mounting for slow animation
 -- no tests found not working on generate tests page
 
+-- add error handling when user is not authenticated it breaks the page
 -- layout reconsiliation
 -- remove all spinners and add proper suspense skeleton
 -- Implement mobile design

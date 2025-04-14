@@ -245,43 +245,41 @@ export default function TestPage() {
   }
 
   return (
-    <div>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-4xl mx-auto"
-        >
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold mb-2">{test.title}</h1>
-            <p className="text-muted-foreground">{test.description}</p>
-          </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="max-w-4xl mx-auto"
+      >
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold mb-2">{test.title}</h1>
+          <p className="text-muted-foreground">{test.description}</p>
+        </div>
 
-          <div className="space-y-6">
-            {currentQuestions?.map((question, index) => (
-              <Card key={startIndex + index} className="p-6">
-                <div className="mb-4">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    Question {startIndex + index + 1}
-                  </span>
-                  <h2 className="text-xl font-semibold mt-1">
-                    {question.questionText}
-                  </h2>
-                </div>
-                {renderQuestion(question, index)}
-              </Card>
-            ))}
-          </div>
+        <div className="space-y-6">
+          {currentQuestions?.map((question, index) => (
+            <Card key={startIndex + index} className="p-6">
+              <div className="mb-4">
+                <span className="text-sm font-medium text-muted-foreground">
+                  Question {startIndex + index + 1}
+                </span>
+                <h2 className="text-xl font-semibold mt-1">
+                  {question.questionText}
+                </h2>
+              </div>
+              {renderQuestion(question, index)}
+            </Card>
+          ))}
+        </div>
 
-          <TestFooter
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            test={test}
-            questionsPerPage={questionsPerPage}
-            handleSubmit={form.handleSubmit(onSubmit)}
-            isLoading={loading}
-          />
-        </form>
-      </Form>
-    </div>
+        <TestFooter
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          test={test}
+          questionsPerPage={questionsPerPage}
+          handleSubmit={form.handleSubmit(onSubmit)}
+          isLoading={loading}
+        />
+      </form>
+    </Form>
   );
 }

@@ -25,12 +25,12 @@ export default function Tests() {
   );
 
   return (
-    <div className="container mx-auto p-6">
+    <div>
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-4xl font-bold">AI Test Generator</h1>
           <p className="text-muted-foreground mt-2">
-            Let AI generate tests from your materials.
+            Let AI generate tests from your materials
           </p>
         </div>
         <Button>

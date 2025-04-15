@@ -23,6 +23,7 @@ import { type Id } from "convex/_generated/dataModel";
 
 import TestReviewStats from "./components/test-review-stats";
 import TestReviewSkeleton from "./components/test-review-skeleton";
+import RetryTestButton from "@/components/retry-test-button";
 
 export default function ReviewPage() {
   const {
@@ -34,10 +35,6 @@ export default function ReviewPage() {
   const testReview = useQuery(api.tests.getTestReviewById, {
     testReviewId,
   });
-
-  const retakeTest = () => {
-    void router.push(`/app/tests/${testId}`);
-  };
 
   const previousPath = typeof window !== "undefined" ? document.referrer : "";
 
@@ -80,10 +77,12 @@ export default function ReviewPage() {
               <Target className="h-6 w-6 text-primary" />
               <CardTitle>Test Results</CardTitle>
             </div>
-            <Button onClick={retakeTest}>
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Retake Test
-            </Button>
+            <RetryTestButton to={`/app/tests/${testId}`} variant="default">
+              <span className="flex items-center gap-2">
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Retake Test
+              </span>
+            </RetryTestButton>
           </div>
         </CardHeader>
         <CardContent>

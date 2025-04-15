@@ -1,7 +1,3 @@
-import ItemsScrollArea from "@/components/items-scroll-area";
-import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,6 +6,9 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+
+import ItemsScrollArea from "@/components/items-scroll-area";
+import RetryTestButton from "@/components/retry-test-button";
 
 import { BookOpen } from "lucide-react";
 
@@ -44,9 +43,9 @@ export default function RecentTests({
                   <BookOpen className="h-4 w-4 mr-2 text-muted-foreground" />
                   <span>{test.title}</span>
                 </div>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href={`/app/tests/${test._id}`}>Retake</Link>
-                </Button>
+                <RetryTestButton to={`/app/tests/${test._id}`} variant="ghost">
+                  Retake Test
+                </RetryTestButton>
               </div>
             ))
           ) : (

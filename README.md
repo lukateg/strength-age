@@ -25,7 +25,6 @@
 
 
 ZA SUTRA:
--- make loader always appear when loading test and work with css and not mounting for slow animation
 -- layout reconsiliation --- fix test view layout
 -- remove all spinners and add proper suspense skeleton
 

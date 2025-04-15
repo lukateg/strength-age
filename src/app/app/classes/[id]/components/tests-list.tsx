@@ -1,10 +1,9 @@
-import { Button } from "@/components/ui/button";
 import ListItem from "@/components/list-item";
+import RetryTestButton from "@/components/retry-test-button";
 
 import { FileText, Loader } from "lucide-react";
 
 import { type Doc } from "convex/_generated/dataModel";
-import Link from "next/link";
 
 export default function TestsList({ tests }: { tests?: Doc<"tests">[] }) {
   if (!tests) {
@@ -31,9 +30,9 @@ export default function TestsList({ tests }: { tests?: Doc<"tests">[] }) {
             <span>{test?.title}</span>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" asChild>
-              <Link href={`/app/tests/${test._id}`}>Retake test</Link>
-            </Button>
+            <RetryTestButton to={`/app/tests/${test._id}`} variant="ghost">
+              Retake test
+            </RetryTestButton>
           </div>
         </ListItem>
       ))}

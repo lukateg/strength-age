@@ -2,12 +2,12 @@
 
 import { FileText } from "lucide-react";
 import { useTests } from "@/providers/tests-provider";
-import Link from "next/link";
-
-import ListItem from "@/components/list-item";
 
 import { Button } from "@/components/ui/button";
+
 import Loader from "@/components/loader";
+import ListItem from "@/components/list-item";
+import RetryTestButton from "@/components/retry-test-button";
 
 export default function TestsList() {
   const { testsByUser } = useTests();
@@ -37,7 +37,9 @@ export default function TestsList() {
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm">
-              <Link href={`/app/tests/${test._id}`}>Retake Test</Link>
+              <RetryTestButton to={`/app/tests/${test._id}`} variant="ghost">
+                Retake Test
+              </RetryTestButton>
             </Button>
           </div>
         </ListItem>

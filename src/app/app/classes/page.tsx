@@ -15,7 +15,7 @@ export default function ClassesPage() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/app/classes/new-class">
+          <Link href="/app/classes/create-class">
             <Plus className="h-4 w-4 mr-2" />
             Create New Class
           </Link>

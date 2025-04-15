@@ -24,11 +24,9 @@
 
 
 ZA SUTRA:
-// loading logo not working on white theme
 -- make loader always appear when loading test and work with css and not mounting for slow animation
 -- layout reconsiliation
 -- remove all spinners and add proper suspense skeleton
-// - change new-class/lesson to create-class/lesson
 
 
 -- Implement mobile design

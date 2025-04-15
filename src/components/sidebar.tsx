@@ -34,7 +34,7 @@ const Sidebar = () => {
 
       <nav
         className={cn(
-          "flex h-full flex-col justify-between px-4 transition-[width] duration-300 ease-in",
+          "flex h-full flex-col justify-between px-4 transition-[width] duration-200 ease-in-out",
           isCollapsed ? "w-[75px]" : "w-[220px]"
         )}
       >

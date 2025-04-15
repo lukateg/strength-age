@@ -6,10 +6,12 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Brain, Home, Layout, Plus, Settings } from "lucide-react";
+import { useLoadingContext } from "@/providers/loading-context";
 
 const Sidebar = () => {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { setLoading } = useLoadingContext();
 
   const navigation = [
     { name: "Dashboard", href: "/app", icon: Home },
@@ -34,7 +36,7 @@ const Sidebar = () => {
 
       <nav
         className={cn(
-          "flex h-full flex-col justify-between px-4 transition-[width] duration-200 ease-in-out",
+          "flex flex-col justify-between px-4 transition-[width] duration-200 ease-in-out",
           isCollapsed ? "w-[75px]" : "w-[220px]"
         )}
       >
@@ -65,9 +67,15 @@ const Sidebar = () => {
       </nav>
 
       <div className="p-4">
-        <Button className="w-full" size={isCollapsed ? "icon" : "default"}>
+        <Button
+          className="w-full"
+          size={isCollapsed ? "icon" : "default"}
+          onClick={() => {
+            setLoading(true, "Generating test...");
+          }}
+        >
           <Plus className={cn("h-4 w-4")} />
-          {/* {!isCollapsed && "New Class"} */}
+          {!isCollapsed && "New Class"}
         </Button>
       </div>
     </aside>

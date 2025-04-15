@@ -9,6 +9,8 @@ import {
   useEffect,
 } from "react";
 import { createPortal } from "react-dom";
+import styles from "@/styles/GeneratingLoader.module.css";
+
 import GeneratingLoader from "@/components/generating-test-loader";
 
 interface LoadingContextType {
@@ -19,11 +21,14 @@ interface LoadingContextType {
 
 const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
 
-function LoadingOverlay() {
+function LoadingOverlay({ shouldDisplay }: { shouldDisplay: boolean }) {
   const { message } = useContext(LoadingContext)!;
+
   return createPortal(
-    <div className="fixed inset-0 z-50">
-      <Card className="flex flex-col items-center justify-center h-full w-ful">
+    <div
+      className={`fixed inset-0 z-50 overlay-enter transition-all duration-1000 ${shouldDisplay ? styles["overlay-enter-active"] : styles["overlay-exit-active"]}`}
+    >
+      <Card className="flex flex-col items-center justify-center h-full w-full">
         <GeneratingLoader message={message} />
       </Card>
     </div>,
@@ -45,13 +50,13 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
     setLoading(isLoading);
     setMessage(loadingMessage);
   };
-
+  console.log(loading && mounted);
   return (
     <LoadingContext.Provider
       value={{ loading, setLoading: handleSetLoading, message }}
     >
       {children}
-      {mounted && loading && <LoadingOverlay />}
+      <LoadingOverlay shouldDisplay={loading && mounted} />
     </LoadingContext.Provider>
   );
 }

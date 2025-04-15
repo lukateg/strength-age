@@ -15,9 +15,10 @@
 -- add validation if test title exist so user cannot have two same entities in database
 -- no tests found not working on generate tests page
 
+
 -- use const user = await currentUser(); from clerk for all API routes -- find out why clerk is not working properly -- because we are throwing error when !userId in convex file, sync userId validation-- add error handling when user is not authenticated it breaks the page
 -- Server-Side Rendering with Next.js add preloadQuery for preloading data on the server
-
+-- make navigation click instant
 
 
 // hook up classes with real data
@@ -25,7 +26,7 @@
 
 ZA SUTRA:
 -- make loader always appear when loading test and work with css and not mounting for slow animation
--- layout reconsiliation
+-- layout reconsiliation --- fix test view layout
 -- remove all spinners and add proper suspense skeleton
 
 
@@ -42,6 +43,7 @@ PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
 MAYBE IN FUTURE
 --  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation to single class page
 -- implement custom question number per lesson
+-- add abort test generating when clicking on the X in the loader
 
 # MVP Plan for Teach.me
 ✅ Core Features

@@ -27,3 +27,25 @@
     animation: typeAndDelete 6s steps(11) infinite,
                blinkCursor 0.5s step-end infinite alternate;
   }
+
+  .overlay-enter {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+  }
+  
+  .overlay-enter-active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .overlay-exit {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+  }
+  
+  .overlay-exit-active {
+    opacity: 0;
+    visibility: hidden;
+  }

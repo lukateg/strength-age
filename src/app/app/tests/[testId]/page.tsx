@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
@@ -19,12 +18,13 @@ import TestSkeleton from "./components/test-skeleton";
 import { useTestMutations } from "@/hooks/use-test-mutation";
 import { useLoadingContext } from "@/providers/loading-context";
 
-import { type TestReview } from "@/lib/schemas";
 import { useRouter } from "next/navigation";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { createAnswerSchema } from "@/lib/schemas";
 
+import { type TestReview } from "@/lib/schemas";
 import { type Id } from "../../../../../convex/_generated/dataModel";
+import type * as z from "zod";
 
 export type TestQuestion = {
   questionText: string;
@@ -103,10 +103,7 @@ export default function TestPage() {
   return (
     <ScrollArea>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="overflow-hidden"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold mb-2">{test.title}</h1>
             <p className="text-muted-foreground">{test.description}</p>

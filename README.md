@@ -1,12 +1,10 @@
 # TODO:
 
 // - since a lot of logic is based on the URLS, implement fallback when user types jibrish in the url so it doesn't break your backedn and frontend
-// - implement custom question number per lesson
 // - remove pdfItems from getLessonData, these need to be separated
 
 // - check if all components are server components if possible
 // - check why uploading calls 3 requests and is so slow ///
-// - change new-class/lesson to create-class/lesson
 
 // -- Refactor working test form
 // -- create proper retry logic when calling AI
@@ -15,24 +13,29 @@
 -- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
 -- add chunking text prompt
 -- add validation if test title exist so user cannot have two same entities in database
-
--- use const user = await currentUser(); from clerk for all API routes -- find out why clerk is not working properly -- because we are throwing error when !userId in convex file, sync userId validation-- add error handling when user is not authenticated it breaks the page
-
--- Server-Side Rendering with Next.js add preloadQuery for preloading data on the server
-
--- make loader always appear when loading test and work with css and not mounting for slow animation
 -- no tests found not working on generate tests page
 
+-- use const user = await currentUser(); from clerk for all API routes -- find out why clerk is not working properly -- because we are throwing error when !userId in convex file, sync userId validation-- add error handling when user is not authenticated it breaks the page
+-- Server-Side Rendering with Next.js add preloadQuery for preloading data on the server
+
+
+
 // hook up classes with real data
-// disable submit when not answered on all questions
+
+
+ZA SUTRA:
 // loading logo not working on white theme
-
-
+-- make loader always appear when loading test and work with css and not mounting for slow animation
 -- layout reconsiliation
 -- remove all spinners and add proper suspense skeleton
+// - change new-class/lesson to create-class/lesson
+
+
 -- Implement mobile design
--- Add delete and edit
 -- add modals on all needed actions
+
+PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
+-- Add delete and edit
 -- maybe add settings page
 -- Add analytics
 -- add payments
@@ -40,6 +43,7 @@
 
 MAYBE IN FUTURE
 --  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation to single class page
+-- implement custom question number per lesson
 
 # MVP Plan for Teach.me
 ✅ Core Features

@@ -14,7 +14,7 @@ import Logo from "./logo";
 
 export function Header() {
   return (
-    <header className="fixed w-full top-0 z-50 border-b border-border/40 backdrop-blur-sm bg-background/80">
+    <header className="container fixed mx-auto top-0 z-50 border-b border-border/40 backdrop-blur-sm bg-background/80">
       <div className="flex h-16 items-center px-4">
         <MobileSidebar />
 

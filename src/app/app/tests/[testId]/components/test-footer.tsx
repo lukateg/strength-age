@@ -18,11 +18,7 @@ export default function TestFooter({
   isLoading: boolean;
 }) {
   const totalPages = Math.ceil(test?.questions.length / questionsPerPage);
-  //   const isLastPage = test.questions
-  //     ? currentPage === Math.ceil(test.questions.length / questionsPerPage)
-  //     : false;
 
-  //   console.log(isLastPage, "last page");
   return (
     <div className="mt-8 flex justify-between">
       <Button

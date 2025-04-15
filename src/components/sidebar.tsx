@@ -35,7 +35,7 @@ const Sidebar = () => {
       <nav
         className={cn(
           "flex h-full flex-col justify-between px-4 transition-[width] duration-300 ease-in",
-          isCollapsed ? "w-20" : "w-[220px]"
+          isCollapsed ? "w-[75px]" : "w-[220px]"
         )}
       >
         <ul className="flex h-full grow flex-col gap-3 overflow-hidden py-2">
@@ -50,7 +50,7 @@ const Sidebar = () => {
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 )}
               >
-                <div className="flex  items-center justify-start gap-3  py-2 overflow-hidden">
+                <div className="flex items-center justify-start gap-3 py-2 overflow-hidden">
                   <div className="flex h-6 w-6 items-center align-middle">
                     <item.icon className="w-6 h-6 " />
                   </div>

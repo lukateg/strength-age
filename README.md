@@ -25,7 +25,6 @@
 
 
 ZA SUTRA:
--- layout reconsiliation --- fix test view layout
 -- remove all spinners and add proper suspense skeleton
 
 

@@ -25,6 +25,9 @@ import { createAnswerSchema } from "@/lib/schemas";
 import { type TestReview } from "@/lib/schemas";
 import { type Id } from "../../../../../convex/_generated/dataModel";
 import type * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Pause, CircleX } from "lucide-react";
+import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 
 export type TestQuestion = {
   questionText: string;
@@ -54,6 +57,7 @@ export default function TestPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {},
+    mode: "onSubmit",
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -101,12 +105,35 @@ export default function TestPage() {
   }
 
   return (
-    <ScrollArea>
+    <ScrollArea className="max-w-screen-xl mx-auto">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold mb-2">{test.title}</h1>
-            <p className="text-muted-foreground">{test.description}</p>
+          <div className="mb-8 text-center flex justify-between items-center">
+            <Button
+              variant="destructive"
+              onClick={() => router.back()}
+              className="mr-4"
+              type="button"
+            >
+              <CircleX className="w-4 h-4 mr-2" />
+              Exit Test
+            </Button>
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold mb-2">{test.title}</h1>
+              <p className="text-muted-foreground">{test.description}</p>
+            </div>
+
+            <FeatureFlagTooltip>
+              <Button
+                type="button"
+                variant="default"
+                className="bg-green-600/70 text-white"
+                disabled
+              >
+                <Pause className="w-4 h-4 mr-2" />
+                Pause Test
+              </Button>
+            </FeatureFlagTooltip>
           </div>
 
           <div className="space-y-6 ">
@@ -130,16 +157,15 @@ export default function TestPage() {
               </Card>
             ))}
           </div>
-
-          <TestFooter
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            test={test}
-            questionsPerPage={questionsPerPage}
-            handleSubmit={form.handleSubmit(onSubmit)}
-            isLoading={loading}
-          />
         </form>
+        <TestFooter
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          test={test}
+          questionsPerPage={questionsPerPage}
+          handleSubmit={form.handleSubmit(onSubmit)}
+          isLoading={loading}
+        />
       </Form>
     </ScrollArea>
   );

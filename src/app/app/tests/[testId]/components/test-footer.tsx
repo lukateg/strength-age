@@ -25,6 +25,7 @@ export default function TestFooter({
         variant="outline"
         onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
         disabled={currentPage === 1}
+        type="button"
       >
         Previous
       </Button>
@@ -34,6 +35,7 @@ export default function TestFooter({
 
       {currentPage !== totalPages ? (
         <Button
+          type="button"
           onClick={() =>
             setCurrentPage((prev) => Math.min(totalPages, prev + 1))
           }
@@ -42,7 +44,7 @@ export default function TestFooter({
           Next
         </Button>
       ) : (
-        <Button onClick={handleSubmit} disabled={isLoading}>
+        <Button onClick={handleSubmit} disabled={isLoading} type="submit">
           Submit
         </Button>
       )}

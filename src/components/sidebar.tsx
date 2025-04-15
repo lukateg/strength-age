@@ -5,13 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Brain, Home, Layout, Plus, Settings } from "lucide-react";
-import { useLoadingContext } from "@/providers/loading-context";
+import { BookOpen, Brain, Home, Layout, Settings } from "lucide-react";
+// import { useLoadingContext } from "@/providers/loading-context";
 
 const Sidebar = () => {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { setLoading } = useLoadingContext();
+  // const { setLoading } = useLoadingContext();
 
   const navigation = [
     { name: "Dashboard", href: "/app", icon: Home },
@@ -66,7 +66,7 @@ const Sidebar = () => {
         </ul>
       </nav>
 
-      <div className="p-4">
+      {/* <div className="p-4">
         <Button
           className="w-full"
           size={isCollapsed ? "icon" : "default"}
@@ -75,9 +75,9 @@ const Sidebar = () => {
           }}
         >
           <Plus className={cn("h-4 w-4")} />
-          {!isCollapsed && "New Class"}
+          {!isCollapsed && "Simulate Loader"}
         </Button>
-      </div>
+      </div> */}
     </aside>
   );
 };

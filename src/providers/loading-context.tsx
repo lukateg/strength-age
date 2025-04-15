@@ -50,7 +50,6 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
     setLoading(isLoading);
     setMessage(loadingMessage);
   };
-  console.log(loading && mounted);
   return (
     <LoadingContext.Provider
       value={{ loading, setLoading: handleSetLoading, message }}

@@ -1,24 +1,24 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const isAppRoute = createRouteMatcher(["/app(.*)"]);
-const isLandingRoute = createRouteMatcher(["/"]);
+const protectedRoute = createRouteMatcher(["/app(.*)"]);
+const publicRoute = createRouteMatcher(["/"]);
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId, redirectToSignIn } = await auth();
 
-  if (userId && isLandingRoute(req)) {
+  if (userId && publicRoute(req)) {
     const url = req.nextUrl.clone();
     url.pathname = "/app";
 
     return NextResponse.rewrite(url);
   }
 
-  if (!userId && isAppRoute(req)) {
+  if (!userId && protectedRoute(req)) {
     return redirectToSignIn();
   }
 
-  if (isAppRoute(req)) await auth.protect();
+  if (protectedRoute(req)) await auth.protect();
 });
 
 export const config = {

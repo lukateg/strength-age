@@ -34,7 +34,11 @@ export default function MaterialsList({
             <span>{material?.name}</span>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(material.fileUrl, "_blank")}
+            >
               Preview
             </Button>
           </div>

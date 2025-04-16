@@ -9,18 +9,18 @@ import {
 import TestReviewsList from "./test-reviews-list";
 import ItemsScrollArea from "@/components/items-scroll-area";
 
-export default function TestReviewsSection({ classId }: { classId: string }) {
+export default function TestReviewsSection() {
   return (
     <Card>
-      <CardHeader>
-        <div className="flex justify-between">
+      <CardHeader className="flex flex-row justify-between">
+        <div className="space-y-2">
           <CardTitle>Test Reviews</CardTitle>
+          <CardDescription>All test reviews created by you</CardDescription>
         </div>
-        <CardDescription>All test reviews created by you</CardDescription>
       </CardHeader>
       <CardContent>
         <ItemsScrollArea className="h-[650px]">
-          <TestReviewsList classId={classId} />
+          <TestReviewsList />
         </ItemsScrollArea>
       </CardContent>
     </Card>

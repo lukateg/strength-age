@@ -14,12 +14,12 @@ export default function ClassesPage() {
             Manage your classes and materials
           </p>
         </div>
-        <Link href="/app/classes/new-class">
-          <Button>
+        <Button asChild>
+          <Link href="/app/classes/create-class">
             <Plus className="h-4 w-4 mr-2" />
             Create New Class
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
 
       <ClassesList />

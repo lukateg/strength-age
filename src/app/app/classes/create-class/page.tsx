@@ -21,6 +21,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { BookOpen } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+
+import RedirectBackButton from "@/components/redirect-back-button";
 
 const formSchema = z.object({
   title: z
@@ -55,17 +59,23 @@ export default function NewClassPage() {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-4xl font-bold">New Class</h1>
-          <p className="text-muted-foreground mt-2">
+    <div className="container mx-auto p-6 space-y-10">
+      <div className="flex items-center gap-4">
+        <RedirectBackButton>
+          <ArrowLeft className="h-6 w-6" />
+        </RedirectBackButton>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-6 w-6 text-primary" />
+            <h1 className="text-2xl font-bold">New Class</h1>
+          </div>
+          <p className="text-muted-foreground">
             Create your classes and materials
           </p>
         </div>
       </div>
 
-      <Card className="p-6 mx-auto mt-6">
+      <Card className="p-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField

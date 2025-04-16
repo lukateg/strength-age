@@ -12,10 +12,14 @@ import RecentClasses from "./components/recent-classes";
 import RecentTests from "./tests/components/recent-tests";
 import DashboardStats from "@/components/dashboard-stats";
 
+import { Plus } from "lucide-react";
+
 export default function Dashboard() {
   const { user } = useUser();
 
-  const classes = useQuery(api.classes.getAllClasses);
+  const classes = useQuery(api.classes.getAllClassesByUserId, {
+    userId: user?.id,
+  });
   const allTests = useQuery(api.tests.getAllTestsByUser, {
     userId: user?.id,
   });
@@ -37,8 +41,11 @@ export default function Dashboard() {
             Your AI-powered learning assistant
           </p>
         </div>
-        <Button>
-          <Link href="/app/classes/new-class">Create New Class</Link>
+        <Button asChild>
+          <Link href="/app/classes/create-class">
+            <Plus className="h-4 w-4 mr-2" />
+            Create New Class
+          </Link>
         </Button>
       </div>
 

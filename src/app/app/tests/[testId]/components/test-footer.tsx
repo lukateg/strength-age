@@ -18,17 +18,14 @@ export default function TestFooter({
   isLoading: boolean;
 }) {
   const totalPages = Math.ceil(test?.questions.length / questionsPerPage);
-  //   const isLastPage = test.questions
-  //     ? currentPage === Math.ceil(test.questions.length / questionsPerPage)
-  //     : false;
 
-  //   console.log(isLastPage, "last page");
   return (
     <div className="mt-8 flex justify-between">
       <Button
         variant="outline"
         onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
         disabled={currentPage === 1}
+        type="button"
       >
         Previous
       </Button>
@@ -38,6 +35,7 @@ export default function TestFooter({
 
       {currentPage !== totalPages ? (
         <Button
+          type="button"
           onClick={() =>
             setCurrentPage((prev) => Math.min(totalPages, prev + 1))
           }
@@ -46,7 +44,7 @@ export default function TestFooter({
           Next
         </Button>
       ) : (
-        <Button onClick={handleSubmit} disabled={isLoading}>
+        <Button onClick={handleSubmit} disabled={isLoading} type="submit">
           Submit
         </Button>
       )}

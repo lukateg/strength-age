@@ -1,4 +1,5 @@
-import { Id } from "convex/_generated/dataModel";
+import { type TestQuestion } from "@/app/app/tests/[testId]/page";
+import { type Id, type Doc } from "convex/_generated/dataModel";
 import { z } from "zod";
 // Zod schemas for data validation
 export const multipleChoiceSchema = z.object({
@@ -78,6 +79,34 @@ export const testFormSchema = z.object({
     .min(1, "Select at least one question type"),
   lessons: z.array(z.string()).min(1, "Select at least one lesson"),
 });
+
+export const createAnswerSchema = (test: Doc<"tests"> | undefined | null) => {
+  if (!test) return z.object({});
+
+  const answerFields: Record<string, z.ZodTypeAny> = {};
+
+  test.questions.forEach((question: TestQuestion, index: number) => {
+    switch (question.questionType) {
+      case "true_false":
+      case "short_answer":
+        answerFields[`question-${index}`] = z
+          .string({
+            required_error: "Answer is required",
+          })
+          .min(1, { message: "Answer is required" });
+        break;
+      case "multiple_choice":
+        answerFields[`question-${index}`] = z
+          .array(z.string(), {
+            required_error: "Select at least one answer",
+          })
+          .min(1, { message: "Select at least one answer" });
+        break;
+    }
+  });
+
+  return z.object(answerFields);
+};
 
 export type Test = z.infer<typeof testSchema>;
 export type Question = z.infer<typeof questionSchema>;

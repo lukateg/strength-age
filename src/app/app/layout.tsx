@@ -1,4 +1,7 @@
+"use client";
+
 import { Toaster } from "@/components/ui/toaster";
+import { usePathname } from "next/navigation";
 
 import { ConvexClientProvider } from "@/providers/convex-client-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
@@ -9,6 +12,11 @@ import Sidebar from "@/components/sidebar";
 // - Remove theme provider and maybe toaster
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isTestRoute =
+    /^\/app\/tests\/[^/]+$/.test(pathname) &&
+    pathname !== "/app/tests/generate-test";
+
   return (
     <ConvexClientProvider>
       <ThemeProvider
@@ -19,7 +27,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       >
         <div className="flex h-screen">
           <div className="hidden md:flex">
-            <Sidebar />
+            {isTestRoute ? null : <Sidebar />}
           </div>
 
           <div className="flex-1 pt-16 flex flex-col">

@@ -5,11 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Brain, Home, Layout, Plus, Settings } from "lucide-react";
+import { BookOpen, Brain, Home, Layout, Settings } from "lucide-react";
+// import { useLoadingContext } from "@/providers/loading-context";
 
 const Sidebar = () => {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  // const { setLoading } = useLoadingContext();
 
   const navigation = [
     { name: "Dashboard", href: "/app", icon: Home },
@@ -19,53 +21,64 @@ const Sidebar = () => {
   ];
 
   return (
-    <div
-      className={cn(
-        "flex flex-col h-screen border-r bg-background pt-16",
-        isCollapsed ? "w-16" : "w-64"
-      )}
+    <aside
+      className={cn("h-screen border-r bg-background pt-16 overflow-hidden")}
     >
       <div className="p-4 flex items-center justify-between border-b">
-        {/* {!isCollapsed && (
-          <span className="text-xl font-bold">Teach-me</span>
-        )} */}
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
-          <Layout className="h-4 w-4" />
+          <Layout className="h-6 w-6" />
         </Button>
       </div>
 
-      <div className="flex-1 px-3 py-2">
-        <nav className="space-y-1">
+      <nav
+        className={cn(
+          "flex flex-col justify-between px-4 transition-[width] duration-200 ease-in-out",
+          isCollapsed ? "w-[75px]" : "w-[220px]"
+        )}
+      >
+        <ul className="flex h-full grow flex-col gap-3 overflow-hidden py-2">
           {navigation.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                pathname === item.href
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                isCollapsed && "justify-center"
-              )}
-            >
-              <item.icon className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
-              {!isCollapsed && <span>{item.name}</span>}
-            </Link>
+            <li key={item.name}>
+              <Link
+                href={item.href}
+                className={cn(
+                  "block px-2 w-full text-sm font-medium rounded-md  overflow-hidden",
+                  pathname === item.href
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                )}
+              >
+                <div className="flex items-center justify-start gap-3 py-2 overflow-hidden">
+                  <div className="flex h-6 w-6 items-center align-middle">
+                    <item.icon className="w-6 h-6 " />
+                  </div>
+                  <span className="overflow-hidden whitespace-nowrap text-sm">
+                    {item.name}
+                  </span>
+                </div>
+              </Link>
+            </li>
           ))}
-        </nav>
-      </div>
+        </ul>
+      </nav>
 
-      <div className="p-4">
-        <Button className="w-full" size={isCollapsed ? "icon" : "default"}>
-          <Plus className={cn("h-4 w-4", !isCollapsed && "mr-2")} />
-          {!isCollapsed && "New Class"}
+      {/* <div className="p-4">
+        <Button
+          className="w-full"
+          size={isCollapsed ? "icon" : "default"}
+          onClick={() => {
+            setLoading(true, "Generating test...");
+          }}
+        >
+          <Plus className={cn("h-4 w-4")} />
+          {!isCollapsed && "Simulate Loader"}
         </Button>
-      </div>
-    </div>
+      </div> */}
+    </aside>
   );
 };
 

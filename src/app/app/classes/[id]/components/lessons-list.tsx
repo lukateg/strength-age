@@ -4,11 +4,11 @@ import { FileText } from "lucide-react";
 import Link from "next/link";
 
 import ListItem from "@/components/list-item";
+import Loader from "@/components/loader";
+import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 
 import { Button } from "@/components/ui/button";
 import { useClass } from "@/providers/class-context-provider";
-
-import Loader from "@/components/loader";
 
 export default function LessonsList() {
   const { classId, lessons } = useClass();
@@ -42,9 +42,11 @@ export default function LessonsList() {
                 View
               </Link>
             </Button>
-            <Button variant="outline" size="sm">
-              Generate Test
-            </Button>
+            <FeatureFlagTooltip>
+              <Button variant="outline" size="sm" disabled>
+                Generate Test
+              </Button>
+            </FeatureFlagTooltip>
           </div>
         </ListItem>
       ))}

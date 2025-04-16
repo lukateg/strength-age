@@ -25,20 +25,20 @@ export default function MaterialsSectionComponent({
   classId,
 }: MaterialsSectionComponentProps) {
   const { materials } = useClass();
+
   return (
     <Card>
-      <CardHeader>
-        <div className="flex justify-between">
+      <CardHeader className="flex flex-row justify-between">
+        <div className="space-y-2">
           <CardTitle>Course Materials</CardTitle>
-
-          <Button asChild>
-            <Link href={`/app/classes/${classId}/file-upload`}>
-              <Upload className="h-4 w-4 mr-2" />
-              Upload Materials
-            </Link>
-          </Button>
+          <CardDescription>PDF documents and study materials</CardDescription>
         </div>
-        <CardDescription>PDF documents and study materials</CardDescription>
+        <Button asChild>
+          <Link href={`/app/classes/${classId}/file-upload`}>
+            <Upload className="h-4 w-4 mr-2" />
+            Upload Materials
+          </Link>
+        </Button>
       </CardHeader>
       <CardContent>
         <ItemsScrollArea className="h-[650px]">

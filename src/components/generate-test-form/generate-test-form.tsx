@@ -98,31 +98,29 @@ export default function GenerateTestForm({
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="mx-auto space-y-8">
-          <div className="grid gap-6">
-            <BasicInformationView control={control} />
+    <Form {...form}>
+      <form onSubmit={handleSubmit(onSubmit)} className="mx-auto space-y-8">
+        <div className="grid gap-6">
+          <BasicInformationView control={control} />
 
-            <ClassSelection
-              control={control}
-              classes={classes}
-              disabled={!!classId}
-            />
+          <ClassSelection
+            control={control}
+            classes={classes}
+            disabled={!!classId}
+          />
 
-            <LessonSelectView classId={selectedClassId} control={control} />
+          <LessonSelectView classId={selectedClassId} control={control} />
 
-            <QuestionConfigurationView
-              control={control}
-              lessonsLength={lessonsLength}
-            />
+          <QuestionConfigurationView
+            control={control}
+            lessonsLength={lessonsLength}
+          />
 
-            <Button type="submit" size="lg" className="w-full">
-              Generate Test
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </div>
+          <Button type="submit" size="lg" className="w-full">
+            Generate Test
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

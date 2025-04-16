@@ -5,5 +5,9 @@ export default function TestsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <TestsProvider>{children}</TestsProvider>;
+  return (
+    <TestsProvider>
+      <div className="mx-auto container p-6 space-y-10">{children}</div>
+    </TestsProvider>
+  );
 }

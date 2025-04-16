@@ -23,21 +23,21 @@ export default function TestsSection({ classId }: { classId: string }) {
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex justify-between">
+      <CardHeader className="flex flex-row justify-between">
+        <div className="space-y-2">
           <CardTitle>Course Tests</CardTitle>
-
-          <Button asChild>
-            <Link href={`/app/classes/${classId}/generate-test`}>
-              <Upload className="h-4 w-4 mr-2" />
-              Generate Test
-            </Link>
-          </Button>
+          <CardDescription>
+            AI-generated tests from your materials
+          </CardDescription>
         </div>
-        <CardDescription>
-          AI-generated tests from your materials
-        </CardDescription>
+        <Button asChild>
+          <Link href={`/app/classes/${classId}/generate-test`}>
+            <Upload className="h-4 w-4 mr-2" />
+            Generate Test
+          </Link>
+        </Button>
       </CardHeader>
+
       <CardContent>
         <ItemsScrollArea className="h-[650px]">
           <TestsList tests={tests} />

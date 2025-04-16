@@ -9,6 +9,7 @@ import { Header } from "@/components/header";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { LoadingProvider } from "@/providers/loading-context";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,25 +27,27 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <LoadingProvider>
-        <html lang="en" suppressHydrationWarning>
-          <body className={inter.className}>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <div className="flex h-screen flex-col">
-                <Header />
+        <TooltipProvider>
+          <html lang="en" suppressHydrationWarning>
+            <body className={inter.className}>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <div className="flex h-screen flex-col container mx-auto">
+                  <Header />
 
-                <div className="flex-1 flex flex-col">
-                  <main className="flex-1 overflow-y-auto">{children}</main>
+                  <div className="flex-1 flex flex-col">
+                    <main className="flex-1 overflow-y-auto">{children}</main>
+                  </div>
                 </div>
-              </div>
-              <Toaster />
-            </ThemeProvider>
-          </body>
-        </html>
+                <Toaster />
+              </ThemeProvider>
+            </body>
+          </html>
+        </TooltipProvider>
       </LoadingProvider>
     </ClerkProvider>
   );

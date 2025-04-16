@@ -22,17 +22,17 @@ export default async function LessonsSectionComponent({
 }: LessonsSectionProps) {
   return (
     <Card>
-      <CardHeader>
-        <div className="flex justify-between">
+      <CardHeader className="flex flex-row justify-between">
+        <div className="space-y-2">
           <CardTitle>Course Lessons</CardTitle>
-          <Button asChild>
-            <Link href={`/app/classes/${classId}/new-lesson`}>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Lesson
-            </Link>
-          </Button>
+          <CardDescription>PDF documents and study materials</CardDescription>
         </div>
-        <CardDescription>PDF documents and study materials</CardDescription>
+        <Button asChild>
+          <Link href={`/app/classes/${classId}/new-lesson`}>
+            <Plus className="h-4 w-4 mr-2" />
+            Create Lesson
+          </Link>
+        </Button>
       </CardHeader>
       <CardContent>
         <ItemsScrollArea className="h-[650px]">

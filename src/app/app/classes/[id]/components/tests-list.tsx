@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
 import ListItem from "@/components/list-item";
+import RetryTestButton from "@/components/retry-test-button";
 
 import { FileText, Loader } from "lucide-react";
 
@@ -30,9 +30,9 @@ export default function TestsList({ tests }: { tests?: Doc<"tests">[] }) {
             <span>{test?.title}</span>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              Preview
-            </Button>
+            <RetryTestButton to={`/app/tests/${test._id}`} variant="ghost">
+              Retake test
+            </RetryTestButton>
           </div>
         </ListItem>
       ))}

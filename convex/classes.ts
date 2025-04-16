@@ -5,7 +5,7 @@ export const getAllClassesByUserId = query({
   args: { userId: v.optional(v.string()) },
   handler: async ({ db }, { userId }) => {
     if (!userId) {
-      throw new Error("Not authenticated");
+      return null;
     }
     return await db
       .query("classes")

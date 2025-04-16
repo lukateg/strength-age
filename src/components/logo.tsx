@@ -5,7 +5,7 @@ import { Brain } from "lucide-react";
 export default function Logo() {
   return (
     <Link
-      href="/"
+      href="/app"
       className="flex items-center justify-start space-x-2 md:flex-none flex-1"
     >
       <Brain className="h-8 w-8 text-primary" />

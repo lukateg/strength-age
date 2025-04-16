@@ -10,62 +10,75 @@ export type GeneratedTest = z.infer<typeof testSchema>;
 export async function generateTest(
   formData: TestFormValues
 ): Promise<GeneratedTest> {
-  const isSingleLesson = formData.lessons.length === 1;
-  const endpoint = isSingleLesson
-    ? "/api/generateTestFromLesson"
-    : "/api/generateTestFromLessons";
+  try {
+    const isSingleLesson = formData.lessons.length === 1;
+    const endpoint = isSingleLesson
+      ? "/api/generateTestFromLesson"
+      : "/api/generateTestFromLessons";
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  if (!baseUrl) {
-    throw new Error("Base URL is not defined");
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    console.log(baseUrl);
+    if (!baseUrl) {
+      throw new Error("Base URL is not defined");
+    }
+    const requestBody = {
+      lessonIds: formData.lessons,
+      questionAmount: formData.questionAmount,
+      questionTypes: formData.questionTypes,
+      difficulty: formData.difficulty,
+      ...(isSingleLesson
+        ? {}
+        : { questionDistribution: formData.distribution }),
+    };
+
+    const response = await fetch(`${baseUrl}${endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to generate test");
+    }
+
+    const { response: generatedTest } = (await response.json()) as {
+      response: GeneratedTest;
+    };
+
+    return generatedTest;
+  } catch (error) {
+    console.error("Error generating test:", error);
+    throw error;
   }
-  const requestBody = {
-    lessonIds: formData.lessons,
-    questionAmount: formData.questionAmount,
-    questionTypes: formData.questionTypes,
-    difficulty: formData.difficulty,
-    ...(isSingleLesson ? {} : { questionDistribution: formData.distribution }),
-  };
-
-  const response = await fetch(`${baseUrl}${endpoint}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(requestBody),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to generate test");
-  }
-
-  const { response: generatedTest } = (await response.json()) as {
-    response: GeneratedTest;
-  };
-
-  return generatedTest;
 }
 
 export async function reviewTest(requestBody: {
   test: Doc<"tests">;
   answers: Record<string, string[]>;
 }) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  if (!baseUrl) {
-    throw new Error("Base URL is not defined");
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    if (!baseUrl) {
+      throw new Error("Base URL is not defined");
+    }
+    console.log(baseUrl);
+    const response = await fetch(`${baseUrl}/api/reviewTest`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to review test");
+    }
+
+    const { response: responseData } = (await response.json()) as {
+      response: TestReview;
+    };
+
+    return responseData;
+  } catch (error) {
+    console.error("Error reviewing test:", error);
+    throw error;
   }
-
-  const response = await fetch(`${baseUrl}/api/reviewTest`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(requestBody),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to review test");
-  }
-
-  const { response: responseData } = (await response.json()) as {
-    response: TestReview;
-  };
-
-  return responseData;
 }

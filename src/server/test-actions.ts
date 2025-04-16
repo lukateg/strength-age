@@ -1,0 +1,71 @@
+"use server";
+// server/generateTest.ts
+import { type TestFormValues } from "@/components/generate-test-form/generate-test-form";
+import { type testSchema, type TestReview } from "@/lib/schemas";
+import { type z } from "zod";
+import { type Doc } from "convex/_generated/dataModel";
+
+export type GeneratedTest = z.infer<typeof testSchema>;
+
+export async function generateTest(
+  formData: TestFormValues
+): Promise<GeneratedTest> {
+  const isSingleLesson = formData.lessons.length === 1;
+  const endpoint = isSingleLesson
+    ? "/api/generateTestFromLesson"
+    : "/api/generateTestFromLessons";
+
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  if (!baseUrl) {
+    throw new Error("Base URL is not defined");
+  }
+  const requestBody = {
+    lessonIds: formData.lessons,
+    questionAmount: formData.questionAmount,
+    questionTypes: formData.questionTypes,
+    difficulty: formData.difficulty,
+    ...(isSingleLesson ? {} : { questionDistribution: formData.distribution }),
+  };
+
+  const response = await fetch(`${baseUrl}${endpoint}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(requestBody),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to generate test");
+  }
+
+  const { response: generatedTest } = (await response.json()) as {
+    response: GeneratedTest;
+  };
+
+  return generatedTest;
+}
+
+export async function reviewTest(requestBody: {
+  test: Doc<"tests">;
+  answers: Record<string, string[]>;
+}) {
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  if (!baseUrl) {
+    throw new Error("Base URL is not defined");
+  }
+
+  const response = await fetch(`${baseUrl}/api/reviewTest`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(requestBody),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to review test");
+  }
+
+  const { response: responseData } = (await response.json()) as {
+    response: TestReview;
+  };
+
+  return responseData;
+}

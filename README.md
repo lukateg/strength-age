@@ -21,7 +21,10 @@
 -- make navigation click instant
 
 ZA SUTRA:
+-- maybe create useAuthenticatedQuery
 -- fix nav menu loading
+-- fix active nav item
+-- fix database authentification best practice
 -- Implement mobile design
 -- add modals on all needed actions
 

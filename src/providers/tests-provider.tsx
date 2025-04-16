@@ -12,10 +12,10 @@ import { type Doc } from "convex/_generated/dataModel";
 
 interface TestsContextType {
   userId?: string;
-  testsByUser: Doc<"tests">[] | undefined;
-  testReviewsByUser: Doc<"testReviews">[] | undefined;
-  weeklyTestReviews: Doc<"testReviews">[] | undefined;
-  weeklyTests: Doc<"tests">[] | undefined;
+  testsByUser?: Doc<"tests">[] | null;
+  testReviewsByUser?: Doc<"testReviews">[] | null;
+  weeklyTestReviews?: Doc<"testReviews">[] | null;
+  weeklyTests?: Doc<"tests">[] | null;
 }
 
 const TestsContext = createContext<TestsContextType | null>(null);

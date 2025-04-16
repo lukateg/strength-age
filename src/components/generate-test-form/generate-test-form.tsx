@@ -26,7 +26,7 @@ export default function GenerateTestForm({
   classes,
   classId,
 }: {
-  classes?: Doc<"classes">[];
+  classes?: Doc<"classes">[] | null;
   classId?: Id<"classes">;
 }) {
   const router = useRouter();

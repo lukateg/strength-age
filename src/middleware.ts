@@ -5,13 +5,17 @@ const isAppRoute = createRouteMatcher(["/app(.*)"]);
 const isLandingRoute = createRouteMatcher(["/"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  const { userId } = await auth();
+  const { userId, redirectToSignIn } = await auth();
 
   if (userId && isLandingRoute(req)) {
     const url = req.nextUrl.clone();
     url.pathname = "/app";
 
     return NextResponse.rewrite(url);
+  }
+
+  if (!userId && isAppRoute(req)) {
+    return redirectToSignIn();
   }
 
   if (isAppRoute(req)) await auth.protect();

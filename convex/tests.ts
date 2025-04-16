@@ -67,7 +67,7 @@ export const getAllTestsByUser = query({
   handler: async (ctx, args) => {
     // TODO find out why this is not working
     if (!args.userId) {
-      throw new Error("Not authenticated");
+      return null;
     }
     const tests = await ctx.db
       .query("tests")
@@ -116,7 +116,7 @@ export const getAllTestReviewsByUser = query({
   },
   handler: async (ctx, args) => {
     if (!args.userId) {
-      throw new Error("Not authenticated");
+      return null;
     }
     const testReviews = await ctx.db
       .query("testReviews")
@@ -144,7 +144,7 @@ export const getWeeklyTestReviewsByUserId = query({
   },
   handler: async (ctx, { userId }) => {
     if (!userId) {
-      throw new Error("Not authenticated");
+      return null;
     }
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -165,7 +165,7 @@ export const getWeeklyTestsByUserId = query({
   },
   handler: async (ctx, { userId }) => {
     if (!userId) {
-      throw new Error("Not authenticated");
+      return null;
     }
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);

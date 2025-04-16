@@ -18,7 +18,7 @@ import { type Doc } from "convex/_generated/dataModel";
 export default function RecentClasses({
   classesByUser,
 }: {
-  classesByUser?: Doc<"classes">[];
+  classesByUser?: Doc<"classes">[] | null;
 }) {
   if (!classesByUser) {
     return <Skeleton className="h-[600px] w-full" />;

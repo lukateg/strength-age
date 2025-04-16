@@ -6,10 +6,10 @@ import { Brain } from "lucide-react";
 import { Users } from "lucide-react";
 
 export const generateStats = (
-  classes?: Doc<"classes">[],
-  materials?: Doc<"pdfs">[],
-  allTests?: Doc<"tests">[],
-  testReviews?: Doc<"testReviews">[]
+  classes?: Doc<"classes">[] | null,
+  materials?: Doc<"pdfs">[] | null,
+  allTests?: Doc<"tests">[] | null,
+  testReviews?: Doc<"testReviews">[] | null
 ) => {
   if (!testReviews || !allTests || !materials || !classes) {
     return null;

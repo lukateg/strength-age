@@ -18,7 +18,7 @@ export default function ClassSelection({
   disabled,
 }: {
   control: Control<TestFormValues>;
-  classes?: Doc<"classes">[];
+  classes?: Doc<"classes">[] | null;
   disabled?: boolean;
 }) {
   return (

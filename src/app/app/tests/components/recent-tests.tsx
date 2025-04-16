@@ -17,7 +17,7 @@ import { type Doc } from "convex/_generated/dataModel";
 export default function RecentTests({
   testsByUser,
 }: {
-  testsByUser?: Doc<"tests">[];
+  testsByUser?: Doc<"tests">[] | null;
 }) {
   if (!testsByUser) {
     return <Skeleton className="h-[600px] w-full" />;

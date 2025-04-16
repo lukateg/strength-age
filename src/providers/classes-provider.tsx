@@ -19,7 +19,7 @@ export function ClassesProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser(); // Clerk provides the logged-in user
   const userId = user?.id;
 
-  const classes = useQuery(api.classes.getAllClasses);
+  const classes = useQuery(api.classes.getAllClassesByUserId, { userId });
   const testsByUser = useQuery(api.tests.getAllTestsByUser, { userId });
 
   return (

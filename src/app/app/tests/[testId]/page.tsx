@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 
 import { useParams } from "next/navigation";
 import { useQuery } from "convex/react";
@@ -14,6 +15,7 @@ import { api } from "../../../../../convex/_generated/api";
 import TestFooter from "./components/test-footer";
 import QuestionAnswers from "./components/question-answers";
 import TestSkeleton from "./components/test-skeleton";
+import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 
 import { useTestMutations } from "@/hooks/use-test-mutation";
 import { useLoadingContext } from "@/providers/loading-context";
@@ -25,9 +27,7 @@ import { createAnswerSchema } from "@/lib/schemas";
 import { type TestReview } from "@/lib/schemas";
 import { type Id } from "../../../../../convex/_generated/dataModel";
 import type * as z from "zod";
-import { Button } from "@/components/ui/button";
 import { Pause, CircleX } from "lucide-react";
-import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 
 export type TestQuestion = {
   questionText: string;
@@ -65,6 +65,8 @@ export default function TestPage() {
       return;
     }
     setLoading(true, "Reviewing test...");
+
+    sessionStorage.setItem("fromTestPage", "true");
 
     const requestBody = {
       test: test,

@@ -138,13 +138,20 @@ export const getTestReviewsByClassId = query({
     return testReviews;
   },
 });
-export const getWeeklyTestReviews = query({
-  handler: async (ctx) => {
+export const getWeeklyTestReviewsByUserId = query({
+  args: {
+    userId: v.optional(v.string()),
+  },
+  handler: async (ctx, { userId }) => {
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     const recentReviews = await ctx.db
       .query("testReviews")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
       .filter((q) => q.gte(q.field("_creationTime"), sevenDaysAgo.getTime()))
       .collect();
 
@@ -152,13 +159,20 @@ export const getWeeklyTestReviews = query({
   },
 });
 
-export const getWeeklyTests = query({
-  handler: async (ctx) => {
+export const getWeeklyTestsByUserId = query({
+  args: {
+    userId: v.optional(v.string()),
+  },
+  handler: async (ctx, { userId }) => {
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     const recentTests = await ctx.db
       .query("tests")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
       .filter((q) => q.gte(q.field("_creationTime"), sevenDaysAgo.getTime()))
       .collect();
 

@@ -7,9 +7,13 @@ import GenerateTestForm from "@/components/generate-test-form/generate-test-form
 import { ArrowLeft } from "lucide-react";
 import { BookOpen } from "lucide-react";
 import RedirectBackButton from "@/components/redirect-back-button";
+import { useUser } from "@clerk/nextjs";
 
 export default function GenerateTestPage() {
-  const classes = useQuery(api.classes.getAllClasses);
+  const { user } = useUser();
+  const classes = useQuery(api.classes.getAllClassesByUserId, {
+    userId: user?.id,
+  });
 
   return (
     <>

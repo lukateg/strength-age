@@ -4,6 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+import TestReviewStats from "./components/test-review-stats";
+import TestReviewSkeleton from "./components/test-review-skeleton";
+import RetryTestButton from "@/components/retry-test-button";
+
 import {
   CheckCircle2,
   XCircle,
@@ -14,16 +19,12 @@ import {
   CheckCircle,
   AlertCircle,
 } from "lucide-react";
-// TODO: duplicate
+
 import { useParams, useRouter } from "next/navigation";
 import { api } from "../../../../../../../convex/_generated/api";
 import { useQuery } from "convex/react";
 
 import { type Id } from "convex/_generated/dataModel";
-
-import TestReviewStats from "./components/test-review-stats";
-import TestReviewSkeleton from "./components/test-review-skeleton";
-import RetryTestButton from "@/components/retry-test-button";
 
 export default function ReviewPage() {
   const {
@@ -31,15 +32,14 @@ export default function ReviewPage() {
     testId,
   }: { testReviewId: Id<"testReviews">; testId: Id<"tests"> } = useParams();
   const router = useRouter();
-
   const testReview = useQuery(api.tests.getTestReviewById, {
     testReviewId,
   });
-
-  const previousPath = typeof window !== "undefined" ? document.referrer : "";
+  const fromTestPage = sessionStorage.getItem("fromTestPage");
 
   const handleBackNavigation = () => {
-    if (previousPath.includes(`/app/tests/${testId}`)) {
+    if (fromTestPage) {
+      sessionStorage.removeItem("fromTestPage");
       router.push(`/app/tests`);
     } else {
       router.back();

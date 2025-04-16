@@ -23,6 +23,14 @@ const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
 
 function LoadingOverlay({ shouldDisplay }: { shouldDisplay: boolean }) {
   const { message } = useContext(LoadingContext)!;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  if (!mounted) return null;
 
   return createPortal(
     <div

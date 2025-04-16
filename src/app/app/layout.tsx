@@ -13,7 +13,9 @@ import Sidebar from "@/components/sidebar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isTestRoute = /^\/app\/tests\/[^/]+$/.test(pathname);
+  const isTestRoute =
+    /^\/app\/tests\/[^/]+$/.test(pathname) &&
+    pathname !== "/app/tests/generate-test";
 
   return (
     <ConvexClientProvider>

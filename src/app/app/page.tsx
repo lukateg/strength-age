@@ -17,7 +17,9 @@ import { Plus } from "lucide-react";
 export default function Dashboard() {
   const { user } = useUser();
 
-  const classes = useQuery(api.classes.getAllClasses);
+  const classes = useQuery(api.classes.getAllClassesByUserId, {
+    userId: user?.id,
+  });
   const allTests = useQuery(api.tests.getAllTestsByUser, {
     userId: user?.id,
   });

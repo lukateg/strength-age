@@ -27,7 +27,10 @@ export const useClassMutations = () => {
           return;
         }
 
-        await createClassMutation(params);
+        await createClassMutation({
+          ...params,
+          userId,
+        });
 
         toast({
           title: "Success",

@@ -28,8 +28,12 @@ export function TestsProvider({ children }: { children: React.ReactNode }) {
   const testReviewsByUser = useQuery(api.tests.getAllTestReviewsByUser, {
     userId,
   });
-  const weeklyTestReviews = useQuery(api.tests.getWeeklyTestReviews);
-  const weeklyTests = useQuery(api.tests.getWeeklyTests);
+  const weeklyTestReviews = useQuery(api.tests.getWeeklyTestReviewsByUserId, {
+    userId,
+  });
+  const weeklyTests = useQuery(api.tests.getWeeklyTestsByUserId, {
+    userId,
+  });
 
   return (
     <TestsContext.Provider

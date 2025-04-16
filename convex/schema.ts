@@ -5,7 +5,8 @@ export default defineSchema({
   classes: defineTable({
     title: v.string(),
     description: v.optional(v.string()),
-  }),
+    userId: v.optional(v.string()),
+  }).index("by_user", ["userId"]),
 
   lessons: defineTable({
     userId: v.string(),
@@ -39,7 +40,7 @@ export default defineSchema({
         correctAnswer: v.array(v.string()),
       })
     ),
-  }),
+  }).index("by_user", ["userId"]),
   testReviews: defineTable({
     userId: v.string(),
     classId: v.string(),
@@ -57,5 +58,5 @@ export default defineSchema({
         feedback: v.optional(v.string()),
       })
     ),
-  }),
+  }).index("by_user", ["userId"]),
 });

@@ -28,6 +28,7 @@ import { type TestReview } from "@/lib/schemas";
 import { type Id } from "../../../../../convex/_generated/dataModel";
 import type * as z from "zod";
 import { Pause, CircleX } from "lucide-react";
+import { reviewTest } from "@/server/test-actions";
 
 export type TestQuestion = {
   questionText: string;
@@ -74,26 +75,13 @@ export default function TestPage() {
     };
 
     try {
-      const response = await fetch("/api/reviewTest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate test");
-      }
-
-      const { response: responseData } = (await response.json()) as {
-        response: TestReview;
-      };
+      const responseData = await reviewTest(requestBody);
 
       const testReviewId = await createTestReview({
         ...responseData,
         testId: test._id,
         classId: test.classId,
       });
-
       void router.push(`/app/tests/${testId}/review/${testReviewId}`);
     } catch (error) {
       console.error("Error generating test:", error);

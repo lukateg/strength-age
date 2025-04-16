@@ -1,3 +1,5 @@
+"use client";
+
 // import { UserNav } from "./user-nav";
 import { ModeToggle } from "./mode-toggle";
 

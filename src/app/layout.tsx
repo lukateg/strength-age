@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   title: "Teach-me - AI-Powered Learning Platform",
   description:
     "An intelligent platform for creating and managing educational content",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

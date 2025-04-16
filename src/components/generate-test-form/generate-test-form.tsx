@@ -18,6 +18,7 @@ import BasicInformationView from "./components/basic-information-view";
 import { testFormSchema, type testSchema } from "@/lib/schemas";
 import { type z } from "zod";
 import { type Id, type Doc } from "convex/_generated/dataModel";
+import { generateTest } from "@/server/test-actions";
 
 export type TestFormValues = z.infer<typeof testFormSchema>;
 export type GeneratedTest = z.infer<typeof testSchema>;
@@ -54,36 +55,8 @@ export default function GenerateTestForm({
 
   const onSubmit = async (formData: TestFormValues) => {
     setLoading(true, "Generating test...");
-    const isSingleLesson = formData.lessons.length === 1;
-    const endpoint = isSingleLesson
-      ? "/api/generateTestFromLesson"
-      : "/api/generateTestFromLessons";
-
-    const requestBody = {
-      lessonIds: formData.lessons,
-      questionAmount: formData.questionAmount,
-      questionTypes: formData.questionTypes,
-      difficulty: formData.difficulty,
-      ...(isSingleLesson
-        ? {}
-        : { questionDistribution: formData.distribution }),
-    };
-
     try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate test");
-      }
-
-      const { response: generatedTest } = (await response.json()) as {
-        response: GeneratedTest;
-      };
-
+      const generatedTest = await generateTest(formData);
       const testId = await createTest({
         ...generatedTest,
         classId: formData.classId,

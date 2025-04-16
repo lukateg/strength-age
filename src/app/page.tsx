@@ -146,30 +146,30 @@ export default function Home() {
               <span className="text-xl font-bold">Teach.me</span>
             </div>
             <div className="flex gap-8">
-              <Link
-                href="#"
+              <span
+                // href="#"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
                 About
-              </Link>
-              <Link
-                href="#"
+              </span>
+              <span
+                // href="#"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
                 Features
-              </Link>
-              <Link
-                href="#"
+              </span>
+              <span
+                // href="#"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
                 Pricing
-              </Link>
-              <Link
-                href="#"
+              </span>
+              <span
+                // href="#"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
                 Contact
-              </Link>
+              </span>
             </div>
           </div>
           <div className="mt-8 text-center text-muted-foreground text-sm">

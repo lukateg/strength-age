@@ -25,6 +25,8 @@ ZA SUTRA:
 -- fix nav menu loading
 -- fix active nav item
 -- fix database authentification best practice
+-- clear schema and start all over
+
 -- Implement mobile design
 -- add modals on all needed actions
 

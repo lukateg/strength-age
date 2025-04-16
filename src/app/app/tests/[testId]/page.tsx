@@ -112,12 +112,12 @@ export default function TestPage() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-8 text-center flex justify-between items-center">
             <Button
-              variant="destructive"
+              variant="outline"
               onClick={() => router.back()}
-              className="mr-4"
+              className="mr-4 border-red-600/50 text-primary border-2"
               type="button"
             >
-              <CircleX className="w-4 h-4 mr-2" />
+              <CircleX className="w-4 h-4 mr-2 text-red-600/50" />
               Exit Test
             </Button>
             <div className="flex-1">
@@ -128,11 +128,11 @@ export default function TestPage() {
             <FeatureFlagTooltip>
               <Button
                 type="button"
-                variant="default"
-                className="bg-green-600/70 text-white"
+                variant="outline"
+                className="border-green-600/90 text-primary border-2"
                 disabled
               >
-                <Pause className="w-4 h-4 mr-2" />
+                <Pause className="w-4 h-4 mr-2 text-green-600/90" />
                 Pause Test
               </Button>
             </FeatureFlagTooltip>

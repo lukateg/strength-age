@@ -20,16 +20,11 @@
 -- Server-Side Rendering with Next.js add preloadQuery for preloading data on the server
 -- make navigation click instant
 
-
-// hook up classes with real data
-
-
 ZA SUTRA:
--- remove all spinners and add proper suspense skeleton
-
-
+-- fix nav menu loading
 -- Implement mobile design
 -- add modals on all needed actions
+
 
 PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
 -- Add delete and edit

@@ -47,6 +47,7 @@ export default function renderQuestion({
                         <RadioGroupItem
                           value={answer}
                           id={`${globalIndex}-${answer}`}
+                          className="w-[19px] h-[19px]"
                         />
                         <Label htmlFor={`${globalIndex}-${answer}`}>
                           {answer}

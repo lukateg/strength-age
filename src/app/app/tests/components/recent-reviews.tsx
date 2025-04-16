@@ -20,7 +20,7 @@ import Link from "next/link";
 export default function RecentReviews({
   testReviewsByUser,
 }: {
-  testReviewsByUser?: Doc<"testReviews">[];
+  testReviewsByUser?: Doc<"testReviews">[] | null;
 }) {
   if (!testReviewsByUser) {
     return <Skeleton className="h-[600px] w-full" />;

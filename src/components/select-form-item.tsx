@@ -24,7 +24,7 @@ export default function SelectFormItem({
   label,
   description,
 }: {
-  items?: Lesson[];
+  items?: Lesson[] | null;
   disabled?: boolean;
   placeholder?: string;
   value?: string;

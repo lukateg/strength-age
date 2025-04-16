@@ -2,9 +2,9 @@ import { type Doc } from "convex/_generated/dataModel";
 import { FileText, BookOpen, Brain, Users } from "lucide-react";
 
 export const generateStats = (
-  testReviewsByUser?: Doc<"testReviews">[],
-  weeklyTestReviews?: Doc<"testReviews">[],
-  testsByUser?: Doc<"tests">[]
+  testReviewsByUser?: Doc<"testReviews">[] | null,
+  weeklyTestReviews?: Doc<"testReviews">[] | null,
+  testsByUser?: Doc<"tests">[] | null
 ) => {
   if (!testReviewsByUser || !weeklyTestReviews || !testsByUser) {
     return null;

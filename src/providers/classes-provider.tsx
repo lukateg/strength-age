@@ -8,9 +8,9 @@ import { type Id, type Doc } from "convex/_generated/dataModel";
 import { useUser } from "@clerk/nextjs";
 
 interface ClassesContextType {
-  classes: Doc<"classes">[] | undefined;
+  classes?: Doc<"classes">[] | null;
   userId: string | undefined;
-  testsByUser: Doc<"tests">[] | undefined;
+  testsByUser?: Doc<"tests">[] | null;
 }
 
 const ClassContext = createContext<ClassesContextType | null>(null);

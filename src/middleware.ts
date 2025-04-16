@@ -1,24 +1,34 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+// import { NextResponse } from "next/server";
 
-const protectedRoute = createRouteMatcher(["/app(.*)"]);
-const publicRoute = createRouteMatcher(["/"]);
+// const protectedRoute = createRouteMatcher(["/app(.*)"]);
+// const publicRoute = createRouteMatcher(["/"]);
+
+// export default clerkMiddleware(async (auth, req) => {
+//   const { userId, redirectToSignIn } = await auth();
+
+//   if (userId && publicRoute(req)) {
+//     const url = req.nextUrl.clone();
+//     url.pathname = "/app";
+
+//     return NextResponse.rewrite(url);
+//   }
+
+//   if (!userId && protectedRoute(req)) {
+//     return redirectToSignIn();
+//   }
+
+//   if (protectedRoute(req)) await auth.protect();
+// });
+
+const isProtectedRoute = createRouteMatcher(["/app(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId, redirectToSignIn } = await auth();
 
-  if (userId && publicRoute(req)) {
-    const url = req.nextUrl.clone();
-    url.pathname = "/app";
-
-    return NextResponse.rewrite(url);
-  }
-
-  if (!userId && protectedRoute(req)) {
+  if (!userId && isProtectedRoute(req)) {
     return redirectToSignIn();
   }
-
-  if (protectedRoute(req)) await auth.protect();
 });
 
 export const config = {

@@ -2,7 +2,7 @@
 
 // - since a lot of logic is based on the URLS, implement fallback when user types jibrish in the url so it doesn't break your backedn and frontend
 // - remove pdfItems from getLessonData, these need to be separated
-
+// - https://stack.convex.dev/authentication-best-practices-convex-clerk-and-nextjs#ensuring-authentication-in-server-components
 // - check if all components are server components if possible
 // - check why uploading calls 3 requests and is so slow ///
 
@@ -13,12 +13,8 @@
 -- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
 -- add chunking text prompt
 -- add validation if test title exist so user cannot have two same entities in database
--- no tests found not working on generate tests page
 
-
--- use const user = await currentUser(); from clerk for all API routes -- find out why clerk is not working properly -- because we are throwing error when !userId in convex file, sync userId validation-- add error handling when user is not authenticated it breaks the page
 -- Server-Side Rendering with Next.js add preloadQuery for preloading data on the server
--- make navigation click instant
 
 ZA SUTRA:
 -- maybe create useAuthenticatedQuery
@@ -42,6 +38,7 @@ MAYBE IN FUTURE
 --  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation to single class page
 -- implement custom question number per lesson
 -- add abort test generating when clicking on the X in the loader
+-- maybe add sharing tests between user as a social media app
 
 # MVP Plan for Teach.me
 ✅ Core Features

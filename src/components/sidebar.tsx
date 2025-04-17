@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -14,11 +14,13 @@ const Sidebar = () => {
   // const { setLoading } = useLoadingContext();
 
   const navigation = [
-    { name: "Dashboard", href: "/app", icon: Home },
+    { name: "Dashboard", href: "/", icon: Home },
     { name: "My Classes", href: "/app/classes", icon: BookOpen },
     { name: "Test Generator", href: "/app/tests", icon: Brain },
     { name: "Settings", href: "/app/settings", icon: Settings },
   ];
+
+  console.log(pathname, "[pathname]");
 
   return (
     <aside
@@ -41,28 +43,31 @@ const Sidebar = () => {
         )}
       >
         <ul className="flex h-full grow flex-col gap-3 overflow-hidden py-2">
-          {navigation.map((item) => (
-            <li key={item.name}>
-              <Link
-                href={item.href}
-                className={cn(
-                  "block px-2 w-full text-sm font-medium rounded-md  overflow-hidden",
-                  pathname === item.href
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                )}
-              >
-                <div className="flex items-center justify-start gap-3 py-2 overflow-hidden">
-                  <div className="flex h-6 w-6 items-center align-middle">
-                    <item.icon className="w-6 h-6 " />
+          {navigation.map((item) => {
+            // console.log(pathname === item.href, "[pathname === item.href]");
+            return (
+              <li key={item.name}>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "block px-2 w-full text-sm font-medium rounded-md  overflow-hidden",
+                    pathname === item.href
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  )}
+                >
+                  <div className="flex items-center justify-start gap-3 py-2 overflow-hidden">
+                    <div className="flex h-6 w-6 items-center align-middle">
+                      <item.icon className="w-6 h-6 " />
+                    </div>
+                    <span className="overflow-hidden whitespace-nowrap text-sm">
+                      {item.name}
+                    </span>
                   </div>
-                  <span className="overflow-hidden whitespace-nowrap text-sm">
-                    {item.name}
-                  </span>
-                </div>
-              </Link>
-            </li>
-          ))}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 

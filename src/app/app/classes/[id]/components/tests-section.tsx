@@ -40,7 +40,7 @@ export default function TestsSection({ classId }: { classId: string }) {
 
       <CardContent>
         <ItemsScrollArea className="h-[650px]">
-          <TestsList tests={tests} />
+          <TestsList tests={tests.data} />
         </ItemsScrollArea>
       </CardContent>
     </Card>

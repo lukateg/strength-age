@@ -12,11 +12,15 @@ export default function TestFooter({
 }: {
   currentPage: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
-  test: Doc<"tests">;
+  test: Doc<"tests"> | null;
   questionsPerPage: number;
   handleSubmit: () => void;
   isLoading: boolean;
 }) {
+  if (!test) {
+    return null;
+  }
+
   const totalPages = Math.ceil(test?.questions.length / questionsPerPage);
 
   return (

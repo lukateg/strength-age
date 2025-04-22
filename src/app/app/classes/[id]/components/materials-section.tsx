@@ -26,6 +26,10 @@ export default function MaterialsSectionComponent({
 }: MaterialsSectionComponentProps) {
   const { materials } = useClass();
 
+  if (materials.isError) {
+    return <div>Error loading materials</div>;
+  }
+
   return (
     <Card>
       <CardHeader className="flex flex-row justify-between">
@@ -42,7 +46,7 @@ export default function MaterialsSectionComponent({
       </CardHeader>
       <CardContent>
         <ItemsScrollArea className="h-[650px]">
-          <MaterialsList materials={materials} />
+          <MaterialsList materials={materials.data} />
         </ItemsScrollArea>
       </CardContent>
     </Card>

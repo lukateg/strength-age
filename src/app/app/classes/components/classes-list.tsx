@@ -18,7 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function ClassesList() {
   const { classes } = useClasses();
 
-  if (!classes) {
+  if (classes.isPending) {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3, 4, 5].map((item) => (
@@ -28,7 +28,11 @@ export default function ClassesList() {
     );
   }
 
-  if (classes.length === 0) {
+  if (classes.isError) {
+    return <div>Error loading classes</div>;
+  }
+
+  if (classes.isSuccess && classes.data.length === 0) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium">No Classes Yet</h3>
@@ -41,7 +45,7 @@ export default function ClassesList() {
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {classes.map((classItem) => (
+      {classes.data.map((classItem) => (
         <Card key={classItem.title}>
           <CardHeader>
             <CardTitle className="flex items-center">

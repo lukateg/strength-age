@@ -3,9 +3,8 @@ import { mutation, query } from "./_generated/server";
 import { AuthenticationRequired } from "./utils/utils";
 
 export const getAllClassesByUserId = query({
-  args: { userId: v.optional(v.string()) },
-  handler: async (ctx, { userId }) => {
-    await AuthenticationRequired({ ctx });
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
 
     return await ctx.db
       .query("classes")

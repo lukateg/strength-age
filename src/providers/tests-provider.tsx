@@ -28,9 +28,8 @@ export function TestsProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser(); // Clerk provides the logged-in user
   const userId = user?.id;
 
-  // const testsByUser = useQuery(api.tests.getAllTestsByUser, { userId });
   const testsByUser: QueryStatus<typeof api.tests.getAllTestsByUser> =
-    useAuthenticatedQueryWithStatus(api.tests.getAllTestsByUser, { userId });
+    useAuthenticatedQueryWithStatus(api.tests.getAllTestsByUser);
 
   const testReviewsByUser: QueryStatus<
     typeof api.tests.getAllTestReviewsByUser

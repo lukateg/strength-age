@@ -7,7 +7,7 @@ import { type Id } from "convex/_generated/dataModel";
 import { type PDFType } from "@/types/types";
 
 interface SelectMaterialsViewProps {
-  materials?: PDFType[];
+  materials?: PDFType[] | null;
   control: Control<{
     lessonId: Id<"lessons">;
     selectedMaterials: Id<"pdfs">[];

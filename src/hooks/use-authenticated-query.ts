@@ -35,7 +35,7 @@ export const useQueryWithStatus = makeUseQueryWithStatus(useQueries);
 
 export function useAuthenticatedQueryWithStatus<
   Query extends FunctionReference<"query">,
->(query: Query, args: OptionalRestArgsOrSkip<Query>[0] | "skip") {
+>(query: Query, args?: OptionalRestArgsOrSkip<Query>[0] | "skip") {
   const { isAuthenticated } = useConvexAuth();
 
   return useQueryWithStatus(query, isAuthenticated ? args : "skip");

@@ -93,7 +93,7 @@ export default function FileUploadPage() {
             name="lessonId"
             render={({ field }) => (
               <SelectFormItem
-                items={lessons}
+                items={lessons.data}
                 label="Select Lesson"
                 placeholder="none"
                 defaultValue="none"

@@ -63,18 +63,12 @@ export const createTestReview = mutation({
 });
 
 export const getAllTestsByUser = query({
-  args: {
-    userId: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    await AuthenticationRequired({ ctx });
-    // TODO find out why this is not working
-    if (!args.userId) {
-      return null;
-    }
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
     const tests = await ctx.db
       .query("tests")
-      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .filter((q) => q.eq(q.field("userId"), userId))
       .collect();
     return tests;
   },

@@ -9,7 +9,8 @@ import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
 import { useParams } from "next/navigation";
-import { useQuery } from "convex/react";
+import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
+
 import { api } from "../../../../../convex/_generated/api";
 
 import TestFooter from "./components/test-footer";
@@ -24,7 +25,6 @@ import { useRouter } from "next/navigation";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { createAnswerSchema } from "@/lib/schemas";
 
-import { type TestReview } from "@/lib/schemas";
 import { type Id } from "../../../../../convex/_generated/dataModel";
 import type * as z from "zod";
 import { Pause, CircleX } from "lucide-react";
@@ -42,7 +42,7 @@ export default function TestPage() {
   const { testId }: { testId: Id<"tests"> } = useParams();
   const { setLoading, loading } = useLoadingContext();
 
-  const test = useQuery(api.tests.getTestById, {
+  const test = useAuthenticatedQueryWithStatus(api.tests.getTestById, {
     testId,
   });
 
@@ -51,9 +51,9 @@ export default function TestPage() {
   const questionsPerPage = 10;
   const startIndex = (currentPage - 1) * questionsPerPage;
   const endIndex = startIndex + questionsPerPage;
-  const currentQuestions = test?.questions.slice(startIndex, endIndex);
+  const currentQuestions = test?.data?.questions.slice(startIndex, endIndex);
 
-  const formSchema = createAnswerSchema(test);
+  const formSchema = createAnswerSchema(test?.data);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -69,8 +69,11 @@ export default function TestPage() {
 
     sessionStorage.setItem("fromTestPage", "true");
 
+    if (!test.data) {
+      return;
+    }
     const requestBody = {
-      test: test,
+      test: test.data,
       answers: data,
     };
 
@@ -79,8 +82,8 @@ export default function TestPage() {
 
       const testReviewId = await createTestReview({
         ...responseData,
-        testId: test._id,
-        classId: test.classId,
+        testId: test.data._id,
+        classId: test.data.classId,
       });
       void router.push(`/app/tests/${testId}/review/${testReviewId}`);
     } catch (error) {
@@ -90,8 +93,12 @@ export default function TestPage() {
     }
   };
 
-  if (!test) {
+  if (test.isPending) {
     return <TestSkeleton />;
+  }
+
+  if (test.isError) {
+    return <div>Error loading test</div>;
   }
 
   return (
@@ -109,8 +116,8 @@ export default function TestPage() {
               Exit Test
             </Button>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-2">{test.title}</h1>
-              <p className="text-muted-foreground">{test.description}</p>
+              <h1 className="text-3xl font-bold mb-2">{test.data?.title}</h1>
+              <p className="text-muted-foreground">{test.data?.description}</p>
             </div>
 
             <FeatureFlagTooltip>
@@ -151,7 +158,7 @@ export default function TestPage() {
         <TestFooter
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
-          test={test}
+          test={test.data}
           questionsPerPage={questionsPerPage}
           handleSubmit={form.handleSubmit(onSubmit)}
           isLoading={loading}

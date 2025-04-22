@@ -53,4 +53,5 @@ export async function AuthenticationRequired({
   if (identity === null) {
     throw new ConvexError("Not authenticated!");
   }
+  return identity.subject;
 }

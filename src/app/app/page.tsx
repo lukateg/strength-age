@@ -2,7 +2,6 @@
 import Link from "next/link";
 
 import { api } from "../../../convex/_generated/api";
-import { useQuery } from "convex/react";
 import { useUser } from "@clerk/nextjs";
 import { generateStats } from "./utils";
 
@@ -13,24 +12,34 @@ import RecentTests from "./tests/components/recent-tests";
 import DashboardStats from "@/components/dashboard-stats";
 
 import { Plus } from "lucide-react";
+import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 export default function Dashboard() {
   const { user } = useUser();
 
-  const classes = useQuery(api.classes.getAllClassesByUserId, {
-    userId: user?.id,
-  });
-  const allTests = useQuery(api.tests.getAllTestsByUser, {
-    userId: user?.id,
-  });
-  const materials = useQuery(api.materials.getAllPDFsByUser, {
-    userId: user?.id,
-  });
-  const testReviews = useQuery(api.tests.getAllTestReviewsByUser, {
-    userId: user?.id,
-  });
+  const classes = useAuthenticatedQueryWithStatus(
+    api.classes.getAllClassesByUserId
+  );
+  const allTests = useAuthenticatedQueryWithStatus(api.tests.getAllTestsByUser);
+  const materials = useAuthenticatedQueryWithStatus(
+    api.materials.getAllPDFsByUser,
+    {
+      userId: user?.id,
+    }
+  );
+  const testReviews = useAuthenticatedQueryWithStatus(
+    api.tests.getAllTestReviewsByUser,
+    {
+      userId: user?.id,
+    }
+  );
 
-  const stats = generateStats(classes, materials, allTests, testReviews);
+  const stats = generateStats(
+    classes.data,
+    materials.data,
+    allTests.data,
+    testReviews.data
+  );
 
   return (
     <div className="container mx-auto p-6">
@@ -52,8 +61,8 @@ export default function Dashboard() {
       <DashboardStats stats={stats} />
 
       <div className="grid gap-6 md:grid-cols-2">
-        <RecentClasses classesByUser={classes} />
-        <RecentTests testsByUser={allTests} />
+        <RecentClasses classesByUser={classes.data} />
+        <RecentTests testsByUser={allTests.data} />
       </div>
     </div>
   );

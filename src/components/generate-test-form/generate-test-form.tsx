@@ -17,17 +17,15 @@ import BasicInformationView from "./components/basic-information-view";
 
 import { testFormSchema, type testSchema } from "@/lib/schemas";
 import { type z } from "zod";
-import { type Id, type Doc } from "convex/_generated/dataModel";
+import { type Id } from "convex/_generated/dataModel";
 import { generateTest } from "@/server/test-actions";
 
 export type TestFormValues = z.infer<typeof testFormSchema>;
 export type GeneratedTest = z.infer<typeof testSchema>;
 
 export default function GenerateTestForm({
-  classes,
   classId,
 }: {
-  classes?: Doc<"classes">[] | null;
   classId?: Id<"classes">;
 }) {
   const router = useRouter();
@@ -76,11 +74,7 @@ export default function GenerateTestForm({
         <div className="grid gap-6">
           <BasicInformationView control={control} />
 
-          <ClassSelection
-            control={control}
-            classes={classes}
-            disabled={!!classId}
-          />
+          <ClassSelection control={control} disabled={!!classId} />
 
           <LessonSelectView classId={selectedClassId} control={control} />
 

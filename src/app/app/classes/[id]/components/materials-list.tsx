@@ -8,7 +8,7 @@ import { type PDFType } from "@/types/types";
 export default function MaterialsList({
   materials,
 }: {
-  materials?: PDFType[];
+  materials?: PDFType[] | null;
 }) {
   if (!materials) {
     return <Loader />;

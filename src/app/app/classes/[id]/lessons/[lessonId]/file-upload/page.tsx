@@ -116,7 +116,7 @@ export default function FileUploadPage() {
             render={({ field }) => (
               <SelectFormItem
                 {...field}
-                items={lessons}
+                items={lessons.data}
                 label="Lesson"
                 placeholder="Select a lesson"
                 defaultValue="none"
@@ -145,7 +145,7 @@ export default function FileUploadPage() {
             />
           ) : (
             <SelectMaterialsView
-              materials={materials}
+              materials={materials.data}
               control={control}
               lessonId={lessonId}
             />

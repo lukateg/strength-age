@@ -35,14 +35,10 @@ export const uploadPdf = mutation({
 export const getPdfsByClassId = query({
   args: v.object({
     classId: v.string(),
-    userId: v.optional(v.string()),
   }),
-  handler: async (ctx, { classId, userId }) => {
+  handler: async (ctx, { classId }) => {
     await AuthenticationRequired({ ctx });
 
-    if (!userId) {
-      return null;
-    }
     return await ctx.db
       .query("pdfs")
       .withIndex("by_class_user", (q) => q.eq("classId", classId))
@@ -51,15 +47,10 @@ export const getPdfsByClassId = query({
 });
 
 export const getAllPDFsByUser = query({
-  args: v.object({
-    userId: v.optional(v.string()),
-  }),
-  handler: async (ctx, { userId }) => {
-    await AuthenticationRequired({ ctx });
+  args: v.object({}),
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
 
-    if (!userId) {
-      return null;
-    }
     return await ctx.db
       .query("pdfs")
       .filter((q) => q.eq(q.field("userId"), userId))

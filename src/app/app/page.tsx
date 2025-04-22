@@ -2,7 +2,6 @@
 import Link from "next/link";
 
 import { api } from "../../../convex/_generated/api";
-import { useUser } from "@clerk/nextjs";
 import { generateStats } from "./utils";
 
 import { Button } from "@/components/ui/button";
@@ -15,23 +14,15 @@ import { Plus } from "lucide-react";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 export default function Dashboard() {
-  const { user } = useUser();
-
   const classes = useAuthenticatedQueryWithStatus(
     api.classes.getAllClassesByUserId
   );
   const allTests = useAuthenticatedQueryWithStatus(api.tests.getAllTestsByUser);
   const materials = useAuthenticatedQueryWithStatus(
-    api.materials.getAllPDFsByUser,
-    {
-      userId: user?.id,
-    }
+    api.materials.getAllPDFsByUser
   );
   const testReviews = useAuthenticatedQueryWithStatus(
-    api.tests.getAllTestReviewsByUser,
-    {
-      userId: user?.id,
-    }
+    api.tests.getAllTestReviewsByUser
   );
 
   const stats = generateStats(

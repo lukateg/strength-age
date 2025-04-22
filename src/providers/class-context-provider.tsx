@@ -3,10 +3,8 @@ import { createContext, useContext } from "react";
 
 import { useUser } from "@clerk/nextjs";
 import { api } from "../../convex/_generated/api";
-import { useQuery } from "convex/react";
 
-import { type LessonsType, type PDFType } from "@/types/types";
-import { type Doc, type Id } from "convex/_generated/dataModel";
+import { type Id } from "convex/_generated/dataModel";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 import { type QueryStatus } from "@/hooks/use-authenticated-query";
 // TODO:
@@ -40,7 +38,6 @@ export function ClassProvider({
     api.materials.getPdfsByClassId,
     {
       classId,
-      userId,
     }
   );
   // TODO: check if queries by both user and class

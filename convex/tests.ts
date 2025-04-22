@@ -111,17 +111,12 @@ export const getTestReviewById = query({
 });
 
 export const getAllTestReviewsByUser = query({
-  args: {
-    userId: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    await AuthenticationRequired({ ctx });
-    if (!args.userId) {
-      return null;
-    }
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
     const testReviews = await ctx.db
       .query("testReviews")
-      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .filter((q) => q.eq(q.field("userId"), userId))
       .collect();
     return testReviews;
   },
@@ -141,14 +136,9 @@ export const getTestReviewsByClassId = query({
   },
 });
 export const getWeeklyTestReviewsByUserId = query({
-  args: {
-    userId: v.optional(v.string()),
-  },
-  handler: async (ctx, { userId }) => {
-    await AuthenticationRequired({ ctx });
-    if (!userId) {
-      return null;
-    }
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -163,14 +153,9 @@ export const getWeeklyTestReviewsByUserId = query({
 });
 
 export const getWeeklyTestsByUserId = query({
-  args: {
-    userId: v.optional(v.string()),
-  },
-  handler: async (ctx, { userId }) => {
-    await AuthenticationRequired({ ctx });
-    if (!userId) {
-      return null;
-    }
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 

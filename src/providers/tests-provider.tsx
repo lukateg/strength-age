@@ -33,18 +33,12 @@ export function TestsProvider({ children }: { children: React.ReactNode }) {
 
   const testReviewsByUser: QueryStatus<
     typeof api.tests.getAllTestReviewsByUser
-  > = useAuthenticatedQueryWithStatus(api.tests.getAllTestReviewsByUser, {
-    userId,
-  });
+  > = useAuthenticatedQueryWithStatus(api.tests.getAllTestReviewsByUser);
   const weeklyTestReviews: QueryStatus<
     typeof api.tests.getWeeklyTestReviewsByUserId
-  > = useAuthenticatedQueryWithStatus(api.tests.getWeeklyTestReviewsByUserId, {
-    userId,
-  });
+  > = useAuthenticatedQueryWithStatus(api.tests.getWeeklyTestReviewsByUserId);
   const weeklyTests: QueryStatus<typeof api.tests.getWeeklyTestsByUserId> =
-    useAuthenticatedQueryWithStatus(api.tests.getWeeklyTestsByUserId, {
-      userId,
-    });
+    useAuthenticatedQueryWithStatus(api.tests.getWeeklyTestsByUserId);
 
   return (
     <TestsContext.Provider

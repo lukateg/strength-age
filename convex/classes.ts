@@ -21,10 +21,11 @@ export const getClassById = query({
     return await ctx.db.get(id);
   },
 });
+
 export const createClass = mutation({
-  args: { title: v.string(), description: v.string(), userId: v.string() },
-  handler: async (ctx, { title, description, userId }) => {
-    await AuthenticationRequired({ ctx });
+  args: { title: v.string(), description: v.string() },
+  handler: async (ctx, { title, description }) => {
+    const userId = await AuthenticationRequired({ ctx });
 
     return await ctx.db.insert("classes", {
       title,

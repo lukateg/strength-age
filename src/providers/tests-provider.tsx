@@ -3,19 +3,23 @@ import { createContext, useContext } from "react";
 
 import { useUser } from "@clerk/nextjs";
 import { api } from "../../convex/_generated/api";
-import { useQuery } from "convex/react";
 
-import { type Doc } from "convex/_generated/dataModel";
+import {
+  useAuthenticatedQueryWithStatus,
+  type QueryStatus,
+} from "@/hooks/use-authenticated-query";
 // TODO:
 // 1. Add correct types for mutations
 // 2. Add correct loading and error state
 
 interface TestsContextType {
   userId?: string;
-  testsByUser?: Doc<"tests">[] | null;
-  testReviewsByUser?: Doc<"testReviews">[] | null;
-  weeklyTestReviews?: Doc<"testReviews">[] | null;
-  weeklyTests?: Doc<"tests">[] | null;
+  testsByUser?: QueryStatus<typeof api.tests.getAllTestsByUser>;
+  testReviewsByUser?: QueryStatus<typeof api.tests.getAllTestReviewsByUser>;
+  weeklyTestReviews?: QueryStatus<
+    typeof api.tests.getWeeklyTestReviewsByUserId
+  >;
+  weeklyTests?: QueryStatus<typeof api.tests.getWeeklyTestsByUserId>;
 }
 
 const TestsContext = createContext<TestsContextType | null>(null);
@@ -24,16 +28,24 @@ export function TestsProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser(); // Clerk provides the logged-in user
   const userId = user?.id;
 
-  const testsByUser = useQuery(api.tests.getAllTestsByUser, { userId });
-  const testReviewsByUser = useQuery(api.tests.getAllTestReviewsByUser, {
+  // const testsByUser = useQuery(api.tests.getAllTestsByUser, { userId });
+  const testsByUser: QueryStatus<typeof api.tests.getAllTestsByUser> =
+    useAuthenticatedQueryWithStatus(api.tests.getAllTestsByUser, { userId });
+
+  const testReviewsByUser: QueryStatus<
+    typeof api.tests.getAllTestReviewsByUser
+  > = useAuthenticatedQueryWithStatus(api.tests.getAllTestReviewsByUser, {
     userId,
   });
-  const weeklyTestReviews = useQuery(api.tests.getWeeklyTestReviewsByUserId, {
+  const weeklyTestReviews: QueryStatus<
+    typeof api.tests.getWeeklyTestReviewsByUserId
+  > = useAuthenticatedQueryWithStatus(api.tests.getWeeklyTestReviewsByUserId, {
     userId,
   });
-  const weeklyTests = useQuery(api.tests.getWeeklyTestsByUserId, {
-    userId,
-  });
+  const weeklyTests: QueryStatus<typeof api.tests.getWeeklyTestsByUserId> =
+    useAuthenticatedQueryWithStatus(api.tests.getWeeklyTestsByUserId, {
+      userId,
+    });
 
   return (
     <TestsContext.Provider

@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { AuthenticationRequired } from "./utils/utils";
 
 export const uploadPdf = mutation({
   args: {
@@ -14,9 +15,11 @@ export const uploadPdf = mutation({
       })
     ),
   },
-  handler: async ({ db }, { userId, classId, lessonIds, pdfFiles }) => {
+  handler: async (ctx, { userId, classId, lessonIds, pdfFiles }) => {
+    await AuthenticationRequired({ ctx });
+
     for (const pdf of pdfFiles) {
-      await db.insert("pdfs", {
+      await ctx.db.insert("pdfs", {
         userId,
         classId,
         lessonIds,
@@ -34,11 +37,13 @@ export const getPdfsByClassId = query({
     classId: v.string(),
     userId: v.optional(v.string()),
   }),
-  handler: async ({ db }, { classId, userId }) => {
+  handler: async (ctx, { classId, userId }) => {
+    await AuthenticationRequired({ ctx });
+
     if (!userId) {
       return null;
     }
-    return await db
+    return await ctx.db
       .query("pdfs")
       .withIndex("by_class_user", (q) => q.eq("classId", classId))
       .collect();
@@ -49,23 +54,28 @@ export const getAllPDFsByUser = query({
   args: v.object({
     userId: v.optional(v.string()),
   }),
-  handler: async ({ db }, { userId }) => {
+  handler: async (ctx, { userId }) => {
+    await AuthenticationRequired({ ctx });
+
     if (!userId) {
       return null;
     }
-    return await db
+    return await ctx.db
       .query("pdfs")
       .filter((q) => q.eq(q.field("userId"), userId))
       .collect();
   },
 });
 
+// TODO: check if this returns all PDFs from database
 export const getLessonPDFs = query({
   args: {
     lessonId: v.string(),
   },
-  handler: async ({ db }, { lessonId }) => {
-    const allPDFs = await db.query("pdfs").collect();
+  handler: async (ctx, { lessonId }) => {
+    await AuthenticationRequired({ ctx });
+
+    const allPDFs = await ctx.db.query("pdfs").collect();
     return allPDFs.filter((pdf) => pdf.lessonIds?.includes(lessonId));
   },
 });

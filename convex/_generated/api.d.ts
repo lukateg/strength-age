@@ -17,6 +17,7 @@ import type * as classes from "../classes.js";
 import type * as lessons from "../lessons.js";
 import type * as materials from "../materials.js";
 import type * as tests from "../tests.js";
+import type * as utils_utils from "../utils/utils.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -31,6 +32,7 @@ declare const fullApi: ApiFromModules<{
   lessons: typeof lessons;
   materials: typeof materials;
   tests: typeof tests;
+  "utils/utils": typeof utils_utils;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

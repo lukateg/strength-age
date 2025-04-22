@@ -1,13 +1,14 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { Id } from "./_generated/dataModel";
+import { AuthenticationRequired } from "./utils/utils";
 
 export const getLessonsByClass = query({
   args: v.object({
     classId: v.string(),
   }),
-  handler: async ({ db }, { classId }) => {
-    return await db
+  handler: async (ctx, { classId }) => {
+    await AuthenticationRequired({ ctx });
+    return await ctx.db
       .query("lessons")
       .filter((q) => q.eq(q.field("classId"), classId))
       .collect();
@@ -21,8 +22,9 @@ export const createLesson = mutation({
     title: v.string(),
     description: v.optional(v.string()),
   }),
-  handler: async ({ db }, { userId, classId, title, description }) => {
-    return await db.insert("lessons", {
+  handler: async (ctx, { userId, classId, title, description }) => {
+    await AuthenticationRequired({ ctx });
+    return await ctx.db.insert("lessons", {
       userId,
       classId,
       title,
@@ -39,8 +41,9 @@ export const createLessonWithExistingMaterials = mutation({
     description: v.optional(v.string()),
     pdfIds: v.array(v.id("pdfs")),
   }),
-  handler: async ({ db }, { userId, classId, title, description, pdfIds }) => {
-    const lessonId = await db.insert("lessons", {
+  handler: async (ctx, { userId, classId, title, description, pdfIds }) => {
+    await AuthenticationRequired({ ctx });
+    const lessonId = await ctx.db.insert("lessons", {
       userId,
       classId,
       title,
@@ -49,10 +52,10 @@ export const createLessonWithExistingMaterials = mutation({
 
     if (pdfIds.length > 0) {
       for (const pdfId of pdfIds) {
-        const pdf = await db.get(pdfId);
+        const pdf = await ctx.db.get(pdfId);
         if (pdf) {
           const updatedLessonIds = [...(pdf.lessonIds ?? []), lessonId];
-          await db.patch(pdfId, {
+          await ctx.db.patch(pdfId, {
             lessonIds: updatedLessonIds,
           });
         }
@@ -77,17 +80,14 @@ export const createLessonWithNewMaterials = mutation({
       })
     ),
   }),
-  handler: async (
-    { db },
-    { userId, classId, title, description, pdfFiles }
-  ) => {
+  handler: async (ctx, { userId, classId, title, description, pdfFiles }) => {
     // check first if there is already lesson with same title
     // const existingLesson = await db.query("lessons").filter((q) => q.eq(q.field("title"), title)).first();
     // if (existingLesson) {
     //   throw new Error("Lesson with same title already exists");
     // }
 
-    const lessonId = await db.insert("lessons", {
+    const lessonId = await ctx.db.insert("lessons", {
       userId,
       classId,
       title,
@@ -96,7 +96,7 @@ export const createLessonWithNewMaterials = mutation({
 
     if (pdfFiles.length > 0) {
       for (const pdf of pdfFiles) {
-        await db.insert("pdfs", {
+        await ctx.db.insert("pdfs", {
           userId,
           classId,
           fileUrl: pdf.fileUrl,
@@ -115,11 +115,12 @@ export const getLessonData = query({
   args: v.object({
     lessonId: v.id("lessons"),
   }),
-  handler: async ({ db }, { lessonId }) => {
-    const lesson = await db.get(lessonId);
+  handler: async (ctx, { lessonId }) => {
+    await AuthenticationRequired({ ctx });
+    const lesson = await ctx.db.get(lessonId);
 
     // TODO: - since we initially load all pdfs already, we can move this logic to context and avoid fetching all pdfs and duplicating logic
-    const allPDFs = await db.query("pdfs").collect();
+    const allPDFs = await ctx.db.query("pdfs").collect();
     const lessonPDFs = allPDFs.filter((pdf) =>
       pdf.lessonIds?.includes(lessonId)
     );
@@ -132,8 +133,9 @@ export const getPDFsByLessonId = query({
   args: v.object({
     lessonId: v.id("lessons"),
   }),
-  handler: async ({ db }, { lessonId }) => {
-    const allPDFs = await db.query("pdfs").collect();
+  handler: async (ctx, { lessonId }) => {
+    await AuthenticationRequired({ ctx });
+    const allPDFs = await ctx.db.query("pdfs").collect();
     const lessonPDFs = allPDFs.filter((pdf) =>
       pdf.lessonIds?.includes(lessonId)
     );
@@ -148,12 +150,13 @@ export const addPDFToLesson = mutation({
     pdfIds: v.array(v.id("pdfs")),
     lessonId: v.string(),
   }),
-  handler: async ({ db }, { pdfIds, lessonId }) => {
+  handler: async (ctx, { pdfIds, lessonId }) => {
+    await AuthenticationRequired({ ctx });
     for (const pdfId of pdfIds) {
-      const pdf = await db.get(pdfId);
+      const pdf = await ctx.db.get(pdfId);
       if (pdf) {
         const updatedLessonIds = [...(pdf.lessonIds ?? []), lessonId];
-        await db.patch(pdfId, {
+        await ctx.db.patch(pdfId, {
           lessonIds: updatedLessonIds,
         });
       }

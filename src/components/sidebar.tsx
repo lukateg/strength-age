@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -19,8 +19,6 @@ const Sidebar = () => {
     { name: "Test Generator", href: "/app/tests", icon: Brain },
     { name: "Settings", href: "/app/settings", icon: Settings },
   ];
-
-  console.log(pathname, "[pathname]");
 
   return (
     <aside

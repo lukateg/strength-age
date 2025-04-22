@@ -15,13 +15,15 @@
 -- add validation if test title exist so user cannot have two same entities in database
 
 -- Server-Side Rendering with Next.js add preloadQuery for preloading data on the server
+-- create suspense component for pending and error state
 
 ZA SUTRA:
 -- maybe create useAuthenticatedQuery
--- fix nav menu loading
--- fix active nav item
 -- fix database authentification best practice
 -- clear schema and start all over
+--              remove all if !userId since the functions will be called only when auth comes
+--              OR create custom useAuthQuery that will utilise useQuery and pass additional ID prop to the useQuery call, it would always have userId
+-- fix main layout providers, remove tooltip and loading providers level lower
 
 -- Implement mobile design
 -- add modals on all needed actions

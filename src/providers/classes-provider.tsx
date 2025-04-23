@@ -1,16 +1,18 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
-import { type Id, type Doc } from "convex/_generated/dataModel";
 import { useUser } from "@clerk/nextjs";
+import {
+  type QueryStatus,
+  useAuthenticatedQueryWithStatus,
+} from "@/hooks/use-authenticated-query";
 
 interface ClassesContextType {
-  classes?: Doc<"classes">[] | null;
+  classes: QueryStatus<typeof api.classes.getAllClassesByUserId>;
   userId: string | undefined;
-  testsByUser?: Doc<"tests">[] | null;
+  testsByUser: QueryStatus<typeof api.tests.getAllTestsByUser>;
 }
 
 const ClassContext = createContext<ClassesContextType | null>(null);
@@ -19,8 +21,12 @@ export function ClassesProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser(); // Clerk provides the logged-in user
   const userId = user?.id;
 
-  const classes = useQuery(api.classes.getAllClassesByUserId, { userId });
-  const testsByUser = useQuery(api.tests.getAllTestsByUser, { userId });
+  const classes = useAuthenticatedQueryWithStatus(
+    api.classes.getAllClassesByUserId
+  );
+  const testsByUser = useAuthenticatedQueryWithStatus(
+    api.tests.getAllTestsByUser
+  );
 
   return (
     <ClassContext.Provider value={{ classes, userId, testsByUser }}>

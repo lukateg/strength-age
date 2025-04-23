@@ -17,10 +17,13 @@ export const metadata: Metadata = {
   title: "Teach-me - AI-Powered Learning Platform",
   description:
     "An intelligent platform for creating and managing educational content",
-  icons: {
-    icon: "/favicon.ico",
-  },
 };
+
+const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error("Missing Publishable Key");
+}
 
 export default function RootLayout({
   children,

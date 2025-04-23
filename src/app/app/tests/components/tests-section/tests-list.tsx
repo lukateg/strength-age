@@ -12,11 +12,11 @@ import RetryTestButton from "@/components/retry-test-button";
 export default function TestsList() {
   const { testsByUser } = useTests();
 
-  if (!testsByUser) {
+  if (testsByUser?.isPending) {
     return <Loader />;
   }
 
-  if (testsByUser.length === 0) {
+  if (testsByUser?.data?.length === 0) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium">No Tests Yet</h3>
@@ -29,7 +29,7 @@ export default function TestsList() {
 
   return (
     <>
-      {testsByUser.map((test) => (
+      {testsByUser?.data?.map((test) => (
         <ListItem key={test._id} variant="outline">
           <div className="flex items-center">
             <FileText className="h-4 w-4 mr-2 text-muted-foreground" />

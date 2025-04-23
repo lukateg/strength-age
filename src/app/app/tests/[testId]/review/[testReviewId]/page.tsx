@@ -22,19 +22,21 @@ import {
 
 import { useParams, useRouter } from "next/navigation";
 import { api } from "../../../../../../../convex/_generated/api";
-import { useQuery } from "convex/react";
+import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 import { type Id } from "convex/_generated/dataModel";
-
 export default function ReviewPage() {
   const {
     testReviewId,
     testId,
   }: { testReviewId: Id<"testReviews">; testId: Id<"tests"> } = useParams();
   const router = useRouter();
-  const testReview = useQuery(api.tests.getTestReviewById, {
-    testReviewId,
-  });
+  const testReview = useAuthenticatedQueryWithStatus(
+    api.tests.getTestReviewById,
+    {
+      testReviewId,
+    }
+  );
   const fromTestPage = sessionStorage.getItem("fromTestPage");
 
   const handleBackNavigation = () => {
@@ -46,8 +48,16 @@ export default function ReviewPage() {
     }
   };
 
-  if (!testReview) {
+  if (testReview.isPending) {
     return <TestReviewSkeleton />;
+  }
+
+  if (testReview.isError) {
+    return <div>Error loading test review</div>;
+  }
+
+  if ((testReview.isSuccess && !testReview.data) || testReview.data === null) {
+    return <div>Test review not found</div>;
   }
 
   return (
@@ -64,9 +74,9 @@ export default function ReviewPage() {
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <BookOpen className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold">{testReview.title}</h1>
+            <h1 className="text-2xl font-bold">{testReview.data.title}</h1>
           </div>
-          <p className="text-muted-foreground">{testReview.description}</p>
+          <p className="text-muted-foreground">{testReview.data.description}</p>
         </div>
       </div>
 
@@ -86,7 +96,7 @@ export default function ReviewPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <TestReviewStats testReview={testReview} />
+          <TestReviewStats testReview={testReview.data} />
 
           <div className="flex items-center gap-2 mb-4">
             <CheckCircle className="h-5 w-5 text-primary" />
@@ -95,7 +105,7 @@ export default function ReviewPage() {
 
           <ScrollArea className="h-[400px] pr-4">
             <div className="space-y-6">
-              {testReview.questions.map((question, index) => (
+              {testReview.data?.questions.map((question, index) => (
                 <Card key={question.questionText} className="p-6">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-2">

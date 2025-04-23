@@ -1,20 +1,16 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 import { api } from "../../../../../convex/_generated/api";
-
-import GenerateTestForm from "@/components/generate-test-form/generate-test-form";
-import { ArrowLeft } from "lucide-react";
-import { BookOpen } from "lucide-react";
-import RedirectBackButton from "@/components/redirect-back-button";
 import { useUser } from "@clerk/nextjs";
 
-export default function GenerateTestPage() {
-  const { user } = useUser();
-  const classes = useQuery(api.classes.getAllClassesByUserId, {
-    userId: user?.id,
-  });
+import GenerateTestForm from "@/components/generate-test-form/generate-test-form";
+import RedirectBackButton from "@/components/redirect-back-button";
 
+import { ArrowLeft } from "lucide-react";
+import { BookOpen } from "lucide-react";
+
+export default function GenerateTestPage() {
   return (
     <>
       <div className="flex items-center gap-4">
@@ -32,7 +28,7 @@ export default function GenerateTestPage() {
         </div>
       </div>
 
-      <GenerateTestForm classes={classes} />
+      <GenerateTestForm />
     </>
   );
 }

@@ -13,11 +13,15 @@ import { useClass } from "@/providers/class-context-provider";
 export default function LessonsList() {
   const { classId, lessons } = useClass();
 
-  if (!lessons) {
+  if (lessons.isPending) {
     return <Loader />;
   }
 
-  if (lessons.length === 0) {
+  if (lessons.isError) {
+    return <div>Error loading lessons</div>;
+  }
+
+  if (lessons.isSuccess && !lessons.data) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium">No Lessons Yet</h3>
@@ -30,7 +34,7 @@ export default function LessonsList() {
 
   return (
     <>
-      {lessons.map((lesson) => (
+      {lessons.data?.map((lesson) => (
         <ListItem key={lesson._id} variant="outline">
           <div className="flex items-center">
             <FileText className="h-4 w-4 mr-2 text-muted-foreground" />

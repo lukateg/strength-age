@@ -14,14 +14,14 @@
 -- add chunking text prompt
 -- add validation if test title exist so user cannot have two same entities in database
 
--- Server-Side Rendering with Next.js add preloadQuery for preloading data on the server
+-- create suspense component for pending and error state
+
 
 ZA SUTRA:
--- maybe create useAuthenticatedQuery
--- fix nav menu loading
--- fix active nav item
--- fix database authentification best practice
+- add all users to the database
 -- clear schema and start all over
+-- fix main layout providers, remove tooltip and loading providers level lower
+
 
 -- Implement mobile design
 -- add modals on all needed actions

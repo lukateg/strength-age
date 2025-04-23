@@ -19,9 +19,9 @@ export default function Tests() {
     useTests();
 
   const stats = generateStats(
-    testReviewsByUser,
-    weeklyTestReviews,
-    testsByUser
+    testReviewsByUser?.data,
+    weeklyTestReviews?.data,
+    testsByUser?.data
   );
 
   return (
@@ -54,9 +54,9 @@ export default function Tests() {
 
         <TabsContent value="recent" className="space-y-4">
           <div className="grid gap-6 md:grid-cols-2">
-            <RecentTests testsByUser={weeklyTests} />
+            <RecentTests testsByUser={weeklyTests?.data} />
 
-            <RecentReviews testReviewsByUser={weeklyTestReviews} />
+            <RecentReviews testReviewsByUser={weeklyTestReviews?.data} />
           </div>
         </TabsContent>
 

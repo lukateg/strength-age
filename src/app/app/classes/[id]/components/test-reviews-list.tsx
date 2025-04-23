@@ -12,11 +12,15 @@ import { useClass } from "@/providers/class-context-provider";
 export default function TestsList() {
   const { testReviews } = useClass();
 
-  if (!testReviews) {
+  if (testReviews.isPending) {
     return <Loader />;
   }
 
-  if (testReviews.length === 0) {
+  if (testReviews.isError) {
+    return <div>Error loading test reviews</div>;
+  }
+
+  if (testReviews.isSuccess && testReviews.data.length === 0) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium">No Tests Yet</h3>
@@ -29,7 +33,7 @@ export default function TestsList() {
 
   return (
     <>
-      {testReviews.map((testReview) => (
+      {testReviews.data.map((testReview) => (
         <ListItem key={testReview._id} variant="outline">
           <div className="flex items-center">
             <FileText className="h-4 w-4 mr-2 text-muted-foreground" />

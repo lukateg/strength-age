@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { AuthenticationRequired } from "./utils/utils";
 
 export const createTest = mutation({
   args: {
@@ -17,6 +18,7 @@ export const createTest = mutation({
     ),
   },
   handler: async (ctx, args) => {
+    await AuthenticationRequired({ ctx });
     const testId = await ctx.db.insert("tests", {
       title: args.title,
       description: args.description,
@@ -61,17 +63,12 @@ export const createTestReview = mutation({
 });
 
 export const getAllTestsByUser = query({
-  args: {
-    userId: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    // TODO find out why this is not working
-    if (!args.userId) {
-      return null;
-    }
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
     const tests = await ctx.db
       .query("tests")
-      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .filter((q) => q.eq(q.field("userId"), userId))
       .collect();
     return tests;
   },
@@ -82,6 +79,7 @@ export const getAllTestsByClassId = query({
     classId: v.string(),
   },
   handler: async (ctx, args) => {
+    await AuthenticationRequired({ ctx });
     const tests = await ctx.db
       .query("tests")
       .filter((q) => q.eq(q.field("classId"), args.classId))
@@ -95,6 +93,7 @@ export const getTestById = query({
     testId: v.id("tests"),
   },
   handler: async (ctx, args) => {
+    await AuthenticationRequired({ ctx });
     const test = await ctx.db.get(args.testId);
     return test;
   },
@@ -105,22 +104,19 @@ export const getTestReviewById = query({
     testReviewId: v.id("testReviews"),
   },
   handler: async (ctx, args) => {
+    await AuthenticationRequired({ ctx });
     const testReview = await ctx.db.get(args.testReviewId);
     return testReview;
   },
 });
 
 export const getAllTestReviewsByUser = query({
-  args: {
-    userId: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    if (!args.userId) {
-      return null;
-    }
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
     const testReviews = await ctx.db
       .query("testReviews")
-      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .filter((q) => q.eq(q.field("userId"), userId))
       .collect();
     return testReviews;
   },
@@ -131,6 +127,7 @@ export const getTestReviewsByClassId = query({
     classId: v.string(),
   },
   handler: async (ctx, args) => {
+    await AuthenticationRequired({ ctx });
     const testReviews = await ctx.db
       .query("testReviews")
       .filter((q) => q.eq(q.field("classId"), args.classId))
@@ -139,13 +136,9 @@ export const getTestReviewsByClassId = query({
   },
 });
 export const getWeeklyTestReviewsByUserId = query({
-  args: {
-    userId: v.optional(v.string()),
-  },
-  handler: async (ctx, { userId }) => {
-    if (!userId) {
-      return null;
-    }
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -160,13 +153,9 @@ export const getWeeklyTestReviewsByUserId = query({
 });
 
 export const getWeeklyTestsByUserId = query({
-  args: {
-    userId: v.optional(v.string()),
-  },
-  handler: async (ctx, { userId }) => {
-    if (!userId) {
-      return null;
-    }
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 

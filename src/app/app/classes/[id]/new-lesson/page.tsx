@@ -159,7 +159,7 @@ export default function NewLessonPage() {
           ) : (
             <SelectMaterialsView
               control={control}
-              allMaterials={allMaterials}
+              allMaterials={allMaterials.data}
             />
           )}
 

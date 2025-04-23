@@ -8,19 +8,22 @@ import {
 } from "@/components/ui/card";
 import { FormField } from "@/components/ui/form";
 
-import { type Doc } from "convex/_generated/dataModel";
 import { type Control } from "react-hook-form";
 import { type TestFormValues } from "@/components/generate-test-form/generate-test-form";
+import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
+import { api } from "../../../../convex/_generated/api";
 
 export default function ClassSelection({
   control,
-  classes,
   disabled,
 }: {
   control: Control<TestFormValues>;
-  classes?: Doc<"classes">[] | null;
   disabled?: boolean;
 }) {
+  const classes = useAuthenticatedQueryWithStatus(
+    api.classes.getAllClassesByUserId
+  );
+
   return (
     <Card>
       <CardHeader>
@@ -34,7 +37,7 @@ export default function ClassSelection({
           render={({ field }) => (
             <SelectFormItem
               {...field}
-              items={classes}
+              items={classes.data}
               label="Class"
               placeholder="Select a class"
               defaultValue="none"

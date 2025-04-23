@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "../../../../../../../../convex/_generated/api";
-import { useQuery } from "convex/react";
+import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
@@ -25,15 +25,19 @@ import { type Id } from "convex/_generated/dataModel";
 export default function MaterialsSection() {
   const { lessonId }: { lessonId: Id<"lessons"> } = useParams();
   // TODO check this useQuery
-  const lessonData = useQuery(api.lessons.getLessonData, {
+  const response = useAuthenticatedQueryWithStatus(api.lessons.getLessonData, {
     lessonId,
   });
 
-  if (!lessonData) {
+  if (response.isPending) {
     return <Loader />;
   }
 
-  const { lesson, lessonPDFs } = lessonData;
+  if (response.isError) {
+    return <div>Error loading lesson data</div>;
+  }
+
+  const { lesson, lessonPDFs } = response.data;
 
   return (
     <Card>

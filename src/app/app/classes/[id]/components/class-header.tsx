@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "../../../../../../convex/_generated/api";
-import { useQuery } from "convex/react";
 
 import RedirectBackButton from "@/components/redirect-back-button";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
@@ -11,12 +10,19 @@ import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 import { ArrowLeft, BookOpen, Pencil } from "lucide-react";
 
 import { type Id } from "convex/_generated/dataModel";
+import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 export default function ClassHeader({ id }: { id: Id<"classes"> }) {
-  const classData = useQuery(api.classes.getClassById, { id });
+  const classData = useAuthenticatedQueryWithStatus(api.classes.getClassById, {
+    id,
+  });
 
-  if (!classData) {
+  if (classData.isPending) {
     return <Skeleton className="h-16 w-full" />;
+  }
+
+  if (classData.isError) {
+    return <div>Failed to load class title</div>;
   }
 
   return (
@@ -29,9 +35,11 @@ export default function ClassHeader({ id }: { id: Id<"classes"> }) {
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <BookOpen className="h-6 w-6 text-primary" />
-              <h1 className="text-2xl font-bold">{classData.title}</h1>
+              <h1 className="text-2xl font-bold">{classData.data?.title}</h1>
             </div>
-            <p className="text-muted-foreground">{classData.description}</p>
+            <p className="text-muted-foreground">
+              {classData.data?.description}
+            </p>
           </div>
         </div>
 

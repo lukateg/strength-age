@@ -1,9 +1,9 @@
 "use server";
-// server/generateTest.ts
 import { type TestFormValues } from "@/components/generate-test-form/generate-test-form";
 import { type testSchema, type TestReview } from "@/lib/schemas";
 import { type z } from "zod";
 import { type Doc } from "convex/_generated/dataModel";
+import { auth } from "@clerk/nextjs/server";
 
 export type GeneratedTest = z.infer<typeof testSchema>;
 
@@ -30,15 +30,21 @@ export async function generateTest(
         ? {}
         : { questionDistribution: formData.distribution }),
     };
-
+    // console.log("Request body:", requestBody);
+    const { getToken } = await auth();
+    const authToken = await getToken();
+    // console.log("Token:", authToken);
     const response = await fetch(`${baseUrl}${endpoint}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      },
       body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to generate test");
+      throw new Error(`Failed to generate test: ${response.statusText}`);
     }
 
     const { response: generatedTest } = (await response.json()) as {

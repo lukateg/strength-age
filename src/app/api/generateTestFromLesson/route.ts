@@ -9,6 +9,8 @@ import { testSchema } from "@/lib/schemas";
 import { type NextRequest } from "next/server";
 import { type Id } from "convex/_generated/dataModel";
 
+import { auth } from "@clerk/nextjs/server";
+
 const getFormatForType = (type: string) => {
   if (type === "multiple_choice") {
     return {
@@ -64,10 +66,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const { getToken } = await auth();
+    const token = await getToken({ template: "convex" });
+
+    if (!token) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // Flatten array of arrays into single array of PDFs
-    const pdfs = await fetchQuery(api.lessons.getPDFsByLessonId, {
-      lessonId: lessonIds[0]!,
-    });
+    const pdfs = await fetchQuery(
+      api.lessons.getPDFsByLessonId,
+      {
+        lessonId: lessonIds[0]!,
+      },
+      { token }
+    );
 
     if (!pdfs.length) {
       return Response.json(

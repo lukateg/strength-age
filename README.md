@@ -15,12 +15,13 @@
 -- add validation if test title exist so user cannot have two same entities in database
 
 -- create suspense component for pending and error state
-- add all users to the database
+
 
 ZA SUTRA:
+- add all users to the database
 -- clear schema and start all over
---              remove all if !userId since the functions will be called only when auth comes
 -- fix main layout providers, remove tooltip and loading providers level lower
+
 
 -- Implement mobile design
 -- add modals on all needed actions

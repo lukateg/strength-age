@@ -48,17 +48,12 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log(prompt, "prompt");
-
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
-
-    console.log(responseText, "response text");
 
     try {
       const reviewedTest = JSON.parse(responseText) as Record<string, unknown>;
       // TODO: add schema validation
-      console.log(reviewedTest, "reviewed test");
       return Response.json({
         response: { ...test, questions: reviewedTest },
       });

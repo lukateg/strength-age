@@ -8,6 +8,7 @@ import { testSchema } from "@/lib/schemas";
 
 import { type NextRequest } from "next/server";
 import { type Id } from "convex/_generated/dataModel";
+import { auth } from "@clerk/nextjs/server";
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -81,12 +82,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const { getToken } = await auth();
+    const token = await getToken({ template: "convex" });
+
+    if (!token) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
     // Fetch PDFs for each lesson and store them in nested arrays
     const lessonPdfs = await Promise.all(
       lessonIds.map(async (lessonId) => {
-        const pdfsForLesson = await fetchQuery(api.lessons.getPDFsByLessonId, {
-          lessonId,
-        });
+        const pdfsForLesson = await fetchQuery(
+          api.lessons.getPDFsByLessonId,
+          {
+            lessonId,
+          },
+          { token }
+        );
         return pdfsForLesson; // Each element will be an array of PDFs for that lesson
       })
     );

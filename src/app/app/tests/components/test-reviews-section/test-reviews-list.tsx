@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText } from "lucide-react";
+import { FileText, Eye } from "lucide-react";
 import { useTests } from "@/providers/tests-provider";
 import Link from "next/link";
 
@@ -33,14 +33,18 @@ export default function TestsList() {
         <ListItem key={testReview._id} variant="outline">
           <div className="flex items-center">
             <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-            <span>{testReview.title}</span>
+            <span className="text-sm md:text-base w-[14ch] md:w-full text-ellipsis overflow-hidden whitespace-nowrap">
+              {testReview.title}
+            </span>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm">
               <Link
                 href={`/app/tests/${testReview.testId}/review/${testReview._id}`}
+                className="flex items-center"
               >
-                Review Test
+                <Eye className="h-4 w-4" />
+                <span className="hidden md:block ml-2">Results</span>
               </Link>
             </Button>
           </div>

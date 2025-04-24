@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ItemsScrollArea from "@/components/items-scroll-area";
 import RetryTestButton from "@/components/retry-test-button";
 
-import { BookOpen } from "lucide-react";
+import { BookOpen, RotateCcw } from "lucide-react";
 
 import { type Doc } from "convex/_generated/dataModel";
 
@@ -27,12 +27,10 @@ export default function RecentTests({
     <Card>
       <CardHeader>
         <CardTitle>Recent Tests</CardTitle>
-        <CardDescription>
-          Your recently created or modified tests
-        </CardDescription>
+        <CardDescription>Latest AI-generated tests for you</CardDescription>
       </CardHeader>
       <CardContent>
-        <ItemsScrollArea className="h-[600px]">
+        <ItemsScrollArea className="h-[400px] md:h-[600px]">
           {testsByUser.length > 0 ? (
             testsByUser.map((test) => (
               <div
@@ -41,10 +39,16 @@ export default function RecentTests({
               >
                 <div className="flex items-center">
                   <BookOpen className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span>{test.title}</span>
+                  <span className="text-sm md:text-base w-[14ch] md:w-full text-ellipsis overflow-hidden whitespace-nowrap">
+                    {test.title}
+                  </span>
                 </div>
-                <RetryTestButton to={`/app/tests/${test._id}`} variant="ghost">
-                  Retake Test
+                <RetryTestButton
+                  to={`/app/tests/${test._id}`}
+                  variant="outline"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  <span className="hidden md:block ml-2">Retry</span>
                 </RetryTestButton>
               </div>
             ))

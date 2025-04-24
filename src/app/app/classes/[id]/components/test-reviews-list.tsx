@@ -37,7 +37,9 @@ export default function TestsList() {
         <ListItem key={testReview._id} variant="outline">
           <div className="flex items-center">
             <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-            <span>{testReview.title}</span>
+            <span className="text-sm md:text-base w-[14ch] md:w-full text-ellipsis overflow-hidden whitespace-nowrap">
+              {testReview.title}
+            </span>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm">

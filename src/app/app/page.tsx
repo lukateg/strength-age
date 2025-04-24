@@ -36,12 +36,14 @@ export default function Dashboard() {
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-4xl font-bold">Welcome to Teach-me</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-2xl md:text-4xl font-bold">
+            Welcome to Teach-me
+          </h1>
+          <p className="text-sm md:text-base text-muted-foreground mt-2">
             Your AI-powered learning assistant
           </p>
         </div>
-        <Button asChild>
+        <Button asChild className="hidden md:flex">
           <Link href="/app/classes/create-class">
             <Plus className="h-4 w-4 mr-2" />
             Create New Class
@@ -51,7 +53,7 @@ export default function Dashboard() {
 
       <DashboardStats stats={stats} />
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 xl:grid-cols-2">
         <RecentClasses classesByUser={classes.data} />
         <RecentTests testsByUser={allTests.data} />
       </div>

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 
 import ItemsScrollArea from "@/components/items-scroll-area";
 
-import { Brain } from "lucide-react";
+import { Brain, Eye } from "lucide-react";
 
 import { type Doc } from "convex/_generated/dataModel";
 import Link from "next/link";
@@ -30,12 +30,10 @@ export default function RecentReviews({
     <Card>
       <CardHeader>
         <CardTitle>Recent Test Reviews</CardTitle>
-        <CardDescription>
-          Latest AI-generated test reviews from your materials
-        </CardDescription>
+        <CardDescription>Latest AI test test reviews</CardDescription>
       </CardHeader>
       <CardContent>
-        <ItemsScrollArea className="h-[600px]">
+        <ItemsScrollArea className="h-[400px] md:h-[600px]">
           {testReviewsByUser.length > 0 ? (
             testReviewsByUser.map((testReview) => (
               <div
@@ -44,13 +42,16 @@ export default function RecentReviews({
               >
                 <div className="flex items-center">
                   <Brain className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span>{testReview.title}</span>
+                  <span className="text-sm md:text-base w-[14ch] md:w-full text-ellipsis overflow-hidden whitespace-nowrap">
+                    {testReview.title}
+                  </span>
                 </div>
-                <Button variant="ghost" size="sm" asChild>
+                <Button variant="outline" size="sm" asChild>
                   <Link
                     href={`/app/tests/${testReview.testId}/review/${testReview._id}`}
                   >
-                    View Results
+                    <Eye className="h-4 w-4" />
+                    <span className="hidden md:block ml-2">Results</span>
                   </Link>
                 </Button>
               </div>

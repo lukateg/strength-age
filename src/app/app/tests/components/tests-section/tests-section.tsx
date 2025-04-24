@@ -21,7 +21,7 @@ export default function TestsSection() {
         <CardDescription>All tests created by you</CardDescription>
       </CardHeader>
       <CardContent>
-        <ItemsScrollArea className="h-[650px]">
+        <ItemsScrollArea className="h-[400px] md:h-[650px]">
           <TestsList />
         </ItemsScrollArea>
       </CardContent>

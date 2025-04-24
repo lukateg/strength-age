@@ -27,15 +27,17 @@ export default function TestReviewStats({
           <div className="flex items-center justify-center flex-col">
             <div className="flex items-center gap-3 mb-2">
               <Award className="h-6 w-6 text-primary" />
-              <h2 className="text-xl font-semibold">Score Summary</h2>
+              <h2 className="text-base md:text-xl font-semibold">
+                Score Summary
+              </h2>
             </div>
             <div className="text-4xl flex items-center justify-center md:justify-start gap-4 mb-2">
               <span className="text-primary">{score}</span>
               <span className="text-muted-foreground">/</span>
               <span>{total}</span>
             </div>
-            <p className="text-muted-foreground flex items-center gap-2">
-              <Clock className="h-4 w-4" />
+            <p className="text-sm md:text-base text-muted-foreground flex items-center gap-2">
+              <Clock className="h-4 w-4 hidden md:block" />
               Questions Answered Correctly
             </p>
           </div>

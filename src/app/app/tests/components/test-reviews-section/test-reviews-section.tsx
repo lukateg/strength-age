@@ -19,7 +19,7 @@ export default function TestReviewsSection() {
         <CardDescription>All test reviews created by you</CardDescription>
       </CardHeader>
       <CardContent>
-        <ItemsScrollArea className="h-[650px]">
+        <ItemsScrollArea className="h-[400px] md:h-[650px]">
           <TestReviewsList />
         </ItemsScrollArea>
       </CardContent>

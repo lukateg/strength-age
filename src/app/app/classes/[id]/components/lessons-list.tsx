@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText } from "lucide-react";
+import { Eye, FileText } from "lucide-react";
 import Link from "next/link";
 
 import ListItem from "@/components/list-item";
@@ -21,7 +21,7 @@ export default function LessonsList() {
     return <div>Error loading lessons</div>;
   }
 
-  if (lessons.isSuccess && !lessons.data) {
+  if (lessons.isSuccess && lessons.data?.length === 0) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium">No Lessons Yet</h3>
@@ -38,16 +38,31 @@ export default function LessonsList() {
         <ListItem key={lesson._id} variant="outline">
           <div className="flex items-center">
             <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-            <span>{lesson.title}</span>
+            <span className="text-sm md:text-base w-[14ch] md:w-full text-ellipsis overflow-hidden whitespace-nowrap">
+              {lesson.title}
+            </span>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Link href={`/app/classes/${classId}/lessons/${lesson._id}`}>
-                View
+            <Button
+              className="text-xs md:text-base"
+              variant="outline"
+              size="sm"
+            >
+              <Link
+                href={`/app/classes/${classId}/lessons/${lesson._id}`}
+                className="flex items-center"
+              >
+                <Eye className="h-4 w-4" />
+                <span className="hidden md:block ml-2">View</span>
               </Link>
             </Button>
             <FeatureFlagTooltip>
-              <Button variant="outline" size="sm" disabled>
+              <Button
+                className="hidden md:block"
+                variant="outline"
+                size="sm"
+                disabled
+              >
                 Generate Test
               </Button>
             </FeatureFlagTooltip>

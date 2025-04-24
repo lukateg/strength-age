@@ -112,12 +112,16 @@ export default function TestPage() {
               className="mr-4 border-red-600/50 text-primary border-2"
               type="button"
             >
-              <CircleX className="w-4 h-4 mr-2 text-red-600/50" />
-              Exit Test
+              <CircleX className="w-4 h-4 text-red-600/50" />
+              <span className="hidden md:block md:ml-2">Exit Test</span>
             </Button>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-2">{test.data?.title}</h1>
-              <p className="text-muted-foreground">{test.data?.description}</p>
+              <h1 className="text-xl md:text-3xl font-bold mb-2">
+                {test.data?.title}
+              </h1>
+              <p className="text-sm md:text-base text-muted-foreground hidden md:block">
+                {test.data?.description}
+              </p>
             </div>
 
             <FeatureFlagTooltip>
@@ -127,8 +131,8 @@ export default function TestPage() {
                 className="border-green-600/90 text-primary border-2"
                 disabled
               >
-                <Pause className="w-4 h-4 mr-2 text-green-600/90" />
-                Pause Test
+                <Pause className="w-4 h-4 text-green-600/90" />
+                <span className="hidden md:block md:ml-2">Pause Test</span>
               </Button>
             </FeatureFlagTooltip>
           </div>

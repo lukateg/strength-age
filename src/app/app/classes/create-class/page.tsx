@@ -67,9 +67,9 @@ export default function NewClassPage() {
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <BookOpen className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold">New Class</h1>
+            <h1 className="text-xl md:text-2xl font-bold">New Class</h1>
           </div>
-          <p className="text-muted-foreground">
+          <p className="text-sm md:text-base text-muted-foreground">
             Create your classes and materials
           </p>
         </div>

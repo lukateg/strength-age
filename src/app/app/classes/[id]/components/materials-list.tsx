@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import ListItem from "@/components/list-item";
 
-import { FileText, Loader } from "lucide-react";
+import { FileText, Loader, Eye } from "lucide-react";
 
 import { type PDFType } from "@/types/types";
 
@@ -31,15 +31,19 @@ export default function MaterialsList({
         <ListItem key={material._id} variant="outline">
           <div className="flex items-center">
             <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-            <span>{material?.name}</span>
+            <span className="text-sm md:text-base w-[12ch] text-ellipsis overflow-hidden whitespace-nowrap">
+              {material?.name}
+            </span>
           </div>
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="sm"
+              className="text-xs md:text-base"
               onClick={() => window.open(material.fileUrl, "_blank")}
             >
-              Preview
+              <Eye className="h-4 w-4" />
+              <span className="hidden md:block ml-2">Preview</span>
             </Button>
           </div>
         </ListItem>

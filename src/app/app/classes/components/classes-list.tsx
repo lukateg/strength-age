@@ -20,7 +20,7 @@ export default function ClassesList() {
 
   if (classes.isPending) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
         {[1, 2, 3, 4, 5].map((item) => (
           <Skeleton key={item} className="h-48 w-full" />
         ))}
@@ -44,7 +44,7 @@ export default function ClassesList() {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
       {classes.data.map((classItem) => (
         <Card key={classItem.title}>
           <CardHeader>

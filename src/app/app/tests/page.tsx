@@ -26,10 +26,10 @@ export default function Tests() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-4xl font-bold">AI Test Generator</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-2xl md:text-4xl font-bold">AI Test Generator</h1>
+          <p className="text-muted-foreground text-sm md:text-base mt-2">
             Let AI generate tests from your materials
           </p>
         </div>
@@ -47,13 +47,19 @@ export default function Tests() {
 
       <Tabs defaultValue="recent" className="space-y-6">
         <TabsList>
-          <TabsTrigger value="recent">Recent</TabsTrigger>
-          <TabsTrigger value="tests">Tests</TabsTrigger>
-          <TabsTrigger value="reviews">Reviews</TabsTrigger>
+          <TabsTrigger value="recent" className="text-xs md:text-base">
+            Recent
+          </TabsTrigger>
+          <TabsTrigger value="tests" className="text-xs md:text-base">
+            Tests
+          </TabsTrigger>
+          <TabsTrigger value="reviews" className="text-xs md:text-base">
+            Reviews
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="recent" className="space-y-4">
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 xl:grid-cols-2">
             <RecentTests testsByUser={weeklyTests?.data} />
 
             <RecentReviews testReviewsByUser={weeklyTestReviews?.data} />

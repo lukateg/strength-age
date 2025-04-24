@@ -105,7 +105,6 @@ export const getTestReviewById = query({
   },
   handler: async (ctx, args) => {
     await AuthenticationRequired({ ctx });
-
     const testReview = await ctx.db.get(args.testReviewId);
     return testReview;
   },

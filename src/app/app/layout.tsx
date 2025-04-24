@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 
-import { ThemeProvider } from "@/providers/theme-provider";
+import { LoadingProvider } from "@/providers/loading-context";
 import { ConvexQueryCacheProvider } from "convex-helpers/react/cache/provider";
 
 import { ConvexProviderWithClerk } from "convex/react-clerk";
@@ -27,12 +27,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
       <ConvexQueryCacheProvider>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <LoadingProvider>
           <div className="flex h-screen">
             <div className="hidden md:flex">
               {isTestRoute ? null : <Sidebar />}
@@ -43,7 +38,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <Toaster />
-        </ThemeProvider>
+        </LoadingProvider>
       </ConvexQueryCacheProvider>
     </ConvexProviderWithClerk>
   );

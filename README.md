@@ -15,16 +15,15 @@
 -- add validation if test title exist so user cannot have two same entities in database
 
 -- create suspense component for pending and error state
+-- fix redirect from the review to test
+-- retry test first flashes the test then loads loader
 
 
 ZA SUTRA:
-- add all users to the database
--- clear schema and start all over
 -- fix main layout providers, remove tooltip and loading providers level lower
-
-
 -- Implement mobile design
 -- add modals on all needed actions
+-- make tests page in single class the same layout as tests route
 
 
 PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE

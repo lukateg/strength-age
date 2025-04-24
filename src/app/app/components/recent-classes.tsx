@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { BookOpen } from "lucide-react";
+import { BookOpen, Eye } from "lucide-react";
 
 import { type Doc } from "convex/_generated/dataModel";
 
@@ -33,7 +33,7 @@ export default function RecentClasses({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ItemsScrollArea className="h-[600px]">
+        <ItemsScrollArea className="h-[400px] md:h-[600px]">
           {classesByUser.length > 0 ? (
             classesByUser.map((classItem) => (
               <div
@@ -44,8 +44,11 @@ export default function RecentClasses({
                   <BookOpen className="h-4 w-4 mr-2 text-muted-foreground" />
                   <span>{classItem.title}</span>
                 </div>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href={`/app/classes/${classItem._id}`}>View</Link>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={`/app/classes/${classItem._id}`}>
+                    <Eye className="h-4 w-4" />
+                    <span className="hidden md:block ml-2">View</span>
+                  </Link>
                 </Button>
               </div>
             ))

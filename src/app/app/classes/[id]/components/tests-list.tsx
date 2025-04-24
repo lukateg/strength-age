@@ -1,7 +1,7 @@
 import ListItem from "@/components/list-item";
 import RetryTestButton from "@/components/retry-test-button";
 
-import { FileText, Loader } from "lucide-react";
+import { FileText, Loader, RotateCcw } from "lucide-react";
 
 import { type Doc } from "convex/_generated/dataModel";
 
@@ -27,11 +27,14 @@ export default function TestsList({ tests }: { tests?: Doc<"tests">[] }) {
         <ListItem key={test._id} variant="outline">
           <div className="flex items-center">
             <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-            <span>{test?.title}</span>
+            <span className="text-sm md:text-base w-[14ch] md:w-full text-ellipsis overflow-hidden whitespace-nowrap">
+              {test?.title}
+            </span>
           </div>
           <div className="flex gap-2">
-            <RetryTestButton to={`/app/tests/${test._id}`} variant="ghost">
-              Retake test
+            <RetryTestButton to={`/app/tests/${test._id}`} variant="outline">
+              <RotateCcw className="h-4 w-4" />
+              <span className="hidden md:block ml-2">Retry</span>
             </RetryTestButton>
           </div>
         </ListItem>

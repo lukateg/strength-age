@@ -35,16 +35,18 @@ export default function ClassHeader({ id }: { id: Id<"classes"> }) {
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <BookOpen className="h-6 w-6 text-primary" />
-              <h1 className="text-2xl font-bold">{classData.data?.title}</h1>
+              <h1 className="text-xl md:text-2xl font-bold">
+                {classData.data?.title}
+              </h1>
             </div>
-            <p className="text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground">
               {classData.data?.description}
             </p>
           </div>
         </div>
 
         <FeatureFlagTooltip>
-          <Button disabled>
+          <Button disabled className="text-xs md:text-base">
             <Pencil className="h-4 w-4 mr-2" />
             Edit Class
           </Button>

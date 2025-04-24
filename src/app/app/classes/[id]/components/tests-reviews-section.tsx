@@ -12,14 +12,16 @@ import ItemsScrollArea from "@/components/items-scroll-area";
 export default function TestReviewsSection() {
   return (
     <Card>
-      <CardHeader className="flex flex-row justify-between">
+      <CardHeader className="flex flex-col gap-2 md:flex-row justify-between">
         <div className="space-y-2">
-          <CardTitle>Test Reviews</CardTitle>
-          <CardDescription>All test reviews created by you</CardDescription>
+          <CardTitle className="text-xl md:text-2xl">Test Reviews</CardTitle>
+          <CardDescription className="text-sm md:text-base">
+            All test reviews created by you
+          </CardDescription>
         </div>
       </CardHeader>
       <CardContent>
-        <ItemsScrollArea className="h-[650px]">
+        <ItemsScrollArea className="h-[400px] md:h-[650px]">
           <TestReviewsList />
         </ItemsScrollArea>
       </CardContent>

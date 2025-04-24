@@ -17,12 +17,20 @@ export default async function ClassPage({
   return (
     <Tabs defaultValue="lessons" className="space-y-6">
       <TabsList>
-        <TabsTrigger value="lessons">Lessons</TabsTrigger>
-        <TabsTrigger value="materials">Materials</TabsTrigger>
-        <TabsTrigger value="tests">Tests</TabsTrigger>
-        <TabsTrigger value="test-reviews">Test Reviews</TabsTrigger>
+        <TabsTrigger value="lessons" className="text-xs md:text-base">
+          Lessons
+        </TabsTrigger>
+        <TabsTrigger value="materials" className="text-xs md:text-base">
+          Materials
+        </TabsTrigger>
+        <TabsTrigger value="tests" className="text-xs md:text-base">
+          Tests
+        </TabsTrigger>
+        {/* <TabsTrigger value="test-reviews" className="text-xs md:text-base">
+            Test Reviews
+          </TabsTrigger> */}
         <FeatureFlagTooltip>
-          <TabsTrigger disabled value="audio">
+          <TabsTrigger disabled value="audio" className="text-xs md:text-base">
             Audio Lessons
           </TabsTrigger>
         </FeatureFlagTooltip>

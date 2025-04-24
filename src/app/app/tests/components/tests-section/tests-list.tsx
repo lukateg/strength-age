@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText } from "lucide-react";
+import { FileText, RotateCcw } from "lucide-react";
 import { useTests } from "@/providers/tests-provider";
 
 import { Button } from "@/components/ui/button";
@@ -33,14 +33,15 @@ export default function TestsList() {
         <ListItem key={test._id} variant="outline">
           <div className="flex items-center">
             <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-            <span>{test.title}</span>
+            <span className="text-sm md:text-base w-[14ch] md:w-full text-ellipsis overflow-hidden whitespace-nowrap">
+              {test.title}
+            </span>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <RetryTestButton to={`/app/tests/${test._id}`} variant="ghost">
-                Retake Test
-              </RetryTestButton>
-            </Button>
+            <RetryTestButton to={`/app/tests/${test._id}`} variant="outline">
+              <RotateCcw className="h-4 w-4" />
+              <span className="hidden md:block ml-2">Retry</span>
+            </RetryTestButton>
           </div>
         </ListItem>
       ))}

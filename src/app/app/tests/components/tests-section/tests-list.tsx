@@ -3,8 +3,6 @@
 import { FileText, RotateCcw } from "lucide-react";
 import { useTests } from "@/providers/tests-provider";
 
-import { Button } from "@/components/ui/button";
-
 import Loader from "@/components/loader";
 import ListItem from "@/components/list-item";
 import RetryTestButton from "@/components/retry-test-button";

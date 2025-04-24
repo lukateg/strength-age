@@ -1,3 +1,5 @@
+"use client";
+
 import { useLoadingContext } from "@/providers/loading-context";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";

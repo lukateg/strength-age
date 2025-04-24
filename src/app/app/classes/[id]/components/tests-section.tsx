@@ -1,8 +1,4 @@
-"use client";
-
 import Link from "next/link";
-
-import { useClass } from "@/providers/class-context-provider";
 
 import {
   Card,
@@ -17,10 +13,9 @@ import ItemsScrollArea from "@/components/items-scroll-area";
 import TestsList from "./tests-list";
 
 import { Upload } from "lucide-react";
+import TestReviewsList from "./test-reviews-list";
 
 export default function TestsSection({ classId }: { classId: string }) {
-  const { tests } = useClass();
-
   return (
     <Card>
       <CardHeader className="flex flex-col gap-2 md:flex-row justify-between">
@@ -38,11 +33,31 @@ export default function TestsSection({ classId }: { classId: string }) {
         </Button>
       </CardHeader>
 
-      <CardContent>
-        <ItemsScrollArea className="h-[400px] md:h-[650px]">
-          <TestsList tests={tests.data} />
-        </ItemsScrollArea>
-      </CardContent>
+      <div className="grid xl:grid-cols-2">
+        <div>
+          <CardHeader>
+            <CardTitle className="text-lg md:text-xl">
+              Generated Tests
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ItemsScrollArea className="h-[400px] md:h-[650px]">
+              <TestsList />
+            </ItemsScrollArea>
+          </CardContent>
+        </div>
+
+        <div>
+          <CardHeader>
+            <CardTitle className="text-lg md:text-xl">Test Reviews</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ItemsScrollArea className="h-[400px] md:h-[650px]">
+              <TestReviewsList />
+            </ItemsScrollArea>
+          </CardContent>
+        </div>
+      </div>
     </Card>
   );
 }

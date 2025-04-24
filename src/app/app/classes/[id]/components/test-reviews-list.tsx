@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText } from "lucide-react";
+import { FileText, Eye } from "lucide-react";
 import Link from "next/link";
 
 import ListItem from "@/components/list-item";
@@ -45,8 +45,10 @@ export default function TestsList() {
             <Button variant="outline" size="sm">
               <Link
                 href={`/app/tests/${testReview.testId}/review/${testReview._id}`}
+                className="flex items-center"
               >
-                Review Test
+                <Eye className="h-4 w-4" />
+                <span className="hidden md:block ml-2">Results</span>
               </Link>
             </Button>
           </div>

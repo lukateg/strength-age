@@ -1,16 +1,24 @@
+"use client";
+
 import ListItem from "@/components/list-item";
 import RetryTestButton from "@/components/retry-test-button";
 
 import { FileText, Loader, RotateCcw } from "lucide-react";
 
-import { type Doc } from "convex/_generated/dataModel";
+import { useClass } from "@/providers/class-context-provider";
 
-export default function TestsList({ tests }: { tests?: Doc<"tests">[] }) {
-  if (!tests) {
+export default function TestsList() {
+  const { tests } = useClass();
+
+  if (tests.isPending) {
     return <Loader />;
   }
 
-  if (tests.length === 0) {
+  if (tests.isError) {
+    return <div>Error loading tests</div>;
+  }
+
+  if (tests.isSuccess && tests.data.length === 0) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium">No Tests Yet</h3>
@@ -23,7 +31,7 @@ export default function TestsList({ tests }: { tests?: Doc<"tests">[] }) {
 
   return (
     <>
-      {tests?.map((test) => (
+      {tests.data?.map((test) => (
         <ListItem key={test._id} variant="outline">
           <div className="flex items-center">
             <FileText className="h-4 w-4 mr-2 text-muted-foreground" />

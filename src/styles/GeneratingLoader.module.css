@@ -23,7 +23,7 @@
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;
-    border-right: 0.2em solid #f9f1fb;
+    border-right: 0.2em solid #374151;
     animation: typeAndDelete 6s steps(11) infinite,
                blinkCursor 0.5s step-end infinite alternate;
   }

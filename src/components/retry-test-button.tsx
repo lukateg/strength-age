@@ -1,3 +1,5 @@
+"use client";
+
 import { useLoadingContext } from "@/providers/loading-context";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
@@ -25,7 +27,7 @@ export default function LinkWithLoader({
     setLoading(true, "Loading test...");
 
     try {
-      router.push(to); // Simulate test generating delay
+      router.push(to);
       await new Promise((resolve) => setTimeout(resolve, 3000));
     } catch (error) {
       console.error("Navigation error:", error);

@@ -19,12 +19,11 @@
 -- retry test first flashes the test then loads loader
 
 
-ZA SUTRA:
--- fix main layout providers, remove tooltip and loading providers level lower
--- Implement mobile design
--- add modals on all needed actions
--- make tests page in single class the same layout as tests route
 
+ZA SUTRA:
+
+-- add modals on all needed actions
+-- proper redirect when user triggers back to test
 
 PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
 -- Add delete and edit

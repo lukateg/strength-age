@@ -25,6 +25,8 @@ import { api } from "../../../../../../../convex/_generated/api";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 import { type Id } from "convex/_generated/dataModel";
+import { useEffect, useState } from "react";
+
 export default function ReviewPage() {
   const {
     testReviewId,
@@ -37,7 +39,14 @@ export default function ReviewPage() {
       testReviewId,
     }
   );
-  const fromTestPage = sessionStorage.getItem("fromTestPage");
+  const [fromTestPage, setFromTestPage] = useState<boolean>(false);
+
+  useEffect(() => {
+    const sessionStorageData = sessionStorage.getItem("fromTestPage");
+    if (sessionStorageData) {
+      setFromTestPage(true);
+    }
+  }, []);
 
   const handleBackNavigation = () => {
     if (fromTestPage) {

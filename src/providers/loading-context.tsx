@@ -34,7 +34,7 @@ function LoadingOverlay({ shouldDisplay }: { shouldDisplay: boolean }) {
 
   return createPortal(
     <div
-      className={`fixed inset-0 z-50 overlay-enter transition-all duration-1000 ${shouldDisplay ? styles["overlay-enter-active"] : styles["overlay-exit-active"]}`}
+      className={`fixed inset-0 z-50 overlay-enter bg-background transition-all duration-800 ${shouldDisplay ? styles["overlay-enter-active"] : styles["overlay-exit-active"]}`}
     >
       <Card className="flex flex-col items-center justify-center h-full w-full">
         <GeneratingLoader message={message} />

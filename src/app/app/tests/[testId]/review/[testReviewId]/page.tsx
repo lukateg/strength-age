@@ -25,6 +25,8 @@ import { api } from "../../../../../../../convex/_generated/api";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 import { type Id } from "convex/_generated/dataModel";
+import { useEffect } from "react";
+
 export default function ReviewPage() {
   const {
     testReviewId,

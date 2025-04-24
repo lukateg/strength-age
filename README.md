@@ -19,12 +19,13 @@
 -- retry test first flashes the test then loads loader
 
 
+
 ZA SUTRA:
--- fix main layout providers, remove tooltip and loading providers level lower
--- Implement mobile design
+
 -- add modals on all needed actions
 -- make tests page in single class the same layout as tests route
-
+-- http://localhost:3000/app/tests/kh7asfzrz71452vc1xcyqtxcjn7eny39/review/kn7a50mmbfajp3cm6k8nnh4etx7emqy2 500 (Internal Server Error)
+-- proper redirect when user triggers back to test
 
 PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
 -- Add delete and edit

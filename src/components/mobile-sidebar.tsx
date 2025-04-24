@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +17,7 @@ import { BookOpen, Brain, Home, Menu, Plus, Settings } from "lucide-react";
 
 const MobileSidebar = () => {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
   const navigation = [
     { name: "Dashboard", href: "/app", icon: Home },
@@ -25,9 +27,14 @@ const MobileSidebar = () => {
   ];
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={() => setIsOpen(true)}
+        >
           <Menu className="h-6 w-6" />
         </Button>
       </SheetTrigger>
@@ -49,6 +56,7 @@ const MobileSidebar = () => {
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   )}
+                  onClick={() => setIsOpen(false)}
                 >
                   <item.icon className="h-5 w-5 mr-3" />
                   <span>{item.name}</span>

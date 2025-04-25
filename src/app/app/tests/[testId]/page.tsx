@@ -67,7 +67,7 @@ export default function TestPage() {
     }
     setLoading(true, "Reviewing test...");
 
-    sessionStorage.setItem("fromTestPage", "true");
+    // sessionStorage.setItem("fromTestPage", "true");
 
     if (!test.data) {
       return;
@@ -85,7 +85,7 @@ export default function TestPage() {
         testId: test.data._id,
         classId: test.data.classId,
       });
-      void router.push(`/app/tests/${testId}/review/${testReviewId}`);
+      void router.replace(`/app/tests/${testId}/review/${testReviewId}`);
     } catch (error) {
       console.error("Error generating test:", error);
     } finally {

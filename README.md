@@ -23,7 +23,6 @@
 ZA SUTRA:
 
 -- add modals on all needed actions
--- proper redirect when user triggers back to test
 
 PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
 -- Add delete and edit

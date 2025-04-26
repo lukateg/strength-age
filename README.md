@@ -26,7 +26,9 @@ PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
 MAYBE IN FUTURE
 -- in settings page add TEST SETTINGs (setting up if user wants all questions on one page, or he wants pagination)
 -- in settings page add TEST SETTINGS (if user wants to have only one question true when multiple questions)
+-TEST GENERATION
 -- add additional prompt section to test generation so user can add additional instruction for test
+-- add importing previous tests when generating test so AI knows not to generate same questions
 --  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation to single class page
 -- implement custom question number per lesson
 -- add abort test generating when clicking on the X in the loader

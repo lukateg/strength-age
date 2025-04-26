@@ -77,14 +77,18 @@ export async function generateQuizForLesson(
   lessonTexts: string[],
   questionTypes: string[],
   difficulty: number,
-  questionCount: number
+  questionCount: number,
+  testName: string,
+  description: string
 ) {
   const combinedText = lessonTexts.join("\n\n");
   const prompt = createQuizPrompt(
     combinedText,
     questionTypes,
     difficulty,
-    questionCount
+    questionCount,
+    testName,
+    description
   );
 
   try {

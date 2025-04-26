@@ -19,8 +19,17 @@ export const createTest = mutation({
   },
   handler: async (ctx, args) => {
     await AuthenticationRequired({ ctx });
+    let title = args.title;
+    const existingTest = await ctx.db
+      .query("tests")
+      .filter((q) => q.eq(q.field("title"), args.title))
+      .collect();
+
+    if (existingTest.length > 0) {
+      title = `${args.title} ${existingTest.length + 1}`;
+    }
     const testId = await ctx.db.insert("tests", {
-      title: args.title,
+      title,
       description: args.description,
       questions: args.questions,
       userId: args.userId,

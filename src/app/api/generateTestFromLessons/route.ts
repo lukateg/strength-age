@@ -28,6 +28,8 @@ interface RequestBody {
   questionTypes: string[];
   difficulty: number;
   questionDistribution: "equal" | "proportional";
+  testName: string;
+  description: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -39,6 +41,8 @@ export async function POST(req: NextRequest) {
       questionTypes,
       difficulty,
       questionDistribution,
+      testName,
+      description,
     } = (await req.json()) as RequestBody;
 
     if (!lessonIds?.length || !questionAmount) {
@@ -115,7 +119,9 @@ export async function POST(req: NextRequest) {
           lessonTexts,
           questionTypes,
           difficulty,
-          questionCount
+          questionCount,
+          testName,
+          description
         );
       })
     );

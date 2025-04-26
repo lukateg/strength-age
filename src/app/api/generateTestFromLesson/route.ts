@@ -17,13 +17,21 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
-    const { lessonIds, questionAmount, questionTypes, difficulty } =
-      (await req.json()) as {
-        lessonIds?: Id<"lessons">[];
-        questionAmount?: number;
-        questionTypes: string[];
-        difficulty: number;
-      };
+    const {
+      lessonIds,
+      questionAmount,
+      questionTypes,
+      difficulty,
+      testName,
+      description,
+    } = (await req.json()) as {
+      lessonIds?: Id<"lessons">[];
+      questionAmount?: number;
+      questionTypes: string[];
+      difficulty: number;
+      testName: string;
+      description: string;
+    };
 
     if (!lessonIds || !questionAmount) {
       return Response.json(
@@ -76,15 +84,17 @@ export async function POST(req: NextRequest) {
         // responseSchema: testSchema,
       },
     });
-
+    console.log("API: Generating quiz...", testName, description);
     const quiz = await generateQuizForLesson(
       model,
       successfulTexts,
       questionTypes,
       difficulty,
-      questionAmount
+      questionAmount,
+      testName,
+      description
     );
-
+    console.log("API: Quiz generated:", quiz);
     return Response.json({ response: quiz });
   } catch (error) {
     console.error("Error generating test:", error);

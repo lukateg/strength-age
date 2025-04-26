@@ -26,11 +26,13 @@ export async function generateTest(
       questionAmount: formData.questionAmount,
       questionTypes: formData.questionTypes,
       difficulty: formData.difficulty,
+      testName: formData.testName,
+      description: formData.description,
       ...(isSingleLesson
         ? {}
         : { questionDistribution: formData.distribution }),
     };
-    // console.log("Request body:", requestBody);
+    console.log("SERVER ACTION: Request body:", requestBody);
     const { getToken } = await auth();
     const authToken = await getToken();
     // console.log("Token:", authToken);
@@ -42,6 +44,8 @@ export async function generateTest(
       },
       body: JSON.stringify(requestBody),
     });
+
+    console.log("SERVER ACTION: Response:", response);
 
     if (!response.ok) {
       const errorData = (await response.json()) as { error?: string };

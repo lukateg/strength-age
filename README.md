@@ -1,8 +1,10 @@
 # TODO:
 
 check before launch:
-// - check if all components are server components if possible
--- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
+// -- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
+// -- check if all components are server components if possible
+// -- check if there is better retry logic when calling the AI
+// -- check if there is better way to add chunking text prompt
 
 // - since a lot of logic is based on the URLS, implement fallback when user types jibrish in the url so it doesn't break your backedn and frontend
 // - remove pdfItems from getLessonData, these need to be separated
@@ -11,14 +13,10 @@ check before launch:
 -- create suspense component for pending and error state
 -- retry test first flashes the test then loads loader
 
-ZA SUTRA:
-// -- create proper retry logic when calling AI
--- add validation if test title exist so user cannot have two same entities in database
--- add chunking text prompt
 
 PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
--- add modals on all needed actions
 -- Add delete and edit
+-- add modals on all needed actions
 -- maybe add settings page
 -- Add analytics
 -- add payments
@@ -32,6 +30,11 @@ MAYBE IN FUTURE
 -- implement custom question number per lesson
 -- add abort test generating when clicking on the X in the loader
 -- maybe add sharing tests between user as a social media app
+
+FUTURE FEATURES:
+- test sharing between users and groups
+- test preview before starting to work on it
+- audio lessons
 
 # MVP Plan for Teach.me
 ✅ Core Features

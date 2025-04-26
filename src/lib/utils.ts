@@ -12,7 +12,9 @@ export function createQuizPrompt(
   successfulTexts: string,
   questionTypes: string[],
   difficulty: number,
-  questionAmount: number
+  questionAmount: number,
+  testName?: string,
+  description?: string
 ) {
   const outputExample = {
     title: "Generated or user-provided title",
@@ -34,7 +36,8 @@ export function createQuizPrompt(
     4.  **Multiple Choice:** Each question must include 4 answer options. If there are 2 correct answers, include both correct answers and one incorrect option. The fourth option should be either "All of the above" or "None of the above" if appropriate. If "All of the above" is used, it must not be marked as correct unless all three preceding options are correct. If there are 3 correct answers, the fourth option must be "All of the above" and it should be marked as the correct answer. If none of the first three options are correct, the fourth option must be "None of the above" and it should be marked as correct. Every question must have at least 2 correct answers unless "None of the above" is the correct answer. Ensure "All of the above" or "None of the above" are used logically and only when appropriate.
     5.  **True/False:**  For true/false questions, use "True" and "False" as the only answer options.
     6.  **Content:** The quiz questions must be based on the lesson material provided.
-    6.  **Title and Description:**  If the user hasn't provided a title or description, generate a relevant title and description for the quiz.
+    6.  **Title**  ${testName ? `Test name should be: "${testName}"` : "Generate a relevant title"}
+    7.  **Description**  ${description ? `Description should be: "${description}"` : "Generate a relevant description"}
 
     **Example Output:**
 

@@ -22,10 +22,10 @@ export default function DashboardStats({ stats }: DashboardStatsProps) {
   if (!stats) {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <Skeleton className="w-full h-20" />
-        <Skeleton className="w-full h-20" />
-        <Skeleton className="w-full h-20" />
-        <Skeleton className="w-full h-20" />
+        <Skeleton className="w-full h-[110px]" />
+        <Skeleton className="w-full h-[110px]" />
+        <Skeleton className="w-full h-[110px]" />
+        <Skeleton className="w-full h-[110px]" />
       </div>
     );
   }

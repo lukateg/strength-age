@@ -1,17 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "../../../../convex/_generated/api";
-import { testSchema } from "@/lib/schemas";
 
 import { type NextRequest } from "next/server";
 import { type Id } from "convex/_generated/dataModel";
 
 import { auth } from "@clerk/nextjs/server";
-import { createQuizPrompt } from "@/lib/utils";
-import { convertPDFToText } from "@/lib/server-utils";
-
-// TODO: check if needed / Add this to use Node.js runtime
-// export const runtime = "nodejs";
+import { convertPDFToText, generateQuizForLesson } from "@/lib/server-utils";
 
 if (!process.env.GEMINI_API_KEY) {
   throw new Error("Missing GEMINI_API_KEY environment variable");
@@ -62,9 +57,9 @@ export async function POST(req: NextRequest) {
     const extractionPromises = pdfs.map((pdf) => convertPDFToText(pdf));
     const extractedTexts = await Promise.all(extractionPromises);
 
-    const successfulTexts = extractedTexts
-      .filter((result): result is string => typeof result === "string")
-      .join("\n\n");
+    const successfulTexts = extractedTexts.filter(
+      (result): result is string => typeof result === "string"
+    );
 
     if (!successfulTexts) {
       return Response.json(
@@ -72,13 +67,6 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
-
-    const prompt = createQuizPrompt(
-      successfulTexts,
-      questionTypes,
-      difficulty,
-      questionAmount
-    );
 
     const model = genAI.getGenerativeModel({
       model: "gemini-2.0-flash-lite",
@@ -89,25 +77,15 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
+    const quiz = await generateQuizForLesson(
+      model,
+      successfulTexts,
+      questionTypes,
+      difficulty,
+      questionAmount
+    );
 
-    try {
-      const parsedData = JSON.parse(responseText) as Record<string, unknown>;
-      const validatedData = testSchema.parse(parsedData);
-
-      return Response.json({ response: validatedData });
-    } catch (parseError) {
-      console.error("Error parsing or validating JSON:", parseError);
-      return Response.json(
-        {
-          error: "Failed to parse or validate the test data",
-          details:
-            parseError instanceof Error ? parseError.message : "Unknown error",
-        },
-        { status: 500 }
-      );
-    }
+    return Response.json({ response: quiz });
   } catch (error) {
     console.error("Error generating test:", error);
     return Response.json(

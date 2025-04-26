@@ -12,9 +12,7 @@ check before launch:
 -- retry test first flashes the test then loads loader
 
 ZA SUTRA:
-// -- refactor create test route
 // -- create proper retry logic when calling AI
-// -- extract logic for parsing the PDF
 -- add validation if test title exist so user cannot have two same entities in database
 -- add chunking text prompt
 

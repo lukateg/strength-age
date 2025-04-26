@@ -86,7 +86,6 @@ export default function TestPage() {
       });
       void router.replace(`/app/tests/${testId}/review/${testReviewId}`);
     } catch (error) {
-      console.error("Error reviewing test:", error);
       let errorMessage = "An unknown error occurred. Please try again later.";
       if (error instanceof Error) {
         errorMessage = error.message;

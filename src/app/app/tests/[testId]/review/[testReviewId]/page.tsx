@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import TestReviewStats from "./components/test-review-stats";
 import TestReviewSkeleton from "./components/test-review-skeleton";
 import RetryTestButton from "@/components/retry-test-button";
+import NotFound from "@/components/not-found";
 
 import {
   CheckCircle2,
@@ -61,11 +62,11 @@ export default function ReviewPage() {
   }
 
   if (testReview.isError) {
-    return <div>Error loading test review</div>;
+    return <NotFound />;
   }
-
+  // TODO: find a way to remove this
   if ((testReview.isSuccess && !testReview.data) || testReview.data === null) {
-    return <div>Test review not found</div>;
+    return <NotFound />;
   }
 
   return (

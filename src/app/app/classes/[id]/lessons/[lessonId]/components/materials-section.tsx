@@ -17,6 +17,7 @@ import {
 import ItemsScrollArea from "@/components/items-scroll-area";
 import MaterialsList from "@/app/app/classes/[id]/components/materials-list";
 import Loader from "@/components/loader";
+import NotFound from "@/components/not-found";
 
 import { Upload } from "lucide-react";
 
@@ -34,7 +35,7 @@ export default function MaterialsSection() {
   }
 
   if (response.isError) {
-    return <div>Error loading lesson data</div>;
+    return <NotFound />;
   }
 
   const { lesson, lessonPDFs } = response.data;

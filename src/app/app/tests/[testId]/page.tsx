@@ -17,6 +17,7 @@ import TestFooter from "./components/test-footer";
 import QuestionAnswers from "./components/question-answers";
 import TestSkeleton from "./components/test-skeleton";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
+import NotFound from "@/components/not-found";
 
 import { useTestMutations } from "@/hooks/use-test-mutation";
 import { useLoadingContext } from "@/providers/loading-context";
@@ -105,7 +106,7 @@ export default function TestPage() {
   }
 
   if (test.isError) {
-    return <div>Error loading test</div>;
+    return <NotFound />;
   }
 
   return (

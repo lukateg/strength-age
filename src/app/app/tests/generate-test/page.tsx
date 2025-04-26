@@ -1,9 +1,5 @@
 "use client";
 
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import { api } from "../../../../../convex/_generated/api";
-import { useUser } from "@clerk/nextjs";
-
 import GenerateTestForm from "@/components/generate-test-form/generate-test-form";
 import RedirectBackButton from "@/components/redirect-back-button";
 

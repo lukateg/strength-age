@@ -5,13 +5,14 @@ check before launch:
 // -- check if all components are server components if possible
 // -- check if there is better retry logic when calling the AI
 // -- check if there is better way to add chunking text prompt
+// -- check if all routes are covered with the fallback and if URL security is enough
 
-// - since a lot of logic is based on the URLS, implement fallback when user types jibrish in the url so it doesn't break your backedn and frontend
-// - remove pdfItems from getLessonData, these need to be separated
-// - check why uploading calls 3 requests and is so slow ///
-// -- Refactor working test form
+-- remove pdfItems from getLessonData, these need to be separated
+-- check why uploading calls 3 requests and is so slow ///
 -- create suspense component for pending and error state
 -- retry test first flashes the test then loads loader
+
+-- check if permisions for tests are needed so we avoid scenario where anyone can access other peoples tests
 
 
 PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE

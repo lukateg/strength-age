@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import ListItem from "@/components/list-item";
 import Loader from "@/components/loader";
+import NotFound from "@/components/not-found";
 
 import { Button } from "@/components/ui/button";
 import { useClass } from "@/providers/class-context-provider";
@@ -17,7 +18,7 @@ export default function TestsList() {
   }
 
   if (testReviews.isError) {
-    return <div>Error loading test reviews</div>;
+    return <NotFound />;
   }
 
   if (testReviews.isSuccess && testReviews.data.length === 0) {

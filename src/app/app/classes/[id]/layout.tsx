@@ -3,13 +3,14 @@
 import { ClassProvider } from "@/providers/class-context-provider";
 
 import ClassHeader from "./components/class-header";
+import NotFound from "@/components/not-found";
 
-import { type Id } from "convex/_generated/dataModel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import { api } from "convex/_generated/api";
+import { api } from "../../../../../convex/_generated/api";
 import { useParams } from "next/navigation";
-import NotFound from "@/components/not-found";
+
+import { type Id } from "convex/_generated/dataModel";
 interface ClassLayoutProps {
   children: React.ReactNode;
   params: Promise<{ id: Id<"classes"> }>;

@@ -17,7 +17,7 @@ export async function generateTest(
       : "/api/generateTestFromLessons";
 
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-    console.log(baseUrl);
+
     if (!baseUrl) {
       throw new Error("Base URL is not defined");
     }
@@ -44,7 +44,8 @@ export async function generateTest(
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to generate test: ${response.statusText}`);
+      const errorData = (await response.json()) as { error?: string };
+      throw new Error(errorData.error ?? response.statusText);
     }
 
     const { response: generatedTest } = (await response.json()) as {
@@ -75,9 +76,9 @@ export async function reviewTest(requestBody: {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to review test");
+      const errorData = (await response.json()) as { error?: string };
+      throw new Error(errorData.error ?? response.statusText);
     }
-
     const { response: responseData } = (await response.json()) as {
       response: TestReview;
     };

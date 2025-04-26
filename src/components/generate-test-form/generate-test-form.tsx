@@ -6,6 +6,7 @@ import { useTestMutations } from "@/hooks/use-test-mutation";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useLoadingContext } from "@/providers/loading-context";
+import { toast } from "@/hooks/use-toast";
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -59,10 +60,17 @@ export default function GenerateTestForm({
         ...generatedTest,
         classId: formData.classId,
       });
-      router.push(`/app/tests/${testId}`);
+      router.replace(`/app/tests/${testId}`);
     } catch (error) {
-      console.error("Error generating test:", error);
-      // TODO: Add proper error handling/user feedback
+      let errorMessage = "An unknown error occurred. Please try again later.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast({
+        title: "Error generating test",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }

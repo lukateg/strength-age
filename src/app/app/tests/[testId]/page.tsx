@@ -29,6 +29,7 @@ import { type Id } from "../../../../../convex/_generated/dataModel";
 import type * as z from "zod";
 import { Pause, CircleX } from "lucide-react";
 import { reviewTest } from "@/server/test-actions";
+import { toast } from "@/hooks/use-toast";
 
 export type TestQuestion = {
   questionText: string;
@@ -67,8 +68,6 @@ export default function TestPage() {
     }
     setLoading(true, "Reviewing test...");
 
-    // sessionStorage.setItem("fromTestPage", "true");
-
     if (!test.data) {
       return;
     }
@@ -87,7 +86,16 @@ export default function TestPage() {
       });
       void router.replace(`/app/tests/${testId}/review/${testReviewId}`);
     } catch (error) {
-      console.error("Error generating test:", error);
+      console.error("Error reviewing test:", error);
+      let errorMessage = "An unknown error occurred. Please try again later.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast({
+        title: "Error reviewing test",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }

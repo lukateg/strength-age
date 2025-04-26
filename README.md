@@ -1,30 +1,25 @@
 # TODO:
 
+check before launch:
+// - check if all components are server components if possible
+-- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
+
 // - since a lot of logic is based on the URLS, implement fallback when user types jibrish in the url so it doesn't break your backedn and frontend
 // - remove pdfItems from getLessonData, these need to be separated
-// - https://stack.convex.dev/authentication-best-practices-convex-clerk-and-nextjs#ensuring-authentication-in-server-components
-// - check if all components are server components if possible
 // - check why uploading calls 3 requests and is so slow ///
-
 // -- Refactor working test form
-// -- create proper retry logic when calling AI
-// -- refactor create test route
-// -- extract logic for parsing the PDF
--- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
--- add chunking text prompt
--- add validation if test title exist so user cannot have two same entities in database
-
 -- create suspense component for pending and error state
--- fix redirect from the review to test
 -- retry test first flashes the test then loads loader
 
-
-
 ZA SUTRA:
-
--- add modals on all needed actions
+// -- refactor create test route
+// -- create proper retry logic when calling AI
+// -- extract logic for parsing the PDF
+-- add validation if test title exist so user cannot have two same entities in database
+-- add chunking text prompt
 
 PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
+-- add modals on all needed actions
 -- Add delete and edit
 -- maybe add settings page
 -- Add analytics
@@ -32,6 +27,9 @@ PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
 -- check free tier plan and work out permisions and free plan
 
 MAYBE IN FUTURE
+-- in settings page add TEST SETTINGs (setting up if user wants all questions on one page, or he wants pagination)
+-- in settings page add TEST SETTINGS (if user wants to have only one question true when multiple questions)
+-- add additional prompt section to test generation so user can add additional instruction for test
 --  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation to single class page
 -- implement custom question number per lesson
 -- add abort test generating when clicking on the X in the loader

@@ -17,7 +17,7 @@ export async function generateTest(
       : "/api/generateTestFromLessons";
 
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-    console.log(baseUrl);
+
     if (!baseUrl) {
       throw new Error("Base URL is not defined");
     }
@@ -26,11 +26,13 @@ export async function generateTest(
       questionAmount: formData.questionAmount,
       questionTypes: formData.questionTypes,
       difficulty: formData.difficulty,
+      testName: formData.testName,
+      description: formData.description,
       ...(isSingleLesson
         ? {}
         : { questionDistribution: formData.distribution }),
     };
-    // console.log("Request body:", requestBody);
+    console.log("SERVER ACTION: Request body:", requestBody);
     const { getToken } = await auth();
     const authToken = await getToken();
     // console.log("Token:", authToken);
@@ -43,8 +45,11 @@ export async function generateTest(
       body: JSON.stringify(requestBody),
     });
 
+    console.log("SERVER ACTION: Response:", response);
+
     if (!response.ok) {
-      throw new Error(`Failed to generate test: ${response.statusText}`);
+      const errorData = (await response.json()) as { error?: string };
+      throw new Error(errorData.error ?? response.statusText);
     }
 
     const { response: generatedTest } = (await response.json()) as {
@@ -75,9 +80,9 @@ export async function reviewTest(requestBody: {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to review test");
+      const errorData = (await response.json()) as { error?: string };
+      throw new Error(errorData.error ?? response.statusText);
     }
-
     const { response: responseData } = (await response.json()) as {
       response: TestReview;
     };

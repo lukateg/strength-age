@@ -1,41 +1,43 @@
 # TODO:
 
-// - since a lot of logic is based on the URLS, implement fallback when user types jibrish in the url so it doesn't break your backedn and frontend
-// - remove pdfItems from getLessonData, these need to be separated
-// - https://stack.convex.dev/authentication-best-practices-convex-clerk-and-nextjs#ensuring-authentication-in-server-components
-// - check if all components are server components if possible
-// - check why uploading calls 3 requests and is so slow ///
+check before launch:
+// -- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
+// -- check if all components are server components if possible
+// -- check if there is better retry logic when calling the AI
+// -- check if there is better way to add chunking text prompt
+// -- check if all routes are covered with the fallback and if URL security is enough
 
-// -- Refactor working test form
-// -- create proper retry logic when calling AI
-// -- refactor create test route
-// -- extract logic for parsing the PDF
--- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
--- add chunking text prompt
--- add validation if test title exist so user cannot have two same entities in database
-
+-- remove pdfItems from getLessonData, these need to be separated
+-- check why uploading calls 3 requests and is so slow ///
 -- create suspense component for pending and error state
--- fix redirect from the review to test
 -- retry test first flashes the test then loads loader
 
+-- check if permisions for tests are needed so we avoid scenario where anyone can access other peoples tests
 
-
-ZA SUTRA:
-
--- add modals on all needed actions
 
 PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
 -- Add delete and edit
+-- add modals on all needed actions
 -- maybe add settings page
 -- Add analytics
 -- add payments
 -- check free tier plan and work out permisions and free plan
 
 MAYBE IN FUTURE
+-- in settings page add TEST SETTINGs (setting up if user wants all questions on one page, or he wants pagination)
+-- in settings page add TEST SETTINGS (if user wants to have only one question true when multiple questions)
+-TEST GENERATION
+-- add additional prompt section to test generation so user can add additional instruction for test
+-- add importing previous tests when generating test so AI knows not to generate same questions
 --  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation to single class page
 -- implement custom question number per lesson
 -- add abort test generating when clicking on the X in the loader
 -- maybe add sharing tests between user as a social media app
+
+FUTURE FEATURES:
+- test sharing between users and groups
+- test preview before starting to work on it
+- audio lessons
 
 # MVP Plan for Teach.me
 ✅ Core Features

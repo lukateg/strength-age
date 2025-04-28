@@ -6,12 +6,11 @@ import { type FunctionReference } from "convex/server";
 export interface PDFType {
   _id: Id<"pdfs">;
   _creationTime: number;
-  classId: string;
+  classId: Id<"classes">;
   fileUrl: string;
   name: string;
   size: number;
   userId: string;
-  lessonIds: string[];
 }
 // TODO: remove and ad Doc<"lessons">
 export type LessonsType = {

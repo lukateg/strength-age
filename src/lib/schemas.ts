@@ -63,7 +63,7 @@ export const testReviewSchema = z.object({
   title: z.string(),
   description: z.string(),
   questions: z.array(reviewQuestionSchema).min(1), // Using review question schema
-  testId: z.string(),
+  testId: z.custom<Id<"tests">>((val) => val !== undefined && val !== ""),
 });
 
 export const testFormSchema = z.object({

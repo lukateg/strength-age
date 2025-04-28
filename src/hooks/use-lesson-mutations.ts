@@ -19,13 +19,14 @@ export const useLessonMutations = () => {
 
   // Mutations
   const createLessonMutation = useMutation(api.lessons.createLesson);
-  const createLessonWithNewMaterialsMutation = useMutation(
-    api.lessons.createLessonWithNewMaterials
-  );
-  const addPDFToLessonMutation = useMutation(api.lessons.addPDFToLesson);
-  const createLessonWithExistingMaterialsMutation = useMutation(
-    api.lessons.createLessonWithExistingMaterials
-  );
+  // const createLessonWithNewMaterialsMutation = useMutation(
+  //   api.lessons.createLessonWithNewMaterials
+  // );
+  // const addPDFToLessonMutation = useMutation(api.lessons.addPdfToLesson);
+  const addManyPdfsToLesson = useMutation(api.lessons.addManyPdfsToLesson);
+  // const createLessonWithExistingMaterialsMutation = useMutation(
+  //   api.lessons.createLessonWithExistingMaterials
+  // );
 
   const createLesson = useCallback(
     async (data: LessonFormData) => {
@@ -72,7 +73,7 @@ export const useLessonMutations = () => {
           pdfIds: selectedMaterials,
         };
 
-        await createLessonWithExistingMaterialsMutation(params);
+        // await createLessonWithExistingMaterialsMutation(params);
 
         toast({
           title: "Success",
@@ -93,7 +94,7 @@ export const useLessonMutations = () => {
         throw error;
       }
     },
-    [userId, classId, createLessonWithExistingMaterialsMutation]
+    [userId, classId]
   );
 
   const createLessonWithNewMaterials = useCallback(
@@ -118,7 +119,7 @@ export const useLessonMutations = () => {
           pdfFiles,
         };
 
-        await createLessonWithNewMaterialsMutation(params);
+        // await createLessonWithNewMaterialsMutation(params);
 
         toast({
           title: "Success",
@@ -136,13 +137,16 @@ export const useLessonMutations = () => {
         throw error;
       }
     },
-    [userId, classId, createLessonWithNewMaterialsMutation]
+    [userId, classId]
   );
 
   const addPDFToLesson = useCallback(
     async (params: AddPDFToLessonParams) => {
       try {
-        await addPDFToLessonMutation(params);
+        await addManyPdfsToLesson({
+          lessonId: params.lessonId,
+          pdfIds: params.pdfIds,
+        });
 
         toast({
           title: "Success",
@@ -159,7 +163,7 @@ export const useLessonMutations = () => {
         throw error;
       }
     },
-    [addPDFToLessonMutation]
+    [addManyPdfsToLesson]
   );
 
   return {

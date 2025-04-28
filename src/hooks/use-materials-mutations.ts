@@ -4,11 +4,10 @@ import { api } from "../../convex/_generated/api";
 import { useClass } from "@/providers/class-context-provider";
 import { toast } from "@/hooks/use-toast";
 import { type ClientUploadedFileData } from "uploadthing/types";
-
+import { type Id } from "../../convex/_generated/dataModel";
 interface UploadPDFParams {
   userId: string;
-  classId: string;
-  lessonIds: string[];
+  classId: Id<"classes">;
   pdfFiles: {
     fileUrl: string;
     name: string;
@@ -38,7 +37,6 @@ export const useMaterialsMutations = () => {
           });
           return;
         }
-        const lessonIds = params.lessonId === "none" ? [] : [params.lessonId];
         const pdfFiles = params.pdfFiles.map((pdf) => ({
           fileUrl: pdf.ufsUrl,
           name: pdf.name,
@@ -48,7 +46,6 @@ export const useMaterialsMutations = () => {
         const uploadParams: UploadPDFParams = {
           userId,
           classId,
-          lessonIds,
           pdfFiles,
         };
 

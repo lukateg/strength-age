@@ -42,16 +42,16 @@ export const UploadMaterialsView = ({
       <div className="space-y-4">
         <Label>Materials</Label>
 
-        <Controller
+        {/* <Controller
           name="uploadedMaterials"
           control={control}
-          render={() => (
-            <FileUploadComponent
-              onDrop={handleFileChange}
-              existingFiles={uploadedMaterials}
-            />
-          )}
+          render={() => ( */}
+        <FileUploadComponent
+          onDrop={handleFileChange}
+          existingFiles={uploadedMaterials}
         />
+        {/* )}
+        /> */}
 
         {!!uploadedMaterials.length && (
           <UploadedMaterialsList

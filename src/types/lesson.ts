@@ -12,10 +12,9 @@ export interface LessonFormData {
 }
 
 export interface CreateBasicLessonParams {
-  userId: string;
   classId: Id<"classes">;
   title: string;
-  description?: string;
+  description: string;
 }
 
 export interface CreateLessonWithMaterialsParams {

@@ -1,6 +1,6 @@
 "use client";
 
-import * as z from "zod";
+import type * as z from "zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -25,34 +25,20 @@ import SelectMaterialsView from "./components/select-materials-view";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLessonMutations } from "@/hooks/use-lesson-mutations";
-import { useUploadThing } from "@/hooks/use-upload-thing";
-import { toast } from "@/hooks/use-toast";
+
+import { createLessonSchema } from "@/lib/schemas";
 
 import { Loader2 } from "lucide-react";
 
 import { type LessonFormData } from "@/types/lesson";
-import { type Id } from "convex/_generated/dataModel";
 
-const formSchema = z.object({
-  lessonTitle: z
-    .string()
-    .min(1, "Lesson title is required")
-    .max(50, "Lesson title cannot be longer than 50 characters"),
-  lessonDescription: z
-    .string()
-    .min(1, "Lesson description is required")
-    .max(200, "Lesson description cannot be longer than 200 characters"),
-  uploadedMaterials: z.array(z.instanceof(File)),
-  selectedMaterials: z.array(z.custom<Id<"pdfs">>()),
-});
-
-type FormData = z.infer<typeof formSchema>;
+type FormData = z.infer<typeof createLessonSchema>;
 
 export default function NewLessonPage() {
   const router = useRouter();
   const [showUploaded, setShowUploaded] = useState(false);
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(createLessonSchema),
     defaultValues: {
       lessonTitle: "",
       lessonDescription: "",
@@ -63,48 +49,33 @@ export default function NewLessonPage() {
 
   const { handleSubmit, control, setValue, watch } = form;
   const {
-    createLesson,
-    createLessonWithExistingMaterials,
-    createLessonWithNewMaterials,
     classId,
     allMaterials,
+    createLesson,
+    isUploading,
+    uploadNewPdfsToLesson,
+    addExistingPdfsToLesson,
   } = useLessonMutations();
 
   const uploadedMaterials = watch("uploadedMaterials", []);
   const selectedMaterials = watch("selectedMaterials", []);
 
-  const { startUpload, isUploading } = useUploadThing("pdfUploader", {
-    onClientUploadComplete: async (res) => {
-      if (res && res.length > 0) {
-        await createLessonWithNewMaterials(form.getValues(), res);
-        router.push(`/app/classes/${classId}`);
-      }
-    },
-    onUploadError: () => {
-      toast({
-        title: "Error",
-        description: "Something went wrong with the upload. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+  const shouldCreateLessonWithNewMaterials =
+    uploadedMaterials.length && !showUploaded;
+  const shouldCreateLessonWithExistingMaterials =
+    selectedMaterials.length && showUploaded;
 
   const onSubmit = async (data: LessonFormData) => {
-    if (!uploadedMaterials.length && !selectedMaterials.length) {
-      await createLesson(data);
-      router.push(`/app/classes/${classId}`);
-      return;
+    const lessonId = await createLesson(data);
+    if (!lessonId) return;
+
+    if (shouldCreateLessonWithNewMaterials) {
+      void uploadNewPdfsToLesson({ lessonId, uploadedMaterials });
+    } else if (shouldCreateLessonWithExistingMaterials) {
+      await addExistingPdfsToLesson({ lessonId, pdfIds: selectedMaterials });
     }
 
-    if (uploadedMaterials.length && !showUploaded) {
-      await startUpload(uploadedMaterials);
-      return;
-    }
-
-    if (selectedMaterials.length && showUploaded) {
-      await createLessonWithExistingMaterials(data, selectedMaterials);
-      router.push(`/app/classes/${classId}`);
-    }
+    router.push(`/app/classes/${classId}`);
   };
 
   return (

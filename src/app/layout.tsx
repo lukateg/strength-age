@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/providers/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/header";
 
 import { ClerkProvider } from "@clerk/nextjs";
@@ -47,7 +46,6 @@ export default function RootLayout({
                   <main className="flex-1 overflow-y-auto">{children}</main>
                 </div>
               </div>
-              <Toaster />
             </ThemeProvider>
           </body>
         </html>

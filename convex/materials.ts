@@ -2,9 +2,33 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { AuthenticationRequired } from "./utils/utils";
 
-export const uploadPdf = mutation({
+export const addPdf = mutation({
   args: {
-    userId: v.string(),
+    classId: v.id("classes"),
+    pdf: v.object({
+      fileUrl: v.string(),
+      name: v.string(),
+      size: v.number(),
+    }),
+  },
+  handler: async (ctx, { classId, pdf }) => {
+    console.log("Adding PDF to database CONVEX:", pdf, ctx);
+    const userId = await AuthenticationRequired({ ctx });
+
+    const pdfId = await ctx.db.insert("pdfs", {
+      userId,
+      classId,
+      fileUrl: pdf.fileUrl,
+      name: pdf.name,
+      size: pdf.size,
+    });
+
+    return pdfId;
+  },
+});
+
+export const addManyPdfs = mutation({
+  args: {
     classId: v.id("classes"),
     pdfFiles: v.array(
       v.object({
@@ -14,8 +38,8 @@ export const uploadPdf = mutation({
       })
     ),
   },
-  handler: async (ctx, { userId, classId, pdfFiles }) => {
-    await AuthenticationRequired({ ctx });
+  handler: async (ctx, { classId, pdfFiles }) => {
+    const userId = await AuthenticationRequired({ ctx });
 
     for (const pdf of pdfFiles) {
       await ctx.db.insert("pdfs", {

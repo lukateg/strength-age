@@ -3,13 +3,11 @@
 import * as z from "zod";
 
 import { useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { toast } from "@/hooks/use-toast";
-import { useUploadThing } from "@/hooks/use-upload-thing";
-import { useMaterialsMutations } from "@/hooks/use-materials-mutations";
 import { useClass } from "@/providers/class-context-provider";
+import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 
 import {
   Card,
@@ -39,36 +37,25 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function FileUploadPage() {
   const { classId, lessons } = useClass();
-  const { uploadPDF } = useMaterialsMutations();
   const router = useRouter();
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: { lessonId: "", uploadedMaterials: [] },
   });
   const { watch, setValue } = form;
+  const { uploadNewPdfsToLesson, isUploading } = useLessonMutations();
 
   const uploadedMaterials = watch("uploadedMaterials", []);
 
-  const { startUpload, isUploading } = useUploadThing("pdfUploader", {
-    onClientUploadComplete: (res) => {
-      if (res && res.length > 0) {
-        void uploadPDF({
-          lessonId: form.getValues("lessonId"),
-          pdfFiles: res,
-        });
+  const handleUpload = async () => {
+    void uploadNewPdfsToLesson({
+      lessonId: form.getValues("lessonId"),
+      uploadedMaterials,
+    });
 
-        // TODO: redirect to the all materials page
-        router.push(`/app/classes/${classId}`);
-      }
-    },
-    onUploadError: () => {
-      toast({
-        title: "Error",
-        description: "Something went wrong, please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+    router.push(`/app/classes/${classId}`);
+  };
 
   const handleFileChange = (newMaterials: File[]) => {
     if (newMaterials.length) {
@@ -104,15 +91,9 @@ export default function FileUploadPage() {
           />
         </Form>
 
-        <Controller
-          name="uploadedMaterials"
-          control={form.control}
-          render={() => (
-            <FileUploadComponent
-              onDrop={handleFileChange}
-              existingFiles={uploadedMaterials}
-            />
-          )}
+        <FileUploadComponent
+          onDrop={handleFileChange}
+          existingFiles={uploadedMaterials}
         />
 
         {!!uploadedMaterials.length && (
@@ -125,7 +106,7 @@ export default function FileUploadPage() {
 
       <CardFooter>
         <UploadFilesButton
-          startUpload={startUpload}
+          startUpload={handleUpload}
           uploadedMaterials={uploadedMaterials}
           isUploading={isUploading}
           className="w-full"

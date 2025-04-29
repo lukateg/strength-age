@@ -8,6 +8,7 @@ import { type Id } from "convex/_generated/dataModel";
 import { type GenerativeModel } from "@google/generative-ai";
 import { createQuizPrompt } from "./utils";
 import { testSchema } from "./schemas";
+import { ConvexError } from "convex/values";
 
 type LessonPdf = {
   fileUrl: string;
@@ -26,7 +27,7 @@ export async function convertPDFToText(pdf: { fileUrl: string; _id: string }) {
 
     const buffer = Buffer.from(new Uint8Array(response.data));
     if (buffer.toString("ascii", 0, 4) !== "%PDF") {
-      throw new Error("Invalid PDF format");
+      throw new ConvexError({ message: "Invalid PDF format" });
     }
 
     const data = await pdfParse(buffer);

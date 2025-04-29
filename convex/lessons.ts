@@ -1,11 +1,12 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { AuthenticationRequired } from "./utils/utils";
+import { AuthenticationRequired, createAppError } from "./utils/utils";
 
 export const getLessonsByClass = query({
   args: v.object({
     classId: v.id("classes"),
   }),
+  // TODO change to index
   handler: async (ctx, { classId }) => {
     await AuthenticationRequired({ ctx });
     return await ctx.db
@@ -17,99 +18,35 @@ export const getLessonsByClass = query({
 
 export const createLesson = mutation({
   args: v.object({
-    userId: v.string(),
     classId: v.id("classes"),
     title: v.string(),
-    description: v.optional(v.string()),
+    description: v.string(),
   }),
-  handler: async (ctx, { userId, classId, title, description }) => {
-    await AuthenticationRequired({ ctx });
-    return await ctx.db.insert("lessons", {
+  handler: async (ctx, { classId, title, description }) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    // TODO use index insead of filter
+    const existingLesson = await ctx.db
+      .query("lessons")
+      .filter((q) => q.eq(q.field("title"), title))
+      .first();
+
+    if (existingLesson) {
+      createAppError({
+        message: "Lesson with same title already exists.",
+      });
+    }
+
+    const lessonId = await ctx.db.insert("lessons", {
       userId,
       classId,
       title,
-      description: description ?? "",
+      description,
     });
+
+    return lessonId;
   },
 });
-
-// export const createLessonWithExistingMaterials = mutation({
-//   args: v.object({
-//     userId: v.string(),
-//     classId: v.id("classes"),
-//     title: v.string(),
-//     description: v.optional(v.string()),
-//     pdfIds: v.array(v.id("pdfs")),
-//   }),
-//   handler: async (ctx, { userId, classId, title, description, pdfIds }) => {
-//     await AuthenticationRequired({ ctx });
-//     const lessonId = await ctx.db.insert("lessons", {
-//       userId,
-//       classId,
-//       title,
-//       description: description ?? "",
-//     });
-
-//     if (pdfIds.length > 0) {
-//       for (const pdfId of pdfIds) {
-//         const pdf = await ctx.db.get(pdfId);
-//         if (pdf) {
-//           const updatedLessonIds = [...(pdf.lessonIds ?? []), lessonId];
-//           await ctx.db.patch(pdfId, {
-//             lessonIds: updatedLessonIds,
-//           });
-//         }
-//       }
-//     }
-
-//     return lessonId;
-//   },
-// });
-// TODO: separate this into two functions and use createLesson.then(uploadMaterials)
-// export const createLessonWithNewMaterials = mutation({
-//   args: v.object({
-//     userId: v.string(),
-//     classId: v.id("classes"),
-//     title: v.string(),
-//     description: v.optional(v.string()),
-//     pdfFiles: v.array(
-//       v.object({
-//         fileUrl: v.string(),
-//         name: v.string(),
-//         size: v.number(),
-//       })
-//     ),
-//   }),
-//   handler: async (ctx, { userId, classId, title, description, pdfFiles }) => {
-//     // check first if there is already lesson with same title
-//     // const existingLesson = await db.query("lessons").filter((q) => q.eq(q.field("title"), title)).first();
-//     // if (existingLesson) {
-//     //   throw new Error("Lesson with same title already exists");
-//     // }
-
-//     const lessonId = await ctx.db.insert("lessons", {
-//       userId,
-//       classId,
-//       title,
-//       description: description ?? "",
-//     });
-
-//     if (pdfFiles.length > 0) {
-//       for (const pdf of pdfFiles) {
-//         await ctx.db.insert("pdfs", {
-//           userId,
-//           classId,
-//           fileUrl: pdf.fileUrl,
-//           name: pdf.name,
-//           lessonIds: [lessonId],
-//           size: pdf.size,
-//         });
-//       }
-//     }
-
-//     return lessonId;
-//   },
-// });
 
 export const getPDFsByLessonId = query({
   args: v.object({

@@ -3,14 +3,12 @@
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { toast } from "@/hooks/use-toast";
-import { useUploadThing } from "@/hooks/use-upload-thing";
 import { useLessonMutations } from "@/hooks/use-lesson-mutations";
-import { useMaterialsMutations } from "@/hooks/use-materials-mutations";
 import { useClass } from "@/providers/class-context-provider";
+
+import type * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addLessonMaterialsSchema } from "@/lib/schemas";
 
 import {
   Card,
@@ -27,35 +25,23 @@ import { Form, FormField } from "@/components/ui/form";
 import AddFilesButton from "@/components/ui/add-files-button";
 import LabeledSwitch from "@/components/labeled-switch";
 import SelectFormItem from "@/components/select-form-item";
-
-import { type Id } from "convex/_generated/dataModel";
 import UploadFilesButton from "@/components/upload-files-button";
 
-const formSchema = (showExistingMaterials: boolean) =>
-  z.object({
-    lessonId: z.custom<Id<"lessons">>(),
-    selectedMaterials: showExistingMaterials
-      ? z
-          .array(z.custom<Id<"pdfs">>())
-          .min(1, "Please select at least one material")
-      : z.array(z.custom<Id<"pdfs">>()),
-    uploadedMaterials: !showExistingMaterials
-      ? z.array(z.instanceof(File)).min(1, "Please upload at least one file")
-      : z.array(z.instanceof(File)),
-  });
+import { type Id } from "convex/_generated/dataModel";
 
-type FormData = z.infer<ReturnType<typeof formSchema>>;
+type FormData = z.infer<ReturnType<typeof addLessonMaterialsSchema>>;
 
 export default function FileUploadPage() {
   const [showExistingMaterials, setShowExistingMaterials] = useState(false);
   const router = useRouter();
   const { lessons, materials, classId } = useClass();
-  const { addPDFToLesson } = useLessonMutations();
-  const { uploadPDF } = useMaterialsMutations();
+  const { addExistingPdfsToLesson, uploadNewPdfsToLesson, isUploading } =
+    useLessonMutations();
+  // const { uploadNewPdfsToLesson } = useMaterialsMutations();
   const { lessonId }: { lessonId: Id<"lessons"> } = useParams();
 
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema(showExistingMaterials)),
+    resolver: zodResolver(addLessonMaterialsSchema(showExistingMaterials)),
     defaultValues: {
       lessonId,
       selectedMaterials: [] as Id<"pdfs">[],
@@ -69,33 +55,19 @@ export default function FileUploadPage() {
   const uploadedMaterials = watch("uploadedMaterials", []);
   const selectedMaterials = watch("selectedMaterials", []);
 
-  const { startUpload, isUploading } = useUploadThing("pdfUploader", {
-    onClientUploadComplete: async (res) => {
-      if (res && res.length > 0) {
-        await uploadPDF({
-          lessonId,
-          pdfFiles: res,
-        });
-
-        router.push(`/app/classes/${classId}/lessons/${lessonId}`);
-      }
-    },
-    onUploadError: () => {
-      toast({
-        title: "Error",
-        description: "Something went wrong, please try again.",
-        variant: "destructive",
-      });
-    },
-  });
-
   const handleAddPDFToLesson = async () => {
     const selectedMaterials = getValues("selectedMaterials");
-
-    await addPDFToLesson({
+    void addExistingPdfsToLesson({
       pdfIds: selectedMaterials,
       lessonId: lessonId,
     });
+
+    router.push(`/app/classes/${classId}/lessons/${lessonId}`);
+  };
+
+  const handleUploadNewPdfsToLesson = async () => {
+    const uploadedMaterials = getValues("uploadedMaterials");
+    void uploadNewPdfsToLesson({ lessonId, uploadedMaterials });
 
     router.push(`/app/classes/${classId}/lessons/${lessonId}`);
   };
@@ -160,9 +132,7 @@ export default function FileUploadPage() {
             ) : (
               <UploadFilesButton
                 className="w-full"
-                startUpload={() =>
-                  handleSubmit(() => startUpload(uploadedMaterials))()
-                }
+                startUpload={handleUploadNewPdfsToLesson}
                 uploadedMaterials={uploadedMaterials}
                 isUploading={isUploading}
               />

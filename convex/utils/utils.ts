@@ -51,7 +51,22 @@ export async function AuthenticationRequired({
 }) {
   const identity = await ctx.auth.getUserIdentity();
   if (identity === null) {
-    throw new ConvexError("Not authenticated!");
+    throw new ConvexError({ message: "Not authenticated!" });
   }
   return identity.subject;
+}
+
+// Create a custom error function that ensures data always has a message
+export function createAppError(data: { message: string }) {
+  return new ConvexError(data);
+}
+
+// Type guard to check and extract properly typed error data
+export function isAppError(
+  error: unknown
+): error is ConvexError<{ message: string }> {
+  return (
+    error instanceof ConvexError &&
+    typeof (error.data as { message: string }).message === "string"
+  );
 }

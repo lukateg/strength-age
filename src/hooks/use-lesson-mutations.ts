@@ -4,173 +4,131 @@ import { api } from "../../convex/_generated/api";
 import { useClass } from "@/providers/class-context-provider";
 import { toast } from "@/hooks/use-toast";
 
-import { type Id } from "convex/_generated/dataModel";
-import { type ClientUploadedFileData } from "uploadthing/types";
 import {
   type LessonFormData,
   type CreateBasicLessonParams,
-  type CreateLessonWithMaterialsParams,
-  type CreateLessonWithNewMaterialsParams,
   type AddPDFToLessonParams,
 } from "@/types/lesson";
+import { useUploadThing } from "./use-upload-thing";
+import { isAppError } from "../../convex/utils/utils";
+
+import { type Id } from "convex/_generated/dataModel";
 
 export const useLessonMutations = () => {
-  const { userId, classId, materials: allMaterials } = useClass();
+  const { classId, materials: allMaterials } = useClass();
+  const { startUpload, isUploading } = useUploadThing("pdfUploader", {
+    onUploadError: (error: Error) => {
+      throw error;
+    },
+  });
 
   // Mutations
   const createLessonMutation = useMutation(api.lessons.createLesson);
-  // const createLessonWithNewMaterialsMutation = useMutation(
-  //   api.lessons.createLessonWithNewMaterials
-  // );
-  // const addPDFToLessonMutation = useMutation(api.lessons.addPdfToLesson);
-  const addManyPdfsToLesson = useMutation(api.lessons.addManyPdfsToLesson);
-  // const createLessonWithExistingMaterialsMutation = useMutation(
-  //   api.lessons.createLessonWithExistingMaterials
-  // );
+  const addManyPdfsToLessonMutation = useMutation(
+    api.lessons.addManyPdfsToLesson
+  );
 
   const createLesson = useCallback(
     async (data: LessonFormData) => {
       try {
-        if (!userId) return;
-
         const params: CreateBasicLessonParams = {
-          userId,
           classId,
           title: data.lessonTitle,
           description: data.lessonDescription,
         };
 
-        await createLessonMutation(params);
+        const lessonId = await createLessonMutation(params);
 
         toast({
           title: "Success",
           description: "Lesson created successfully.",
           variant: "default",
         });
+
+        return lessonId;
       } catch (error) {
-        console.error("Failed to create basic lesson:", error);
+        let errorData = "Failed to create lesson. Please try again.";
+        if (isAppError(error)) {
+          errorData = error.data.message;
+        }
         toast({
           title: "Error",
-          description: "Failed to create lesson. Please try again.",
+          description: errorData,
           variant: "destructive",
         });
-        throw error;
       }
     },
-    [userId, classId, createLessonMutation]
+    [classId, createLessonMutation]
   );
 
-  const createLessonWithExistingMaterials = useCallback(
-    async (data: LessonFormData, selectedMaterials: Id<"pdfs">[]) => {
+  const uploadNewPdfsToLesson = useCallback(
+    async ({
+      uploadedMaterials,
+      lessonId,
+    }: {
+      uploadedMaterials: File[];
+      lessonId: Id<"lessons">;
+    }) => {
+      const { dismiss } = toast({
+        title: "Uploading...",
+        description: "Please wait while we upload your files.",
+        variant: "default",
+        duration: Infinity,
+      });
+
       try {
-        if (!userId) return;
+        await startUpload(uploadedMaterials, { lessonId, classId });
 
-        const params: CreateLessonWithMaterialsParams = {
-          userId,
-          classId,
-          title: data.lessonTitle,
-          description: data.lessonDescription,
-          pdfIds: selectedMaterials,
-        };
-
-        // await createLessonWithExistingMaterialsMutation(params);
-
+        dismiss();
         toast({
           title: "Success",
-          description: "Lesson created with existing materials.",
+          description: "PDFs uploaded to lesson successfully.",
           variant: "default",
         });
       } catch (error) {
-        console.error(
-          "Failed to create lesson with existing materials:",
-          error
-        );
+        console.error("Failed to upload new PDFs to lesson:", error);
+        dismiss();
+
         toast({
           title: "Error",
-          description:
-            "Failed to create lesson with materials. Please try again.",
+          description: "Failed to upload PDFs to lesson. Please try again.",
           variant: "destructive",
         });
-        throw error;
       }
     },
-    [userId, classId]
+    [startUpload, classId]
   );
 
-  const createLessonWithNewMaterials = useCallback(
-    async (
-      data: LessonFormData,
-      files: ClientUploadedFileData<{ uploadedBy: string }>[]
-    ) => {
-      try {
-        if (!userId) return;
-
-        const pdfFiles = files.map((pdf) => ({
-          fileUrl: pdf.ufsUrl,
-          name: pdf.name,
-          size: pdf.size,
-        }));
-
-        const params: CreateLessonWithNewMaterialsParams = {
-          userId,
-          classId,
-          title: data.lessonTitle,
-          description: data.lessonDescription,
-          pdfFiles,
-        };
-
-        // await createLessonWithNewMaterialsMutation(params);
-
-        toast({
-          title: "Success",
-          description: "Lesson created with new materials.",
-          variant: "default",
-        });
-      } catch (error) {
-        console.error("Failed to create lesson with new materials:", error);
-        toast({
-          title: "Error",
-          description:
-            "Failed to create lesson with materials. Please try again.",
-          variant: "destructive",
-        });
-        throw error;
-      }
-    },
-    [userId, classId]
-  );
-
-  const addPDFToLesson = useCallback(
+  const addExistingPdfsToLesson = useCallback(
     async (params: AddPDFToLessonParams) => {
       try {
-        await addManyPdfsToLesson({
+        await addManyPdfsToLessonMutation({
           lessonId: params.lessonId,
           pdfIds: params.pdfIds,
         });
 
         toast({
           title: "Success",
-          description: "Materials added to lesson successfully.",
+          description: "PDFs added to lesson successfully.",
           variant: "default",
         });
       } catch (error) {
         console.error("Failed to add PDF to lesson:", error);
         toast({
           title: "Error",
-          description: "Failed to add materials to lesson. Please try again.",
+          description: "Failed to add PDFs to lesson. Please try again.",
           variant: "destructive",
         });
-        throw error;
       }
     },
-    [addManyPdfsToLesson]
+    [addManyPdfsToLessonMutation]
   );
 
   return {
+    isUploading,
     createLesson,
-    createLessonWithExistingMaterials,
-    createLessonWithNewMaterials,
-    addPDFToLesson,
+    addExistingPdfsToLesson,
+    uploadNewPdfsToLesson,
     classId,
     allMaterials,
   };

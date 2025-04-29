@@ -1,12 +1,15 @@
 import { useCallback } from "react";
 import { useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
 import { useClass } from "@/providers/class-context-provider";
+import { useUploadThing } from "@/hooks/use-upload-thing";
+
+import { api } from "../../convex/_generated/api";
 import { toast } from "@/hooks/use-toast";
+
 import { type ClientUploadedFileData } from "uploadthing/types";
 import { type Id } from "../../convex/_generated/dataModel";
+
 interface UploadPDFParams {
-  userId: string;
   classId: Id<"classes">;
   pdfFiles: {
     fileUrl: string;
@@ -16,27 +19,30 @@ interface UploadPDFParams {
 }
 
 export const useMaterialsMutations = () => {
-  const { userId, classId } = useClass();
+  const { classId } = useClass();
+  const { startUpload, isUploading } = useUploadThing("pdfUploader", {
+    onUploadError: (error: Error) => {
+      throw error;
+    },
+  });
 
   // Mutations
-  const uploadPDFMutation = useMutation(api.materials.uploadPdf);
+  const addManyPdfsMutation = useMutation(api.materials.addManyPdfs);
 
-  const uploadPDF = useCallback(
+  const uploadManyPdfs = useCallback(
     async (params: {
       lessonId: string;
       pdfFiles: ClientUploadedFileData<{
         uploadedBy: string;
       }>[];
     }) => {
+      const { dismiss } = toast({
+        title: "Uploading...",
+        description: "Please wait while we upload your files.",
+        variant: "default",
+        duration: Infinity,
+      });
       try {
-        if (!userId) {
-          toast({
-            title: "Error",
-            description: "You must be logged in to upload materials.",
-            variant: "destructive",
-          });
-          return;
-        }
         const pdfFiles = params.pdfFiles.map((pdf) => ({
           fileUrl: pdf.ufsUrl,
           name: pdf.name,
@@ -44,13 +50,13 @@ export const useMaterialsMutations = () => {
         }));
 
         const uploadParams: UploadPDFParams = {
-          userId,
           classId,
           pdfFiles,
         };
 
-        await uploadPDFMutation(uploadParams);
+        await addManyPdfsMutation(uploadParams);
 
+        dismiss();
         toast({
           title: "Success",
           description: "Materials uploaded successfully.",
@@ -63,14 +69,15 @@ export const useMaterialsMutations = () => {
           description: "Failed to upload materials. Please try again.",
           variant: "destructive",
         });
-        throw error;
       }
     },
-    [userId, classId, uploadPDFMutation]
+    [classId, addManyPdfsMutation]
   );
 
   return {
-    uploadPDF,
+    isUploading,
+    startUpload,
+    uploadManyPdfs,
     classId,
   };
 };

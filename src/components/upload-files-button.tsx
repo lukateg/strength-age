@@ -3,13 +3,14 @@ import { Loader2 } from "lucide-react";
 import { Cloud } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+
 export default function UploadFilesButton({
   startUpload,
   uploadedMaterials,
   isUploading,
   className,
 }: {
-  startUpload: (uploadedMaterials: File[]) => void;
+  startUpload: () => Promise<void>;
   uploadedMaterials: File[];
   isUploading: boolean;
   className?: string;
@@ -19,7 +20,7 @@ export default function UploadFilesButton({
       className={cn(className, {
         "opacity-50": uploadedMaterials.length === 0 || isUploading,
       })}
-      onClick={() => startUpload(uploadedMaterials)}
+      onClick={startUpload}
       disabled={uploadedMaterials.length === 0 || isUploading}
     >
       {isUploading ? (

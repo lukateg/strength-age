@@ -12,15 +12,14 @@ export interface LessonFormData {
 }
 
 export interface CreateBasicLessonParams {
-  userId: string;
-  classId: string;
+  classId: Id<"classes">;
   title: string;
-  description?: string;
+  description: string;
 }
 
 export interface CreateLessonWithMaterialsParams {
   userId: string;
-  classId: string;
+  classId: Id<"classes">;
   title: string;
   description?: string;
   pdfIds: Id<"pdfs">[];
@@ -28,7 +27,7 @@ export interface CreateLessonWithMaterialsParams {
 
 export interface CreateLessonWithNewMaterialsParams {
   userId: string;
-  classId: string;
+  classId: Id<"classes">;
   title: string;
   description?: string;
   pdfFiles: {
@@ -40,5 +39,5 @@ export interface CreateLessonWithNewMaterialsParams {
 
 export interface AddPDFToLessonParams {
   pdfIds: Id<"pdfs">[];
-  lessonId: string;
+  lessonId: Id<"lessons">;
 }

@@ -8,7 +8,7 @@ import { type PDFType } from "@/types/types";
 export default function MaterialsList({
   materials,
 }: {
-  materials?: PDFType[] | null;
+  materials?: (PDFType | null)[];
 }) {
   if (!materials) {
     return <Loader />;
@@ -28,7 +28,7 @@ export default function MaterialsList({
   return (
     <>
       {materials?.map((material) => (
-        <ListItem key={material._id} variant="outline">
+        <ListItem key={material?._id} variant="outline">
           <div className="flex items-center">
             <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
             <span className="text-sm md:text-base w-[12ch] text-ellipsis overflow-hidden whitespace-nowrap">
@@ -40,7 +40,7 @@ export default function MaterialsList({
               variant="outline"
               size="sm"
               className="text-xs md:text-base"
-              onClick={() => window.open(material.fileUrl, "_blank")}
+              onClick={() => window.open(material?.fileUrl, "_blank")}
             >
               <Eye className="h-4 w-4" />
               <span className="hidden md:block ml-2">Preview</span>

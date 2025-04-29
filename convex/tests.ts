@@ -7,7 +7,7 @@ export const createTest = mutation({
     title: v.string(),
     description: v.string(),
     userId: v.string(),
-    classId: v.string(),
+    classId: v.id("classes"),
     questions: v.array(
       v.object({
         questionText: v.string(),
@@ -44,8 +44,8 @@ export const createTestReview = mutation({
     title: v.string(),
     description: v.string(),
     userId: v.string(),
-    classId: v.string(),
-    testId: v.string(),
+    classId: v.id("classes"),
+    testId: v.id("tests"),
     questions: v.array(
       v.object({
         questionText: v.string(),
@@ -85,7 +85,7 @@ export const getAllTestsByUser = query({
 
 export const getAllTestsByClassId = query({
   args: {
-    classId: v.string(),
+    classId: v.id("classes"),
   },
   handler: async (ctx, args) => {
     await AuthenticationRequired({ ctx });
@@ -133,7 +133,7 @@ export const getAllTestReviewsByUser = query({
 
 export const getTestReviewsByClassId = query({
   args: {
-    classId: v.string(),
+    classId: v.id("classes"),
   },
   handler: async (ctx, args) => {
     await AuthenticationRequired({ ctx });

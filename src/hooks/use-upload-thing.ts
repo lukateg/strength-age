@@ -7,33 +7,44 @@ export const { useUploadThing, uploadFiles } =
 
 // TODO: - move this to the upload thing hook
 
-import { toast } from "@/hooks/use-toast";
+// import { toast } from "@/hooks/use-toast";
 import { type ClientUploadedFileData } from "uploadthing/types";
+import { type Id } from "convex/_generated/dataModel";
 
-interface UseFileUploadProps {
-  onUploadComplete: (
-    files: ClientUploadedFileData<{ uploadedBy: string }>[]
-  ) => void;
-}
+// interface UseFileUploadProps {
+//   onUploadComplete: (
+//     files: ClientUploadedFileData<{ uploadedBy: string }>[]
+//   ) => void;
+// }
 
-export const useFileUpload = ({ onUploadComplete }: UseFileUploadProps) => {
-  const { startUpload, isUploading } = useUploadThing("pdfUploader", {
-    onClientUploadComplete: (res) => {
-      if (res && res.length > 0 && res[0]?.serverData.uploadedBy) {
-        onUploadComplete(res);
-      }
-    },
-    onUploadError: () => {
-      toast({
-        title: "Error",
-        description: "Something went wrong when uploading, please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+export type StartUploadType = (
+  files: File[],
+  input: {
+    classId: string & {
+      __tableName: "classes";
+    };
+    lessonId?: Id<"lessons"> | undefined;
+  }
+) => Promise<ClientUploadedFileData<null>[] | undefined>;
 
-  return {
-    startUpload,
-    isUploading,
-  };
-};
+// export const useFileUpload = ({ onUploadComplete }: UseFileUploadProps) => {
+//   const { startUpload, isUploading } = useUploadThing("pdfUploader", {
+//     onClientUploadComplete: (res) => {
+//       if (res && res.length > 0 && res[0]?.serverData.uploadedBy) {
+//         onUploadComplete(res);
+//       }
+//     },
+//     onUploadError: () => {
+//       toast({
+//         title: "Error",
+//         description: "Something went wrong when uploading, please try again.",
+//         variant: "destructive",
+//       });
+//     },
+//   });
+
+//   return {
+//     startUpload,
+//     isUploading,
+//   };
+// };

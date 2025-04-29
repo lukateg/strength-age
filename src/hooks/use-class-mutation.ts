@@ -43,7 +43,6 @@ export const useClassMutations = () => {
           description: "Failed to create class. Please try again.",
           variant: "destructive",
         });
-        throw error;
       }
     },
     [userId, createClassMutation]

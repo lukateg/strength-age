@@ -10,31 +10,37 @@ export default defineSchema({
   classes: defineTable({
     title: v.string(),
     description: v.optional(v.string()),
-    userId: v.string(),
+    userId: v.string(), // Changed to proper ID reference
   }).index("by_user", ["userId"]),
 
   lessons: defineTable({
-    userId: v.string(),
-    classId: v.string(),
+    userId: v.string(), // Changed to proper ID reference
+    classId: v.id("classes"), // Changed to proper ID reference
     title: v.string(),
     description: v.optional(v.string()),
   }).index("by_class", ["classId"]),
 
-  // TODO: check if queries by both user and class
   pdfs: defineTable({
-    userId: v.string(),
-    classId: v.string(),
-    lessonIds: v.array(v.string()), // Array of lesson IDs the PDF is linked to
+    userId: v.string(), // Changed to proper ID reference
+    classId: v.id("classes"), // Changed to proper ID reference
     fileUrl: v.string(),
     name: v.string(),
     size: v.number(),
+  }).index("by_class_user", ["classId", "userId"]),
+
+  // New join table for the many-to-many relationship between lessons and pdfs
+  lessonPdfs: defineTable({
+    lessonId: v.id("lessons"),
+    pdfId: v.id("pdfs"),
+    // You could add additional fields if needed
+    order: v.optional(v.number()), // Optional: for ordering pdfs within a lesson
   })
-    .index("by_class_user", ["classId", "userId"]) // ✅ Add an index for queries
-    .index("by_lessonId", ["lessonIds"]), // Index for lessonIds
+    .index("by_lessonId", ["lessonId"])
+    .index("by_pdfId", ["pdfId"]),
 
   tests: defineTable({
-    userId: v.string(),
-    classId: v.string(),
+    userId: v.string(), // Changed to proper ID reference
+    classId: v.id("classes"), // Changed to proper ID reference
     title: v.string(),
     description: v.optional(v.string()),
     questions: v.array(
@@ -46,12 +52,13 @@ export default defineSchema({
       })
     ),
   }).index("by_user", ["userId"]),
+
   testReviews: defineTable({
-    userId: v.string(),
-    classId: v.string(),
+    userId: v.string(), // Changed to proper ID reference
+    classId: v.id("classes"), // Changed to proper ID reference
     title: v.string(),
     description: v.optional(v.string()),
-    testId: v.string(),
+    testId: v.id("tests"), // Changed to proper ID reference
     questions: v.array(
       v.object({
         questionText: v.string(),

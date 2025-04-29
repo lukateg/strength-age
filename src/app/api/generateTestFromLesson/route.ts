@@ -62,7 +62,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const extractionPromises = pdfs.map((pdf) => convertPDFToText(pdf));
+    const extractionPromises = pdfs.map((pdf) =>
+      convertPDFToText({ fileUrl: pdf.fileUrl, _id: pdf._id })
+    );
     const extractedTexts = await Promise.all(extractionPromises);
 
     const successfulTexts = extractedTexts.filter(

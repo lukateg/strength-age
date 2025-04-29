@@ -13,7 +13,7 @@ type CreateTestParams = z.infer<typeof testSchema> & {
 };
 
 type CreateTestReviewParams = z.infer<typeof testReviewSchema> & {
-  classId: string;
+  classId: Id<"classes">;
 };
 
 export const useTestMutations = () => {

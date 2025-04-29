@@ -24,7 +24,7 @@ import UploadFilesButton from "@/components/upload-files-button";
 import UploadedMaterialsList from "@/components/uploaded-materials-list";
 import SelectFormItem from "@/components/select-form-item";
 
-import { type Id } from "convex/_generated/dataModel";
+import { type Id } from "../../../../../../convex/_generated/dataModel";
 
 const formSchema = z.object({
   lessonId: z.custom<Id<"lessons">>(),

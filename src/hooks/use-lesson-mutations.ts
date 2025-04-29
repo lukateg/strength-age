@@ -12,7 +12,7 @@ import {
 import { useUploadThing } from "./use-upload-thing";
 import { isAppError } from "../../convex/utils/utils";
 
-import { type Id } from "convex/_generated/dataModel";
+import { type Id } from "../../convex/_generated/dataModel";
 
 export const useLessonMutations = () => {
   const { classId, materials: allMaterials } = useClass();

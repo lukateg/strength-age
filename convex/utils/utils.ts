@@ -12,7 +12,7 @@ import {
   type ActionCtx,
   type MutationCtx,
   type QueryCtx,
-} from "convex/_generated/server";
+} from "../_generated/server";
 
 import { ConvexError } from "convex/values";
 

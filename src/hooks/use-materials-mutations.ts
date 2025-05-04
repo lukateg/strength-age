@@ -4,7 +4,7 @@ import { useClass } from "@/providers/class-context-provider";
 import { useUploadThing } from "@/hooks/use-upload-thing";
 
 import { api } from "../../convex/_generated/api";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 import { type ClientUploadedFileData } from "uploadthing/types";
 import { type Id } from "../../convex/_generated/dataModel";
@@ -36,10 +36,8 @@ export const useMaterialsMutations = () => {
         uploadedBy: string;
       }>[];
     }) => {
-      const { dismiss } = toast({
-        title: "Uploading...",
+      const toastId = toast.loading("Uploading...", {
         description: "Please wait while we upload your files.",
-        variant: "default",
         duration: Infinity,
       });
       try {
@@ -56,19 +54,12 @@ export const useMaterialsMutations = () => {
 
         await addManyPdfsMutation(uploadParams);
 
-        dismiss();
-        toast({
-          title: "Success",
-          description: "Materials uploaded successfully.",
-          variant: "default",
-        });
+        toast.dismiss(toastId);
+        toast.success("Materials uploaded successfully.");
       } catch (error) {
         console.error("Failed to upload materials:", error);
-        toast({
-          title: "Error",
-          description: "Failed to upload materials. Please try again.",
-          variant: "destructive",
-        });
+        toast.dismiss(toastId);
+        toast.error("Failed to upload materials. Please try again.");
       }
     },
     [classId, addManyPdfsMutation]

@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MaterialsSection from "./components/materials-section";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 
-export default function LessonPage({}) {
+export default function LessonPage() {
   return (
     <Tabs defaultValue="lessonMaterials" className="space-y-6">
       <TabsList>

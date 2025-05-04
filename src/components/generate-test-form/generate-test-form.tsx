@@ -6,7 +6,7 @@ import { useTestMutations } from "@/hooks/use-test-mutation";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useLoadingContext } from "@/providers/loading-context";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -66,11 +66,7 @@ export default function GenerateTestForm({
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      toast({
-        title: "Error generating test",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

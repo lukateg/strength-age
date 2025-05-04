@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { toast } from "sonner";
 
-import { toast } from "@/hooks/use-toast";
 import { useClasses } from "@/providers/classes-provider";
 
 interface CreateClassParams {
@@ -19,11 +19,7 @@ export const useClassMutations = () => {
     async (params: CreateClassParams) => {
       try {
         if (!userId) {
-          toast({
-            title: "Error",
-            description: "You must be logged in to create a class.",
-            variant: "destructive",
-          });
+          toast.error("You must be logged in to create a class.");
           return;
         }
 
@@ -31,18 +27,10 @@ export const useClassMutations = () => {
           ...params,
         });
 
-        toast({
-          title: "Success",
-          description: "Class created successfully.",
-          variant: "default",
-        });
+        toast.success("Class created successfully.");
       } catch (error) {
         console.error("Failed to create class:", error);
-        toast({
-          title: "Error",
-          description: "Failed to create class. Please try again.",
-          variant: "destructive",
-        });
+        toast.error("Failed to create class. Please try again.");
       }
     },
     [userId, createClassMutation]

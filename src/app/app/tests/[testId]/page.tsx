@@ -21,6 +21,7 @@ import NotFound from "@/components/not-found";
 
 import { useTestMutations } from "@/hooks/use-test-mutation";
 import { useLoadingContext } from "@/providers/loading-context";
+import { toast } from "sonner";
 
 import { useRouter } from "next/navigation";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -30,7 +31,6 @@ import { type Id } from "../../../../../convex/_generated/dataModel";
 import type * as z from "zod";
 import { Pause, CircleX } from "lucide-react";
 import { reviewTest } from "@/server/test-actions";
-import { toast } from "@/hooks/use-toast";
 
 export type TestQuestion = {
   questionText: string;
@@ -91,10 +91,8 @@ export default function TestPage() {
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      toast({
-        title: "Error reviewing test",
+      toast.error("Error reviewing test", {
         description: errorMessage,
-        variant: "destructive",
       });
     } finally {
       setLoading(false);

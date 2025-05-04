@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { type z } from "zod";
 import { type testSchema, type testReviewSchema } from "@/lib/schemas";
 
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
@@ -27,29 +27,17 @@ export const useTestMutations = () => {
     async (params: CreateTestParams) => {
       try {
         if (!userId) {
-          toast({
-            title: "Error",
-            description: "You must be logged in to create a test.",
-            variant: "destructive",
-          });
+          toast.error("You must be logged in to create a test.");
           return;
         }
         const testId = await createTestMutation({ ...params, userId });
 
-        toast({
-          title: "Success",
-          description: "Test created successfully.",
-          variant: "default",
-        });
+        toast.success("Test created successfully.");
 
         return testId;
       } catch (error) {
         console.error("Failed to create class:", error);
-        toast({
-          title: "Error",
-          description: "Failed to create test. Please try again.",
-          variant: "destructive",
-        });
+        toast.error("Failed to create test. Please try again.");
         throw error;
       }
     },
@@ -60,11 +48,7 @@ export const useTestMutations = () => {
     async (params: CreateTestReviewParams) => {
       try {
         if (!userId) {
-          toast({
-            title: "Error",
-            description: "You must be logged in to create a test review.",
-            variant: "destructive",
-          });
+          toast.error("You must be logged in to create a test review.");
           return;
         }
         const testReviewId = await createTestReviewMutation({
@@ -76,20 +60,12 @@ export const useTestMutations = () => {
           questions: params.questions,
         });
 
-        toast({
-          title: "Success",
-          description: "Test review created successfully.",
-          variant: "default",
-        });
+        toast.success("Test review created successfully.");
 
         return testReviewId;
       } catch (error) {
         console.error("Failed to create test review:", error);
-        toast({
-          title: "Error",
-          description: "Failed to create test review. Please try again.",
-          variant: "destructive",
-        });
+        toast.error("Failed to create test review. Please try again.");
         throw error;
       }
     },

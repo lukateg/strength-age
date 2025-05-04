@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useClass } from "@/providers/class-context-provider";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 import {
   type LessonFormData,
@@ -12,7 +12,7 @@ import {
 import { useUploadThing } from "./use-upload-thing";
 import { isAppError } from "../../convex/utils/utils";
 
-import { type Id } from "../../convex/_generated/dataModel";
+import { type Id } from "convex/_generated/dataModel";
 
 export const useLessonMutations = () => {
   const { classId, materials: allMaterials } = useClass();
@@ -39,11 +39,7 @@ export const useLessonMutations = () => {
 
         const lessonId = await createLessonMutation(params);
 
-        toast({
-          title: "Success",
-          description: "Lesson created successfully.",
-          variant: "default",
-        });
+        toast.success("Lesson created successfully");
 
         return lessonId;
       } catch (error) {
@@ -51,11 +47,7 @@ export const useLessonMutations = () => {
         if (isAppError(error)) {
           errorData = error.data.message;
         }
-        toast({
-          title: "Error",
-          description: errorData,
-          variant: "destructive",
-        });
+        toast.error(errorData);
       }
     },
     [classId, createLessonMutation]
@@ -69,31 +61,17 @@ export const useLessonMutations = () => {
       uploadedMaterials: File[];
       lessonId: Id<"lessons">;
     }) => {
-      const { dismiss } = toast({
-        title: "Uploading...",
-        description: "Please wait while we upload your files.",
-        variant: "default",
-        duration: Infinity,
-      });
+      const toastId = toast.loading("Please wait while we upload your files");
 
       try {
         await startUpload(uploadedMaterials, { lessonId, classId });
 
-        dismiss();
-        toast({
-          title: "Success",
-          description: "PDFs uploaded to lesson successfully.",
-          variant: "default",
-        });
+        toast.dismiss(toastId);
+        toast.success("PDFs uploaded to lesson successfully");
       } catch (error) {
         console.error("Failed to upload new PDFs to lesson:", error);
-        dismiss();
-
-        toast({
-          title: "Error",
-          description: "Failed to upload PDFs to lesson. Please try again.",
-          variant: "destructive",
-        });
+        toast.dismiss(toastId);
+        toast.error("Failed to upload PDFs to lesson. Please try again");
       }
     },
     [startUpload, classId]
@@ -107,18 +85,10 @@ export const useLessonMutations = () => {
           pdfIds: params.pdfIds,
         });
 
-        toast({
-          title: "Success",
-          description: "PDFs added to lesson successfully.",
-          variant: "default",
-        });
+        toast.success("PDFs added to lesson successfully");
       } catch (error) {
         console.error("Failed to add PDF to lesson:", error);
-        toast({
-          title: "Error",
-          description: "Failed to add PDFs to lesson. Please try again.",
-          variant: "destructive",
-        });
+        toast.error("Failed to add PDFs to lesson. Please try again");
       }
     },
     [addManyPdfsToLessonMutation]

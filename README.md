@@ -19,11 +19,8 @@ check before launch:
 // TODO
 -- check if permisions for tests are needed so we avoid scenario where anyone can access other peoples tests
 // - add error messages for each scenario that comes from the server -- iplement solution across all mutations and whole app
-// - check if you want to upload on the client or server side
-// - lesson creation should display toast and redirect to the class page and uploading should happen in the background
-// - migrate to sonner toast and implement stacking toaster
 
-/
+// - lesson page should be new page because redirect works bad
 
 
 

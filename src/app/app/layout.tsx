@@ -9,12 +9,9 @@ import { ConvexQueryCacheProvider } from "convex-helpers/react/cache/provider";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
 
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 
 import Sidebar from "@/components/sidebar";
-
-// TODO:
-// - Remove theme provider and maybe toaster
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
@@ -37,7 +34,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <main className="flex-1 overflow-y-auto">{children}</main>
             </div>
           </div>
-          <Toaster />
+          <Toaster expand={true} visibleToasts={4} />
         </LoadingProvider>
       </ConvexQueryCacheProvider>
     </ConvexProviderWithClerk>

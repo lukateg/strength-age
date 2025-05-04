@@ -3,7 +3,8 @@
 import { useCallback, useState } from "react";
 import { UploadCloud, AlertCircle } from "lucide-react";
 import { useDropzone, type FileRejection } from "react-dropzone";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+
 import { cn } from "@/lib/utils";
 
 // TODO
@@ -32,11 +33,7 @@ export default function FileUploadComponent({
         const message =
           rejectedFiles[0]?.errors[0]?.message ?? "An unknown error occurred";
         setError(message);
-        toast({
-          title: "File Error",
-          description: message,
-          variant: "destructive",
-        });
+        toast.error(message);
         return;
       }
 
@@ -73,6 +70,13 @@ export default function FileUploadComponent({
         return {
           code: "too-many-files",
           message: `You can only upload up to ${maxFiles} files in total`,
+        };
+      }
+
+      if (file.size > maxSize) {
+        return {
+          code: "file-size-too-large",
+          message: `File size must be less than ${maxSize / 1048576}MB`,
         };
       }
 

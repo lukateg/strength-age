@@ -7,7 +7,6 @@ export const { useUploadThing, uploadFiles } =
 
 // TODO: - move this to the upload thing hook
 
-// import { toast } from "@/hooks/use-toast";
 import { type ClientUploadedFileData } from "uploadthing/types";
 import { type Id } from "convex/_generated/dataModel";
 

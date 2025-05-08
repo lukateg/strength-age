@@ -12,7 +12,6 @@ export const addPdf = mutation({
     }),
   },
   handler: async (ctx, { classId, pdf }) => {
-    console.log("Adding PDF to database CONVEX:", pdf, ctx);
     const userId = await AuthenticationRequired({ ctx });
 
     const pdfId = await ctx.db.insert("pdfs", {

@@ -2,10 +2,25 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 import { type Id } from "convex/_generated/dataModel";
+import { ConvexError } from "convex/values";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export const extractErrorMessage = (error: unknown) => {
+  const errorMessage =
+    // Check whether the error is an application error
+    error instanceof ConvexError
+      ? // Access data and cast it to the type we expect
+        (error.data as { message: string }).message
+      : // Must be some developer error,
+        // and prod deployments will not
+        // reveal any more information about it
+        // to the client
+        "Unexpected error occurred";
+  return errorMessage;
+};
 
 // Extract prompt creation logic
 export function createQuizPrompt(

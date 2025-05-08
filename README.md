@@ -14,10 +14,18 @@ check before launch:
 -- retry test multiple times and redirect back willaredirect you through multiple test reviews
 // - add error messages for each scenario that comes from the server -- iplement solution across all mutations and whole app
 // - lesson page should be new page because redirect works bad
+-- handle case when statusText: 'Service Unavailable' 
+-- implement proper error boundary
+-- use normaliseId across app where you use id from the url
+-- implement not authorised to read/write if userId doesnt match creatorId
+-- change userId on all tables to be createdBy
 
-
-// TODO
--- add permisions
+------ PLAN
+-- add permisions so user can access only its own content
+-- resi sve do payments
+-- pocisti bagove
+-- vidi payments i free tier i pustaj prod
+-- ostavi ovo na devu i kreci sa sharingom
 
 PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
 -- Add delete and edit

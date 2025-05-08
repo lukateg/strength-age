@@ -18,9 +18,8 @@ interface ClassLayoutProps {
 
 export default function ClassLayout({ children }: ClassLayoutProps) {
   const { id }: { id: Id<"classes"> } = useParams();
-
   const classData = useAuthenticatedQueryWithStatus(api.classes.getClassById, {
-    id,
+    id: id ?? "skip",
   });
 
   if (classData.isPending) {

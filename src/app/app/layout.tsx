@@ -12,6 +12,7 @@ import { ConvexReactClient } from "convex/react";
 import { Toaster } from "@/components/ui/sonner";
 
 import Sidebar from "@/components/sidebar";
+import ErrorBoundary from "@/components/error-boundary";
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
@@ -25,15 +26,17 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
       <ConvexQueryCacheProvider>
         <LoadingProvider>
-          <div className="flex h-screen">
-            <div className="hidden md:flex">
-              {isTestRoute ? null : <Sidebar />}
-            </div>
+          <ErrorBoundary>
+            <div className="flex h-screen">
+              <div className="hidden md:flex">
+                {isTestRoute ? null : <Sidebar />}
+              </div>
 
-            <div className="flex-1 pt-16 flex flex-col">
-              <main className="flex-1 overflow-y-auto">{children}</main>
+              <div className="flex-1 pt-16 flex flex-col">
+                <main className="flex-1 overflow-y-auto">{children}</main>
+              </div>
             </div>
-          </div>
+          </ErrorBoundary>
           <Toaster expand={true} visibleToasts={4} />
         </LoadingProvider>
       </ConvexQueryCacheProvider>

@@ -1,18 +1,18 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 
 import RedirectBackButton from "@/components/redirect-back-button";
-import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 
 import { ArrowLeft, BookOpen, Pencil } from "lucide-react";
+import Link from "next/link";
 
 export default function ClassHeader({
   title,
   description,
+  classId,
 }: {
   title?: string;
   description?: string;
+  classId: string;
 }) {
   return (
     <div>
@@ -32,12 +32,12 @@ export default function ClassHeader({
           </div>
         </div>
 
-        <FeatureFlagTooltip>
-          <Button disabled className="text-xs md:text-base">
+        <Button disabled className="text-xs md:text-base" asChild>
+          <Link href={`/app/classes/edit-class?id=${classId}`}>
             <Pencil className="h-4 w-4 mr-2" />
             Edit Class
-          </Button>
-        </FeatureFlagTooltip>
+          </Link>
+        </Button>
       </div>
     </div>
   );

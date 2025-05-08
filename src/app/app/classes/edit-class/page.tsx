@@ -26,7 +26,7 @@ export default function EditClassPage() {
       classId: classId ?? "skip",
       title: data.title,
       description: data.description,
-    }).then(() => router.push("/app/classes"));
+    }).then(() => router.back());
   };
 
   if (classRequest.status === "pending") {

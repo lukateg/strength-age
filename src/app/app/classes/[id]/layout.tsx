@@ -44,6 +44,7 @@ export default function ClassLayout({ children }: ClassLayoutProps) {
         <ClassHeader
           title={classData.data?.title}
           description={classData.data?.description}
+          classId={id}
         />
         {children}
       </div>

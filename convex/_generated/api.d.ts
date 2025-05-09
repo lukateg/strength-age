@@ -13,6 +13,7 @@ import type * as http from "../http.js";
 import type * as lessons from "../lessons.js";
 import type * as materials from "../materials.js";
 import type * as tests from "../tests.js";
+import type * as uploadThingActions from "../uploadThingActions.js";
 import type * as users from "../users.js";
 import type * as utils_utils from "../utils/utils.js";
 
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   lessons: typeof lessons;
   materials: typeof materials;
   tests: typeof tests;
+  uploadThingActions: typeof uploadThingActions;
   users: typeof users;
   "utils/utils": typeof utils_utils;
 }>;

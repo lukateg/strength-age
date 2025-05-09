@@ -83,6 +83,7 @@ export const useLessonMutations = () => {
         await addManyPdfsToLessonMutation({
           lessonId: params.lessonId,
           pdfIds: params.pdfIds,
+          classId,
         });
 
         toast.success("PDFs added to lesson successfully");
@@ -91,7 +92,7 @@ export const useLessonMutations = () => {
         toast.error("Failed to add PDFs to lesson. Please try again");
       }
     },
-    [addManyPdfsToLessonMutation]
+    [addManyPdfsToLessonMutation, classId]
   );
 
   return {

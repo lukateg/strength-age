@@ -2,6 +2,8 @@ import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { AuthenticationRequired, createAppError } from "./utils/utils";
 import { internal } from "./_generated/api";
+import { type GenericMutationCtx } from "convex/server";
+import { type Id, type DataModel } from "./_generated/dataModel";
 
 export const getAllClassesByUserId = query({
   handler: async (ctx) => {
@@ -24,13 +26,7 @@ export const getClassById = query({
     if (!normalizedId) {
       throw createAppError({ message: "Invalid item ID" });
     }
-    const classItem = await ctx.db.get(normalizedId);
-
-    if (!classItem) {
-      throw createAppError({ message: "Item not found" });
-    }
-
-    return classItem;
+    return await ctx.db.get(normalizedId);
   },
 });
 
@@ -107,7 +103,179 @@ export const deleteClass = mutation({
   },
 });
 
-// Internal batch deletion handler
+// Helper functions for batch deletion
+async function deleteLessonPdfsBatch(
+  ctx: GenericMutationCtx<DataModel>,
+  classId: Id<"classes">,
+  userId: string,
+  cursor?: string
+) {
+  const BATCH_SIZE = 100;
+  const { page, isDone, continueCursor } = await ctx.db
+    .query("lessonPdfs")
+    .withIndex("by_classId", (q) => q.eq("classId", classId))
+    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
+
+  for (const lessonPdf of page) {
+    await ctx.db.delete(lessonPdf._id);
+  }
+
+  if (!isDone) {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "lessonPdfs",
+      cursor: continueCursor,
+    });
+  } else {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "lessons",
+      cursor: undefined,
+    });
+  }
+}
+
+async function deleteLessonsBatch(
+  ctx: GenericMutationCtx<DataModel>,
+  classId: Id<"classes">,
+  userId: string,
+  cursor?: string
+) {
+  const BATCH_SIZE = 100;
+  const { page, isDone, continueCursor } = await ctx.db
+    .query("lessons")
+    .withIndex("by_class", (q) => q.eq("classId", classId))
+    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
+
+  for (const lesson of page) {
+    await ctx.db.delete(lesson._id);
+  }
+
+  if (!isDone) {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "lessons",
+      cursor: continueCursor,
+    });
+  } else {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "pdfs",
+      cursor: undefined,
+    });
+  }
+}
+
+async function deletePdfsBatch(
+  ctx: GenericMutationCtx<DataModel>,
+  classId: Id<"classes">,
+  userId: string,
+  cursor?: string
+) {
+  const BATCH_SIZE = 100;
+  const { page, isDone, continueCursor } = await ctx.db
+    .query("pdfs")
+    .withIndex("by_class_user", (q) => q.eq("classId", classId))
+    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
+
+  for (const pdf of page) {
+    const fileKey = pdf.fileUrl.split("/").pop();
+    if (!fileKey) continue;
+
+    await ctx.scheduler.runAfter(
+      0,
+      internal.uploadThingActions.deleteFileFromUploadThing,
+      {
+        fileKey,
+      }
+    );
+
+    await ctx.db.delete(pdf._id);
+  }
+
+  if (!isDone) {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "pdfs",
+      cursor: continueCursor,
+    });
+  } else {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "tests",
+      cursor: undefined,
+    });
+  }
+}
+
+async function deleteTestsBatch(
+  ctx: GenericMutationCtx<DataModel>,
+  classId: Id<"classes">,
+  userId: string,
+  cursor?: string
+) {
+  const BATCH_SIZE = 100;
+  const { page, isDone, continueCursor } = await ctx.db
+    .query("tests")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .filter((q) => q.eq(q.field("classId"), classId))
+    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
+
+  for (const test of page) {
+    await ctx.db.delete(test._id);
+  }
+
+  if (!isDone) {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "tests",
+      cursor: continueCursor,
+    });
+  } else {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "testReviews",
+      cursor: undefined,
+    });
+  }
+}
+
+async function deleteTestReviewsBatch(
+  ctx: GenericMutationCtx<DataModel>,
+  classId: Id<"classes">,
+  userId: string,
+  cursor?: string
+) {
+  const BATCH_SIZE = 100;
+  const { page, isDone, continueCursor } = await ctx.db
+    .query("testReviews")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .filter((q) => q.eq(q.field("classId"), classId))
+    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
+
+  for (const review of page) {
+    await ctx.db.delete(review._id);
+  }
+
+  if (!isDone) {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "testReviews",
+      cursor: continueCursor,
+    });
+  }
+}
+
+// Main batch deletion handler
 export const batchDeleteClassData = internalMutation({
   args: {
     classId: v.id("classes"),
@@ -122,216 +290,26 @@ export const batchDeleteClassData = internalMutation({
     cursor: v.optional(v.string()),
   },
   handler: async (ctx, { classId, userId, phase, cursor }) => {
-    const BATCH_SIZE = 100;
-
     try {
       switch (phase) {
-        case "lessonPdfs": {
-          // First get all lessons for this class
-          const lessons = await ctx.db
-            .query("lessons")
-            .filter((q) => q.eq(q.field("classId"), classId))
-            .collect();
-
-          // If there are no lessons, skip to next phase
-          if (lessons.length === 0) {
-            console.log();
-            await ctx.scheduler.runAfter(
-              0,
-              internal.classes.batchDeleteClassData,
-              {
-                classId,
-                userId,
-                phase: "lessons",
-                cursor: undefined,
-              }
-            );
-            break;
-          }
-
-          // Get all lessonPdfs for these lessons
-          const lessonPdfs = await Promise.all(
-            lessons.map((lesson) =>
-              ctx.db
-                .query("lessonPdfs")
-                .withIndex("by_lessonId", (q) => q.eq("lessonId", lesson._id))
-                .collect()
-            )
-          );
-
-          // Delete all lessonPdfs
-          await Promise.all(
-            lessonPdfs.flat().map((lessonPdf) => ctx.db.delete(lessonPdf._id))
-          );
-
-          // Move to next phase
-          await ctx.scheduler.runAfter(
-            0,
-            internal.classes.batchDeleteClassData,
-            {
-              classId,
-              userId,
-              phase: "lessons",
-              cursor: undefined,
-            }
-          );
+        case "lessonPdfs":
+          await deleteLessonPdfsBatch(ctx, classId, userId, cursor);
           break;
-        }
-
-        case "lessons": {
-          // Get a batch of lessons for this class
-          const { page, isDone, continueCursor } = await ctx.db
-            .query("lessons")
-            .withIndex("by_class", (q) => q.eq("classId", classId))
-            .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
-
-          // Delete each lesson in the batch
-          for (const lesson of page) {
-            await ctx.db.delete(lesson._id);
-          }
-
-          // Continue with lessons or move to next phase
-          if (!isDone) {
-            await ctx.scheduler.runAfter(
-              0,
-              internal.classes.batchDeleteClassData,
-              {
-                classId,
-                userId,
-                phase: "lessons",
-                cursor: continueCursor,
-              }
-            );
-          } else {
-            // Move to next phase
-            await ctx.scheduler.runAfter(
-              0,
-              internal.classes.batchDeleteClassData,
-              {
-                classId,
-                userId,
-                phase: "pdfs",
-                cursor: undefined,
-              }
-            );
-          }
+        case "lessons":
+          await deleteLessonsBatch(ctx, classId, userId, cursor);
           break;
-        }
-
-        case "pdfs": {
-          // Get a batch of PDFs for this class
-          const { page, isDone, continueCursor } = await ctx.db
-            .query("pdfs")
-            .withIndex("by_class_user", (q) => q.eq("classId", classId))
-            .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
-
-          // Delete each PDF in the batch
-          for (const pdf of page) {
-            await ctx.db.delete(pdf._id);
-          }
-
-          // Continue with PDFs or move to next phase
-          if (!isDone) {
-            await ctx.scheduler.runAfter(
-              0,
-              internal.classes.batchDeleteClassData,
-              {
-                classId,
-                userId,
-                phase: "pdfs",
-                cursor: continueCursor,
-              }
-            );
-          } else {
-            // Move to next phase
-            await ctx.scheduler.runAfter(
-              0,
-              internal.classes.batchDeleteClassData,
-              {
-                classId,
-                userId,
-                phase: "tests",
-                cursor: undefined,
-              }
-            );
-          }
+        case "pdfs":
+          await deletePdfsBatch(ctx, classId, userId, cursor);
           break;
-        }
-
-        case "tests": {
-          // Get a batch of tests for this class
-          const { page, isDone, continueCursor } = await ctx.db
-            .query("tests")
-            .withIndex("by_user", (q) => q.eq("userId", userId))
-            .filter((q) => q.eq(q.field("classId"), classId))
-            .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
-
-          // Delete each test in the batch
-          for (const test of page) {
-            await ctx.db.delete(test._id);
-          }
-
-          // Continue with tests or move to next phase
-          if (!isDone) {
-            await ctx.scheduler.runAfter(
-              0,
-              internal.classes.batchDeleteClassData,
-              {
-                classId,
-                userId,
-                phase: "tests",
-                cursor: continueCursor,
-              }
-            );
-          } else {
-            // Move to next phase
-            await ctx.scheduler.runAfter(
-              0,
-              internal.classes.batchDeleteClassData,
-              {
-                classId,
-                userId,
-                phase: "testReviews",
-                cursor: undefined,
-              }
-            );
-          }
+        case "tests":
+          await deleteTestsBatch(ctx, classId, userId, cursor);
           break;
-        }
-
-        case "testReviews": {
-          // Get a batch of test reviews for this class
-          const { page, isDone, continueCursor } = await ctx.db
-            .query("testReviews")
-            .withIndex("by_user", (q) => q.eq("userId", userId))
-            .filter((q) => q.eq(q.field("classId"), classId))
-            .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
-
-          // Delete each test review in the batch
-          for (const review of page) {
-            await ctx.db.delete(review._id);
-          }
-
-          // Continue with test reviews or finish
-          if (!isDone) {
-            await ctx.scheduler.runAfter(
-              0,
-              internal.classes.batchDeleteClassData,
-              {
-                classId,
-                userId,
-                phase: "testReviews",
-                cursor: continueCursor,
-              }
-            );
-          }
-          // No else needed - we're done with all phases
+        case "testReviews":
+          await deleteTestReviewsBatch(ctx, classId, userId, cursor);
           break;
-        }
       }
     } catch (error) {
       console.error(`Error during ${phase} deletion:`, error);
-      // You might want to log this error or handle it in some way
     }
   },
 });

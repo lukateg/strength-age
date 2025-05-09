@@ -28,15 +28,15 @@ export default defineSchema({
     size: v.number(),
   }).index("by_class_user", ["classId", "userId"]),
 
-  // New join table for the many-to-many relationship between lessons and pdfs
   lessonPdfs: defineTable({
     lessonId: v.id("lessons"),
     pdfId: v.id("pdfs"),
-    // You could add additional fields if needed
-    order: v.optional(v.number()), // Optional: for ordering pdfs within a lesson
+    classId: v.id("classes"),
+    order: v.optional(v.number()),
   })
     .index("by_lessonId", ["lessonId"])
-    .index("by_pdfId", ["pdfId"]),
+    .index("by_pdfId", ["pdfId"])
+    .index("by_classId", ["classId"]),
 
   tests: defineTable({
     userId: v.string(), // Changed to proper ID reference

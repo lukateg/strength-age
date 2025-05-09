@@ -37,6 +37,17 @@ export default function EditClassPage() {
     return <NotFound />;
   }
 
+  if (!classRequest.data) {
+    return (
+      <div className="text-center py-12">
+        <h3 className="text-lg font-medium">Class not found</h3>
+        <p className="text-muted-foreground mt-2">
+          The class you are looking for does not exist anymore.
+        </p>
+      </div>
+    );
+  }
+
   if (classRequest.status === "success") {
     return (
       <ClassForm

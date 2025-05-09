@@ -60,7 +60,8 @@ export const pdfFileRouter = {
             api.lessons.addPdfToLesson,
             {
               lessonId: metadata.lessonId,
-              pdfId: pdfId,
+              pdfId,
+              classId: metadata.classId,
             },
             { token: metadata.token }
           );

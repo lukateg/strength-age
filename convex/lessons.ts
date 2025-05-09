@@ -11,7 +11,7 @@ export const getLessonsByClass = query({
     await AuthenticationRequired({ ctx });
     return await ctx.db
       .query("lessons")
-      .filter((q) => q.eq(q.field("classId"), classId))
+      .withIndex("by_class", (q) => q.eq("classId", classId))
       .collect();
   },
 });
@@ -94,8 +94,9 @@ export const addPdfToLesson = mutation({
   args: v.object({
     lessonId: v.id("lessons"),
     pdfId: v.id("pdfs"),
+    classId: v.id("classes"),
   }),
-  handler: async (ctx, { lessonId, pdfId }) => {
+  handler: async (ctx, { lessonId, pdfId, classId }) => {
     await AuthenticationRequired({ ctx });
 
     // Check if relationship already exists
@@ -109,6 +110,7 @@ export const addPdfToLesson = mutation({
       await ctx.db.insert("lessonPdfs", {
         lessonId,
         pdfId,
+        classId,
       });
     }
   },
@@ -118,8 +120,9 @@ export const addManyPdfsToLesson = mutation({
   args: v.object({
     lessonId: v.id("lessons"),
     pdfIds: v.array(v.id("pdfs")),
+    classId: v.id("classes"),
   }),
-  handler: async (ctx, { lessonId, pdfIds }) => {
+  handler: async (ctx, { lessonId, pdfIds, classId }) => {
     await AuthenticationRequired({ ctx });
 
     for (const pdfId of pdfIds) {
@@ -134,6 +137,7 @@ export const addManyPdfsToLesson = mutation({
         await ctx.db.insert("lessonPdfs", {
           lessonId,
           pdfId,
+          classId,
         });
       }
     }

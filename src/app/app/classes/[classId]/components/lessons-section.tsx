@@ -17,7 +17,7 @@ interface LessonsSectionProps {
   classId: Id<"classes">;
 }
 
-export default async function LessonsSectionComponent({
+export default function LessonsSectionComponent({
   classId,
 }: LessonsSectionProps) {
   return (

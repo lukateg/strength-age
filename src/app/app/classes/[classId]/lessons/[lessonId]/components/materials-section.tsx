@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 
 import ItemsScrollArea from "@/components/items-scroll-area";
-import MaterialsList from "@/app/app/classes/[id]/components/materials-list";
+import MaterialsList from "@/app/app/classes/[classId]/components/materials-list";
 import Loader from "@/components/loader";
 import NotFound from "@/components/not-found";
 

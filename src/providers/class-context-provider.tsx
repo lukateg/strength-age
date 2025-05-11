@@ -18,6 +18,7 @@ interface ClassContextType {
   lessons: QueryStatus<typeof api.lessons.getLessonsByClass>;
   tests: QueryStatus<typeof api.tests.getAllTestsByClassId>;
   testReviews: QueryStatus<typeof api.tests.getTestReviewsByClassId>;
+  classData: QueryStatus<typeof api.classes.getClassById>;
 }
 
 const ClassContext = createContext<ClassContextType | null>(null);
@@ -57,6 +58,9 @@ export function ClassProvider({
       classId,
     }
   );
+  const classData = useAuthenticatedQueryWithStatus(api.classes.getClassById, {
+    id: classId,
+  });
 
   return (
     <ClassContext.Provider
@@ -67,6 +71,7 @@ export function ClassProvider({
         lessons,
         tests,
         testReviews,
+        classData,
       }}
     >
       {children}

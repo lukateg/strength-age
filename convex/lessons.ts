@@ -68,6 +68,16 @@ export const getPDFsByLessonId = query({
   },
 });
 
+export const getLessonById = query({
+  args: v.object({
+    lessonId: v.id("lessons"),
+  }),
+  handler: async (ctx, { lessonId }) => {
+    await AuthenticationRequired({ ctx });
+    return await ctx.db.get(lessonId);
+  },
+});
+
 export const getLessonData = query({
   args: v.object({
     lessonId: v.id("lessons"),

@@ -20,6 +20,10 @@ check before launch:
 -- implement not authorised to read/write if userId doesnt match creatorId
 -- change userId on all tables to be createdBy
 
+finish the edit and delete lesson and tests and reviews
+create consistent pattern for loading skeleton, error case, and not found case
+create reusable components for error and not found case and use them across the app
+
 ------ PLAN
 -- add permisions so user can access only its own content
 -- resi sve do payments

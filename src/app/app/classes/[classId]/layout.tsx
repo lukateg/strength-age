@@ -3,9 +3,13 @@ import { type Id } from "convex/_generated/dataModel";
 
 interface ClassLayoutProps {
   children: React.ReactNode;
-  params: { classId: Id<"classes"> };
+  params: Promise<{ classId: Id<"classes"> }>;
 }
 
-export default function ClassLayout({ children, params }: ClassLayoutProps) {
-  return <ClassProvider classId={params.classId}>{children}</ClassProvider>;
+export default async function ClassLayout({
+  children,
+  params,
+}: ClassLayoutProps) {
+  const { classId } = await params;
+  return <ClassProvider classId={classId}>{children}</ClassProvider>;
 }

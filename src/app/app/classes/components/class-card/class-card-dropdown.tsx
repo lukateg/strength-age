@@ -24,14 +24,18 @@ import { EllipsisVertical } from "lucide-react";
 
 import { type Id } from "../../../../../../convex/_generated/dataModel";
 
-export default function CardDropdown({ classId }: { classId: Id<"classes"> }) {
+export default function ClassCardDropdown({
+  classId,
+}: {
+  classId: Id<"classes">;
+}) {
   const { deleteClass } = useClassMutations();
 
   return (
     <div className="absolute top-2 right-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="">
+          <Button variant="ghost">
             <EllipsisVertical className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -58,7 +62,11 @@ export default function CardDropdown({ classId }: { classId: Id<"classes"> }) {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => deleteClass({ classId })}>
+                <AlertDialogAction
+                  onClick={async () => {
+                    await deleteClass({ classId });
+                  }}
+                >
                   Delete
                 </AlertDialogAction>
               </AlertDialogFooter>

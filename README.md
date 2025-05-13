@@ -21,6 +21,13 @@ check before launch:
 -- change userId on all tables to be createdBy
 -- rename SelectFormItem to FormSelect
 -- remove all loading... 
+-- create main page components like main-header and reuse it across the app
+-- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class
+-- replace all history back buttons with normal routes and align all layout patterns
+-- edit lesson opens edit page and there we render delete button
+-- delete modal should have red confirm button
+-- create dialog component that accepts onConfirm, confirmText, CancelText, descriptionText ....
+-- edit section buttons should have beautifull purple design maybe
 
 finish the edit and delete lesson and tests and reviews
 create consistent pattern for loading skeleton, error case, and not found case
@@ -28,26 +35,37 @@ create reusable components for error and not found case and use them across the 
 test fast clicks on submit buttons that do not have disabled props
 edit lesson has no submit button
 
-in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
 
------- PLAN
--- add permisions so user can access only its own content
--- resi sve do payments
--- pocisti bagove
--- vidi payments i free tier i pustaj prod
--- ostavi ovo na devu i kreci sa sharingom
+TODO: 
+-- add  "..." for lesson item in list that has a dropdown with delete and edit
+-- on edit class/lesson implement delete class/lesson button
+-- add "..." for each pdf and implement delete or edit logic "check if edit can edit text in the uploadThing
 
-PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
+
+PLAN:
 -- Add delete and edit
+-- create beautiful destructive and positive buttons
+-- add permisions so user can access only its own content
 -- add modals on all needed actions
--- maybe add settings page
+-- add additional info prompt when generating the test
+-- add settings page
+-- handle case when LLM is not working
 -- Add analytics
 -- add payments
--- check free tier plan and work out permisions and free plan
+-- add free tier permission system
+-- pocisti bagove
+-- check free tier plan and work out permisions and free plan for max classes, lessons, pdfs in mb, tests and ai token calls
+-- in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
+-- release to prod
+-- wait for the analytics results and think about the compex permisions and test sharing and start sprint 2
 
-MAYBE IN FUTURE
+SETTINGS PAGE
 -- in settings page add TEST SETTINGs (setting up if user wants all questions on one page, or he wants pagination)
 -- in settings page add TEST SETTINGS (if user wants to have only one question true when multiple questions)
+-- in settings page add ANSWER REQUIRED (if user wants to be able to submit test with answers that are not answered)
+-- in settings page add I DONT KNOW (if user wants to have don't know answer when multiple question)
+
+MAYBE IN FUTURE
 -TEST GENERATION
 -- add additional prompt section to test generation so user can add additional instruction for test
 -- add importing previous tests when generating test so AI knows not to generate same questions

@@ -29,6 +29,7 @@ export const useLessonMutations = () => {
     api.lessons.addManyPdfsToLesson
   );
   const updateLessonMutation = useMutation(api.lessons.updateLesson);
+  const deleteLessonMutation = useMutation(api.lessons.deleteLesson);
 
   const createLesson = useCallback(
     async ({ title, description }: LessonFormData) => {
@@ -119,12 +120,26 @@ export const useLessonMutations = () => {
     [updateLessonMutation]
   );
 
+  const deleteLesson = useCallback(
+    async (lessonId: Id<"lessons">) => {
+      try {
+        await deleteLessonMutation({ lessonId });
+        toast.success("Lesson deleted successfully");
+      } catch (error) {
+        console.error("Failed to delete lesson:", error);
+        toast.error("Failed to delete lesson. Please try again.");
+      }
+    },
+    [deleteLessonMutation]
+  );
+
   return {
     isUploading,
     createLesson,
     addExistingPdfsToLesson,
     uploadNewPdfsToLesson,
     updateLesson,
+    deleteLesson,
     classId,
     allMaterials,
   };

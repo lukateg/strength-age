@@ -1,6 +1,10 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { AuthenticationRequired } from "./utils/utils";
+import { internal } from "./_generated/api";
+
+import { type DataModel, type Id } from "./_generated/dataModel";
+import { type GenericMutationCtx } from "convex/server";
 
 export const addPdf = mutation({
   args: {
@@ -91,6 +95,50 @@ export const getPdfsForLesson = query({
     );
   },
 });
+
+export async function deletePdfsByClassIdBatch(
+  ctx: GenericMutationCtx<DataModel>,
+  classId: Id<"classes">,
+  userId: string,
+  cursor?: string
+) {
+  const BATCH_SIZE = 100;
+  const { page, isDone, continueCursor } = await ctx.db
+    .query("pdfs")
+    .withIndex("by_class_user", (q) => q.eq("classId", classId))
+    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
+
+  for (const pdf of page) {
+    const fileKey = pdf.fileUrl.split("/").pop();
+    if (!fileKey) continue;
+
+    await ctx.scheduler.runAfter(
+      0,
+      internal.uploadThingActions.deleteFileFromUploadThing,
+      {
+        fileKey,
+      }
+    );
+
+    await ctx.db.delete(pdf._id);
+  }
+
+  if (!isDone) {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "pdfs",
+      cursor: continueCursor,
+    });
+  } else {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "tests",
+      cursor: undefined,
+    });
+  }
+}
 
 // export const addPdfToLesson = mutation({
 //   args: {

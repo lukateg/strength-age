@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import MaterialsSectionComponent from "./components/materials-section";
-import LessonsSectionComponent from "./components/lessons-section";
+import LessonsSectionComponent from "./components/lessons-section/lessons-section";
 import TestsSection from "./components/tests-section";
 import TestReviewsSection from "./components/tests-reviews-section";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";

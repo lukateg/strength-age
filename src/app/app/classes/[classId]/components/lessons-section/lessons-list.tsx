@@ -1,14 +1,16 @@
 "use client";
 
-import { Eye, FileText } from "lucide-react";
-import Link from "next/link";
+import { useClass } from "@/providers/class-context-provider";
 
+import { Button } from "@/components/ui/button";
+
+import Link from "next/link";
 import ListItem from "@/components/list-item";
 import Loader from "@/components/loader";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
+import LessonsItemDropdown from "./lessons-item-dropdown";
 
-import { Button } from "@/components/ui/button";
-import { useClass } from "@/providers/class-context-provider";
+import { Eye, FileText } from "lucide-react";
 
 export default function LessonsList() {
   const { classId, lessons } = useClass();
@@ -56,6 +58,7 @@ export default function LessonsList() {
                 <span className="hidden md:block ml-2">View</span>
               </Link>
             </Button>
+
             <FeatureFlagTooltip>
               <Button
                 className="hidden md:block"
@@ -66,6 +69,8 @@ export default function LessonsList() {
                 Generate Test
               </Button>
             </FeatureFlagTooltip>
+
+            <LessonsItemDropdown lessonId={lesson._id} classId={classId} />
           </div>
         </ListItem>
       ))}

@@ -13,13 +13,12 @@ import ItemsScrollArea from "@/components/items-scroll-area";
 import { type Id } from "convex/_generated/dataModel";
 
 import { Plus } from "lucide-react";
-interface LessonsSectionProps {
-  classId: Id<"classes">;
-}
 
 export default function LessonsSectionComponent({
   classId,
-}: LessonsSectionProps) {
+}: {
+  classId: Id<"classes">;
+}) {
   return (
     <Card>
       <CardHeader className="flex flex-col gap-2 md:flex-row justify-between">

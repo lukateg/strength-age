@@ -8,7 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import CardDropdown from "./card-dropdown";
+
+import ClassCardDropdown from "./class-card-dropdown";
 
 import { BookOpen } from "lucide-react";
 
@@ -30,7 +31,7 @@ export default function ClassCard({
           <CardDescription>{classItem.description}</CardDescription>
         </div>
 
-        <CardDropdown classId={classItem._id} />
+        <ClassCardDropdown classId={classItem._id} />
       </CardHeader>
 
       <CardContent>

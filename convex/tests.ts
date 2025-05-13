@@ -1,6 +1,10 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { AuthenticationRequired } from "./utils/utils";
+import { internal } from "./_generated/api";
+
+import { type DataModel, type Id } from "./_generated/dataModel";
+import { type GenericMutationCtx } from "convex/server";
 
 export const createTest = mutation({
   args: {
@@ -177,3 +181,64 @@ export const getWeeklyTestsByUserId = query({
     return recentTests;
   },
 });
+
+export async function deleteTestsByClassIdBatch(
+  ctx: GenericMutationCtx<DataModel>,
+  classId: Id<"classes">,
+  userId: string,
+  cursor?: string
+) {
+  const BATCH_SIZE = 100;
+  const { page, isDone, continueCursor } = await ctx.db
+    .query("tests")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .filter((q) => q.eq(q.field("classId"), classId))
+    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
+
+  for (const test of page) {
+    await ctx.db.delete(test._id);
+  }
+
+  if (!isDone) {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "tests",
+      cursor: continueCursor,
+    });
+  } else {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "testReviews",
+      cursor: undefined,
+    });
+  }
+}
+
+export async function deleteTestReviewsByClassIdBatch(
+  ctx: GenericMutationCtx<DataModel>,
+  classId: Id<"classes">,
+  userId: string,
+  cursor?: string
+) {
+  const BATCH_SIZE = 100;
+  const { page, isDone, continueCursor } = await ctx.db
+    .query("testReviews")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .filter((q) => q.eq(q.field("classId"), classId))
+    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
+
+  for (const review of page) {
+    await ctx.db.delete(review._id);
+  }
+
+  if (!isDone) {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "testReviews",
+      cursor: continueCursor,
+    });
+  }
+}

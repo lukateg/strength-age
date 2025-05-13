@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button";
 import { X, File } from "lucide-react";
 
 export default function UploadedMaterialsList({
-  uploadedMaterials,
+  materialsToUpload,
   setValue,
 }: {
-  uploadedMaterials: File[];
+  materialsToUpload: File[];
   setValue: (
-    name: "uploadedMaterials",
+    name: "materialsToUpload",
     value: File[],
     options?: Partial<{
       shouldValidate: boolean;
@@ -22,15 +22,15 @@ export default function UploadedMaterialsList({
 }) {
   const removeMaterial = (name: string) => {
     setValue(
-      "uploadedMaterials",
-      uploadedMaterials.filter((material) => material.name !== name),
+      "materialsToUpload",
+      materialsToUpload.filter((material) => material.name !== name),
       { shouldValidate: true }
     );
   };
 
   return (
     <ItemsScrollArea>
-      {uploadedMaterials.map((file) => (
+      {materialsToUpload.map((file) => (
         <ListItem key={file.name}>
           <div className="flex items-center gap-4">
             <File className="h-6 w-6 text-primary" />

@@ -19,10 +19,16 @@ check before launch:
 -- use normaliseId across app where you use id from the url
 -- implement not authorised to read/write if userId doesnt match creatorId
 -- change userId on all tables to be createdBy
+-- rename SelectFormItem to FormSelect
+-- remove all loading... 
 
 finish the edit and delete lesson and tests and reviews
 create consistent pattern for loading skeleton, error case, and not found case
 create reusable components for error and not found case and use them across the app
+test fast clicks on submit buttons that do not have disabled props
+edit lesson has no submit button
+
+in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
 
 ------ PLAN
 -- add permisions so user can access only its own content

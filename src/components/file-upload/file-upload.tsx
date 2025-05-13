@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { UploadCloud, AlertCircle } from "lucide-react";
-import { useDropzone, type FileRejection } from "react-dropzone";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-import { cn } from "@/lib/utils";
+import { useCallback, useState } from "react";
+import { useDropzone, type FileRejection } from "react-dropzone";
+
+import { UploadCloud, AlertCircle } from "lucide-react";
 
 // TODO
 // - make this component work with internal state without controls passed

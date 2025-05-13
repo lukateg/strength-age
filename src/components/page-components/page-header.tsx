@@ -1,7 +1,8 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 
 import { ArrowLeft, BookOpen, Pencil } from "lucide-react";
-import Link from "next/link";
 
 export default function SectionHeader({
   title,
@@ -13,8 +14,8 @@ export default function SectionHeader({
   title: string;
   description?: string;
   backRoute: string;
-  editRoute: string;
-  editButtonText: string;
+  editRoute?: string;
+  editButtonText?: string;
 }) {
   return (
     <div>
@@ -36,12 +37,14 @@ export default function SectionHeader({
           </div>
         </div>
 
-        <Button disabled className="text-xs md:text-base" asChild>
-          <Link href={editRoute}>
-            <Pencil className="h-4 w-4 mr-2" />
-            {editButtonText}
-          </Link>
-        </Button>
+        {editRoute && editButtonText && (
+          <Button disabled className="text-xs md:text-base" asChild>
+            <Link href={editRoute}>
+              <Pencil className="h-4 w-4 mr-2" />
+              {editButtonText}
+            </Link>
+          </Button>
+        )}
       </div>
     </div>
   );

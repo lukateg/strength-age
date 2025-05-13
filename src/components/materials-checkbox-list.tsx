@@ -1,15 +1,14 @@
 import ItemsScrollArea from "@/components/items-scroll-area";
 import CheckboxListItem from "@/components/checkbox-list-item";
 
-import { type Id } from "convex/_generated/dataModel";
-import { type PDFType } from "@/types/types";
+import { type Id, type Doc } from "convex/_generated/dataModel";
 import { type CheckedState } from "@radix-ui/react-checkbox";
 
 interface MaterialsCheckboxListProps {
-  allMaterials?: PDFType[] | null;
+  allMaterials?: Doc<"pdfs">[] | null;
   selectedMaterials: Id<"pdfs">[];
   onChange: (value: Id<"pdfs">[]) => void;
-  shouldDisableItem?: (pdf: PDFType) => boolean;
+  shouldDisableItem?: (pdf: Doc<"pdfs">) => boolean;
 }
 
 export default function MaterialsCheckboxList({

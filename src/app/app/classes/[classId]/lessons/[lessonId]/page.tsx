@@ -45,12 +45,12 @@ export default function LessonPage() {
   }
 
   return (
-    <div className="mx-auto container p-6 space-y-10">
+    <div className="space-y-10">
       <SectionHeader
         title={lessonData.data?.title}
         description={lessonData.data?.description}
         backRoute={`/app/classes/${classId}`}
-        editRoute={`/app/classes/${classId}/edit-lesson?id=${lessonId}`}
+        editRoute={`/app/classes/${classId}/edit-lesson?lessonId=${lessonId}`}
         editButtonText={"Edit Lesson"}
       />
       <Tabs defaultValue="lessonMaterials" className="space-y-6">

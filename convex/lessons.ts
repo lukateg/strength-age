@@ -20,7 +20,7 @@ export const createLesson = mutation({
   args: v.object({
     classId: v.id("classes"),
     title: v.string(),
-    description: v.string(),
+    description: v.optional(v.string()),
   }),
   handler: async (ctx, { classId, title, description }) => {
     const userId = await AuthenticationRequired({ ctx });
@@ -70,11 +70,18 @@ export const getPDFsByLessonId = query({
 
 export const getLessonById = query({
   args: v.object({
-    lessonId: v.id("lessons"),
+    lessonId: v.string(),
   }),
   handler: async (ctx, { lessonId }) => {
     await AuthenticationRequired({ ctx });
-    return await ctx.db.get(lessonId);
+
+    const normalizedId = ctx.db.normalizeId("lessons", lessonId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    return await ctx.db.get(normalizedId);
   },
 });
 
@@ -165,5 +172,43 @@ export const getLessonsForPdf = query({
     return Promise.all(
       lessonPdfs.map(async (lp) => await ctx.db.get(lp.lessonId))
     );
+  },
+});
+
+export const updateLesson = mutation({
+  args: v.object({
+    lessonId: v.string(),
+    title: v.string(),
+    description: v.optional(v.string()),
+  }),
+  handler: async (ctx, { lessonId, title, description }) => {
+    await AuthenticationRequired({ ctx });
+
+    const normalizedId = ctx.db.normalizeId("lessons", lessonId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    // Check if another lesson with the same title exists
+    const existingLesson = await ctx.db
+      .query("lessons")
+      .filter((q) =>
+        q.and(q.eq(q.field("title"), title), q.neq(q.field("_id"), lessonId))
+      )
+      .first();
+
+    if (existingLesson) {
+      createAppError({
+        message: "Lesson with same title already exists.",
+      });
+    }
+
+    const updatedLessonId = await ctx.db.patch(normalizedId, {
+      title,
+      description,
+    });
+
+    return updatedLessonId;
   },
 });

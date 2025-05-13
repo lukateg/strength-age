@@ -1,6 +1,5 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import MaterialsSectionComponent from "./components/materials-section";
@@ -40,12 +39,12 @@ export default function ClassPage() {
   }
 
   return (
-    <div className="mx-auto container p-6 space-y-10">
+    <div className="space-y-10">
       <SectionHeader
         title={classData.data?.title}
         description={classData.data?.description}
         backRoute={`/app/classes`}
-        editRoute={`/app/classes/edit-class?id=${classId}`}
+        editRoute={`/app/classes/edit-class?classId=${classId}`}
         editButtonText={"Edit Class"}
       />
       <Tabs defaultValue="lessons" className="space-y-6">

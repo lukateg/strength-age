@@ -3,12 +3,12 @@ import ListItem from "@/components/list-item";
 
 import { FileText, Loader, Eye } from "lucide-react";
 
-import { type PDFType } from "@/types/types";
+import { type Doc } from "convex/_generated/dataModel";
 
 export default function MaterialsList({
   materials,
 }: {
-  materials?: (PDFType | null)[];
+  materials?: (Doc<"pdfs"> | null)[];
 }) {
   if (!materials) {
     return <Loader />;

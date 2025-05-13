@@ -1,10 +1,10 @@
 "use client";
 import { api } from "../../../../../convex/_generated/api";
 
+import { useRouter, useSearchParams } from "next/navigation";
 import { useClassMutations } from "@/hooks/use-class-mutation";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
-import { useRouter, useSearchParams } from "next/navigation";
 import NotFound from "@/components/not-found";
 import ClassFormSkeleton from "../components/class-form-skeleton";
 import ClassForm, { type ClassFormData } from "../components/class-form";
@@ -13,7 +13,7 @@ export default function EditClassPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { updateClass } = useClassMutations();
-  const classId = searchParams.get("id");
+  const classId = searchParams.get("classId");
   const classRequest = useAuthenticatedQueryWithStatus(
     api.classes.getClassById,
     {

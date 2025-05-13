@@ -37,7 +37,9 @@ export default function CardDropdown({ classId }: { classId: Id<"classes"> }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-26">
           <DropdownMenuItem asChild>
-            <Link href={`/app/classes/edit-class?id=${classId}`}>Edit</Link>
+            <Link href={`/app/classes/edit-class?classId=${classId}`}>
+              Edit
+            </Link>
           </DropdownMenuItem>
 
           <AlertDialog>

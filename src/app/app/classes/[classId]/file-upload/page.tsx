@@ -19,16 +19,16 @@ import {
 } from "@/components/ui/card";
 import { Form, FormField } from "@/components/ui/form";
 
-import FileUploadComponent from "@/components/file-upload";
+import FileUploadComponent from "@/components/file-upload/file-upload";
 import UploadFilesButton from "@/components/upload-files-button";
-import UploadedMaterialsList from "@/components/uploaded-materials-list";
+import UploadedMaterialsList from "@/components/file-upload/uploaded-materials-list";
 import SelectFormItem from "@/components/select-form-item";
 
 import { type Id } from "../../../../../../convex/_generated/dataModel";
 
 const formSchema = z.object({
   lessonId: z.custom<Id<"lessons">>(),
-  uploadedMaterials: z
+  materialsToUpload: z
     .array(z.instanceof(File))
     .min(1, "Please upload at least one file."),
 });
@@ -41,17 +41,17 @@ export default function FileUploadPage() {
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: { lessonId: "", uploadedMaterials: [] },
+    defaultValues: { lessonId: "", materialsToUpload: [] },
   });
   const { watch, setValue } = form;
   const { uploadNewPdfsToLesson, isUploading } = useLessonMutations();
 
-  const uploadedMaterials = watch("uploadedMaterials", []);
+  const materialsToUpload = watch("materialsToUpload", []);
 
   const handleUpload = async () => {
     void uploadNewPdfsToLesson({
       lessonId: form.getValues("lessonId"),
-      uploadedMaterials,
+      materialsToUpload,
     });
 
     router.push(`/app/classes/${classId}`);
@@ -59,7 +59,7 @@ export default function FileUploadPage() {
 
   const handleFileChange = (newMaterials: File[]) => {
     if (newMaterials.length) {
-      setValue("uploadedMaterials", [...uploadedMaterials, ...newMaterials], {
+      setValue("materialsToUpload", [...materialsToUpload, ...newMaterials], {
         shouldValidate: true,
       });
     }
@@ -93,12 +93,12 @@ export default function FileUploadPage() {
 
         <FileUploadComponent
           onDrop={handleFileChange}
-          existingFiles={uploadedMaterials}
+          existingFiles={materialsToUpload}
         />
 
-        {!!uploadedMaterials.length && (
+        {!!materialsToUpload.length && (
           <UploadedMaterialsList
-            uploadedMaterials={uploadedMaterials}
+            materialsToUpload={materialsToUpload}
             setValue={setValue}
           />
         )}
@@ -107,7 +107,7 @@ export default function FileUploadPage() {
       <CardFooter>
         <UploadFilesButton
           startUpload={handleUpload}
-          uploadedMaterials={uploadedMaterials}
+          materialsToUpload={materialsToUpload}
           isUploading={isUploading}
           className="w-full"
         />

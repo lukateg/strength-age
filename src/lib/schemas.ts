@@ -56,27 +56,28 @@ export const reviewQuestionSchema = z.union([
 export const addLessonMaterialsSchema = (showExistingMaterials: boolean) =>
   z.object({
     lessonId: z.custom<Id<"lessons">>(),
-    selectedMaterials: showExistingMaterials
+    materialsToAdd: showExistingMaterials
       ? z
           .array(z.custom<Id<"pdfs">>())
           .min(1, "Please select at least one material")
       : z.array(z.custom<Id<"pdfs">>()),
-    uploadedMaterials: !showExistingMaterials
+    materialsToUpload: !showExistingMaterials
       ? z.array(z.instanceof(File)).min(1, "Please upload at least one file")
       : z.array(z.instanceof(File)),
   });
 
 export const createLessonSchema = z.object({
-  lessonTitle: z
+  title: z
     .string()
     .min(1, "Lesson title is required")
     .max(50, "Lesson title cannot be longer than 50 characters"),
-  lessonDescription: z
+  description: z
     .string()
-    .min(1, "Lesson description is required")
-    .max(200, "Lesson description cannot be longer than 200 characters"),
-  uploadedMaterials: z.array(z.instanceof(File)),
-  selectedMaterials: z.array(z.custom<Id<"pdfs">>()),
+    .max(200, "Lesson description cannot be longer than 200 characters")
+    .optional(),
+  materialsToUpload: z.array(z.instanceof(File)),
+  materialsToAdd: z.array(z.custom<Id<"pdfs">>()),
+  showExistingMaterials: z.boolean(),
 });
 
 export const testSchema = z.object({

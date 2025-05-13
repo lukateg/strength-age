@@ -5,8 +5,10 @@ import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 import { useClass } from "@/providers/class-context-provider";
+import { useQuery } from "convex/react";
 
 import type * as z from "zod";
+import { api } from "../../../../../../../../convex/_generated/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addLessonMaterialsSchema } from "@/lib/schemas";
 
@@ -18,13 +20,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { UploadMaterialsView } from "./components/upload-materials-view";
-import { SelectMaterialsView } from "./components/select-materials-view";
 import { Form, FormField } from "@/components/ui/form";
+import { AddMaterialsView } from "@/components/add-materials-section/add-materials-section";
 
 import AddFilesButton from "@/components/ui/add-files-button";
-import LabeledSwitch from "@/components/labeled-switch";
 import SelectFormItem from "@/components/select-form-item";
+import SectionHeader from "@/components/page-components/page-header";
 import UploadFilesButton from "@/components/upload-files-button";
 
 import { type Id } from "convex/_generated/dataModel";
@@ -37,28 +38,33 @@ export default function FileUploadPage() {
   const { lessons, materials, classId } = useClass();
   const { addExistingPdfsToLesson, uploadNewPdfsToLesson, isUploading } =
     useLessonMutations();
-  // const { uploadNewPdfsToLesson } = useMaterialsMutations();
   const { lessonId }: { lessonId: Id<"lessons"> } = useParams();
+  const lessonData = useQuery(api.lessons.getLessonById, {
+    lessonId,
+  });
 
   const form = useForm<FormData>({
     resolver: zodResolver(addLessonMaterialsSchema(showExistingMaterials)),
     defaultValues: {
       lessonId,
-      selectedMaterials: [] as Id<"pdfs">[],
-      uploadedMaterials: [] as File[],
+      materialsToAdd: [] as Id<"pdfs">[],
+      materialsToUpload: [] as File[],
     },
+  });
+  const uploadedPdfs = useQuery(api.lessons.getPDFsByLessonId, {
+    lessonId,
   });
 
   const { control, watch, getValues, setValue, clearErrors, handleSubmit } =
     form;
 
-  const uploadedMaterials = watch("uploadedMaterials", []);
-  const selectedMaterials = watch("selectedMaterials", []);
+  const materialsToUpload = watch("materialsToUpload", []);
+  const materialsToAdd = watch("materialsToAdd", []);
 
   const handleAddPDFToLesson = async () => {
-    const selectedMaterials = getValues("selectedMaterials");
+    const materialsToAdd = getValues("materialsToAdd");
     void addExistingPdfsToLesson({
-      pdfIds: selectedMaterials,
+      pdfIds: materialsToAdd,
       lessonId: lessonId,
     });
 
@@ -66,80 +72,80 @@ export default function FileUploadPage() {
   };
 
   const handleUploadNewPdfsToLesson = async () => {
-    const uploadedMaterials = getValues("uploadedMaterials");
-    void uploadNewPdfsToLesson({ lessonId, uploadedMaterials });
+    const materialsToUpload = getValues("materialsToUpload");
+    void uploadNewPdfsToLesson({ lessonId, materialsToUpload });
 
     router.push(`/app/classes/${classId}/lessons/${lessonId}`);
   };
+  // TODO implement suspense
+  if (!lessonData) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <Card className="m-4">
-      <CardHeader>
-        <CardTitle>Upload Files</CardTitle>
-        <CardDescription>
-          Drag and drop your files here or click to browse
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <Form {...form}>
-          <FormField
-            control={control}
-            name="lessonId"
-            render={({ field }) => (
-              <SelectFormItem
-                {...field}
-                items={lessons.data}
-                label="Lesson"
-                placeholder="Select a lesson"
-                defaultValue="none"
-                onChange={field.onChange}
-                description="You can link material to a specific lesson."
-                disabled
-              />
-            )}
-          />
+    <div className="space-y-10">
+      <SectionHeader
+        title={lessonData?.title}
+        description={lessonData?.description}
+        backRoute={`/app/classes/${classId}/lessons/${lessonId}`}
+        editRoute={`/app/classes/${classId}/edit-lesson?lessonId=${lessonId}`}
+        editButtonText={"Edit Lesson"}
+      />
+      <Card className="m-4">
+        <CardHeader>
+          <CardTitle>Upload Files</CardTitle>
+          <CardDescription>
+            Drag and drop your files here or click to browse
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <Form {...form}>
+            <FormField
+              control={control}
+              name="lessonId"
+              render={({ field }) => (
+                <SelectFormItem
+                  {...field}
+                  items={lessons.data}
+                  label="Lesson"
+                  placeholder="Select a lesson"
+                  defaultValue="none"
+                  onChange={field.onChange}
+                  description="You can link material to a specific lesson."
+                  disabled
+                />
+              )}
+            />
 
-          <LabeledSwitch
-            id="select-from-uploaded"
-            checked={showExistingMaterials}
-            onCheckedChange={(checked) => {
-              setShowExistingMaterials(checked);
-              clearErrors();
-            }}
-            label="Select from already uploaded materials"
-          />
-
-          {!showExistingMaterials ? (
-            <UploadMaterialsView
+            <AddMaterialsView<FormData>
+              showExistingMaterials={showExistingMaterials}
+              onShowExistingMaterialsChange={setShowExistingMaterials}
+              materialsToUpload={materialsToUpload}
+              allMaterials={materials.data}
+              control={control}
               setValue={setValue}
-              control={control}
-              uploadedMaterials={uploadedMaterials}
+              clearErrors={clearErrors}
+              uploadedPdfs={uploadedPdfs}
             />
-          ) : (
-            <SelectMaterialsView
-              materials={materials.data}
-              control={control}
-              lessonId={lessonId}
-            />
-          )}
 
-          <CardFooter>
-            {showExistingMaterials ? (
-              <AddFilesButton
-                selectedMaterials={selectedMaterials}
-                startAdding={handleSubmit(handleAddPDFToLesson)}
-              />
-            ) : (
-              <UploadFilesButton
-                className="w-full"
-                startUpload={handleUploadNewPdfsToLesson}
-                uploadedMaterials={uploadedMaterials}
-                isUploading={isUploading}
-              />
-            )}
-          </CardFooter>
-        </Form>
-      </CardContent>
-    </Card>
+            <CardFooter>
+              {showExistingMaterials ? (
+                <AddFilesButton
+                  materialsToAdd={materialsToAdd}
+                  startAdding={handleSubmit(handleAddPDFToLesson)}
+                />
+              ) : (
+                <UploadFilesButton
+                  className="w-full"
+                  startUpload={handleUploadNewPdfsToLesson}
+                  materialsToUpload={materialsToUpload}
+                  isUploading={isUploading}
+                />
+              )}
+            </CardFooter>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

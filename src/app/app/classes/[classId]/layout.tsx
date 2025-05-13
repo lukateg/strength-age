@@ -11,5 +11,9 @@ export default async function ClassLayout({
   params,
 }: ClassLayoutProps) {
   const { classId } = await params;
-  return <ClassProvider classId={classId}>{children}</ClassProvider>;
+  return (
+    <ClassProvider classId={classId}>
+      <div className="mx-auto container p-6 space-y-10">{children}</div>
+    </ClassProvider>
+  );
 }

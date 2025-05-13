@@ -1,20 +1,20 @@
+import { type createLessonSchema } from "@/lib/schemas";
 import { type Id } from "convex/_generated/dataModel";
 // import { type ClientUploadedFileData } from "uploadthing/types";
+import { type z } from "zod";
 
 // TODO
 // - remove all this types and infer the convex schema
 
-export interface LessonFormData {
-  lessonTitle: string;
-  lessonDescription: string;
-  uploadedMaterials: File[];
-  selectedMaterials: Id<"pdfs">[];
-}
-
+export type LessonFormData = z.infer<typeof createLessonSchema>;
+export type EditLessonFormData = Omit<
+  LessonFormData,
+  "materialsToUpload" | "materialsToAdd" | "showExistingMaterials"
+>;
 export interface CreateBasicLessonParams {
   classId: Id<"classes">;
   title: string;
-  description: string;
+  description?: string;
 }
 
 export interface CreateLessonWithMaterialsParams {

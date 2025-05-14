@@ -37,19 +37,19 @@ edit lesson has no submit button
 
 
 TODO: 
--- add  "..." for lesson item in list that has a dropdown with delete and edit
--- on edit class/lesson implement delete class/lesson button
 -- add "..." for each pdf and implement delete or edit logic "check if edit can edit text in the uploadThing
+-- add "..." for a test and test reviews
+-- create alertDialog component and reuse it in all cases
 
 
 PLAN:
 -- Add delete and edit
--- create beautiful destructive and positive buttons
+-- create beautiful destructive and positive buttons and reusable dialog that will have positive, default, and destructive variant
 -- add permisions so user can access only its own content
 -- add modals on all needed actions
 -- add additional info prompt when generating the test
--- add settings page
 -- handle case when LLM is not working
+-- add settings page
 -- Add analytics
 -- add payments
 -- add free tier permission system

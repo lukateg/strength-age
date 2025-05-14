@@ -8,11 +8,15 @@ import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query
 import NotFound from "@/components/not-found";
 import ClassFormSkeleton from "../components/class-form-skeleton";
 import ClassForm, { type ClassFormData } from "../components/class-form";
+import RedirectBackButton from "@/components/redirect-back-button";
+import DangerZone from "@/components/danger-zone";
+
+import { ArrowLeft, BookOpen } from "lucide-react";
 
 export default function EditClassPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { updateClass } = useClassMutations();
+  const { updateClass, deleteClass } = useClassMutations();
   const classId = searchParams.get("classId");
   const classRequest = useAuthenticatedQueryWithStatus(
     api.classes.getClassById,
@@ -50,13 +54,36 @@ export default function EditClassPage() {
 
   if (classRequest.status === "success") {
     return (
-      <ClassForm
-        onSubmit={onSubmit}
-        isEditMode={true}
-        defaultValues={{
-          ...classRequest.data,
-        }}
-      />
+      <div className="container mx-auto p-6 space-y-10">
+        <div className="flex items-center gap-4">
+          <RedirectBackButton>
+            <ArrowLeft className="h-6 w-6" />
+          </RedirectBackButton>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-6 w-6 text-primary" />
+              <h1 className="text-xl md:text-2xl font-bold">Edit Class</h1>
+            </div>
+            <p className="text-sm md:text-base text-muted-foreground">
+              Edit your class details
+            </p>
+          </div>
+        </div>
+
+        <ClassForm
+          onSubmit={onSubmit}
+          isEditMode={true}
+          defaultValues={{
+            ...classRequest.data,
+          }}
+        />
+
+        <DangerZone
+          onDelete={() => {
+            void deleteClass(classId ?? "skip").then(() => router.back());
+          }}
+        />
+      </div>
     );
   }
 }

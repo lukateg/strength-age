@@ -317,11 +317,17 @@ export async function deleteLessonPdfsByLessonIdBatch(
 }
 
 export const deleteLesson = mutation({
-  args: { lessonId: v.id("lessons") },
+  args: { lessonId: v.string() },
   handler: async (ctx, { lessonId }) => {
     const userId = await AuthenticationRequired({ ctx });
 
-    const existingLesson = await ctx.db.get(lessonId);
+    const normalizedId = ctx.db.normalizeId("lessons", lessonId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const existingLesson = await ctx.db.get(normalizedId);
     if (!existingLesson) {
       throw new Error("Lesson not found");
     }
@@ -332,14 +338,14 @@ export const deleteLesson = mutation({
 
     // Start the batch deletion process in the background
     await ctx.scheduler.runAfter(0, internal.lessons.batchDeleteLessonData, {
-      lessonId,
+      lessonId: normalizedId,
       userId,
       phase: "pdfs",
       cursor: undefined,
     });
 
     // Delete the class immediately to give instant feedback to the user
-    await ctx.db.delete(lessonId);
+    await ctx.db.delete(normalizedId);
 
     return { success: true };
   },

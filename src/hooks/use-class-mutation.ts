@@ -14,10 +14,6 @@ type UpdateClassParams = CreateClassParams & {
   classId: string;
 };
 
-type DeleteClassParams = {
-  classId: Id<"classes">;
-};
-
 export const useClassMutations = () => {
   const createClassMutation = useMutation(api.classes.createClass);
   const updateClassMutation = useMutation(api.classes.updateClass);
@@ -56,10 +52,10 @@ export const useClassMutations = () => {
   );
 
   const deleteClass = useCallback(
-    async (params: DeleteClassParams) => {
+    async (classId: string) => {
       try {
         await deleteClassMutation({
-          id: params.classId,
+          classId,
         });
 
         toast.success("Class deleted successfully.");

@@ -121,7 +121,7 @@ export const useLessonMutations = () => {
   );
 
   const deleteLesson = useCallback(
-    async (lessonId: Id<"lessons">) => {
+    async (lessonId: string) => {
       try {
         await deleteLessonMutation({ lessonId });
         toast.success("Lesson deleted successfully");

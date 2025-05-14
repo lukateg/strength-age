@@ -82,11 +82,17 @@ export const updateClass = mutation({
 });
 
 export const deleteClass = mutation({
-  args: { id: v.id("classes") },
-  handler: async (ctx, { id }) => {
+  args: { classId: v.string() },
+  handler: async (ctx, { classId }) => {
     const userId = await AuthenticationRequired({ ctx });
 
-    const existingClass = await ctx.db.get(id);
+    const normalizedId = ctx.db.normalizeId("classes", classId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const existingClass = await ctx.db.get(normalizedId);
     if (!existingClass) {
       throw new Error("Class not found");
     }
@@ -96,13 +102,13 @@ export const deleteClass = mutation({
     }
 
     await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId: id,
+      classId: normalizedId,
       userId,
       phase: "lessonPdfs",
       cursor: undefined,
     });
 
-    await ctx.db.delete(id);
+    await ctx.db.delete(normalizedId);
 
     return { success: true };
   },

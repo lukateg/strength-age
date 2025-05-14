@@ -9,6 +9,7 @@ import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query
 import LessonForm from "@/app/app/classes/[classId]/lessons/[lessonId]/components/lesson-form/lesson-form";
 import NotFound from "@/app/not-found";
 import SectionHeader from "@/components/page-components/page-header";
+import DangerZone from "@/components/danger-zone";
 
 import { type EditLessonFormData } from "@/types/lesson";
 
@@ -17,7 +18,7 @@ export default function EditLessonPage() {
   const searchParams = useSearchParams();
   const lessonId = searchParams.get("lessonId");
 
-  const { classId, updateLesson } = useLessonMutations();
+  const { classId, updateLesson, deleteLesson } = useLessonMutations();
 
   const lessonRequest = useAuthenticatedQueryWithStatus(
     api.lessons.getLessonById,
@@ -64,6 +65,14 @@ export default function EditLessonPage() {
         onSubmit={onSubmit}
         isEditMode={true}
         defaultValues={lessonRequest.data}
+      />
+
+      <DangerZone
+        onDelete={() => {
+          void deleteLesson(lessonId ?? "skip").then(() =>
+            router.push(`/app/classes/${classId}`)
+          );
+        }}
       />
     </div>
   );

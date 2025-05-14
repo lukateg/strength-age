@@ -39,8 +39,6 @@ edit lesson has no submit button
 TODO: 
 -- add "..." for each pdf and implement delete or edit logic "check if edit can edit text in the uploadThing
 -- add "..." for a test and test reviews
--- create alertDialog component and reuse it in all cases
-
 
 PLAN:
 -- Add delete and edit

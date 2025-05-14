@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -8,22 +9,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
-import { EllipsisVertical } from "lucide-react";
+import AlertDialogModal from "@/components/alert-dialog";
 
 import { type Id } from "../../../../../../../convex/_generated/dataModel";
-import { useLessonMutations } from "@/hooks/use-lesson-mutations";
+
+import { EllipsisVertical } from "lucide-react";
 
 export default function LessonsItemDropdown({
   lessonId,
@@ -50,32 +41,18 @@ export default function LessonsItemDropdown({
           </Link>
         </DropdownMenuItem>
 
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
+        <AlertDialogModal
+          title="Are you sure?"
+          description="This action cannot be undone. This will permanently delete the
+                lesson and all associated materials."
+          onConfirm={() => deleteLesson(lessonId)}
+          variant="destructive"
+          alertTrigger={
             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
               Delete
             </DropdownMenuItem>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the
-                lesson and all associated materials.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={async () => {
-                  await deleteLesson(lessonId);
-                }}
-              >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+          }
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   );

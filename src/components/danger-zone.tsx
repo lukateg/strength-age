@@ -6,17 +6,8 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Button } from "./ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "./ui/alert-dialog";
+
+import AlertDialogModal from "./alert-dialog";
 
 export default function DangerZone({ onDelete }: { onDelete: () => void }) {
   return (
@@ -29,24 +20,14 @@ export default function DangerZone({ onDelete }: { onDelete: () => void }) {
       </CardHeader>
 
       <CardFooter>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive">Delete</Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete this
-                resource and all associated data.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={onDelete}>Delete</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <AlertDialogModal
+          title="Are you sure?"
+          description="This action cannot be undone. This will permanently delete this
+                resource and all associated data."
+          onConfirm={onDelete}
+          variant="destructive"
+          alertTrigger={<Button variant="destructive">Delete</Button>}
+        />
       </CardFooter>
     </Card>
   );

@@ -24,7 +24,6 @@ export default function AlertDialogModal({
   alertTrigger: React.ReactNode;
   variant?: "destructive" | "default" | "positive";
 }) {
-  console.log(variant);
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{alertTrigger}</AlertDialogTrigger>

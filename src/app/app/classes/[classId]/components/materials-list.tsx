@@ -1,7 +1,12 @@
+"use client";
+
+import { useMaterialsMutations } from "@/hooks/use-materials-mutations";
+
 import { Button } from "@/components/ui/button";
 import ListItem from "@/components/list-item";
+import AlertDialogModal from "@/components/alert-dialog";
 
-import { FileText, Loader, Eye } from "lucide-react";
+import { FileText, Loader, Eye, Trash } from "lucide-react";
 
 import { type Doc } from "convex/_generated/dataModel";
 
@@ -10,6 +15,8 @@ export default function MaterialsList({
 }: {
   materials?: (Doc<"pdfs"> | null)[];
 }) {
+  const { deletePdf } = useMaterialsMutations();
+
   if (!materials) {
     return <Loader />;
   }
@@ -45,6 +52,26 @@ export default function MaterialsList({
               <Eye className="h-4 w-4" />
               <span className="hidden md:block ml-2">Preview</span>
             </Button>
+
+            <AlertDialogModal
+              onConfirm={async () => {
+                if (material?._id) {
+                  await deletePdf(material._id);
+                }
+              }}
+              title="Delete Material"
+              description="Are you sure you want to delete this material?"
+              variant="destructive"
+              alertTrigger={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs md:text-base"
+                >
+                  <Trash className="h-4 w-4 text-red-500" />
+                </Button>
+              }
+            />
           </div>
         </ListItem>
       ))}

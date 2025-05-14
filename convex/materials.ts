@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { AuthenticationRequired } from "./utils/utils";
+import { AuthenticationRequired, createAppError } from "./utils/utils";
 import { internal } from "./_generated/api";
 
 import { type DataModel, type Id } from "./_generated/dataModel";
@@ -96,6 +96,54 @@ export const getPdfsForLesson = query({
   },
 });
 
+export async function deleteLessonPdfRelationsByPdfId(
+  ctx: GenericMutationCtx<DataModel>,
+  pdfId: Id<"pdfs">
+) {
+  const lessonPdfs = await ctx.db
+    .query("lessonPdfs")
+    .withIndex("by_pdfId", (q) => q.eq("pdfId", pdfId))
+    .collect();
+
+  for (const lessonPdf of lessonPdfs) {
+    await ctx.db.delete(lessonPdf._id);
+  }
+}
+
+export const deletePdf = mutation({
+  args: { pdfId: v.id("pdfs") },
+  handler: async (ctx, { pdfId }) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const pdf = await ctx.db.get(pdfId);
+    if (!pdf) {
+      throw createAppError({
+        message: "PDF not found",
+      });
+    }
+
+    if (pdf.userId !== userId) {
+      throw createAppError({
+        message: "Not authorized to delete this PDF",
+      });
+    }
+
+    await deleteLessonPdfRelationsByPdfId(ctx, pdfId);
+
+    await ctx.scheduler.runAfter(
+      0,
+      internal.uploadThingActions.deleteFileFromUploadThing,
+      {
+        pdf,
+      }
+    );
+
+    await ctx.db.delete(pdfId);
+
+    return { success: true };
+  },
+});
+
 export async function deletePdfsByClassIdBatch(
   ctx: GenericMutationCtx<DataModel>,
   classId: Id<"classes">,
@@ -109,14 +157,11 @@ export async function deletePdfsByClassIdBatch(
     .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
 
   for (const pdf of page) {
-    const fileKey = pdf.fileUrl.split("/").pop();
-    if (!fileKey) continue;
-
     await ctx.scheduler.runAfter(
       0,
       internal.uploadThingActions.deleteFileFromUploadThing,
       {
-        fileKey,
+        pdf,
       }
     );
 
@@ -139,26 +184,3 @@ export async function deletePdfsByClassIdBatch(
     });
   }
 }
-
-// export const addPdfToLesson = mutation({
-//   args: {
-//     lessonId: v.id("lessons"),
-//     pdfId: v.id("pdfs"),
-//   },
-//   handler: async (ctx, args) => {
-//     // Check if relationship already exists
-//     const existing = await ctx.db
-//       .query("lessonPdfs")
-//       .withIndex("by_lessonId", q =>
-//         q.eq("lessonId", args.lessonId).eq("pdfId", args.pdfId)
-//       )
-//       .unique();
-
-//     if (!existing) {
-//       await ctx.db.insert("lessonPdfs", {
-//         lessonId: args.lessonId,
-//         pdfId: args.pdfId,
-//       });
-//     }
-//   },
-// });

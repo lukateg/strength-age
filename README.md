@@ -43,7 +43,7 @@ TODO:
 PLAN:
 -- Add delete and edit
 -- create beautiful destructive and positive buttons and reusable dialog that will have positive, default, and destructive variant
--- add permisions so user can access only its own content
+-- add permisions so user can access only its own content (change param userId to createdBy)
 -- add modals on all needed actions
 -- add additional info prompt when generating the test
 -- handle case when LLM is not working
@@ -52,6 +52,7 @@ PLAN:
 -- add payments
 -- add free tier permission system
 -- pocisti bagove
+-- SEO check
 -- check free tier plan and work out permisions and free plan for max classes, lessons, pdfs in mb, tests and ai token calls
 -- in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
 -- release to prod

@@ -28,6 +28,13 @@ check before launch:
 -- delete modal should have red confirm button
 -- create dialog component that accepts onConfirm, confirmText, CancelText, descriptionText ....
 -- edit section buttons should have beautifull purple design maybe
+-- for exit test set new icon (exit door icon)
+-- check case when generating test with lesson that has 0 materials
+
+BUGS
+-- redirect after test creation still doesn't work properly(test with multiple lessons)
+-- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
+-- lesson title is not working when generating multiple lesson test
 
 finish the edit and delete lesson and tests and reviews
 create consistent pattern for loading skeleton, error case, and not found case
@@ -37,13 +44,14 @@ edit lesson has no submit button
 
 
 TODO: 
--- add "..." for each pdf and implement delete or edit logic "check if edit can edit text in the uploadThing
--- add "..." for a test and test reviews
+-- add "..." for a test and implement edit test page if possible, if not implement just delete
+-- add delete test review
 
 PLAN:
 -- Add delete and edit
 -- create beautiful destructive and positive buttons and reusable dialog that will have positive, default, and destructive variant
 -- add permisions so user can access only its own content (change param userId to createdBy)
+-- add share button for test result and implement share link logic
 -- add modals on all needed actions
 -- add additional info prompt when generating the test
 -- handle case when LLM is not working
@@ -72,6 +80,8 @@ MAYBE IN FUTURE
 -- implement custom question number per lesson
 -- add abort test generating when clicking on the X in the loader
 -- maybe add sharing tests between user as a social media app
+-- add "..." for each pdf and implement edit logic "check if edit can edit text in the uploadThing
+
 
 FUTURE FEATURES:
 - test sharing between users and groups

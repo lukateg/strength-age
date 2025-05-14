@@ -1,5 +1,4 @@
 import LessonSelectTable from "./lesson-select-table";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
   CardTitle,
@@ -16,7 +15,6 @@ import {
 
 import { type Control } from "react-hook-form";
 import { type TestFormValues } from "@/components/generate-test-form/generate-test-form";
-import { type Id } from "convex/_generated/dataModel";
 
 import { api } from "../../../../../convex/_generated/api";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
@@ -29,13 +27,11 @@ export default function LessonSelectView({
 }: {
   // lessons?: LessonsType[];
   control: Control<TestFormValues>;
-  classId: Id<"classes">;
+  classId: string;
 }) {
   const lessons = useAuthenticatedQueryWithStatus(
     api.lessons.getLessonsByClass,
-    {
-      classId,
-    }
+    classId && classId !== "none" ? { classId } : "skip"
   );
 
   return (
@@ -53,7 +49,13 @@ export default function LessonSelectView({
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <LessonSelectTable lessons={lessons.data} field={field} />
+                {!classId || classId === "none" ? (
+                  <div className="text-center py-4 text-muted-foreground">
+                    Please select a class first to view available lessons
+                  </div>
+                ) : (
+                  <LessonSelectTable lessons={lessons.data} field={field} />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>

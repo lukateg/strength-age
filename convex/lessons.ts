@@ -8,26 +8,37 @@ import { type GenericMutationCtx } from "convex/server";
 
 export const getLessonsByClass = query({
   args: v.object({
-    classId: v.id("classes"),
+    classId: v.string(),
   }),
   // TODO change to index
   handler: async (ctx, { classId }) => {
     await AuthenticationRequired({ ctx });
+    const normalizedId = ctx.db.normalizeId("classes", classId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
     return await ctx.db
       .query("lessons")
-      .withIndex("by_class", (q) => q.eq("classId", classId))
+      .withIndex("by_class", (q) => q.eq("classId", normalizedId))
       .collect();
   },
 });
 
 export const createLesson = mutation({
   args: v.object({
-    classId: v.id("classes"),
+    classId: v.string(),
     title: v.string(),
     description: v.optional(v.string()),
   }),
   handler: async (ctx, { classId, title, description }) => {
     const userId = await AuthenticationRequired({ ctx });
+    const normalizedId = ctx.db.normalizeId("classes", classId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
 
     // TODO use index insead of filter
     const existingLesson = await ctx.db
@@ -43,7 +54,7 @@ export const createLesson = mutation({
 
     const lessonId = await ctx.db.insert("lessons", {
       userId,
-      classId,
+      classId: normalizedId,
       title,
       description,
     });
@@ -115,10 +126,15 @@ export const addPdfToLesson = mutation({
   args: v.object({
     lessonId: v.id("lessons"),
     pdfId: v.id("pdfs"),
-    classId: v.id("classes"),
+    classId: v.string(),
   }),
   handler: async (ctx, { lessonId, pdfId, classId }) => {
     await AuthenticationRequired({ ctx });
+    const normalizedId = ctx.db.normalizeId("classes", classId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
 
     // Check if relationship already exists
     const existing = await ctx.db
@@ -131,7 +147,7 @@ export const addPdfToLesson = mutation({
       await ctx.db.insert("lessonPdfs", {
         lessonId,
         pdfId,
-        classId,
+        classId: normalizedId,
       });
     }
   },
@@ -141,10 +157,15 @@ export const addManyPdfsToLesson = mutation({
   args: v.object({
     lessonId: v.id("lessons"),
     pdfIds: v.array(v.id("pdfs")),
-    classId: v.id("classes"),
+    classId: v.string(),
   }),
   handler: async (ctx, { lessonId, pdfIds, classId }) => {
     await AuthenticationRequired({ ctx });
+    const normalizedId = ctx.db.normalizeId("classes", classId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
 
     for (const pdfId of pdfIds) {
       // Check if relationship already exists
@@ -158,7 +179,7 @@ export const addManyPdfsToLesson = mutation({
         await ctx.db.insert("lessonPdfs", {
           lessonId,
           pdfId,
-          classId,
+          classId: normalizedId,
         });
       }
     }

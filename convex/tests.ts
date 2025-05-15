@@ -266,3 +266,27 @@ export const deleteTestReview = mutation({
     return { success: true };
   },
 });
+
+export const deleteTest = mutation({
+  args: { testId: v.id("tests") },
+  handler: async (ctx, { testId }) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const test = await ctx.db.get(testId);
+    if (!test) {
+      throw createAppError({
+        message: "Test not found",
+      });
+    }
+
+    if (test.userId !== userId) {
+      throw createAppError({
+        message: "Not authorized to delete this test",
+      });
+    }
+
+    await ctx.db.delete(testId);
+
+    return { success: true };
+  },
+});

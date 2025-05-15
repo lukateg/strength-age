@@ -23,6 +23,7 @@ export const useTestMutations = () => {
   const createTestMutation = useMutation(api.tests.createTest);
   const createTestReviewMutation = useMutation(api.tests.createTestReview);
   const deleteTestReviewMutation = useMutation(api.tests.deleteTestReview);
+  const deleteTestMutation = useMutation(api.tests.deleteTest);
 
   const createTest = useCallback(
     async (params: CreateTestParams) => {
@@ -93,9 +94,30 @@ export const useTestMutations = () => {
     [deleteTestReviewMutation]
   );
 
+  const deleteTest = useCallback(
+    async (testId: Id<"tests">) => {
+      const toastId = toast.loading("Deleting...", {
+        description: "Please wait while we delete the test.",
+        duration: Infinity,
+      });
+
+      try {
+        await deleteTestMutation({ testId });
+        toast.dismiss(toastId);
+        toast.success("Test deleted successfully.");
+      } catch (error) {
+        console.error("Failed to delete test:", error);
+        toast.dismiss(toastId);
+        toast.error("Failed to delete test. Please try again.");
+      }
+    },
+    [deleteTestMutation]
+  );
+
   return {
     createTest,
     createTestReview,
     deleteTestReview,
+    deleteTest,
   };
 };

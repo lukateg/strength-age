@@ -1,14 +1,19 @@
 "use client";
 
+import { useClass } from "@/providers/class-context-provider";
+import { useTestMutations } from "@/hooks/use-test-mutation";
+
 import ListItem from "@/components/list-item";
 import RetryTestButton from "@/components/retry-test-button";
+import AlertDialogModal from "@/components/alert-dialog";
 
-import { FileText, Loader, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-import { useClass } from "@/providers/class-context-provider";
+import { FileText, Loader, RotateCcw, Trash } from "lucide-react";
 
 export default function TestsList() {
   const { tests } = useClass();
+  const { deleteTest } = useTestMutations();
 
   if (tests.isPending) {
     return <Loader />;
@@ -44,6 +49,26 @@ export default function TestsList() {
               <RotateCcw className="h-4 w-4" />
               <span className="hidden md:block ml-2">Retry</span>
             </RetryTestButton>
+
+            <AlertDialogModal
+              onConfirm={async () => {
+                if (test?._id) {
+                  await deleteTest(test._id);
+                }
+              }}
+              title="Delete Test"
+              description="Are you sure you want to delete this test?"
+              variant="destructive"
+              alertTrigger={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs md:text-base"
+                >
+                  <Trash className="h-4 w-4 text-red-500" />
+                </Button>
+              }
+            />
           </div>
         </ListItem>
       ))}

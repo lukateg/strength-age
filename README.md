@@ -45,7 +45,8 @@ edit lesson has no submit button
 
 TODO: 
 -- add "..." for a test and implement edit test page if possible, if not implement just delete
--- add delete test review
+-- make test and test review page reusable component, or make only one card for all cases and reuse it across the app
+-- add delete test and review on generate test page
 
 PLAN:
 -- Add delete and edit
@@ -66,6 +67,7 @@ PLAN:
 -- in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
 -- release to prod
 -- wait for the analytics results and think about the compex permisions and test sharing and start sprint 2
+-- if test is deleted retry button on testReview page should be disabled
 
 SETTINGS PAGE
 -- in settings page add TEST SETTINGs (setting up if user wants all questions on one page, or he wants pagination)

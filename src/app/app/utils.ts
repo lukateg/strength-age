@@ -44,7 +44,7 @@ export const generateStats = (
     {
       title: "Global Success Rate",
       icon: Users,
-      value: averageSuccessRate,
+      value: `${averageSuccessRate}%`,
       description: "Total number of active students",
     },
   ];

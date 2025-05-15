@@ -1,17 +1,21 @@
 "use client";
 
-import { FileText, Eye } from "lucide-react";
 import Link from "next/link";
 
 import ListItem from "@/components/list-item";
 import Loader from "@/components/loader";
 import NotFound from "@/components/not-found";
+import AlertDialogModal from "@/components/alert-dialog";
 
 import { Button } from "@/components/ui/button";
 import { useClass } from "@/providers/class-context-provider";
+import { useTestMutations } from "@/hooks/use-test-mutation";
+
+import { FileText, Eye, Trash } from "lucide-react";
 
 export default function TestsList() {
   const { testReviews } = useClass();
+  const { deleteTestReview } = useTestMutations();
 
   if (testReviews.isPending) {
     return <Loader />;
@@ -52,6 +56,26 @@ export default function TestsList() {
                 <span className="hidden md:block ml-2">Results</span>
               </Link>
             </Button>
+
+            <AlertDialogModal
+              onConfirm={async () => {
+                if (testReview?._id) {
+                  await deleteTestReview(testReview._id);
+                }
+              }}
+              title="Delete Test Review"
+              description="Are you sure you want to delete this test review?"
+              variant="destructive"
+              alertTrigger={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs md:text-base"
+                >
+                  <Trash className="h-4 w-4 text-red-500" />
+                </Button>
+              }
+            />
           </div>
         </ListItem>
       ))}

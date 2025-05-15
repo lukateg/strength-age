@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { AuthenticationRequired } from "./utils/utils";
+import { AuthenticationRequired, createAppError } from "./utils/utils";
 import { internal } from "./_generated/api";
 
 import { type DataModel, type Id } from "./_generated/dataModel";
@@ -242,3 +242,27 @@ export async function deleteTestReviewsByClassIdBatch(
     });
   }
 }
+
+export const deleteTestReview = mutation({
+  args: { testReviewId: v.id("testReviews") },
+  handler: async (ctx, { testReviewId }) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const testReview = await ctx.db.get(testReviewId);
+    if (!testReview) {
+      throw createAppError({
+        message: "Test review not found",
+      });
+    }
+
+    if (testReview.userId !== userId) {
+      throw createAppError({
+        message: "Not authorized to delete this test review",
+      });
+    }
+
+    await ctx.db.delete(testReviewId);
+
+    return { success: true };
+  },
+});

@@ -55,6 +55,7 @@ PLAN:
 -- add modals on all needed actions
 -- add additional info prompt when generating the test
 -- handle case when LLM is not working
+-- add test preview page that would be oppened when test is generated or before retrying test that has basic info and a start (positive) button
 -- add settings page
 -- Add analytics
 -- add payments

@@ -14,7 +14,7 @@ import AlertDialogModal from "@/components/alert-dialog";
 
 import { type Id } from "../../../../../../../convex/_generated/dataModel";
 
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, Pencil, Trash } from "lucide-react";
 
 export default function LessonsItemDropdown({
   lessonId,
@@ -32,14 +32,17 @@ export default function LessonsItemDropdown({
           <EllipsisVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-26">
-        <DropdownMenuItem asChild>
-          <Link
-            href={`/app/classes/${classId}/edit-lesson?lessonId=${lessonId}`}
-          >
-            Edit
-          </Link>
-        </DropdownMenuItem>
+      <DropdownMenuContent className="w-16">
+        <Button variant="ghost" asChild className="justify-start w-full h-fit">
+          <DropdownMenuItem asChild>
+            <Link
+              href={`/app/classes/${classId}/edit-lesson?lessonId=${lessonId}`}
+            >
+              <Pencil className="h-4 w-4" />
+              Edit
+            </Link>
+          </DropdownMenuItem>
+        </Button>
 
         <AlertDialogModal
           title="Are you sure?"
@@ -48,9 +51,16 @@ export default function LessonsItemDropdown({
           onConfirm={() => deleteLesson(lessonId)}
           variant="destructive"
           alertTrigger={
-            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-              Delete
-            </DropdownMenuItem>
+            <Button
+              variant="destructive-ghost"
+              asChild
+              className="justify-start w-full h-fit"
+            >
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                <Trash className="h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            </Button>
           }
         />
       </DropdownMenuContent>

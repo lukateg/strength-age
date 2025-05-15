@@ -70,27 +70,5 @@ export default function MaterialsSection() {
         </ListItem>
       )}
     />
-    // <Card>
-    //   <CardHeader className="flex flex-row justify-between">
-    //     <div className="space-y-2">
-    //       <CardTitle>{lesson?.title}</CardTitle>
-    //       <CardDescription>{lesson?.description}</CardDescription>
-    //     </div>
-    //     <Button asChild>
-    //       <Link
-    //         href={`/app/classes/${lesson?.classId}/lessons/${lesson?._id}/file-upload`}
-    //       >
-    //         <Upload className="h-4 w-4 mr-2" />
-    //         Add new material
-    //       </Link>
-    //     </Button>
-    //   </CardHeader>
-
-    //   <CardContent>
-    //     <ItemsScrollArea className="h-[650px]">
-    //       <MaterialsList materials={lessonPDFs} />
-    //     </ItemsScrollArea>
-    //   </CardContent>
-    // </Card>
   );
 }

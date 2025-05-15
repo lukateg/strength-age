@@ -2,16 +2,6 @@ import { type Id } from "convex/_generated/dataModel";
 import { type ReactMutation } from "convex/react";
 import { type FunctionReference } from "convex/server";
 
-// TODO: Add correct types
-export interface PDFType {
-  _id: Id<"pdfs">;
-  _creationTime: number;
-  classId: Id<"classes">;
-  fileUrl: string;
-  name: string;
-  size: number;
-  userId: string;
-}
 // TODO: remove and ad Doc<"lessons">
 export type LessonsType = {
   _id: Id<"lessons">;

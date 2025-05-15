@@ -1,6 +1,17 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
-import { AuthenticationRequired } from "./utils/utils";
+import { AuthenticationRequired, createAppError } from "./utils/utils";
+import { internalMutation, mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
+
+import {
+  deleteLessonPdfsByClassIdBatch,
+  deleteLessonsByClassIdBatch,
+} from "./lessons";
+import {
+  deleteTestReviewsByClassIdBatch,
+  deleteTestsByClassIdBatch,
+} from "./tests";
+import { deletePdfsByClassIdBatch } from "./materials";
 
 export const getAllClassesByUserId = query({
   handler: async (ctx) => {
@@ -14,11 +25,16 @@ export const getAllClassesByUserId = query({
 });
 
 export const getClassById = query({
-  args: { id: v.id("classes") },
+  args: { id: v.string() },
   handler: async (ctx, { id }) => {
     await AuthenticationRequired({ ctx });
 
-    return await ctx.db.get(id);
+    const normalizedId = ctx.db.normalizeId("classes", id);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+    return await ctx.db.get(normalizedId);
   },
 });
 
@@ -32,5 +48,106 @@ export const createClass = mutation({
       description,
       userId,
     });
+  },
+});
+
+export const updateClass = mutation({
+  args: {
+    classId: v.string(),
+    title: v.string(),
+    description: v.string(),
+  },
+  handler: async (ctx, { classId, title, description }) => {
+    const userId = await AuthenticationRequired({ ctx });
+    const normalizedId = ctx.db.normalizeId("classes", classId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const existingClass = await ctx.db.get(normalizedId);
+    if (!existingClass) {
+      throw createAppError({ message: "Class not found" });
+    }
+
+    if (existingClass.userId !== userId) {
+      throw createAppError({ message: "Not authorized to update this class" });
+    }
+
+    return await ctx.db.patch(normalizedId, {
+      title,
+      description,
+    });
+  },
+});
+
+export const deleteClass = mutation({
+  args: { classId: v.string() },
+  handler: async (ctx, { classId }) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const normalizedId = ctx.db.normalizeId("classes", classId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const existingClass = await ctx.db.get(normalizedId);
+    if (!existingClass) {
+      throw new Error("Class not found");
+    }
+
+    if (existingClass.userId !== userId) {
+      throw new Error("Not authorized to delete this class");
+    }
+
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId: normalizedId,
+      userId,
+      phase: "lessonPdfs",
+      cursor: undefined,
+    });
+
+    await ctx.db.delete(normalizedId);
+
+    return { success: true };
+  },
+});
+
+export const batchDeleteClassData = internalMutation({
+  args: {
+    classId: v.id("classes"),
+    userId: v.string(),
+    phase: v.union(
+      v.literal("lessons"),
+      v.literal("pdfs"),
+      v.literal("lessonPdfs"),
+      v.literal("tests"),
+      v.literal("testReviews")
+    ),
+    cursor: v.optional(v.string()),
+  },
+  handler: async (ctx, { classId, userId, phase, cursor }) => {
+    try {
+      switch (phase) {
+        case "lessonPdfs":
+          await deleteLessonPdfsByClassIdBatch(ctx, classId, userId, cursor);
+          break;
+        case "lessons":
+          await deleteLessonsByClassIdBatch(ctx, classId, userId, cursor);
+          break;
+        case "pdfs":
+          await deletePdfsByClassIdBatch(ctx, classId, userId, cursor);
+          break;
+        case "tests":
+          await deleteTestsByClassIdBatch(ctx, classId, userId, cursor);
+          break;
+        case "testReviews":
+          await deleteTestReviewsByClassIdBatch(ctx, classId, userId, cursor);
+          break;
+      }
+    } catch (error) {
+      console.error(`Error during ${phase} deletion:`, error);
+    }
   },
 });

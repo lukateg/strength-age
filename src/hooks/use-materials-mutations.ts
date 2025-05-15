@@ -28,6 +28,7 @@ export const useMaterialsMutations = () => {
 
   // Mutations
   const addManyPdfsMutation = useMutation(api.materials.addManyPdfs);
+  const deletePdfMutation = useMutation(api.materials.deletePdf);
 
   const uploadManyPdfs = useCallback(
     async (params: {
@@ -65,10 +66,31 @@ export const useMaterialsMutations = () => {
     [classId, addManyPdfsMutation]
   );
 
+  const deletePdf = useCallback(
+    async (pdfId: Id<"pdfs">) => {
+      const toastId = toast.loading("Deleting...", {
+        description: "Please wait while we delete the file.",
+        duration: Infinity,
+      });
+
+      try {
+        await deletePdfMutation({ pdfId });
+        toast.dismiss(toastId);
+        toast.success("File deleted successfully.");
+      } catch (error) {
+        console.error("Failed to delete file:", error);
+        toast.dismiss(toastId);
+        toast.error("Failed to delete file. Please try again.");
+      }
+    },
+    [deletePdfMutation]
+  );
+
   return {
     isUploading,
     startUpload,
     uploadManyPdfs,
+    deletePdf,
     classId,
   };
 };

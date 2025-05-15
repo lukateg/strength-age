@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useTestMutations } from "@/hooks/use-test-mutation";
+import { useTestMutations } from "@/hooks/use-test-mutations";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useLoadingContext } from "@/providers/loading-context";
@@ -17,18 +17,14 @@ import QuestionConfigurationView from "./components/question-configuration-view/
 import BasicInformationView from "./components/basic-information-view";
 
 import { testFormSchema, type testSchema } from "@/lib/schemas";
-import { type z } from "zod";
-import { type Id } from "convex/_generated/dataModel";
 import { generateTest } from "@/server/test-actions";
+
+import { type z } from "zod";
 
 export type TestFormValues = z.infer<typeof testFormSchema>;
 export type GeneratedTest = z.infer<typeof testSchema>;
 
-export default function GenerateTestForm({
-  classId,
-}: {
-  classId?: Id<"classes">;
-}) {
+export default function GenerateTestForm({ classId }: { classId?: string }) {
   const router = useRouter();
   const { createTest } = useTestMutations();
   const { setLoading } = useLoadingContext();

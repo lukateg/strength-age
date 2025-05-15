@@ -1,21 +1,22 @@
+import { api } from "../../convex/_generated/api";
+import { toast } from "sonner";
+import { isAppError } from "../../convex/utils/utils";
 import { useCallback } from "react";
 import { useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
 import { useClass } from "@/providers/class-context-provider";
-import { toast } from "sonner";
+import { useUploadThing } from "./use-upload-thing";
 
 import {
   type LessonFormData,
   type CreateBasicLessonParams,
   type AddPDFToLessonParams,
+  type EditLessonFormData,
 } from "@/types/lesson";
-import { useUploadThing } from "./use-upload-thing";
-import { isAppError } from "../../convex/utils/utils";
 
 import { type Id } from "convex/_generated/dataModel";
 
 export const useLessonMutations = () => {
-  const { classId, materials: allMaterials } = useClass();
+  const { classId } = useClass();
   const { startUpload, isUploading } = useUploadThing("pdfUploader", {
     onUploadError: (error: Error) => {
       throw error;
@@ -27,14 +28,16 @@ export const useLessonMutations = () => {
   const addManyPdfsToLessonMutation = useMutation(
     api.lessons.addManyPdfsToLesson
   );
+  const updateLessonMutation = useMutation(api.lessons.updateLesson);
+  const deleteLessonMutation = useMutation(api.lessons.deleteLesson);
 
   const createLesson = useCallback(
-    async (data: LessonFormData) => {
+    async ({ title, description }: LessonFormData) => {
       try {
         const params: CreateBasicLessonParams = {
           classId,
-          title: data.lessonTitle,
-          description: data.lessonDescription,
+          title,
+          description,
         };
 
         const lessonId = await createLessonMutation(params);
@@ -55,16 +58,16 @@ export const useLessonMutations = () => {
 
   const uploadNewPdfsToLesson = useCallback(
     async ({
-      uploadedMaterials,
+      materialsToUpload,
       lessonId,
     }: {
-      uploadedMaterials: File[];
+      materialsToUpload: File[];
       lessonId: Id<"lessons">;
     }) => {
       const toastId = toast.loading("Please wait while we upload your files");
 
       try {
-        await startUpload(uploadedMaterials, { lessonId, classId });
+        await startUpload(materialsToUpload, { lessonId, classId });
 
         toast.dismiss(toastId);
         toast.success("PDFs uploaded to lesson successfully");
@@ -83,6 +86,7 @@ export const useLessonMutations = () => {
         await addManyPdfsToLessonMutation({
           lessonId: params.lessonId,
           pdfIds: params.pdfIds,
+          classId,
         });
 
         toast.success("PDFs added to lesson successfully");
@@ -91,7 +95,42 @@ export const useLessonMutations = () => {
         toast.error("Failed to add PDFs to lesson. Please try again");
       }
     },
-    [addManyPdfsToLessonMutation]
+    [addManyPdfsToLessonMutation, classId]
+  );
+
+  const updateLesson = useCallback(
+    async (data: { lessonId: string } & EditLessonFormData) => {
+      const { lessonId, title, description } = data;
+      try {
+        await updateLessonMutation({
+          lessonId,
+          title,
+          description,
+        });
+
+        toast.success("Lesson updated successfully");
+      } catch (error) {
+        let errorData = "Failed to update lesson. Please try again.";
+        if (isAppError(error)) {
+          errorData = error.data.message;
+        }
+        toast.error(errorData);
+      }
+    },
+    [updateLessonMutation]
+  );
+
+  const deleteLesson = useCallback(
+    async (lessonId: string) => {
+      try {
+        await deleteLessonMutation({ lessonId });
+        toast.success("Lesson deleted successfully");
+      } catch (error) {
+        console.error("Failed to delete lesson:", error);
+        toast.error("Failed to delete lesson. Please try again.");
+      }
+    },
+    [deleteLessonMutation]
   );
 
   return {
@@ -99,7 +138,8 @@ export const useLessonMutations = () => {
     createLesson,
     addExistingPdfsToLesson,
     uploadNewPdfsToLesson,
+    updateLesson,
+    deleteLesson,
     classId,
-    allMaterials,
   };
 };

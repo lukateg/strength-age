@@ -1,57 +1,19 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { useClassMutations } from "@/hooks/use-class-mutation";
+import { useClassMutations } from "@/hooks/use-class-mutations";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { BookOpen } from "lucide-react";
-import { ArrowLeft } from "lucide-react";
-
+import ClassForm, { type ClassFormData } from "../components/class-form";
 import RedirectBackButton from "@/components/redirect-back-button";
 
-const formSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Class title is required")
-    .max(50, "Class title cannot be longer than 50 characters"),
-  description: z
-    .string()
-    .min(1, "Class description is required")
-    .max(200, "Class description cannot be longer than 200 characters"),
-});
+import { ArrowLeft, BookOpen } from "lucide-react";
 
-type FormData = z.infer<typeof formSchema>;
-
-export default function NewClassPage() {
+export default function CreateClassPage() {
   const router = useRouter();
   const { createClass } = useClassMutations();
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-    },
-  });
-
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: ClassFormData) => {
     void createClass({
       title: data.title,
       description: data.description,
@@ -74,51 +36,7 @@ export default function NewClassPage() {
           </p>
         </div>
       </div>
-
-      <Card className="p-6">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Class Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter class title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Class Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Enter class description"
-                      className="min-h-[120px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-end gap-4">
-              <Button type="button" variant="outline" asChild>
-                <Link href={`/app/classes`}>Cancel</Link>
-              </Button>
-              <Button type="submit">Create Class</Button>
-            </div>
-          </form>
-        </Form>
-      </Card>
+      <ClassForm onSubmit={onSubmit} />
     </div>
   );
 }

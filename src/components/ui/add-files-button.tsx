@@ -4,17 +4,17 @@ import React from "react";
 import { Button } from "./button";
 
 export default function AddFilesButton({
-  selectedMaterials,
+  materialsToAdd,
   startAdding,
 }: {
-  selectedMaterials: string[];
+  materialsToAdd: string[];
   startAdding: () => void;
 }) {
   return (
     <Button
       className="w-full"
       onClick={() => startAdding()}
-      disabled={selectedMaterials.length === 0}
+      disabled={materialsToAdd.length === 0}
     >
       {false ? (
         <>
@@ -24,8 +24,8 @@ export default function AddFilesButton({
       ) : (
         <>
           <Cloud className="mr-2 h-4 w-4" />
-          Add {selectedMaterials.length} file
-          {selectedMaterials.length !== 1 ? "s" : ""}
+          Add {materialsToAdd.length} file
+          {materialsToAdd.length !== 1 ? "s" : ""}
         </>
       )}
     </Button>

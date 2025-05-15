@@ -7,29 +7,64 @@ check before launch:
 // -- check if there is better way to add chunking text prompt
 // -- check if all routes are covered with the fallback and if URL security is enough
 
--- remove pdfItems from getLessonData, these need to be separated
 -- check why uploading calls 3 requests and is so slow ///
--- create suspense component for pending and error state
+create consistent pattern for loading skeleton, error case, and not found case
+create reusable components for error and not found case and use them across the app
 -- create custom fetch function with convex token
 -- retry test multiple times and redirect back willaredirect you through multiple test reviews
 // - add error messages for each scenario that comes from the server -- iplement solution across all mutations and whole app
 // - lesson page should be new page because redirect works bad
+-- handle case when statusText: 'Service Unavailable' 
+-- implement proper error boundary
+-- use normaliseId across app where you use id from the url
+-- change userId on all tables to be createdBy
+-- rename SelectFormItem to FormSelect
+-- remove all loading... 
+-- create main page components like main-header and reuse it across the app
+-- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class
+-- replace all history back buttons with normal routes and align all layout patterns
+-- edit section buttons should have beautifull purple design maybe
+-- check case when generating test with lesson that has 0 materials
+-- add mobile design to the sections again
+-- decide if you want to go with with promise.all and pageSkeleton or with streaming and each component skeleton
+
+BUGS
+-- redirect after test creation still doesn't work properly(test with multiple lessons)
+-- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
+-- lesson title is not working when generating multiple lesson test
 
 
-// TODO
--- add permisions
+test fast clicks on submit buttons that do not have disabled props
+edit lesson has no submit button
 
-PRE OVOGA MORAS POCISTITI SVE STO STOJI U NAPOMENAMA GORE
--- Add delete and edit
+
+
+PLAN:
+-- add permisions so user can access only its own content (change param userId to createdBy)
+-- add share button for test result and implement share link logic
 -- add modals on all needed actions
--- maybe add settings page
+-- add additional info prompt when generating the test
+-- handle case when LLM is not working
+-- add test preview page that would be oppened when test is generated or before retrying test that has basic info and a start (positive) button
+-- add settings page
 -- Add analytics
 -- add payments
--- check free tier plan and work out permisions and free plan
+-- add free tier permission system
+-- pocisti bagove
+-- SEO check
+-- check free tier plan and work out permisions and free plan for max classes, lessons, pdfs in mb, tests and ai token calls
+-- in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
+-- release to prod
+-- wait for the analytics results and think about the compex permisions and test sharing and start sprint 2
+-- if test is deleted retry button on testReview page should be disabled
 
-MAYBE IN FUTURE
+SETTINGS PAGE
 -- in settings page add TEST SETTINGs (setting up if user wants all questions on one page, or he wants pagination)
 -- in settings page add TEST SETTINGS (if user wants to have only one question true when multiple questions)
+-- in settings page add ANSWER REQUIRED (if user wants to be able to submit test with answers that are not answered)
+-- in settings page add I DONT KNOW (if user wants to have don't know answer when multiple question)
+
+MAYBE IN FUTURE
 -TEST GENERATION
 -- add additional prompt section to test generation so user can add additional instruction for test
 -- add importing previous tests when generating test so AI knows not to generate same questions
@@ -37,6 +72,8 @@ MAYBE IN FUTURE
 -- implement custom question number per lesson
 -- add abort test generating when clicking on the X in the loader
 -- maybe add sharing tests between user as a social media app
+-- add "..." for each pdf and implement edit logic "check if edit can edit text in the uploadThing
+
 
 FUTURE FEATURES:
 - test sharing between users and groups

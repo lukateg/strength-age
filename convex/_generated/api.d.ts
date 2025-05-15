@@ -13,6 +13,7 @@ import type * as http from "../http.js";
 import type * as lessons from "../lessons.js";
 import type * as materials from "../materials.js";
 import type * as tests from "../tests.js";
+import type * as uploadThingActions from "../uploadThingActions.js";
 import type * as users from "../users.js";
 import type * as utils_utils from "../utils/utils.js";
 
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   lessons: typeof lessons;
   materials: typeof materials;
   tests: typeof tests;
+  uploadThingActions: typeof uploadThingActions;
   users: typeof users;
   "utils/utils": typeof utils_utils;
 }>;
@@ -111,83 +113,6 @@ export declare const components: {
         }>
       >;
       migrate: FunctionReference<
-        "mutation",
-        "internal",
-        {
-          batchSize?: number;
-          cursor?: string | null;
-          dryRun: boolean;
-          fnHandle: string;
-          name: string;
-          next?: Array<{ fnHandle: string; name: string }>;
-        },
-        {
-          batchSize?: number;
-          cursor?: string | null;
-          error?: string;
-          isDone: boolean;
-          latestEnd?: number;
-          latestStart: number;
-          name: string;
-          next?: Array<string>;
-          processed: number;
-          state: "inProgress" | "success" | "failed" | "canceled" | "unknown";
-        }
-      >;
-    };
-    public: {
-      cancel: FunctionReference<
-        "mutation",
-        "internal",
-        { name: string },
-        {
-          batchSize?: number;
-          cursor?: string | null;
-          error?: string;
-          isDone: boolean;
-          latestEnd?: number;
-          latestStart: number;
-          name: string;
-          next?: Array<string>;
-          processed: number;
-          state: "inProgress" | "success" | "failed" | "canceled" | "unknown";
-        }
-      >;
-      cancelAll: FunctionReference<
-        "mutation",
-        "internal",
-        { sinceTs?: number },
-        Array<{
-          batchSize?: number;
-          cursor?: string | null;
-          error?: string;
-          isDone: boolean;
-          latestEnd?: number;
-          latestStart: number;
-          name: string;
-          next?: Array<string>;
-          processed: number;
-          state: "inProgress" | "success" | "failed" | "canceled" | "unknown";
-        }>
-      >;
-      getStatus: FunctionReference<
-        "query",
-        "internal",
-        { limit?: number; migrationNames?: Array<string> },
-        Array<{
-          batchSize?: number;
-          cursor?: string | null;
-          error?: string;
-          isDone: boolean;
-          latestEnd?: number;
-          latestStart: number;
-          name: string;
-          next?: Array<string>;
-          processed: number;
-          state: "inProgress" | "success" | "failed" | "canceled" | "unknown";
-        }>
-      >;
-      runMigration: FunctionReference<
         "mutation",
         "internal",
         {

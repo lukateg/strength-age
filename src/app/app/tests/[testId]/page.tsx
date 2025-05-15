@@ -19,7 +19,7 @@ import TestSkeleton from "./components/test-skeleton";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 import NotFound from "@/components/not-found";
 
-import { useTestMutations } from "@/hooks/use-test-mutation";
+import { useTestMutations } from "@/hooks/use-test-mutations";
 import { useLoadingContext } from "@/providers/loading-context";
 import { toast } from "sonner";
 
@@ -29,7 +29,7 @@ import { createAnswerSchema } from "@/lib/schemas";
 
 import { type Id } from "../../../../../convex/_generated/dataModel";
 import type * as z from "zod";
-import { Pause, CircleX } from "lucide-react";
+import { Pause, CircleX, DoorOpen } from "lucide-react";
 import { reviewTest } from "@/server/test-actions";
 
 export type TestQuestion = {
@@ -113,12 +113,11 @@ export default function TestPage() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-8 text-center flex justify-between items-center">
             <Button
-              variant="outline"
+              variant="destructive"
               onClick={() => router.back()}
-              className="mr-4 border-red-600/50 text-primary border-2"
               type="button"
             >
-              <CircleX className="w-4 h-4 text-red-600/50" />
+              <DoorOpen />
               <span className="hidden md:block md:ml-2">Exit Test</span>
             </Button>
             <div className="flex-1">
@@ -131,13 +130,8 @@ export default function TestPage() {
             </div>
 
             <FeatureFlagTooltip>
-              <Button
-                type="button"
-                variant="outline"
-                className="border-green-600/90 text-primary border-2"
-                disabled
-              >
-                <Pause className="w-4 h-4 text-green-600/90" />
+              <Button type="button" variant="positive" disabled>
+                <Pause className="w-4 h-4" />
                 <span className="hidden md:block md:ml-2">Pause Test</span>
               </Button>
             </FeatureFlagTooltip>

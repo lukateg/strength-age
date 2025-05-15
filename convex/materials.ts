@@ -1,6 +1,10 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { AuthenticationRequired } from "./utils/utils";
+import { AuthenticationRequired, createAppError } from "./utils/utils";
+import { internal } from "./_generated/api";
+
+import { type DataModel, type Id } from "./_generated/dataModel";
+import { type GenericMutationCtx } from "convex/server";
 
 export const addPdf = mutation({
   args: {
@@ -12,7 +16,6 @@ export const addPdf = mutation({
     }),
   },
   handler: async (ctx, { classId, pdf }) => {
-    console.log("Adding PDF to database CONVEX:", pdf, ctx);
     const userId = await AuthenticationRequired({ ctx });
 
     const pdfId = await ctx.db.insert("pdfs", {
@@ -93,25 +96,91 @@ export const getPdfsForLesson = query({
   },
 });
 
-// export const addPdfToLesson = mutation({
-//   args: {
-//     lessonId: v.id("lessons"),
-//     pdfId: v.id("pdfs"),
-//   },
-//   handler: async (ctx, args) => {
-//     // Check if relationship already exists
-//     const existing = await ctx.db
-//       .query("lessonPdfs")
-//       .withIndex("by_lessonId", q =>
-//         q.eq("lessonId", args.lessonId).eq("pdfId", args.pdfId)
-//       )
-//       .unique();
+export async function deleteLessonPdfRelationsByPdfId(
+  ctx: GenericMutationCtx<DataModel>,
+  pdfId: Id<"pdfs">
+) {
+  const lessonPdfs = await ctx.db
+    .query("lessonPdfs")
+    .withIndex("by_pdfId", (q) => q.eq("pdfId", pdfId))
+    .collect();
 
-//     if (!existing) {
-//       await ctx.db.insert("lessonPdfs", {
-//         lessonId: args.lessonId,
-//         pdfId: args.pdfId,
-//       });
-//     }
-//   },
-// });
+  for (const lessonPdf of lessonPdfs) {
+    await ctx.db.delete(lessonPdf._id);
+  }
+}
+
+export const deletePdf = mutation({
+  args: { pdfId: v.id("pdfs") },
+  handler: async (ctx, { pdfId }) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const pdf = await ctx.db.get(pdfId);
+    if (!pdf) {
+      throw createAppError({
+        message: "PDF not found",
+      });
+    }
+
+    if (pdf.userId !== userId) {
+      throw createAppError({
+        message: "Not authorized to delete this PDF",
+      });
+    }
+
+    await deleteLessonPdfRelationsByPdfId(ctx, pdfId);
+
+    await ctx.scheduler.runAfter(
+      0,
+      internal.uploadThingActions.deleteFileFromUploadThing,
+      {
+        pdf,
+      }
+    );
+
+    await ctx.db.delete(pdfId);
+
+    return { success: true };
+  },
+});
+
+export async function deletePdfsByClassIdBatch(
+  ctx: GenericMutationCtx<DataModel>,
+  classId: Id<"classes">,
+  userId: string,
+  cursor?: string
+) {
+  const BATCH_SIZE = 100;
+  const { page, isDone, continueCursor } = await ctx.db
+    .query("pdfs")
+    .withIndex("by_class_user", (q) => q.eq("classId", classId))
+    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
+
+  for (const pdf of page) {
+    await ctx.scheduler.runAfter(
+      0,
+      internal.uploadThingActions.deleteFileFromUploadThing,
+      {
+        pdf,
+      }
+    );
+
+    await ctx.db.delete(pdf._id);
+  }
+
+  if (!isDone) {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "pdfs",
+      cursor: continueCursor,
+    });
+  } else {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "tests",
+      cursor: undefined,
+    });
+  }
+}

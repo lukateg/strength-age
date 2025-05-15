@@ -1,6 +1,10 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { AuthenticationRequired } from "./utils/utils";
+import { AuthenticationRequired, createAppError } from "./utils/utils";
+import { internal } from "./_generated/api";
+
+import { type DataModel, type Id } from "./_generated/dataModel";
+import { type GenericMutationCtx } from "convex/server";
 
 export const createTest = mutation({
   args: {
@@ -175,5 +179,114 @@ export const getWeeklyTestsByUserId = query({
       .collect();
 
     return recentTests;
+  },
+});
+
+export async function deleteTestsByClassIdBatch(
+  ctx: GenericMutationCtx<DataModel>,
+  classId: Id<"classes">,
+  userId: string,
+  cursor?: string
+) {
+  const BATCH_SIZE = 100;
+  const { page, isDone, continueCursor } = await ctx.db
+    .query("tests")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .filter((q) => q.eq(q.field("classId"), classId))
+    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
+
+  for (const test of page) {
+    await ctx.db.delete(test._id);
+  }
+
+  if (!isDone) {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "tests",
+      cursor: continueCursor,
+    });
+  } else {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "testReviews",
+      cursor: undefined,
+    });
+  }
+}
+
+export async function deleteTestReviewsByClassIdBatch(
+  ctx: GenericMutationCtx<DataModel>,
+  classId: Id<"classes">,
+  userId: string,
+  cursor?: string
+) {
+  const BATCH_SIZE = 100;
+  const { page, isDone, continueCursor } = await ctx.db
+    .query("testReviews")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .filter((q) => q.eq(q.field("classId"), classId))
+    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
+
+  for (const review of page) {
+    await ctx.db.delete(review._id);
+  }
+
+  if (!isDone) {
+    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
+      classId,
+      userId,
+      phase: "testReviews",
+      cursor: continueCursor,
+    });
+  }
+}
+
+export const deleteTestReview = mutation({
+  args: { testReviewId: v.id("testReviews") },
+  handler: async (ctx, { testReviewId }) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const testReview = await ctx.db.get(testReviewId);
+    if (!testReview) {
+      throw createAppError({
+        message: "Test review not found",
+      });
+    }
+
+    if (testReview.userId !== userId) {
+      throw createAppError({
+        message: "Not authorized to delete this test review",
+      });
+    }
+
+    await ctx.db.delete(testReviewId);
+
+    return { success: true };
+  },
+});
+
+export const deleteTest = mutation({
+  args: { testId: v.id("tests") },
+  handler: async (ctx, { testId }) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const test = await ctx.db.get(testId);
+    if (!test) {
+      throw createAppError({
+        message: "Test not found",
+      });
+    }
+
+    if (test.userId !== userId) {
+      throw createAppError({
+        message: "Not authorized to delete this test",
+      });
+    }
+
+    await ctx.db.delete(testId);
+
+    return { success: true };
   },
 });

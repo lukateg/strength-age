@@ -128,6 +128,15 @@ export default function LessonSelectTable({
                   <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                 </TableCell>
               </TableRow>
+            ) : lessons.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No lessons available for this class.
+                </TableCell>
+              </TableRow>
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
@@ -166,7 +175,7 @@ export default function LessonSelectTable({
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {field.value.length} of {lessons?.length} row(s) selected.
+          {field.value.length} of {lessons?.length ?? 0} row(s) selected.
         </div>
       </div>
     </div>

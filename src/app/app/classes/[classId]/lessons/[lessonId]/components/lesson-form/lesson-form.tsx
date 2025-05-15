@@ -25,6 +25,7 @@ import { Loader2 } from "lucide-react";
 
 import { type LessonFormData } from "@/types/lesson";
 import { type Doc } from "convex/_generated/dataModel";
+import { useClass } from "@/providers/class-context-provider";
 
 export default function LessonForm({
   isEditMode = false,
@@ -47,7 +48,8 @@ export default function LessonForm({
   });
 
   const { handleSubmit, control, setValue, watch, clearErrors } = form;
-  const { classId, allMaterials, isUploading } = useLessonMutations();
+  const { classId, isUploading } = useLessonMutations();
+  const { materialsByClass } = useClass();
 
   const materialsToUpload = watch("materialsToUpload", []);
   const showExistingMaterials = watch("showExistingMaterials", false);
@@ -95,7 +97,7 @@ export default function LessonForm({
                 setValue("showExistingMaterials", checked)
               }
               materialsToUpload={materialsToUpload}
-              allMaterials={allMaterials.data}
+              allMaterials={materialsByClass.data}
               control={control}
               setValue={setValue}
               clearErrors={clearErrors}

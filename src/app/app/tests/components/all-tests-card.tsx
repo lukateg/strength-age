@@ -1,49 +1,29 @@
 "use client";
 
-import { useClass } from "@/providers/class-context-provider";
 import { useTestMutations } from "@/hooks/use-test-mutation";
+import { useTests } from "@/providers/tests-provider";
 
-import ListItem from "@/components/list-item";
+import ListCard, { ListItem } from "@/components/list-card";
 import RetryTestButton from "@/components/retry-test-button";
 import AlertDialogModal from "@/components/alert-dialog";
 
 import { Button } from "@/components/ui/button";
 
-import { FileText, Loader, RotateCcw, Trash } from "lucide-react";
+import { FileText, RotateCcw, Trash } from "lucide-react";
 
-export default function TestsList() {
-  const { tests } = useClass();
+export default function TestsSection() {
+  const { testsByUser } = useTests();
   const { deleteTest } = useTestMutations();
 
-  if (tests.isPending) {
-    return <Loader />;
-  }
-
-  if (tests.isError) {
-    return <div>Error loading tests</div>;
-  }
-
-  if (tests.isSuccess && tests.data.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <h3 className="text-lg font-medium">No Tests Yet</h3>
-        <p className="text-muted-foreground mt-2">
-          Create your first test to get started!
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <>
-      {tests.data?.map((test) => (
-        <ListItem key={test._id} variant="outline">
-          <div className="flex items-center">
-            <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-            <span className="text-sm md:text-base w-[14ch] md:w-full text-ellipsis overflow-hidden whitespace-nowrap">
-              {test?.title}
-            </span>
-          </div>
+    <ListCard
+      title="Tests"
+      description="All tests created by you"
+      height="h-[400px] md:h-[650px]"
+      items={testsByUser?.data}
+      isLoading={testsByUser?.isPending}
+      renderItem={(test) => (
+        <ListItem key={test._id} icon={FileText} title={test.title}>
           <div className="flex gap-2">
             <RetryTestButton to={`/app/tests/${test._id}`} variant="outline">
               <RotateCcw className="h-4 w-4" />
@@ -71,7 +51,7 @@ export default function TestsList() {
             />
           </div>
         </ListItem>
-      ))}
-    </>
+      )}
+    />
   );
 }

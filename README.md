@@ -30,6 +30,10 @@ check before launch:
 -- edit section buttons should have beautifull purple design maybe
 -- for exit test set new icon (exit door icon)
 -- check case when generating test with lesson that has 0 materials
+-- delete word in the dropdown should be red color
+-- rename use test mutation to use test mutationS
+-- add mobile design to the sections again
+-- decide if you want to go with with promise.all and pageSkeleton or with streaming and each component skeleton
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)

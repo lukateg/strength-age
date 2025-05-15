@@ -16,7 +16,7 @@ import {
 import { type Id } from "convex/_generated/dataModel";
 
 export const useLessonMutations = () => {
-  const { classId, materials: allMaterials } = useClass();
+  const { classId } = useClass();
   const { startUpload, isUploading } = useUploadThing("pdfUploader", {
     onUploadError: (error: Error) => {
       throw error;
@@ -141,6 +141,5 @@ export const useLessonMutations = () => {
     updateLesson,
     deleteLesson,
     classId,
-    allMaterials,
   };
 };

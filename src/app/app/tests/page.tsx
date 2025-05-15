@@ -5,18 +5,18 @@ import { Button } from "@/components/ui/button";
 import { FilePlus2 } from "lucide-react";
 import { useTests } from "@/providers/tests-provider";
 
-import RecentTests from "./components/recent-tests";
-import RecentReviews from "./components/recent-reviews";
+import RecentTests from "./components/recent-tests-card";
+import RecentReviews from "./components/recent-reviews-card";
 import DashboardStats from "../../../components/dashboard-stats";
-import TestsSection from "./components/tests-section/tests-section";
-import TestReviewsSection from "./components/test-reviews-section/test-reviews-section";
+import AllTestsCard from "./components/all-tests-card";
+import AllTestReviewsCard from "./components/all-test-reviews-card";
 
 import { generateStats } from "./utils";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function Tests() {
-  const { testsByUser, testReviewsByUser, weeklyTestReviews, weeklyTests } =
-    useTests();
+  // TODO: create a function with Promise.all to fetch all the data at useTests and then here implement loading skeleton pattern
+  const { testsByUser, testReviewsByUser, weeklyTestReviews } = useTests();
 
   const stats = generateStats(
     testReviewsByUser?.data,
@@ -60,18 +60,18 @@ export default function Tests() {
 
         <TabsContent value="recent" className="space-y-4">
           <div className="grid gap-6 xl:grid-cols-2">
-            <RecentTests testsByUser={weeklyTests?.data} />
+            <RecentTests />
 
-            <RecentReviews testReviewsByUser={weeklyTestReviews?.data} />
+            <RecentReviews />
           </div>
         </TabsContent>
 
         <TabsContent value="tests" className="space-y-4">
-          <TestsSection />
+          <AllTestsCard />
         </TabsContent>
 
         <TabsContent value="reviews" className="space-y-4">
-          <TestReviewsSection />
+          <AllTestReviewsCard />
         </TabsContent>
       </Tabs>
     </div>

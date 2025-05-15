@@ -35,7 +35,7 @@ type FormData = z.infer<ReturnType<typeof addLessonMaterialsSchema>>;
 export default function FileUploadPage() {
   const [showExistingMaterials, setShowExistingMaterials] = useState(false);
   const router = useRouter();
-  const { lessons, materials, classId } = useClass();
+  const { lessonsByClass, materialsByClass, classId } = useClass();
   const { addExistingPdfsToLesson, uploadNewPdfsToLesson, isUploading } =
     useLessonMutations();
   const { lessonId }: { lessonId: Id<"lessons"> } = useParams();
@@ -106,7 +106,7 @@ export default function FileUploadPage() {
               render={({ field }) => (
                 <SelectFormItem
                   {...field}
-                  items={lessons.data}
+                  items={lessonsByClass.data}
                   label="Lesson"
                   placeholder="Select a lesson"
                   defaultValue="none"
@@ -121,7 +121,7 @@ export default function FileUploadPage() {
               showExistingMaterials={showExistingMaterials}
               onShowExistingMaterialsChange={setShowExistingMaterials}
               materialsToUpload={materialsToUpload}
-              allMaterials={materials.data}
+              allMaterials={materialsByClass.data}
               control={control}
               setValue={setValue}
               clearErrors={clearErrors}

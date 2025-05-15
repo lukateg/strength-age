@@ -6,8 +6,8 @@ import { generateStats } from "./utils";
 
 import { Button } from "@/components/ui/button";
 
-import RecentClasses from "./components/recent-classes";
-import RecentTests from "./tests/components/recent-tests";
+import RecentClasses from "./components/recent-classes-section";
+import RecentTests from "./tests/components/recent-tests-card";
 import DashboardStats from "@/components/dashboard-stats";
 
 import { Plus } from "lucide-react";
@@ -54,8 +54,8 @@ export default function Dashboard() {
       <DashboardStats stats={stats} />
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <RecentClasses classesByUser={classes.data} />
-        <RecentTests testsByUser={allTests.data} />
+        <RecentClasses />
+        <RecentTests />
       </div>
     </div>
   );

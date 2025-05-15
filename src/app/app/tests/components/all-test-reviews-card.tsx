@@ -1,51 +1,29 @@
 "use client";
 
-import Link from "next/link";
+import { useTests } from "@/providers/tests-provider";
+import { useTestMutations } from "@/hooks/use-test-mutation";
 
-import ListItem from "@/components/list-item";
-import Loader from "@/components/loader";
-import NotFound from "@/components/not-found";
+import Link from "next/link";
+import ListCard, { ListItem } from "@/components/list-card";
 import AlertDialogModal from "@/components/alert-dialog";
 
 import { Button } from "@/components/ui/button";
-import { useClass } from "@/providers/class-context-provider";
-import { useTestMutations } from "@/hooks/use-test-mutation";
 
-import { FileText, Eye, Trash } from "lucide-react";
+import { Brain, Eye, Trash } from "lucide-react";
 
-export default function TestsList() {
-  const { testReviews } = useClass();
+export default function TestReviewsSection() {
+  const { testReviewsByUser } = useTests();
   const { deleteTestReview } = useTestMutations();
 
-  if (testReviews.isPending) {
-    return <Loader />;
-  }
-
-  if (testReviews.isError) {
-    return <NotFound />;
-  }
-
-  if (testReviews.isSuccess && testReviews.data.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <h3 className="text-lg font-medium">No Tests Yet</h3>
-        <p className="text-muted-foreground mt-2">
-          Create your first test to get started!
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <>
-      {testReviews.data.map((testReview) => (
-        <ListItem key={testReview._id} variant="outline">
-          <div className="flex items-center">
-            <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-            <span className="text-sm md:text-base w-[14ch] md:w-full text-ellipsis overflow-hidden whitespace-nowrap">
-              {testReview.title}
-            </span>
-          </div>
+    <ListCard
+      title="Test Reviews"
+      description="All test reviews created by you"
+      height="h-[400px] md:h-[650px]"
+      items={testReviewsByUser?.data}
+      isLoading={testReviewsByUser?.isPending}
+      renderItem={(testReview) => (
+        <ListItem key={testReview._id} icon={Brain} title={testReview.title}>
           <div className="flex gap-2">
             <Button variant="outline" size="sm">
               <Link
@@ -78,7 +56,7 @@ export default function TestsList() {
             />
           </div>
         </ListItem>
-      ))}
-    </>
+      )}
+    />
   );
 }

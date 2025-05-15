@@ -14,10 +14,10 @@ import { type QueryStatus } from "@/hooks/use-authenticated-query";
 interface ClassContextType {
   classId: Id<"classes">;
   userId?: string;
-  materials: QueryStatus<typeof api.materials.getPdfsByClassId>; // Replace `any` with your material type
-  lessons: QueryStatus<typeof api.lessons.getLessonsByClass>;
-  tests: QueryStatus<typeof api.tests.getAllTestsByClassId>;
-  testReviews: QueryStatus<typeof api.tests.getTestReviewsByClassId>;
+  materialsByClass: QueryStatus<typeof api.materials.getPdfsByClassId>; // Replace `any` with your material type
+  lessonsByClass: QueryStatus<typeof api.lessons.getLessonsByClass>;
+  testsByClass: QueryStatus<typeof api.tests.getAllTestsByClassId>;
+  testReviewsByClass: QueryStatus<typeof api.tests.getTestReviewsByClassId>;
   classData: QueryStatus<typeof api.classes.getClassById>;
 }
 
@@ -35,24 +35,24 @@ export function ClassProvider({
 
   // TODO: Maybe remove queries from the context so they dont run initially, and instead when the component mounts
   // Fetch materials for the class
-  const materials = useAuthenticatedQueryWithStatus(
+  const materialsByClass = useAuthenticatedQueryWithStatus(
     api.materials.getPdfsByClassId,
     {
       classId,
     }
   );
   // TODO: check if queries by both user and class
-  const lessons = useAuthenticatedQueryWithStatus(
+  const lessonsByClass = useAuthenticatedQueryWithStatus(
     api.lessons.getLessonsByClass,
     {
       classId,
     }
   );
-  const tests = useAuthenticatedQueryWithStatus(
+  const testsByClass = useAuthenticatedQueryWithStatus(
     api.tests.getAllTestsByClassId,
     { classId }
   );
-  const testReviews = useAuthenticatedQueryWithStatus(
+  const testReviewsByClass = useAuthenticatedQueryWithStatus(
     api.tests.getTestReviewsByClassId,
     {
       classId,
@@ -67,10 +67,10 @@ export function ClassProvider({
       value={{
         classId,
         userId,
-        materials,
-        lessons,
-        tests,
-        testReviews,
+        materialsByClass,
+        lessonsByClass,
+        testsByClass,
+        testReviewsByClass,
         classData,
       }}
     >

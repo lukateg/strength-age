@@ -6,7 +6,7 @@ import { api } from "../../../../../../../convex/_generated/api";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import MaterialsSection from "./components/materials-section";
+import AllMaterialsByLessonCard from "./components/all-materials-by-lesson-card";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 import SectionHeader from "@/components/page-components/page-header";
 
@@ -19,21 +19,18 @@ export default function LessonPage() {
     lessonId,
     classId,
   }: { lessonId: Id<"lessons">; classId: Id<"classes"> } = useParams();
-  const lessonData = useAuthenticatedQueryWithStatus(
-    api.lessons.getLessonById,
-    {
-      lessonId,
-    }
-  );
+  const lesson = useAuthenticatedQueryWithStatus(api.lessons.getLessonById, {
+    lessonId,
+  });
 
-  if (lessonData.isPending) {
+  if (lesson.isPending) {
     return <PageSkeleton />;
   }
 
-  if (lessonData.isError) {
+  if (lesson.isError) {
     return <NotFound />;
   }
-  if (!lessonData.data) {
+  if (!lesson.data) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium">Lesson not found</h3>
@@ -47,8 +44,8 @@ export default function LessonPage() {
   return (
     <div className="space-y-10">
       <SectionHeader
-        title={lessonData.data?.title}
-        description={lessonData.data?.description}
+        title={lesson.data?.title}
+        description={lesson.data?.description}
         backRoute={`/app/classes/${classId}`}
         editRoute={`/app/classes/${classId}/edit-lesson?lessonId=${lessonId}`}
         editButtonText={"Edit Lesson"}
@@ -64,7 +61,7 @@ export default function LessonPage() {
         </TabsList>
 
         <TabsContent value="lessonMaterials" className="space-y-4">
-          <MaterialsSection />
+          <AllMaterialsByLessonCard />
         </TabsContent>
       </Tabs>
     </div>

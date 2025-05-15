@@ -2,10 +2,9 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import MaterialsSectionComponent from "./components/materials-section";
-import LessonsSectionComponent from "./components/lessons-section/lessons-section";
-import TestsSection from "./components/tests-section";
-import TestReviewsSection from "./components/tests-reviews-section";
+import MaterialsSectionComponent from "./components/materials-by-class-card";
+import LessonsSectionComponent from "./components/lessons-by-class-card/lessons-by-class-card";
+import TestsSection from "./components/tests-by-class-card";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 import PageSkeleton from "@/components/page-components/page-skeleton";
 import NotFound from "@/components/not-found";
@@ -74,15 +73,11 @@ export default function ClassPage() {
         </TabsContent>
 
         <TabsContent value="materials" className="space-y-4">
-          <MaterialsSectionComponent classId={classId} />
+          <MaterialsSectionComponent />
         </TabsContent>
 
         <TabsContent value="tests" className="space-y-4">
           <TestsSection classId={classId} />
-        </TabsContent>
-
-        <TabsContent value="test-reviews" className="space-y-4">
-          <TestReviewsSection />
         </TabsContent>
       </Tabs>
     </div>

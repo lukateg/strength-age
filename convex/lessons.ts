@@ -100,25 +100,25 @@ export const getLessonById = query({
   },
 });
 
-export const getLessonData = query({
+export const getLessonPdfs = query({
   args: v.object({
     lessonId: v.id("lessons"),
   }),
   handler: async (ctx, { lessonId }) => {
     await AuthenticationRequired({ ctx });
-    const lesson = await ctx.db.get(lessonId);
-
-    // TODO: - since we initially load all pdfs already, we can move this logic to context and avoid fetching all pdfs and duplicating logic
     const lessonPdfs = await ctx.db
       .query("lessonPdfs")
       .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
       .collect();
 
-    const lessonPDFs = await Promise.all(
+    const pdfsByLesson = await Promise.all(
       lessonPdfs.map(async (lp) => await ctx.db.get(lp.pdfId))
     );
 
-    return { lesson, lessonPDFs };
+    // Filter out any null PDFs
+    return pdfsByLesson.filter(
+      (pdf): pdf is NonNullable<typeof pdf> => pdf !== null
+    );
   },
 });
 

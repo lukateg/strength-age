@@ -27,8 +27,8 @@ export default function LessonsItemDropdown({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="">
+      <DropdownMenuTrigger asChild className="h-fit p-2">
+        <Button variant="ghost">
           <EllipsisVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>

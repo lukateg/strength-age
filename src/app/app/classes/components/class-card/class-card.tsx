@@ -31,7 +31,9 @@ export default function ClassCard({
           <CardDescription>{classItem.description}</CardDescription>
         </div>
 
-        <ClassCardDropdown classId={classItem._id} />
+        <div className="absolute top-2 right-2">
+          <ClassCardDropdown classId={classItem._id} />
+        </div>
       </CardHeader>
 
       <CardContent>

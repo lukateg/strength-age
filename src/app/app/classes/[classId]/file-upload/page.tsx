@@ -36,7 +36,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export default function FileUploadPage() {
-  const { classId, lessons } = useClass();
+  const { classId, lessonsByClass } = useClass();
   const router = useRouter();
 
   const form = useForm<FormData>({
@@ -80,7 +80,7 @@ export default function FileUploadPage() {
             name="lessonId"
             render={({ field }) => (
               <SelectFormItem
-                items={lessons.data}
+                items={lessonsByClass.data}
                 label="Select Lesson"
                 placeholder="none"
                 defaultValue="none"

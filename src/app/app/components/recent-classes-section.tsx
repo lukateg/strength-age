@@ -1,6 +1,6 @@
 "use client";
 
-import { api } from "convex/_generated/api";
+import { api } from "../../../../convex/_generated/api";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 import { Button } from "@/components/ui/button";

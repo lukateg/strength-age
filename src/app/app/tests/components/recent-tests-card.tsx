@@ -2,7 +2,7 @@
 import { api } from "../../../../../convex/_generated/api";
 
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import { useTestMutations } from "@/hooks/use-test-mutation";
+import { useTestMutations } from "@/hooks/use-test-mutations";
 
 import AlertDialogModal from "@/components/alert-dialog";
 import RetryTestButton from "@/components/retry-test-button";

@@ -7,9 +7,9 @@ check before launch:
 // -- check if there is better way to add chunking text prompt
 // -- check if all routes are covered with the fallback and if URL security is enough
 
--- remove pdfItems from getLessonData, these need to be separated
 -- check why uploading calls 3 requests and is so slow ///
--- create suspense component for pending and error state
+create consistent pattern for loading skeleton, error case, and not found case
+create reusable components for error and not found case and use them across the app
 -- create custom fetch function with convex token
 -- retry test multiple times and redirect back willaredirect you through multiple test reviews
 // - add error messages for each scenario that comes from the server -- iplement solution across all mutations and whole app
@@ -17,21 +17,14 @@ check before launch:
 -- handle case when statusText: 'Service Unavailable' 
 -- implement proper error boundary
 -- use normaliseId across app where you use id from the url
--- implement not authorised to read/write if userId doesnt match creatorId
 -- change userId on all tables to be createdBy
 -- rename SelectFormItem to FormSelect
 -- remove all loading... 
 -- create main page components like main-header and reuse it across the app
 -- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class
 -- replace all history back buttons with normal routes and align all layout patterns
--- edit lesson opens edit page and there we render delete button
--- delete modal should have red confirm button
--- create dialog component that accepts onConfirm, confirmText, CancelText, descriptionText ....
 -- edit section buttons should have beautifull purple design maybe
--- for exit test set new icon (exit door icon)
 -- check case when generating test with lesson that has 0 materials
--- delete word in the dropdown should be red color
--- rename use test mutation to use test mutationS
 -- add mobile design to the sections again
 -- decide if you want to go with with promise.all and pageSkeleton or with streaming and each component skeleton
 
@@ -40,21 +33,13 @@ BUGS
 -- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
 -- lesson title is not working when generating multiple lesson test
 
-finish the edit and delete lesson and tests and reviews
-create consistent pattern for loading skeleton, error case, and not found case
-create reusable components for error and not found case and use them across the app
+
 test fast clicks on submit buttons that do not have disabled props
 edit lesson has no submit button
 
 
-TODO: 
--- add "..." for a test and implement edit test page if possible, if not implement just delete
--- make test and test review page reusable component, or make only one card for all cases and reuse it across the app
--- add delete test and review on generate test page
 
 PLAN:
--- Add delete and edit
--- create beautiful destructive and positive buttons and reusable dialog that will have positive, default, and destructive variant
 -- add permisions so user can access only its own content (change param userId to createdBy)
 -- add share button for test result and implement share link logic
 -- add modals on all needed actions

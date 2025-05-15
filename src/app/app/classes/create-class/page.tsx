@@ -1,6 +1,6 @@
 "use client";
 
-import { useClassMutations } from "@/hooks/use-class-mutation";
+import { useClassMutations } from "@/hooks/use-class-mutations";
 
 import { useRouter } from "next/navigation";
 

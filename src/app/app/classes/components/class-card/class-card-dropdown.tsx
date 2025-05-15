@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useClassMutations } from "@/hooks/use-class-mutation";
+import { useClassMutations } from "@/hooks/use-class-mutations";
 
 import { Button } from "@/components/ui/button";
 import {

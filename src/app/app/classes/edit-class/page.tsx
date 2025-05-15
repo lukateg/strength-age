@@ -2,7 +2,7 @@
 import { api } from "../../../../../convex/_generated/api";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useClassMutations } from "@/hooks/use-class-mutation";
+import { useClassMutations } from "@/hooks/use-class-mutations";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 import NotFound from "@/components/not-found";

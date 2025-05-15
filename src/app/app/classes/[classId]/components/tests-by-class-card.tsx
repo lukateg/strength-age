@@ -1,6 +1,6 @@
 "use client";
 
-import { useTestMutations } from "@/hooks/use-test-mutation";
+import { useTestMutations } from "@/hooks/use-test-mutations";
 import { useClass } from "@/providers/class-context-provider";
 
 import {

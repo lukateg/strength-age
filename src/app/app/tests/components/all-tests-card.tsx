@@ -1,6 +1,6 @@
 "use client";
 
-import { useTestMutations } from "@/hooks/use-test-mutation";
+import { useTestMutations } from "@/hooks/use-test-mutations";
 import { useTests } from "@/providers/tests-provider";
 
 import ListCard, { ListItem } from "@/components/list-card";

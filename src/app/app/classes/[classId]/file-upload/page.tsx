@@ -23,6 +23,9 @@ import FileUploadComponent from "@/components/file-upload/file-upload";
 import UploadFilesButton from "@/components/upload-files-button";
 import UploadedMaterialsList from "@/components/file-upload/uploaded-materials-list";
 import SelectFormItem from "@/components/select-form-item";
+import SectionHeader from "@/components/page-components/page-header";
+import NotFound from "@/components/not-found";
+import PageSkeleton from "@/components/page-components/page-skeleton";
 
 import { type Id } from "../../../../../../convex/_generated/dataModel";
 
@@ -36,7 +39,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export default function FileUploadPage() {
-  const { classId, lessonsByClass } = useClass();
+  const { classId, lessonsByClass, classData } = useClass();
   const router = useRouter();
 
   const form = useForm<FormData>({
@@ -65,53 +68,69 @@ export default function FileUploadPage() {
     }
   };
 
+  if (classData.isError) {
+    return <NotFound />;
+  }
+
+  if (classData.isPending) {
+    return <PageSkeleton />;
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Upload Files</CardTitle>
-        <CardDescription>
-          Drag and drop your files here or click to browse
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <Form {...form}>
-          <FormField
-            control={form.control}
-            name="lessonId"
-            render={({ field }) => (
-              <SelectFormItem
-                items={lessonsByClass.data}
-                label="Select Lesson"
-                placeholder="none"
-                defaultValue="none"
-                onChange={field.onChange}
-                description="You can link material to a specific lesson."
-              />
-            )}
+    <div className="space-y-10">
+      <SectionHeader
+        title={classData.data?.title}
+        description={classData.data?.description}
+        backRoute={`/app/classes/${classId}`}
+        editButtonText={"Upload Materials"}
+      />
+      <Card>
+        <CardHeader>
+          <CardTitle>Upload Files</CardTitle>
+          <CardDescription>
+            Drag and drop your files here or click to browse
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <Form {...form}>
+            <FormField
+              control={form.control}
+              name="lessonId"
+              render={({ field }) => (
+                <SelectFormItem
+                  items={lessonsByClass.data}
+                  label="Select Lesson"
+                  placeholder="none"
+                  defaultValue="none"
+                  onChange={field.onChange}
+                  description="You can link material to a specific lesson."
+                />
+              )}
+            />
+          </Form>
+
+          <FileUploadComponent
+            onDrop={handleFileChange}
+            existingFiles={materialsToUpload}
           />
-        </Form>
 
-        <FileUploadComponent
-          onDrop={handleFileChange}
-          existingFiles={materialsToUpload}
-        />
+          {!!materialsToUpload.length && (
+            <UploadedMaterialsList
+              materialsToUpload={materialsToUpload}
+              setValue={setValue}
+            />
+          )}
+        </CardContent>
 
-        {!!materialsToUpload.length && (
-          <UploadedMaterialsList
+        <CardFooter>
+          <UploadFilesButton
+            startUpload={handleUpload}
             materialsToUpload={materialsToUpload}
-            setValue={setValue}
+            isUploading={isUploading}
+            className="w-full"
           />
-        )}
-      </CardContent>
-
-      <CardFooter>
-        <UploadFilesButton
-          startUpload={handleUpload}
-          materialsToUpload={materialsToUpload}
-          isUploading={isUploading}
-          className="w-full"
-        />
-      </CardFooter>
-    </Card>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }

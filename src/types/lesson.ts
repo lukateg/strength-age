@@ -39,5 +39,5 @@ export interface CreateLessonWithNewMaterialsParams {
 
 export interface AddPDFToLessonParams {
   pdfIds: Id<"pdfs">[];
-  lessonId: Id<"lessons">;
+  lessonId: string;
 }

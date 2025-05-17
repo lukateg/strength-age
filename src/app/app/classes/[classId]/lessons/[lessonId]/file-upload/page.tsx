@@ -35,10 +35,11 @@ type FormData = z.infer<ReturnType<typeof addLessonMaterialsSchema>>;
 export default function FileUploadPage() {
   const [showExistingMaterials, setShowExistingMaterials] = useState(false);
   const router = useRouter();
-  const { lessonsByClass, materialsByClass, classId } = useClass();
+  const { lessonsByClass, materialsByClass } = useClass();
   const { addExistingPdfsToLesson, uploadNewPdfsToLesson, isUploading } =
     useLessonMutations();
-  const { lessonId }: { lessonId: Id<"lessons"> } = useParams();
+  const { lessonId, classId }: { lessonId: string; classId: string } =
+    useParams();
   const lessonData = useQuery(api.lessons.getLessonById, {
     lessonId,
   });
@@ -91,7 +92,7 @@ export default function FileUploadPage() {
         editRoute={`/app/classes/${classId}/edit-lesson?lessonId=${lessonId}`}
         editButtonText={"Edit Lesson"}
       />
-      <Card className="m-4">
+      <Card>
         <CardHeader>
           <CardTitle>Upload Files</CardTitle>
           <CardDescription>

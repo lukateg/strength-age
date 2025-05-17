@@ -83,7 +83,7 @@ export const createLesson = mutation({
 
 export const getPDFsByLessonId = query({
   args: v.object({
-    lessonId: v.id("lessons"),
+    lessonId: v.string(),
   }),
   handler: async (ctx, { lessonId }) => {
     const userId = await AuthenticationRequired({ ctx });
@@ -105,7 +105,7 @@ export const getPDFsByLessonId = query({
 
     const lessonPdfs = await ctx.db
       .query("lessonPdfs")
-      .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
+      .withIndex("by_lessonId", (q) => q.eq("lessonId", normalizedId))
       .collect();
 
     const pdfs = await Promise.all(
@@ -145,7 +145,7 @@ export const getLessonById = query({
 
 export const getLessonPdfs = query({
   args: v.object({
-    lessonId: v.id("lessons"),
+    lessonId: v.string(),
   }),
   handler: async (ctx, { lessonId }) => {
     const userId = await AuthenticationRequired({ ctx });
@@ -167,7 +167,7 @@ export const getLessonPdfs = query({
 
     const lessonPdfs = await ctx.db
       .query("lessonPdfs")
-      .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
+      .withIndex("by_lessonId", (q) => q.eq("lessonId", normalizedId))
       .collect();
 
     const pdfsByLesson = await Promise.all(
@@ -183,18 +183,22 @@ export const getLessonPdfs = query({
 
 export const addPdfToLesson = mutation({
   args: v.object({
-    lessonId: v.id("lessons"),
+    lessonId: v.string(),
     pdfId: v.id("pdfs"),
     classId: v.string(),
   }),
   handler: async (ctx, { lessonId, pdfId, classId }) => {
     const userId = await AuthenticationRequired({ ctx });
-    const normalizedId = ctx.db.normalizeId("classes", classId);
+    const normalizedClassId = ctx.db.normalizeId("classes", classId);
 
-    if (!normalizedId) {
+    if (!normalizedClassId) {
       throw createAppError({ message: "Invalid item ID" });
     }
-    const lesson = await ctx.db.get(lessonId);
+    const normalizedLessonId = ctx.db.normalizeId("lessons", lessonId);
+    if (!normalizedLessonId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+    const lesson = await ctx.db.get(normalizedLessonId);
     if (!lesson) {
       throw createAppError({ message: "Lesson not found" });
     }
@@ -207,15 +211,15 @@ export const addPdfToLesson = mutation({
     // Check if relationship already exists
     const existing = await ctx.db
       .query("lessonPdfs")
-      .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
+      .withIndex("by_lessonId", (q) => q.eq("lessonId", normalizedLessonId))
       .filter((q) => q.eq(q.field("pdfId"), pdfId))
       .unique();
 
     if (!existing) {
       await ctx.db.insert("lessonPdfs", {
-        lessonId,
+        lessonId: normalizedLessonId,
         pdfId,
-        classId: normalizedId,
+        classId: normalizedClassId,
       });
     }
   },
@@ -223,22 +227,26 @@ export const addPdfToLesson = mutation({
 
 export const addManyPdfsToLesson = mutation({
   args: v.object({
-    lessonId: v.id("lessons"),
+    lessonId: v.string(),
     pdfIds: v.array(v.id("pdfs")),
     classId: v.string(),
   }),
   handler: async (ctx, { lessonId, pdfIds, classId }) => {
     const userId = await AuthenticationRequired({ ctx });
-    const normalizedId = ctx.db.normalizeId("classes", classId);
-
-    if (!normalizedId) {
+    const normalizedClassId = ctx.db.normalizeId("classes", classId);
+    const normalizedLessonId = ctx.db.normalizeId("lessons", lessonId);
+    if (!normalizedClassId) {
       throw createAppError({ message: "Invalid item ID" });
     }
 
-    const classResponse = await ctx.db.get(normalizedId);
+    const classResponse = await ctx.db.get(normalizedClassId);
     if (!classResponse) {
       throw createAppError({ message: "Class not found" });
     }
+    if (!normalizedLessonId) {
+      throw createAppError({ message: "Lesson not found" });
+    }
+
     if (classResponse.createdBy !== userId) {
       throw createAppError({
         message: "Not authorized to add PDFs to this lesson",
@@ -249,15 +257,15 @@ export const addManyPdfsToLesson = mutation({
       // Check if relationship already exists
       const existing = await ctx.db
         .query("lessonPdfs")
-        .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
+        .withIndex("by_lessonId", (q) => q.eq("lessonId", normalizedLessonId))
         .filter((q) => q.eq(q.field("pdfId"), pdfId))
         .unique();
 
       if (!existing) {
         await ctx.db.insert("lessonPdfs", {
-          lessonId,
+          lessonId: normalizedLessonId,
           pdfId,
-          classId: normalizedId,
+          classId: normalizedClassId,
         });
       }
     }

@@ -6,10 +6,15 @@ import { Button } from "@/components/ui/button";
 
 import ListCard, { ListItem } from "@/components/list-card";
 import AlertDialogModal from "@/components/alert-dialog";
+import Link from "next/link";
 
-import { FileText, Trash, Eye } from "lucide-react";
+import { FileText, Trash, Eye, Upload } from "lucide-react";
 
-export default function MaterialsSectionComponent() {
+export default function MaterialsSectionComponent({
+  classId,
+}: {
+  classId: string;
+}) {
   const { materialsByClass } = useClass();
   const { deletePdf } = useMaterialsMutations();
 
@@ -23,6 +28,14 @@ export default function MaterialsSectionComponent() {
       description="PDF documents and study materials"
       items={materialsByClass.data}
       isLoading={materialsByClass.isPending}
+      cardAction={
+        <Button asChild>
+          <Link href={`/app/classes/${classId}/file-upload`}>
+            <Upload className="h-4 w-4 mr-2" />
+            Upload Materials
+          </Link>
+        </Button>
+      }
       renderItem={(material) => (
         <ListItem key={material._id} icon={FileText} title={material.name}>
           <div className="flex gap-2">

@@ -13,7 +13,6 @@ import {
   type EditLessonFormData,
 } from "@/types/lesson";
 
-import { type Id } from "convex/_generated/dataModel";
 import { toastError } from "@/lib/utils";
 
 export const useLessonMutations = () => {
@@ -59,7 +58,7 @@ export const useLessonMutations = () => {
       lessonId,
     }: {
       materialsToUpload: File[];
-      lessonId: Id<"lessons">;
+      lessonId: string;
     }) => {
       const toastId = toast.loading("Please wait while we upload your files");
 

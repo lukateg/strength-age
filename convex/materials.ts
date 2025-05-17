@@ -8,7 +8,7 @@ import { type GenericMutationCtx } from "convex/server";
 
 export const addPdf = mutation({
   args: {
-    classId: v.id("classes"),
+    classId: v.string(),
     pdf: v.object({
       fileUrl: v.string(),
       name: v.string(),
@@ -18,9 +18,15 @@ export const addPdf = mutation({
   handler: async (ctx, { classId, pdf }) => {
     const userId = await AuthenticationRequired({ ctx });
 
+    const normalizedClassId = ctx.db.normalizeId("classes", classId);
+
+    if (!normalizedClassId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
     const pdfId = await ctx.db.insert("pdfs", {
       createdBy: userId,
-      classId,
+      classId: normalizedClassId,
       fileUrl: pdf.fileUrl,
       name: pdf.name,
       size: pdf.size,
@@ -32,7 +38,7 @@ export const addPdf = mutation({
 
 export const addManyPdfs = mutation({
   args: {
-    classId: v.id("classes"),
+    classId: v.string(),
     pdfFiles: v.array(
       v.object({
         fileUrl: v.string(),
@@ -44,10 +50,16 @@ export const addManyPdfs = mutation({
   handler: async (ctx, { classId, pdfFiles }) => {
     const userId = await AuthenticationRequired({ ctx });
 
+    const normalizedClassId = ctx.db.normalizeId("classes", classId);
+
+    if (!normalizedClassId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
     for (const pdf of pdfFiles) {
       await ctx.db.insert("pdfs", {
         createdBy: userId,
-        classId,
+        classId: normalizedClassId,
         fileUrl: pdf.fileUrl,
         name: pdf.name,
         size: pdf.size,
@@ -58,20 +70,20 @@ export const addManyPdfs = mutation({
 
 export const getPdfsByClassId = query({
   args: v.object({
-    classId: v.id("classes"),
+    classId: v.string(),
   }),
   handler: async (ctx, { classId }) => {
     await AuthenticationRequired({ ctx });
 
-    const normalizedId = ctx.db.normalizeId("classes", classId);
+    const normalizedClassId = ctx.db.normalizeId("classes", classId);
 
-    if (!normalizedId) {
+    if (!normalizedClassId) {
       throw createAppError({ message: "Invalid item ID" });
     }
 
     return await ctx.db
       .query("pdfs")
-      .withIndex("by_class_user", (q) => q.eq("classId", normalizedId))
+      .withIndex("by_class_user", (q) => q.eq("classId", normalizedClassId))
       .collect();
   },
 });
@@ -89,17 +101,17 @@ export const getAllPDFsByUser = query({
 });
 
 export const getPdfsForLesson = query({
-  args: { lessonId: v.id("lessons") },
+  args: { lessonId: v.string() },
   handler: async (ctx, args) => {
-    const normalizedId = ctx.db.normalizeId("lessons", args.lessonId);
+    const normalizedLessonId = ctx.db.normalizeId("lessons", args.lessonId);
 
-    if (!normalizedId) {
+    if (!normalizedLessonId) {
       throw createAppError({ message: "Invalid item ID" });
     }
 
     const lessonPdfs = await ctx.db
       .query("lessonPdfs")
-      .withIndex("by_lessonId", (q) => q.eq("lessonId", normalizedId))
+      .withIndex("by_lessonId", (q) => q.eq("lessonId", normalizedLessonId))
       .collect();
 
     return Promise.all(
@@ -110,17 +122,17 @@ export const getPdfsForLesson = query({
 
 export async function deleteLessonPdfRelationsByPdfId(
   ctx: GenericMutationCtx<DataModel>,
-  pdfId: Id<"pdfs">
+  pdfId: string
 ) {
-  const normalizedId = ctx.db.normalizeId("pdfs", pdfId);
+  const normalizedPdfId = ctx.db.normalizeId("pdfs", pdfId);
 
-  if (!normalizedId) {
+  if (!normalizedPdfId) {
     throw createAppError({ message: "Invalid item ID" });
   }
 
   const lessonPdfs = await ctx.db
     .query("lessonPdfs")
-    .withIndex("by_pdfId", (q) => q.eq("pdfId", normalizedId))
+    .withIndex("by_pdfId", (q) => q.eq("pdfId", normalizedPdfId))
     .collect();
 
   for (const lessonPdf of lessonPdfs) {
@@ -129,17 +141,17 @@ export async function deleteLessonPdfRelationsByPdfId(
 }
 
 export const deletePdf = mutation({
-  args: { pdfId: v.id("pdfs") },
+  args: { pdfId: v.string() },
   handler: async (ctx, { pdfId }) => {
     const userId = await AuthenticationRequired({ ctx });
 
-    const normalizedId = ctx.db.normalizeId("pdfs", pdfId);
+    const normalizedPdfId = ctx.db.normalizeId("pdfs", pdfId);
 
-    if (!normalizedId) {
+    if (!normalizedPdfId) {
       throw createAppError({ message: "Invalid item ID" });
     }
 
-    const pdf = await ctx.db.get(normalizedId);
+    const pdf = await ctx.db.get(normalizedPdfId);
     if (!pdf) {
       throw createAppError({
         message: "PDF not found",
@@ -152,7 +164,7 @@ export const deletePdf = mutation({
       });
     }
 
-    await deleteLessonPdfRelationsByPdfId(ctx, normalizedId);
+    await deleteLessonPdfRelationsByPdfId(ctx, normalizedPdfId);
 
     await ctx.scheduler.runAfter(
       0,
@@ -162,7 +174,7 @@ export const deletePdf = mutation({
       }
     );
 
-    await ctx.db.delete(pdfId);
+    await ctx.db.delete(normalizedPdfId);
 
     return { success: true };
   },

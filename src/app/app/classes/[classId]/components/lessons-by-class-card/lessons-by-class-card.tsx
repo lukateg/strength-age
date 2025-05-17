@@ -11,12 +11,10 @@ import LessonsItemDropdown from "./lessons-item-dropdown";
 
 import { Eye, FileText, Plus } from "lucide-react";
 
-import { type Id } from "convex/_generated/dataModel";
-
 export default function LessonsSectionComponent({
   classId,
 }: {
-  classId: Id<"classes">;
+  classId: string;
 }) {
   const { lessonsByClass } = useClass();
 

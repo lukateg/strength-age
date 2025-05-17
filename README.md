@@ -47,6 +47,7 @@ PLAN:
 -- add share button for test result and implement share link logic
 -- add modals on all needed actions
 -- add next progress
+
 -- add additional info prompt when generating the test
 -- add test preview page that would be oppened when test is generated or before retrying test that has basic info and a start (positive) button
 -- handle case when LLM is not working

@@ -32,7 +32,7 @@ export const useTestMutations = () => {
           toast.error("You must be logged in to create a test.");
           return;
         }
-        const testId = await createTestMutation({ ...params, userId });
+        const testId = await createTestMutation({ ...params });
 
         toast.success("Test created successfully.");
 
@@ -54,7 +54,6 @@ export const useTestMutations = () => {
           return;
         }
         const testReviewId = await createTestReviewMutation({
-          userId,
           testId: params.testId,
           title: params.title,
           description: params.description,

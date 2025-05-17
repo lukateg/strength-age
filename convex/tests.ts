@@ -10,7 +10,6 @@ export const createTest = mutation({
   args: {
     title: v.string(),
     description: v.string(),
-    userId: v.string(),
     classId: v.id("classes"),
     questions: v.array(
       v.object({
@@ -22,7 +21,7 @@ export const createTest = mutation({
     ),
   },
   handler: async (ctx, args) => {
-    await AuthenticationRequired({ ctx });
+    const userId = await AuthenticationRequired({ ctx });
     let title = args.title;
     const existingTest = await ctx.db
       .query("tests")
@@ -36,7 +35,7 @@ export const createTest = mutation({
       title,
       description: args.description,
       questions: args.questions,
-      userId: args.userId,
+      createdBy: userId,
       classId: args.classId,
     });
     return testId;
@@ -47,7 +46,6 @@ export const createTestReview = mutation({
   args: {
     title: v.string(),
     description: v.string(),
-    userId: v.string(),
     classId: v.id("classes"),
     testId: v.id("tests"),
     questions: v.array(
@@ -63,11 +61,13 @@ export const createTestReview = mutation({
     ),
   },
   handler: async (ctx, args) => {
+    const userId = await AuthenticationRequired({ ctx });
+
     const testId = await ctx.db.insert("testReviews", {
       title: args.title,
       description: args.description,
       questions: args.questions,
-      userId: args.userId,
+      createdBy: userId,
       classId: args.classId,
       testId: args.testId,
     });
@@ -81,7 +81,7 @@ export const getAllTestsByUser = query({
 
     const tests = await ctx.db
       .query("tests")
-      .filter((q) => q.eq(q.field("userId"), userId))
+      .filter((q) => q.eq(q.field("createdBy"), userId))
       .collect();
     return tests;
   },
@@ -129,7 +129,7 @@ export const getAllTestReviewsByUser = query({
 
     const testReviews = await ctx.db
       .query("testReviews")
-      .filter((q) => q.eq(q.field("userId"), userId))
+      .filter((q) => q.eq(q.field("createdBy"), userId))
       .collect();
     return testReviews;
   },
@@ -148,6 +148,7 @@ export const getTestReviewsByClassId = query({
     return testReviews;
   },
 });
+
 export const getWeeklyTestReviewsByUserId = query({
   handler: async (ctx) => {
     const userId = await AuthenticationRequired({ ctx });
@@ -157,7 +158,7 @@ export const getWeeklyTestReviewsByUserId = query({
 
     const recentReviews = await ctx.db
       .query("testReviews")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_user", (q) => q.eq("createdBy", userId))
       .filter((q) => q.gte(q.field("_creationTime"), sevenDaysAgo.getTime()))
       .collect();
 
@@ -174,7 +175,7 @@ export const getWeeklyTestsByUserId = query({
 
     const recentTests = await ctx.db
       .query("tests")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_user", (q) => q.eq("createdBy", userId))
       .filter((q) => q.gte(q.field("_creationTime"), sevenDaysAgo.getTime()))
       .collect();
 
@@ -191,7 +192,7 @@ export async function deleteTestsByClassIdBatch(
   const BATCH_SIZE = 100;
   const { page, isDone, continueCursor } = await ctx.db
     .query("tests")
-    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .withIndex("by_user", (q) => q.eq("createdBy", userId))
     .filter((q) => q.eq(q.field("classId"), classId))
     .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
 
@@ -225,7 +226,7 @@ export async function deleteTestReviewsByClassIdBatch(
   const BATCH_SIZE = 100;
   const { page, isDone, continueCursor } = await ctx.db
     .query("testReviews")
-    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .withIndex("by_user", (q) => q.eq("createdBy", userId))
     .filter((q) => q.eq(q.field("classId"), classId))
     .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
 
@@ -255,7 +256,7 @@ export const deleteTestReview = mutation({
       });
     }
 
-    if (testReview.userId !== userId) {
+    if (testReview.createdBy !== userId) {
       throw createAppError({
         message: "Not authorized to delete this test review",
       });
@@ -279,7 +280,7 @@ export const deleteTest = mutation({
       });
     }
 
-    if (test.userId !== userId) {
+    if (test.createdBy !== userId) {
       throw createAppError({
         message: "Not authorized to delete this test",
       });

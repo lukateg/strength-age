@@ -10,23 +10,23 @@ export default defineSchema({
   classes: defineTable({
     title: v.string(),
     description: v.optional(v.string()),
-    userId: v.string(), // Changed to proper ID reference
-  }).index("by_user", ["userId"]),
+    createdBy: v.string(), // Changed to proper ID reference
+  }).index("by_user", ["createdBy"]),
 
   lessons: defineTable({
-    userId: v.string(), // Changed to proper ID reference
+    createdBy: v.string(), // Changed to proper ID reference
     classId: v.id("classes"), // Changed to proper ID reference
     title: v.string(),
     description: v.optional(v.string()),
   }).index("by_class", ["classId"]),
 
   pdfs: defineTable({
-    userId: v.string(), // Changed to proper ID reference
+    createdBy: v.string(), // Changed to proper ID reference
     classId: v.id("classes"), // Changed to proper ID reference
     fileUrl: v.string(),
     name: v.string(),
     size: v.number(),
-  }).index("by_class_user", ["classId", "userId"]),
+  }).index("by_class_user", ["classId", "createdBy"]),
 
   lessonPdfs: defineTable({
     lessonId: v.id("lessons"),
@@ -39,7 +39,7 @@ export default defineSchema({
     .index("by_classId", ["classId"]),
 
   tests: defineTable({
-    userId: v.string(), // Changed to proper ID reference
+    createdBy: v.string(), // Changed to proper ID reference
     classId: v.id("classes"), // Changed to proper ID reference
     title: v.string(),
     description: v.optional(v.string()),
@@ -51,10 +51,10 @@ export default defineSchema({
         correctAnswer: v.array(v.string()),
       })
     ),
-  }).index("by_user", ["userId"]),
+  }).index("by_user", ["createdBy"]),
 
   testReviews: defineTable({
-    userId: v.string(), // Changed to proper ID reference
+    createdBy: v.string(), // Changed to proper ID reference
     classId: v.id("classes"), // Changed to proper ID reference
     title: v.string(),
     description: v.optional(v.string()),
@@ -70,5 +70,5 @@ export default defineSchema({
         feedback: v.optional(v.string()),
       })
     ),
-  }).index("by_user", ["userId"]),
+  }).index("by_user", ["createdBy"]),
 });

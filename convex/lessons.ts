@@ -53,7 +53,7 @@ export const createLesson = mutation({
     }
 
     const lessonId = await ctx.db.insert("lessons", {
-      userId,
+      createdBy: userId,
       classId: normalizedId,
       title,
       description,
@@ -353,7 +353,7 @@ export const deleteLesson = mutation({
       throw new Error("Lesson not found");
     }
 
-    if (existingLesson.userId !== userId) {
+    if (existingLesson.createdBy !== userId) {
       throw new Error("Not authorized to delete this lesson");
     }
 

@@ -15,6 +15,7 @@ export const deleteFileFromUploadThing = internalAction({
       name: v.string(),
       size: v.number(),
       _creationTime: v.number(),
+      _id: v.string(),
     }),
   },
   handler: async (ctx, args) => {

@@ -19,7 +19,7 @@ export const getAllClassesByUserId = query({
 
     return await ctx.db
       .query("classes")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_user", (q) => q.eq("createdBy", userId))
       .collect();
   },
 });
@@ -46,7 +46,7 @@ export const createClass = mutation({
     return await ctx.db.insert("classes", {
       title,
       description,
-      userId,
+      createdBy: userId,
     });
   },
 });
@@ -70,7 +70,7 @@ export const updateClass = mutation({
       throw createAppError({ message: "Class not found" });
     }
 
-    if (existingClass.userId !== userId) {
+    if (existingClass.createdBy !== userId) {
       throw createAppError({ message: "Not authorized to update this class" });
     }
 
@@ -97,7 +97,7 @@ export const deleteClass = mutation({
       throw new Error("Class not found");
     }
 
-    if (existingClass.userId !== userId) {
+    if (existingClass.createdBy !== userId) {
       throw new Error("Not authorized to delete this class");
     }
 

@@ -1,16 +1,9 @@
-import { type Id } from "convex/_generated/dataModel";
+import { type Id, type Doc } from "convex/_generated/dataModel";
 import { type ReactMutation } from "convex/react";
 import { type FunctionReference } from "convex/server";
 
 // TODO: remove and ad Doc<"lessons">
-export type LessonsType = {
-  _id: Id<"lessons">;
-  _creationTime: number;
-  description?: string | undefined;
-  classId: string;
-  userId: string;
-  title: string;
-};
+export type LessonsType = Doc<"lessons">;
 
 export type UploadPDFMutation = ReactMutation<
   FunctionReference<

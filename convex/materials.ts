@@ -19,7 +19,7 @@ export const addPdf = mutation({
     const userId = await AuthenticationRequired({ ctx });
 
     const pdfId = await ctx.db.insert("pdfs", {
-      userId,
+      createdBy: userId,
       classId,
       fileUrl: pdf.fileUrl,
       name: pdf.name,
@@ -46,7 +46,7 @@ export const addManyPdfs = mutation({
 
     for (const pdf of pdfFiles) {
       await ctx.db.insert("pdfs", {
-        userId,
+        createdBy: userId,
         classId,
         fileUrl: pdf.fileUrl,
         name: pdf.name,
@@ -77,7 +77,7 @@ export const getAllPDFsByUser = query({
 
     return await ctx.db
       .query("pdfs")
-      .filter((q) => q.eq(q.field("userId"), userId))
+      .filter((q) => q.eq(q.field("createdBy"), userId))
       .collect();
   },
 });
@@ -122,7 +122,7 @@ export const deletePdf = mutation({
       });
     }
 
-    if (pdf.userId !== userId) {
+    if (pdf.createdBy !== userId) {
       throw createAppError({
         message: "Not authorized to delete this PDF",
       });

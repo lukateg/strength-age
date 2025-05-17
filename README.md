@@ -6,6 +6,7 @@ check before launch:
 // -- check if there is better retry logic when calling the AI
 // -- check if there is better way to add chunking text prompt
 // -- check if all routes are covered with the fallback and if URL security is enough
+// -- check if actions that require modals have them
 
 -- check why uploading calls 3 requests and is so slow ///
 create consistent pattern for loading skeleton, error case, and not found case
@@ -17,7 +18,6 @@ create reusable components for error and not found case and use them across the 
 -- handle case when statusText: 'Service Unavailable' 
 -- implement proper error boundary
 -- use normaliseId across app where you use id from the url
--- change userId on all tables to be createdBy
 -- rename SelectFormItem to FormSelect
 -- remove all loading... 
 -- create main page components like main-header and reuse it across the app
@@ -27,6 +27,8 @@ create reusable components for error and not found case and use them across the 
 -- check case when generating test with lesson that has 0 materials
 -- add mobile design to the sections again
 -- decide if you want to go with with promise.all and pageSkeleton or with streaming and each component skeleton
+-- dashboard -> create new class -> cancel -> redirects to classes instead of dashboard
+-- make theme switch and not dropdown
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
@@ -43,9 +45,10 @@ PLAN:
 -- add permisions so user can access only its own content (change param userId to createdBy)
 -- add share button for test result and implement share link logic
 -- add modals on all needed actions
+-- add next progress
 -- add additional info prompt when generating the test
--- handle case when LLM is not working
 -- add test preview page that would be oppened when test is generated or before retrying test that has basic info and a start (positive) button
+-- handle case when LLM is not working
 -- add settings page
 -- Add analytics
 -- add payments
@@ -79,6 +82,8 @@ FUTURE FEATURES:
 - test sharing between users and groups
 - test preview before starting to work on it
 - audio lessons
+- invite multiple people to the scheduled test at specific tieme and display leaderbord with result at the end
+- pausing or blockin test when changing window while working on a test
 
 # MVP Plan for Teach.me
 ✅ Core Features

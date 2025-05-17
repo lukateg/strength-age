@@ -30,6 +30,7 @@ create reusable components for error and not found case and use them across the 
 -- dashboard -> create new class -> cancel -> redirects to classes instead of dashboard
 -- make theme switch and not dropdown
 -- all errors in mutations should be handled with error is instance of an error display error message
+-- if you delete users table and user is not deleted from clerk next time he logs in he will not be in the users table
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
@@ -43,19 +44,18 @@ edit lesson has no submit button
 
 
 PLAN:
--- add permisions so user can access only its own content (change param userId to createdBy)
--- add share button for test result and implement share link logic
--- add modals on all needed actions
 -- add next progress
+-- add modals on all needed actions
 
 -- add additional info prompt when generating the test
 -- add test preview page that would be oppened when test is generated or before retrying test that has basic info and a start (positive) button
 -- handle case when LLM is not working
--- add settings page
--- Add analytics
+-- fix bugs
+
 -- add payments
--- add free tier permission system
--- pocisti bagove
+-- add free tier permission system and share logic
+-- Add analytics
+
 -- SEO check
 -- check free tier plan and work out permisions and free plan for max classes, lessons, pdfs in mb, tests and ai token calls
 -- in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
@@ -81,6 +81,7 @@ MAYBE IN FUTURE
 
 
 FUTURE FEATURES:
+-- add settings page
 - test sharing between users and groups
 - test preview before starting to work on it
 - audio lessons

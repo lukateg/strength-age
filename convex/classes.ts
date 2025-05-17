@@ -27,14 +27,20 @@ export const getAllClassesByUserId = query({
 export const getClassById = query({
   args: { id: v.string() },
   handler: async (ctx, { id }) => {
-    await AuthenticationRequired({ ctx });
+    const userId = await AuthenticationRequired({ ctx });
 
     const normalizedId = ctx.db.normalizeId("classes", id);
 
     if (!normalizedId) {
       throw createAppError({ message: "Invalid item ID" });
     }
-    return await ctx.db.get(normalizedId);
+    const classResponse = await ctx.db.get(normalizedId);
+
+    if (classResponse?.createdBy !== userId) {
+      throw createAppError({ message: "Not authorized to access this class" });
+    }
+
+    return classResponse;
   },
 });
 
@@ -42,6 +48,17 @@ export const createClass = mutation({
   args: { title: v.string(), description: v.string() },
   handler: async (ctx, { title, description }) => {
     const userId = await AuthenticationRequired({ ctx });
+
+    const existingClass = await ctx.db
+      .query("classes")
+      .withIndex("by_class_name", (q) => q.eq("title", title))
+      .first();
+
+    if (existingClass) {
+      throw createAppError({
+        message: "Class with same title already exists.",
+      });
+    }
 
     return await ctx.db.insert("classes", {
       title,

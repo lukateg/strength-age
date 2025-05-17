@@ -14,6 +14,7 @@ import {
 } from "@/types/lesson";
 
 import { type Id } from "convex/_generated/dataModel";
+import { toastError } from "@/lib/utils";
 
 export const useLessonMutations = () => {
   const { classId } = useClass();
@@ -46,11 +47,7 @@ export const useLessonMutations = () => {
 
         return lessonId;
       } catch (error) {
-        let errorData = "Failed to create lesson. Please try again.";
-        if (isAppError(error)) {
-          errorData = error.data.message;
-        }
-        toast.error(errorData);
+        toastError(error, "Failed to create lesson. Please try again.");
       }
     },
     [classId, createLessonMutation]
@@ -72,9 +69,7 @@ export const useLessonMutations = () => {
         toast.dismiss(toastId);
         toast.success("PDFs uploaded to lesson successfully");
       } catch (error) {
-        console.error("Failed to upload new PDFs to lesson:", error);
-        toast.dismiss(toastId);
-        toast.error("Failed to upload PDFs to lesson. Please try again");
+        toastError(error, "Failed to upload PDFs to lesson. Please try again");
       }
     },
     [startUpload, classId]
@@ -91,8 +86,7 @@ export const useLessonMutations = () => {
 
         toast.success("PDFs added to lesson successfully");
       } catch (error) {
-        console.error("Failed to add PDF to lesson:", error);
-        toast.error("Failed to add PDFs to lesson. Please try again");
+        toastError(error, "Failed to add PDFs to lesson. Please try again");
       }
     },
     [addManyPdfsToLessonMutation, classId]
@@ -110,11 +104,7 @@ export const useLessonMutations = () => {
 
         toast.success("Lesson updated successfully");
       } catch (error) {
-        let errorData = "Failed to update lesson. Please try again.";
-        if (isAppError(error)) {
-          errorData = error.data.message;
-        }
-        toast.error(errorData);
+        toastError(error, "Failed to update lesson. Please try again.");
       }
     },
     [updateLessonMutation]
@@ -126,8 +116,7 @@ export const useLessonMutations = () => {
         await deleteLessonMutation({ lessonId });
         toast.success("Lesson deleted successfully");
       } catch (error) {
-        console.error("Failed to delete lesson:", error);
-        toast.error("Failed to delete lesson. Please try again.");
+        toastError(error, "Failed to delete lesson. Please try again.");
       }
     },
     [deleteLessonMutation]

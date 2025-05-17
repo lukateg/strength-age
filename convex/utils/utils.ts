@@ -15,6 +15,8 @@ import {
 } from "../_generated/server";
 
 import { ConvexError } from "convex/values";
+import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
+import { type DataModel } from "../_generated/dataModel";
 
 /** Custom query that requires authentication */
 export const authQuery = customQuery(
@@ -69,4 +71,26 @@ export function isAppError(
     error instanceof ConvexError &&
     typeof (error.data as { message: string }).message === "string"
   );
+}
+
+export async function checkResourceOwnership<T extends { createdBy: string }>(
+  ctx: GenericQueryCtx<DataModel> | GenericMutationCtx<DataModel>,
+  resource: T | null,
+  resourceName: string
+) {
+  const userId = await AuthenticationRequired({ ctx });
+
+  if (!resource) {
+    throw createAppError({
+      message: `${resourceName} not found`,
+    });
+  }
+
+  if (resource.createdBy !== userId) {
+    throw createAppError({
+      message: `Not authorized to access this ${resourceName}`,
+    });
+  }
+
+  return userId;
 }

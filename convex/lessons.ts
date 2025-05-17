@@ -10,13 +10,21 @@ export const getLessonsByClass = query({
   args: v.object({
     classId: v.string(),
   }),
-  // TODO change to index
   handler: async (ctx, { classId }) => {
-    await AuthenticationRequired({ ctx });
+    const userId = await AuthenticationRequired({ ctx });
     const normalizedId = ctx.db.normalizeId("classes", classId);
 
     if (!normalizedId) {
       throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const classResponse = await ctx.db.get(normalizedId);
+    if (!classResponse) {
+      throw createAppError({ message: "Class not found" });
+    }
+
+    if (classResponse.createdBy !== userId) {
+      throw createAppError({ message: "Not authorized to access this class" });
     }
 
     return await ctx.db
@@ -40,14 +48,24 @@ export const createLesson = mutation({
       throw createAppError({ message: "Invalid item ID" });
     }
 
-    // TODO use index insead of filter
+    const classResponse = await ctx.db.get(normalizedId);
+    if (!classResponse) {
+      throw createAppError({ message: "Class not found" });
+    }
+
+    if (classResponse.createdBy !== userId) {
+      throw createAppError({
+        message: "Not authorized to create lessons in this class",
+      });
+    }
+
     const existingLesson = await ctx.db
       .query("lessons")
-      .filter((q) => q.eq(q.field("title"), title))
+      .withIndex("by_lesson_name", (q) => q.eq("title", title))
       .first();
 
     if (existingLesson) {
-      createAppError({
+      throw createAppError({
         message: "Lesson with same title already exists.",
       });
     }
@@ -68,7 +86,23 @@ export const getPDFsByLessonId = query({
     lessonId: v.id("lessons"),
   }),
   handler: async (ctx, { lessonId }) => {
-    await AuthenticationRequired({ ctx });
+    const userId = await AuthenticationRequired({ ctx });
+    const normalizedId = ctx.db.normalizeId("lessons", lessonId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const lesson = await ctx.db.get(normalizedId);
+    if (!lesson) {
+      throw createAppError({ message: "Lesson not found" });
+    }
+    if (lesson.createdBy !== userId) {
+      throw createAppError({
+        message: "Not authorized to access PDFs for this lesson",
+      });
+    }
+
     const lessonPdfs = await ctx.db
       .query("lessonPdfs")
       .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
@@ -88,7 +122,7 @@ export const getLessonById = query({
     lessonId: v.string(),
   }),
   handler: async (ctx, { lessonId }) => {
-    await AuthenticationRequired({ ctx });
+    const userId = await AuthenticationRequired({ ctx });
 
     const normalizedId = ctx.db.normalizeId("lessons", lessonId);
 
@@ -96,7 +130,16 @@ export const getLessonById = query({
       throw createAppError({ message: "Invalid item ID" });
     }
 
-    return await ctx.db.get(normalizedId);
+    const lesson = await ctx.db.get(normalizedId);
+    if (!lesson) {
+      throw createAppError({ message: "Lesson not found" });
+    }
+
+    if (lesson.createdBy !== userId) {
+      throw createAppError({ message: "Not authorized to access this lesson" });
+    }
+
+    return lesson;
   },
 });
 
@@ -105,7 +148,23 @@ export const getLessonPdfs = query({
     lessonId: v.id("lessons"),
   }),
   handler: async (ctx, { lessonId }) => {
-    await AuthenticationRequired({ ctx });
+    const userId = await AuthenticationRequired({ ctx });
+    const normalizedId = ctx.db.normalizeId("lessons", lessonId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const lesson = await ctx.db.get(normalizedId);
+    if (!lesson) {
+      throw createAppError({ message: "Lesson not found" });
+    }
+    if (lesson.createdBy !== userId) {
+      throw createAppError({
+        message: "Not authorized to access this lesson's PDFs",
+      });
+    }
+
     const lessonPdfs = await ctx.db
       .query("lessonPdfs")
       .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
@@ -129,11 +188,20 @@ export const addPdfToLesson = mutation({
     classId: v.string(),
   }),
   handler: async (ctx, { lessonId, pdfId, classId }) => {
-    await AuthenticationRequired({ ctx });
+    const userId = await AuthenticationRequired({ ctx });
     const normalizedId = ctx.db.normalizeId("classes", classId);
 
     if (!normalizedId) {
       throw createAppError({ message: "Invalid item ID" });
+    }
+    const lesson = await ctx.db.get(lessonId);
+    if (!lesson) {
+      throw createAppError({ message: "Lesson not found" });
+    }
+    if (lesson.createdBy !== userId) {
+      throw createAppError({
+        message: "Not authorized to add PDF to this lesson",
+      });
     }
 
     // Check if relationship already exists
@@ -160,11 +228,21 @@ export const addManyPdfsToLesson = mutation({
     classId: v.string(),
   }),
   handler: async (ctx, { lessonId, pdfIds, classId }) => {
-    await AuthenticationRequired({ ctx });
+    const userId = await AuthenticationRequired({ ctx });
     const normalizedId = ctx.db.normalizeId("classes", classId);
 
     if (!normalizedId) {
       throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const classResponse = await ctx.db.get(normalizedId);
+    if (!classResponse) {
+      throw createAppError({ message: "Class not found" });
+    }
+    if (classResponse.createdBy !== userId) {
+      throw createAppError({
+        message: "Not authorized to add PDFs to this lesson",
+      });
     }
 
     for (const pdfId of pdfIds) {
@@ -189,9 +267,27 @@ export const addManyPdfsToLesson = mutation({
 export const getLessonsForPdf = query({
   args: { pdfId: v.id("pdfs") },
   handler: async (ctx, args) => {
+    const userId = await AuthenticationRequired({ ctx });
+    const normalizedId = ctx.db.normalizeId("pdfs", args.pdfId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const pdf = await ctx.db.get(normalizedId);
+    if (!pdf) {
+      throw createAppError({ message: "PDF not found" });
+    }
+
+    if (pdf.createdBy !== userId) {
+      throw createAppError({
+        message: "Not authorized to get PDFs for this lesson",
+      });
+    }
+
     const lessonPdfs = await ctx.db
       .query("lessonPdfs")
-      .withIndex("by_pdfId", (q) => q.eq("pdfId", args.pdfId))
+      .withIndex("by_pdfId", (q) => q.eq("pdfId", normalizedId))
       .collect();
 
     return Promise.all(
@@ -207,24 +303,31 @@ export const updateLesson = mutation({
     description: v.optional(v.string()),
   }),
   handler: async (ctx, { lessonId, title, description }) => {
-    await AuthenticationRequired({ ctx });
+    const userId = await AuthenticationRequired({ ctx });
 
     const normalizedId = ctx.db.normalizeId("lessons", lessonId);
-
     if (!normalizedId) {
       throw createAppError({ message: "Invalid item ID" });
     }
 
-    // Check if another lesson with the same title exists
+    const lesson = await ctx.db.get(normalizedId);
+    if (!lesson) {
+      throw createAppError({ message: "Lesson not found" });
+    }
+    if (lesson.createdBy !== userId) {
+      throw createAppError({
+        message: "Not authorized to update this lesson",
+      });
+    }
+
     const existingLesson = await ctx.db
       .query("lessons")
       .filter((q) =>
         q.and(q.eq(q.field("title"), title), q.neq(q.field("_id"), lessonId))
       )
       .first();
-
     if (existingLesson) {
-      createAppError({
+      throw createAppError({
         message: "Lesson with same title already exists.",
       });
     }

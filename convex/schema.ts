@@ -11,14 +11,18 @@ export default defineSchema({
     title: v.string(),
     description: v.optional(v.string()),
     createdBy: v.string(), // Changed to proper ID reference
-  }).index("by_user", ["createdBy"]),
+  })
+    .index("by_user", ["createdBy"])
+    .index("by_class_name", ["title"]),
 
   lessons: defineTable({
     createdBy: v.string(), // Changed to proper ID reference
     classId: v.id("classes"), // Changed to proper ID reference
     title: v.string(),
     description: v.optional(v.string()),
-  }).index("by_class", ["classId"]),
+  })
+    .index("by_class", ["classId"])
+    .index("by_lesson_name", ["title"]),
 
   pdfs: defineTable({
     createdBy: v.string(), // Changed to proper ID reference
@@ -26,7 +30,9 @@ export default defineSchema({
     fileUrl: v.string(),
     name: v.string(),
     size: v.number(),
-  }).index("by_class_user", ["classId", "createdBy"]),
+  })
+    .index("by_class_user", ["classId", "createdBy"])
+    .index("by_user", ["createdBy"]),
 
   lessonPdfs: defineTable({
     lessonId: v.id("lessons"),
@@ -51,7 +57,9 @@ export default defineSchema({
         correctAnswer: v.array(v.string()),
       })
     ),
-  }).index("by_user", ["createdBy"]),
+  })
+    .index("by_user", ["createdBy"])
+    .index("by_class", ["classId"]),
 
   testReviews: defineTable({
     createdBy: v.string(), // Changed to proper ID reference
@@ -70,5 +78,7 @@ export default defineSchema({
         feedback: v.optional(v.string()),
       })
     ),
-  }).index("by_user", ["createdBy"]),
+  })
+    .index("by_user", ["createdBy"])
+    .index("by_class", ["classId"]),
 });

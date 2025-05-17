@@ -29,6 +29,7 @@ create reusable components for error and not found case and use them across the 
 -- decide if you want to go with with promise.all and pageSkeleton or with streaming and each component skeleton
 -- dashboard -> create new class -> cancel -> redirects to classes instead of dashboard
 -- make theme switch and not dropdown
+-- all errors in mutations should be handled with error is instance of an error display error message
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)

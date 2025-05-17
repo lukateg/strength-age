@@ -13,11 +13,13 @@ export default function CreateClassPage() {
   const router = useRouter();
   const { createClass } = useClassMutations();
 
-  const onSubmit = (data: ClassFormData) => {
-    void createClass({
+  const onSubmit = async (data: ClassFormData) => {
+    const classId = await createClass({
       title: data.title,
       description: data.description,
-    }).then(() => router.push("/app/classes"));
+    });
+    if (!classId) return;
+    router.push(`/app/classes/${classId}`);
   };
 
   return (

@@ -1,6 +1,7 @@
 import { api } from "../../convex/_generated/api";
 import { toast } from "sonner";
-import { isAppError } from "../../convex/utils/utils";
+import { toastError } from "@/lib/utils";
+
 import { useCallback } from "react";
 import { useMutation } from "convex/react";
 import { useClass } from "@/providers/class-context-provider";
@@ -12,8 +13,6 @@ import {
   type AddPDFToLessonParams,
   type EditLessonFormData,
 } from "@/types/lesson";
-
-import { toastError } from "@/lib/utils";
 
 export const useLessonMutations = () => {
   const { classId } = useClass();

@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 import { toast } from "sonner";
-import { isAppError } from "convex/utils/utils";
+import { isAppError } from "convex/utils";
 
 import { type Id } from "convex/_generated/dataModel";
 

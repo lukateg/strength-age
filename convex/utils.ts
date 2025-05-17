@@ -12,11 +12,11 @@ import {
   type ActionCtx,
   type MutationCtx,
   type QueryCtx,
-} from "../_generated/server";
+} from "./_generated/server";
 
 import { ConvexError } from "convex/values";
 import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
-import { type DataModel } from "../_generated/dataModel";
+import { type DataModel } from "./_generated/dataModel";
 
 /** Custom query that requires authentication */
 export const authQuery = customQuery(

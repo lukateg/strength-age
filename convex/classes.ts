@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { AuthenticationRequired, createAppError } from "./utils/utils";
+import { AuthenticationRequired, createAppError } from "./utils";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 

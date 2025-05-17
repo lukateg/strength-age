@@ -15,7 +15,7 @@ import type * as materials from "../materials.js";
 import type * as tests from "../tests.js";
 import type * as uploadThingActions from "../uploadThingActions.js";
 import type * as users from "../users.js";
-import type * as utils_utils from "../utils/utils.js";
+import type * as utils from "../utils.js";
 
 import type {
   ApiFromModules,
@@ -39,7 +39,7 @@ declare const fullApi: ApiFromModules<{
   tests: typeof tests;
   uploadThingActions: typeof uploadThingActions;
   users: typeof users;
-  "utils/utils": typeof utils_utils;
+  utils: typeof utils;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

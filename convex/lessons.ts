@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
-import { AuthenticationRequired, createAppError } from "./utils/utils";
+import { AuthenticationRequired, createAppError } from "./utils";
 import { internal } from "./_generated/api";
 
 import { type Id, type DataModel } from "./_generated/dataModel";

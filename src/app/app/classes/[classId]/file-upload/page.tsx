@@ -22,7 +22,7 @@ import { Form, FormField } from "@/components/ui/form";
 import FileUploadComponent from "@/components/file-upload/file-upload";
 import UploadFilesButton from "@/components/upload-files-button";
 import UploadedMaterialsList from "@/components/file-upload/uploaded-materials-list";
-import SelectFormItem from "@/components/select-form-item";
+import FormSelect from "@/components/form-select";
 import SectionHeader from "@/components/page-components/page-header";
 import NotFound from "@/components/not-found";
 import PageSkeleton from "@/components/page-components/page-skeleton";
@@ -97,7 +97,7 @@ export default function FileUploadPage() {
               control={form.control}
               name="lessonId"
               render={({ field }) => (
-                <SelectFormItem
+                <FormSelect
                   items={lessonsByClass.data}
                   label="Select Lesson"
                   placeholder="none"

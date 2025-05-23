@@ -24,7 +24,7 @@ import { Form, FormField } from "@/components/ui/form";
 import { AddMaterialsView } from "@/components/add-materials-section/add-materials-section";
 
 import AddFilesButton from "@/components/ui/add-files-button";
-import SelectFormItem from "@/components/select-form-item";
+import FormSelect from "@/components/form-select";
 import SectionHeader from "@/components/page-components/page-header";
 import UploadFilesButton from "@/components/upload-files-button";
 
@@ -105,7 +105,7 @@ export default function FileUploadPage() {
               control={control}
               name="lessonId"
               render={({ field }) => (
-                <SelectFormItem
+                <FormSelect
                   {...field}
                   items={lessonsByClass.data}
                   label="Lesson"

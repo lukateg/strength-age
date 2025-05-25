@@ -39,14 +39,9 @@ BUGS
 -- lesson title is not working when generating multiple lesson test
 -- header overlaps the layout on the mobile
 
-
 test fast clicks on submit buttons that do not have disabled props
 
-
-
 PLAN:
-
--- add additional info prompt when generating the test
 -- add test preview page that would be oppened when test is generated or before retrying test that has basic info and a start (positive) button
 -- handle case when LLM is not working
 -- fix bugs

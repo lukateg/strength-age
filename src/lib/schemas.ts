@@ -101,6 +101,7 @@ export const testFormSchema = z.object({
   distribution: z.enum(["equal", "proportional"]),
   questionAmount: z.number().min(1),
   difficulty: z.number().min(0).max(100),
+  additionalInstructions: z.string(),
   questionTypes: z
     .array(z.string())
     .min(1, "Select at least one question type"),

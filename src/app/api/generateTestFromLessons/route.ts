@@ -30,6 +30,7 @@ interface RequestBody {
   questionDistribution: "equal" | "proportional";
   testName: string;
   description: string;
+  additionalInstructions?: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -43,6 +44,7 @@ export async function POST(req: NextRequest) {
       questionDistribution,
       testName,
       description,
+      additionalInstructions,
     } = (await req.json()) as RequestBody;
 
     if (!lessonIds?.length || !questionAmount) {
@@ -121,7 +123,8 @@ export async function POST(req: NextRequest) {
           difficulty,
           questionCount,
           testName,
-          description
+          description,
+          additionalInstructions
         );
       })
     );

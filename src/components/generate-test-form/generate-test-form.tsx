@@ -20,6 +20,7 @@ import { testFormSchema, type testSchema } from "@/lib/schemas";
 import { generateTest } from "@/server/test-actions";
 
 import { type z } from "zod";
+import AdditionalInstructionsView from "./components/additional-instructions-view";
 
 export type TestFormValues = z.infer<typeof testFormSchema>;
 export type GeneratedTest = z.infer<typeof testSchema>;
@@ -37,6 +38,7 @@ export default function GenerateTestForm({ classId }: { classId?: string }) {
       distribution: "equal",
       questionAmount: 10,
       difficulty: 50,
+      additionalInstructions: "",
       classId: classId ?? "",
       questionTypes: [],
       lessons: [],
@@ -82,6 +84,8 @@ export default function GenerateTestForm({ classId }: { classId?: string }) {
             control={control}
             lessonsLength={lessonsLength}
           />
+
+          <AdditionalInstructionsView control={control} />
 
           <Button type="submit" size="lg" className="w-full">
             Generate Test

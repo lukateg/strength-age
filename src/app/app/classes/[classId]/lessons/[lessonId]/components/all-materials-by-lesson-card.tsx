@@ -10,12 +10,13 @@ import { Button } from "@/components/ui/button";
 import ListCard, { ListItem } from "@/components/list-card";
 import AlertDialogModal from "@/components/alert-dialog";
 
-import { FileText, Eye, Trash } from "lucide-react";
+import { FileText, Eye, Trash, Upload } from "lucide-react";
 
-import { type Id } from "convex/_generated/dataModel";
+import Link from "next/link";
 
-export default function MaterialsSection() {
-  const { lessonId }: { lessonId: Id<"lessons"> } = useParams();
+export default function AllMaterialsByLessonCard() {
+  const { lessonId, classId }: { lessonId: string; classId: string } =
+    useParams();
   const pdfsByLesson = useAuthenticatedQueryWithStatus(
     api.lessons.getLessonPdfs,
     {
@@ -30,6 +31,16 @@ export default function MaterialsSection() {
       description="All materials for this lesson"
       items={pdfsByLesson.data}
       isLoading={pdfsByLesson.isPending}
+      cardAction={
+        <Button asChild>
+          <Link
+            href={`/app/classes/${classId}/lessons/${lessonId}/file-upload`}
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            Add new material
+          </Link>
+        </Button>
+      }
       renderItem={(pdf) => (
         <ListItem key={pdf?._id} icon={FileText} title={pdf.name}>
           <div className="flex gap-2">

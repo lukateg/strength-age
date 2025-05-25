@@ -2,9 +2,10 @@ import { useCallback } from "react";
 import { useMutation } from "convex/react";
 import { useClass } from "@/providers/class-context-provider";
 import { useUploadThing } from "@/hooks/use-upload-thing";
-
-import { api } from "../../convex/_generated/api";
 import { toast } from "sonner";
+
+import { toastError } from "@/lib/utils";
+import { api } from "../../convex/_generated/api";
 
 import { type ClientUploadedFileData } from "uploadthing/types";
 import { type Id } from "../../convex/_generated/dataModel";
@@ -58,9 +59,7 @@ export const useMaterialsMutations = () => {
         toast.dismiss(toastId);
         toast.success("Materials uploaded successfully.");
       } catch (error) {
-        console.error("Failed to upload materials:", error);
-        toast.dismiss(toastId);
-        toast.error("Failed to upload materials. Please try again.");
+        toastError(error, "Failed to upload materials. Please try again.");
       }
     },
     [classId, addManyPdfsMutation]
@@ -78,9 +77,7 @@ export const useMaterialsMutations = () => {
         toast.dismiss(toastId);
         toast.success("File deleted successfully.");
       } catch (error) {
-        console.error("Failed to delete file:", error);
-        toast.dismiss(toastId);
-        toast.error("Failed to delete file. Please try again.");
+        toastError(error, "Failed to delete file. Please try again.");
       }
     },
     [deletePdfMutation]

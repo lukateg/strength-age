@@ -12,16 +12,14 @@ import {
 
 import AlertDialogModal from "@/components/alert-dialog";
 
-import { type Id } from "../../../../../../../convex/_generated/dataModel";
-
 import { EllipsisVertical, Pencil, Trash } from "lucide-react";
 
 export default function LessonsItemDropdown({
   lessonId,
   classId,
 }: {
-  lessonId: Id<"lessons">;
-  classId: Id<"classes">;
+  lessonId: string;
+  classId: string;
 }) {
   const { deleteLesson } = useLessonMutations();
 

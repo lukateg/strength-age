@@ -28,6 +28,7 @@ export async function generateTest(
       difficulty: formData.difficulty,
       testName: formData.testName,
       description: formData.description,
+      additionalInstructions: formData.additionalInstructions,
       ...(isSingleLesson
         ? {}
         : { questionDistribution: formData.distribution }),

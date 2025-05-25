@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { AuthenticationRequired, createAppError } from "./utils/utils";
+import { AuthenticationRequired, createAppError } from "./utils";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 
@@ -19,7 +19,7 @@ export const getAllClassesByUserId = query({
 
     return await ctx.db
       .query("classes")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_user", (q) => q.eq("createdBy", userId))
       .collect();
   },
 });
@@ -27,14 +27,20 @@ export const getAllClassesByUserId = query({
 export const getClassById = query({
   args: { id: v.string() },
   handler: async (ctx, { id }) => {
-    await AuthenticationRequired({ ctx });
+    const userId = await AuthenticationRequired({ ctx });
 
     const normalizedId = ctx.db.normalizeId("classes", id);
 
     if (!normalizedId) {
       throw createAppError({ message: "Invalid item ID" });
     }
-    return await ctx.db.get(normalizedId);
+    const classResponse = await ctx.db.get(normalizedId);
+
+    if (classResponse?.createdBy !== userId) {
+      throw createAppError({ message: "Not authorized to access this class" });
+    }
+
+    return classResponse;
   },
 });
 
@@ -43,10 +49,21 @@ export const createClass = mutation({
   handler: async (ctx, { title, description }) => {
     const userId = await AuthenticationRequired({ ctx });
 
+    const existingClass = await ctx.db
+      .query("classes")
+      .withIndex("by_class_name", (q) => q.eq("title", title))
+      .first();
+
+    if (existingClass) {
+      throw createAppError({
+        message: "Class with same title already exists.",
+      });
+    }
+
     return await ctx.db.insert("classes", {
       title,
       description,
-      userId,
+      createdBy: userId,
     });
   },
 });
@@ -70,7 +87,7 @@ export const updateClass = mutation({
       throw createAppError({ message: "Class not found" });
     }
 
-    if (existingClass.userId !== userId) {
+    if (existingClass.createdBy !== userId) {
       throw createAppError({ message: "Not authorized to update this class" });
     }
 
@@ -97,7 +114,7 @@ export const deleteClass = mutation({
       throw new Error("Class not found");
     }
 
-    if (existingClass.userId !== userId) {
+    if (existingClass.createdBy !== userId) {
       throw new Error("Not authorized to delete this class");
     }
 

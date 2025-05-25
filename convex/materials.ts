@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { AuthenticationRequired, createAppError } from "./utils/utils";
+import { AuthenticationRequired, createAppError } from "./utils";
 import { internal } from "./_generated/api";
 
 import { type DataModel, type Id } from "./_generated/dataModel";
@@ -8,7 +8,7 @@ import { type GenericMutationCtx } from "convex/server";
 
 export const addPdf = mutation({
   args: {
-    classId: v.id("classes"),
+    classId: v.string(),
     pdf: v.object({
       fileUrl: v.string(),
       name: v.string(),
@@ -18,9 +18,15 @@ export const addPdf = mutation({
   handler: async (ctx, { classId, pdf }) => {
     const userId = await AuthenticationRequired({ ctx });
 
+    const normalizedClassId = ctx.db.normalizeId("classes", classId);
+
+    if (!normalizedClassId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
     const pdfId = await ctx.db.insert("pdfs", {
-      userId,
-      classId,
+      createdBy: userId,
+      classId: normalizedClassId,
       fileUrl: pdf.fileUrl,
       name: pdf.name,
       size: pdf.size,
@@ -32,7 +38,7 @@ export const addPdf = mutation({
 
 export const addManyPdfs = mutation({
   args: {
-    classId: v.id("classes"),
+    classId: v.string(),
     pdfFiles: v.array(
       v.object({
         fileUrl: v.string(),
@@ -44,10 +50,16 @@ export const addManyPdfs = mutation({
   handler: async (ctx, { classId, pdfFiles }) => {
     const userId = await AuthenticationRequired({ ctx });
 
+    const normalizedClassId = ctx.db.normalizeId("classes", classId);
+
+    if (!normalizedClassId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
     for (const pdf of pdfFiles) {
       await ctx.db.insert("pdfs", {
-        userId,
-        classId,
+        createdBy: userId,
+        classId: normalizedClassId,
         fileUrl: pdf.fileUrl,
         name: pdf.name,
         size: pdf.size,
@@ -58,14 +70,20 @@ export const addManyPdfs = mutation({
 
 export const getPdfsByClassId = query({
   args: v.object({
-    classId: v.id("classes"),
+    classId: v.string(),
   }),
   handler: async (ctx, { classId }) => {
     await AuthenticationRequired({ ctx });
 
+    const normalizedClassId = ctx.db.normalizeId("classes", classId);
+
+    if (!normalizedClassId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
     return await ctx.db
       .query("pdfs")
-      .withIndex("by_class_user", (q) => q.eq("classId", classId))
+      .withIndex("by_class_user", (q) => q.eq("classId", normalizedClassId))
       .collect();
   },
 });
@@ -77,17 +95,23 @@ export const getAllPDFsByUser = query({
 
     return await ctx.db
       .query("pdfs")
-      .filter((q) => q.eq(q.field("userId"), userId))
+      .withIndex("by_user", (q) => q.eq("createdBy", userId))
       .collect();
   },
 });
 
 export const getPdfsForLesson = query({
-  args: { lessonId: v.id("lessons") },
+  args: { lessonId: v.string() },
   handler: async (ctx, args) => {
+    const normalizedLessonId = ctx.db.normalizeId("lessons", args.lessonId);
+
+    if (!normalizedLessonId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
     const lessonPdfs = await ctx.db
       .query("lessonPdfs")
-      .withIndex("by_lessonId", (q) => q.eq("lessonId", args.lessonId))
+      .withIndex("by_lessonId", (q) => q.eq("lessonId", normalizedLessonId))
       .collect();
 
     return Promise.all(
@@ -98,11 +122,17 @@ export const getPdfsForLesson = query({
 
 export async function deleteLessonPdfRelationsByPdfId(
   ctx: GenericMutationCtx<DataModel>,
-  pdfId: Id<"pdfs">
+  pdfId: string
 ) {
+  const normalizedPdfId = ctx.db.normalizeId("pdfs", pdfId);
+
+  if (!normalizedPdfId) {
+    throw createAppError({ message: "Invalid item ID" });
+  }
+
   const lessonPdfs = await ctx.db
     .query("lessonPdfs")
-    .withIndex("by_pdfId", (q) => q.eq("pdfId", pdfId))
+    .withIndex("by_pdfId", (q) => q.eq("pdfId", normalizedPdfId))
     .collect();
 
   for (const lessonPdf of lessonPdfs) {
@@ -111,24 +141,30 @@ export async function deleteLessonPdfRelationsByPdfId(
 }
 
 export const deletePdf = mutation({
-  args: { pdfId: v.id("pdfs") },
+  args: { pdfId: v.string() },
   handler: async (ctx, { pdfId }) => {
     const userId = await AuthenticationRequired({ ctx });
 
-    const pdf = await ctx.db.get(pdfId);
+    const normalizedPdfId = ctx.db.normalizeId("pdfs", pdfId);
+
+    if (!normalizedPdfId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const pdf = await ctx.db.get(normalizedPdfId);
     if (!pdf) {
       throw createAppError({
         message: "PDF not found",
       });
     }
 
-    if (pdf.userId !== userId) {
+    if (pdf.createdBy !== userId) {
       throw createAppError({
         message: "Not authorized to delete this PDF",
       });
     }
 
-    await deleteLessonPdfRelationsByPdfId(ctx, pdfId);
+    await deleteLessonPdfRelationsByPdfId(ctx, normalizedPdfId);
 
     await ctx.scheduler.runAfter(
       0,
@@ -138,7 +174,7 @@ export const deletePdf = mutation({
       }
     );
 
-    await ctx.db.delete(pdfId);
+    await ctx.db.delete(normalizedPdfId);
 
     return { success: true };
   },
@@ -151,9 +187,16 @@ export async function deletePdfsByClassIdBatch(
   cursor?: string
 ) {
   const BATCH_SIZE = 100;
+
+  const normalizedId = ctx.db.normalizeId("classes", classId);
+
+  if (!normalizedId) {
+    throw createAppError({ message: "Invalid item ID" });
+  }
+
   const { page, isDone, continueCursor } = await ctx.db
     .query("pdfs")
-    .withIndex("by_class_user", (q) => q.eq("classId", classId))
+    .withIndex("by_class_user", (q) => q.eq("classId", normalizedId))
     .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
 
   for (const pdf of page) {

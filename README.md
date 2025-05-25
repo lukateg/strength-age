@@ -6,20 +6,21 @@ check before launch:
 // -- check if there is better retry logic when calling the AI
 // -- check if there is better way to add chunking text prompt
 // -- check if all routes are covered with the fallback and if URL security is enough
+// -- check if actions that require modals have them
+// -- check if -- remove all loading... 
 
 -- check why uploading calls 3 requests and is so slow ///
 create consistent pattern for loading skeleton, error case, and not found case
 create reusable components for error and not found case and use them across the app
 -- create custom fetch function with convex token
--- retry test multiple times and redirect back willaredirect you through multiple test reviews
 // - add error messages for each scenario that comes from the server -- iplement solution across all mutations and whole app
 // - lesson page should be new page because redirect works bad
 -- handle case when statusText: 'Service Unavailable' 
 -- implement proper error boundary
--- use normaliseId across app where you use id from the url
--- change userId on all tables to be createdBy
--- rename SelectFormItem to FormSelect
--- remove all loading... 
+
+-- retry test multiple times and redirect back willaredirect you through multiple test reviews SOLUTION: create reusable test review component and new route for test review from class, then use the review component on both routes and just different router back route in header on different routes
+
+
 -- create main page components like main-header and reuse it across the app
 -- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class
 -- replace all history back buttons with normal routes and align all layout patterns
@@ -27,31 +28,30 @@ create reusable components for error and not found case and use them across the 
 -- check case when generating test with lesson that has 0 materials
 -- add mobile design to the sections again
 -- decide if you want to go with with promise.all and pageSkeleton or with streaming and each component skeleton
+-- dashboard -> create new class -> cancel -> redirects to classes instead of dashboard
+-- make theme switch and not dropdown
+-- all errors in mutations should be handled with error is instance of an error display error message
+-- if you delete users table and user is not deleted from clerk next time he logs in he will not be in the users table
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
 -- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
 -- lesson title is not working when generating multiple lesson test
-
+-- header overlaps the layout on the mobile
 
 test fast clicks on submit buttons that do not have disabled props
-edit lesson has no submit button
-
-
 
 PLAN:
--- add permisions so user can access only its own content (change param userId to createdBy)
--- add share button for test result and implement share link logic
--- add modals on all needed actions
--- add additional info prompt when generating the test
--- handle case when LLM is not working
 -- add test preview page that would be oppened when test is generated or before retrying test that has basic info and a start (positive) button
--- add settings page
--- Add analytics
+-- handle case when LLM is not working
+-- fix bugs
+
 -- add payments
--- add free tier permission system
--- pocisti bagove
+-- add free tier permission system and share logic
+-- Add analytics
+
 -- SEO check
+-- restyle the and add colors to the app
 -- check free tier plan and work out permisions and free plan for max classes, lessons, pdfs in mb, tests and ai token calls
 -- in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
 -- release to prod
@@ -65,6 +65,10 @@ SETTINGS PAGE
 -- in settings page add I DONT KNOW (if user wants to have don't know answer when multiple question)
 
 MAYBE IN FUTURE
+-- add modals on all needed actions (when exiting touched forms)
+-- set generating the test to work the same as uploading materials in background and then whene finishes on toaster add link to open the test, then redirect him to test view page and then display green start button and then display global loader that simulates short loading and starts the test
+-- set each form to not be redirectable back to
+
 -TEST GENERATION
 -- add additional prompt section to test generation so user can add additional instruction for test
 -- add importing previous tests when generating test so AI knows not to generate same questions
@@ -76,9 +80,12 @@ MAYBE IN FUTURE
 
 
 FUTURE FEATURES:
+-- add settings page
 - test sharing between users and groups
 - test preview before starting to work on it
 - audio lessons
+- invite multiple people to the scheduled test at specific tieme and display leaderbord with result at the end
+- pausing or blockin test when changing window while working on a test
 
 # MVP Plan for Teach.me
 ✅ Core Features

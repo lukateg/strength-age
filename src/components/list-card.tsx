@@ -19,6 +19,7 @@ interface ListCardProps<T> {
   emptyMessage?: string;
   renderItem: (item: T) => React.ReactNode;
   height?: string;
+  cardAction?: React.ReactNode;
 }
 
 export default function ListCard<T>({
@@ -29,6 +30,7 @@ export default function ListCard<T>({
   emptyMessage = "No items found",
   renderItem,
   height = "h-[400px] md:h-[600px]",
+  cardAction,
 }: ListCardProps<T>) {
   if (isLoading) {
     return <Skeleton className="h-[600px] w-full" />;
@@ -36,9 +38,12 @@ export default function ListCard<T>({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+      <CardHeader className="flex flex-row justify-between">
+        <div className="space-y-2">
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </div>
+        {cardAction && <div>{cardAction}</div>}
       </CardHeader>
       <CardContent>
         <ItemsScrollArea className={height}>

@@ -1,4 +1,6 @@
-import SelectFormItem from "@/components/select-form-item";
+import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
+import { api } from "../../../../convex/_generated/api";
+
 import {
   Card,
   CardDescription,
@@ -8,10 +10,10 @@ import {
 } from "@/components/ui/card";
 import { FormField } from "@/components/ui/form";
 
+import FormSelect from "@/components/form-select";
+
 import { type Control } from "react-hook-form";
 import { type TestFormValues } from "@/components/generate-test-form/generate-test-form";
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import { api } from "../../../../convex/_generated/api";
 
 export default function ClassSelection({
   control,
@@ -35,7 +37,7 @@ export default function ClassSelection({
           control={control}
           name="classId"
           render={({ field }) => (
-            <SelectFormItem
+            <FormSelect
               {...field}
               items={classes.data}
               label="Class"

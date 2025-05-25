@@ -9,14 +9,12 @@ import ListCard, { ListItem } from "@/components/list-card";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 import LessonsItemDropdown from "./lessons-item-dropdown";
 
-import { Eye, FileText } from "lucide-react";
-
-import { type Id } from "convex/_generated/dataModel";
+import { Eye, FileText, Plus } from "lucide-react";
 
 export default function LessonsSectionComponent({
   classId,
 }: {
-  classId: Id<"classes">;
+  classId: string;
 }) {
   const { lessonsByClass } = useClass();
 
@@ -26,6 +24,14 @@ export default function LessonsSectionComponent({
       description="PDF documents and study materials"
       items={lessonsByClass.data}
       isLoading={lessonsByClass.isPending}
+      cardAction={
+        <Button asChild>
+          <Link href={`/app/classes/${classId}/new-lesson`}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add new lesson
+          </Link>
+        </Button>
+      }
       renderItem={(lesson) => (
         <ListItem key={lesson._id} icon={FileText} title={lesson.title}>
           <div className="flex gap-2 items-center">

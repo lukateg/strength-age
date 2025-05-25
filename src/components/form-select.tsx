@@ -9,12 +9,12 @@ import { Select } from "./ui/select";
 import { FormItem, FormMessage } from "./ui/form";
 import { FormDescription, FormLabel } from "./ui/form";
 
-interface Lesson {
+interface SelectableItem {
   _id: string;
   title: string;
 }
 
-export default function SelectFormItem({
+export default function FormSelect<T extends SelectableItem>({
   items,
   disabled,
   placeholder,
@@ -24,7 +24,7 @@ export default function SelectFormItem({
   label,
   description,
 }: {
-  items?: Lesson[] | null;
+  items?: T[] | null;
   disabled?: boolean;
   placeholder?: string;
   value?: string;

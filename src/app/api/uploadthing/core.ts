@@ -22,8 +22,8 @@ export const pdfFileRouter = {
   })
     .input(
       z.object({
-        classId: z.custom<Id<"classes">>(),
-        lessonId: z.optional(z.custom<Id<"lessons">>()),
+        classId: z.string(),
+        lessonId: z.optional(z.string()),
       })
     )
     // Set permissions and file types for this FileRoute

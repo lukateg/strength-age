@@ -1,12 +1,14 @@
 import { useCallback } from "react";
-import { type z } from "zod";
-import { type testSchema, type testReviewSchema } from "@/lib/schemas";
-
-import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
+
+import { toast } from "sonner";
+import { toastError } from "@/lib/utils";
 import { api } from "../../convex/_generated/api";
+
 import { type Id } from "../../convex/_generated/dataModel";
+import { type z } from "zod";
+import { type testSchema, type testReviewSchema } from "@/lib/schemas";
 
 type CreateTestParams = z.infer<typeof testSchema> & {
   classId: Id<"classes">;
@@ -32,14 +34,13 @@ export const useTestMutations = () => {
           toast.error("You must be logged in to create a test.");
           return;
         }
-        const testId = await createTestMutation({ ...params, userId });
+        const testId = await createTestMutation({ ...params });
 
         toast.success("Test created successfully.");
 
         return testId;
       } catch (error) {
-        console.error("Failed to create class:", error);
-        toast.error("Failed to create test. Please try again.");
+        toastError(error, "Failed to create test. Please try again.");
         throw error;
       }
     },
@@ -54,7 +55,6 @@ export const useTestMutations = () => {
           return;
         }
         const testReviewId = await createTestReviewMutation({
-          userId,
           testId: params.testId,
           title: params.title,
           description: params.description,
@@ -66,8 +66,7 @@ export const useTestMutations = () => {
 
         return testReviewId;
       } catch (error) {
-        console.error("Failed to create test review:", error);
-        toast.error("Failed to create test review. Please try again.");
+        toastError(error, "Failed to create test review. Please try again.");
         throw error;
       }
     },
@@ -86,9 +85,7 @@ export const useTestMutations = () => {
         toast.dismiss(toastId);
         toast.success("Test review deleted successfully.");
       } catch (error) {
-        console.error("Failed to delete test review:", error);
-        toast.dismiss(toastId);
-        toast.error("Failed to delete test review. Please try again.");
+        toastError(error, "Failed to delete test review. Please try again.");
       }
     },
     [deleteTestReviewMutation]
@@ -106,9 +103,7 @@ export const useTestMutations = () => {
         toast.dismiss(toastId);
         toast.success("Test deleted successfully.");
       } catch (error) {
-        console.error("Failed to delete test:", error);
-        toast.dismiss(toastId);
-        toast.error("Failed to delete test. Please try again.");
+        toastError(error, "Failed to delete test. Please try again.");
       }
     },
     [deleteTestMutation]

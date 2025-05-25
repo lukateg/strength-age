@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { AuthenticationRequired, createAppError } from "./utils/utils";
+import { AuthenticationRequired, createAppError } from "./utils";
 import { internal } from "./_generated/api";
 
 import { type DataModel, type Id } from "./_generated/dataModel";
@@ -10,7 +10,6 @@ export const createTest = mutation({
   args: {
     title: v.string(),
     description: v.string(),
-    userId: v.string(),
     classId: v.id("classes"),
     questions: v.array(
       v.object({
@@ -22,7 +21,7 @@ export const createTest = mutation({
     ),
   },
   handler: async (ctx, args) => {
-    await AuthenticationRequired({ ctx });
+    const userId = await AuthenticationRequired({ ctx });
     let title = args.title;
     const existingTest = await ctx.db
       .query("tests")
@@ -36,7 +35,7 @@ export const createTest = mutation({
       title,
       description: args.description,
       questions: args.questions,
-      userId: args.userId,
+      createdBy: userId,
       classId: args.classId,
     });
     return testId;
@@ -47,7 +46,6 @@ export const createTestReview = mutation({
   args: {
     title: v.string(),
     description: v.string(),
-    userId: v.string(),
     classId: v.id("classes"),
     testId: v.id("tests"),
     questions: v.array(
@@ -63,11 +61,13 @@ export const createTestReview = mutation({
     ),
   },
   handler: async (ctx, args) => {
+    const userId = await AuthenticationRequired({ ctx });
+
     const testId = await ctx.db.insert("testReviews", {
       title: args.title,
       description: args.description,
       questions: args.questions,
-      userId: args.userId,
+      createdBy: userId,
       classId: args.classId,
       testId: args.testId,
     });
@@ -81,7 +81,7 @@ export const getAllTestsByUser = query({
 
     const tests = await ctx.db
       .query("tests")
-      .filter((q) => q.eq(q.field("userId"), userId))
+      .withIndex("by_user", (q) => q.eq("createdBy", userId))
       .collect();
     return tests;
   },
@@ -89,13 +89,28 @@ export const getAllTestsByUser = query({
 
 export const getAllTestsByClassId = query({
   args: {
-    classId: v.id("classes"),
+    classId: v.string(),
   },
   handler: async (ctx, args) => {
-    await AuthenticationRequired({ ctx });
+    const userId = await AuthenticationRequired({ ctx });
+    const normalizedId = ctx.db.normalizeId("classes", args.classId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+    const classResponse = await ctx.db.get(normalizedId);
+
+    if (!classResponse) {
+      return null;
+    }
+
+    if (classResponse.createdBy !== userId) {
+      throw createAppError({ message: "Not authorized to access this class" });
+    }
+
     const tests = await ctx.db
       .query("tests")
-      .filter((q) => q.eq(q.field("classId"), args.classId))
+      .withIndex("by_class", (q) => q.eq("classId", normalizedId))
       .collect();
     return tests;
   },
@@ -103,22 +118,50 @@ export const getAllTestsByClassId = query({
 
 export const getTestById = query({
   args: {
-    testId: v.id("tests"),
+    testId: v.string(),
   },
   handler: async (ctx, args) => {
-    await AuthenticationRequired({ ctx });
-    const test = await ctx.db.get(args.testId);
+    const userId = await AuthenticationRequired({ ctx });
+    const normalizedId = ctx.db.normalizeId("tests", args.testId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const test = await ctx.db.get(normalizedId);
+    if (!test) {
+      return null;
+    }
+
+    if (test.createdBy !== userId) {
+      throw createAppError({ message: "Not authorized to access this test" });
+    }
     return test;
   },
 });
 
 export const getTestReviewById = query({
   args: {
-    testReviewId: v.id("testReviews"),
+    testReviewId: v.string(),
   },
   handler: async (ctx, args) => {
-    await AuthenticationRequired({ ctx });
-    const testReview = await ctx.db.get(args.testReviewId);
+    const userId = await AuthenticationRequired({ ctx });
+    const normalizedId = ctx.db.normalizeId("testReviews", args.testReviewId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const testReview = await ctx.db.get(normalizedId);
+    if (!testReview) {
+      return null;
+    }
+
+    if (testReview.createdBy !== userId) {
+      throw createAppError({
+        message: "Not authorized to access this test review",
+      });
+    }
     return testReview;
   },
 });
@@ -129,7 +172,7 @@ export const getAllTestReviewsByUser = query({
 
     const testReviews = await ctx.db
       .query("testReviews")
-      .filter((q) => q.eq(q.field("userId"), userId))
+      .withIndex("by_user", (q) => q.eq("createdBy", userId))
       .collect();
     return testReviews;
   },
@@ -137,17 +180,34 @@ export const getAllTestReviewsByUser = query({
 
 export const getTestReviewsByClassId = query({
   args: {
-    classId: v.id("classes"),
+    classId: v.string(),
   },
   handler: async (ctx, args) => {
-    await AuthenticationRequired({ ctx });
+    const userId = await AuthenticationRequired({ ctx });
+    const normalizedId = ctx.db.normalizeId("classes", args.classId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const classResponse = await ctx.db.get(normalizedId);
+
+    if (!classResponse) {
+      return null;
+    }
+
+    if (classResponse.createdBy !== userId) {
+      throw createAppError({ message: "Not authorized to access this class" });
+    }
+
     const testReviews = await ctx.db
       .query("testReviews")
-      .filter((q) => q.eq(q.field("classId"), args.classId))
+      .withIndex("by_class", (q) => q.eq("classId", normalizedId))
       .collect();
     return testReviews;
   },
 });
+
 export const getWeeklyTestReviewsByUserId = query({
   handler: async (ctx) => {
     const userId = await AuthenticationRequired({ ctx });
@@ -157,7 +217,7 @@ export const getWeeklyTestReviewsByUserId = query({
 
     const recentReviews = await ctx.db
       .query("testReviews")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_user", (q) => q.eq("createdBy", userId))
       .filter((q) => q.gte(q.field("_creationTime"), sevenDaysAgo.getTime()))
       .collect();
 
@@ -174,7 +234,7 @@ export const getWeeklyTestsByUserId = query({
 
     const recentTests = await ctx.db
       .query("tests")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_user", (q) => q.eq("createdBy", userId))
       .filter((q) => q.gte(q.field("_creationTime"), sevenDaysAgo.getTime()))
       .collect();
 
@@ -191,7 +251,7 @@ export async function deleteTestsByClassIdBatch(
   const BATCH_SIZE = 100;
   const { page, isDone, continueCursor } = await ctx.db
     .query("tests")
-    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .withIndex("by_user", (q) => q.eq("createdBy", userId))
     .filter((q) => q.eq(q.field("classId"), classId))
     .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
 
@@ -225,7 +285,7 @@ export async function deleteTestReviewsByClassIdBatch(
   const BATCH_SIZE = 100;
   const { page, isDone, continueCursor } = await ctx.db
     .query("testReviews")
-    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .withIndex("by_user", (q) => q.eq("createdBy", userId))
     .filter((q) => q.eq(q.field("classId"), classId))
     .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
 
@@ -255,7 +315,7 @@ export const deleteTestReview = mutation({
       });
     }
 
-    if (testReview.userId !== userId) {
+    if (testReview.createdBy !== userId) {
       throw createAppError({
         message: "Not authorized to delete this test review",
       });
@@ -279,7 +339,7 @@ export const deleteTest = mutation({
       });
     }
 
-    if (test.userId !== userId) {
+    if (test.createdBy !== userId) {
       throw createAppError({
         message: "Not authorized to delete this test",
       });

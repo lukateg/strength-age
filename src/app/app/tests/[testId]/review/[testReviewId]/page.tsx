@@ -19,6 +19,7 @@ import {
   BookOpen,
   CheckCircle,
   AlertCircle,
+  Send,
 } from "lucide-react";
 
 import { useParams, useRouter } from "next/navigation";
@@ -26,6 +27,7 @@ import { api } from "../../../../../../../convex/_generated/api";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 import { type Id } from "convex/_generated/dataModel";
+import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 
 export default function ReviewPage() {
   const {
@@ -39,22 +41,9 @@ export default function ReviewPage() {
       testReviewId,
     }
   );
-  // const [fromTestPage, setFromTestPage] = useState<boolean>(false);
-
-  // useEffect(() => {
-  //   const sessionStorageData = sessionStorage.getItem("fromTestPage");
-  //   if (sessionStorageData) {
-  //     setFromTestPage(true);
-  //   }
-  // }, []);
 
   const handleBackNavigation = () => {
-    // if (fromTestPage) {
-    //   sessionStorage.removeItem("fromTestPage");
-    //   router.push(`/app/tests`);
-    // } else {
     router.back();
-    // }
   };
 
   if (testReview.isPending) {
@@ -71,26 +60,34 @@ export default function ReviewPage() {
 
   return (
     <>
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full"
-          onClick={handleBackNavigation}
-        >
-          <ArrowLeft className="h-6 w-6" />
-        </Button>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-primary" />
-            <h1 className="text-xl md:text-2xl font-bold">
-              {testReview.data.title}
-            </h1>
+      <div className="flex justify-between items-center">
+        <div className=" flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full"
+            onClick={handleBackNavigation}
+          >
+            <ArrowLeft className="h-6 w-6" />
+          </Button>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-6 w-6 text-primary" />
+              <h1 className="text-xl md:text-2xl font-bold">
+                {testReview.data.title}
+              </h1>
+            </div>
+            <p className="text-sm md:text-base text-muted-foreground">
+              {testReview.data.description}
+            </p>
           </div>
-          <p className="text-sm md:text-base text-muted-foreground">
-            {testReview.data.description}
-          </p>
         </div>
+
+        <FeatureFlagTooltip>
+          <Button disabled className="text-xs md:text-base" variant="outline">
+            <Send className="h-4 w-4" />
+          </Button>
+        </FeatureFlagTooltip>
       </div>
 
       <Card>

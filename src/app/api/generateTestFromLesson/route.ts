@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
       difficulty,
       testName,
       description,
+      additionalInstructions,
     } = (await req.json()) as {
       lessonIds?: Id<"lessons">[];
       questionAmount?: number;
@@ -31,6 +32,7 @@ export async function POST(req: NextRequest) {
       difficulty: number;
       testName: string;
       description: string;
+      additionalInstructions?: string;
     };
 
     if (!lessonIds || !questionAmount) {
@@ -94,7 +96,8 @@ export async function POST(req: NextRequest) {
       difficulty,
       questionAmount,
       testName,
-      description
+      description,
+      additionalInstructions
     );
     console.log("API: Quiz generated:", quiz);
     return Response.json({ response: quiz });

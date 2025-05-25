@@ -73,7 +73,7 @@ export default function ClassPage() {
         </TabsContent>
 
         <TabsContent value="materials" className="space-y-4">
-          <MaterialsSectionComponent />
+          <MaterialsSectionComponent classId={classId} />
         </TabsContent>
 
         <TabsContent value="tests" className="space-y-4">

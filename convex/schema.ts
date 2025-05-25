@@ -5,28 +5,35 @@ export default defineSchema({
   users: defineTable({
     name: v.string(),
     clerkId: v.string(),
+    subscriptionTier: v.optional(v.string()),
   }).index("by_clerkId", ["clerkId"]),
 
   classes: defineTable({
     title: v.string(),
     description: v.optional(v.string()),
-    userId: v.string(), // Changed to proper ID reference
-  }).index("by_user", ["userId"]),
+    createdBy: v.string(),
+  })
+    .index("by_user", ["createdBy"])
+    .index("by_class_name", ["title"]),
 
   lessons: defineTable({
-    userId: v.string(), // Changed to proper ID reference
-    classId: v.id("classes"), // Changed to proper ID reference
+    createdBy: v.string(),
+    classId: v.id("classes"),
     title: v.string(),
     description: v.optional(v.string()),
-  }).index("by_class", ["classId"]),
+  })
+    .index("by_class", ["classId"])
+    .index("by_lesson_name", ["title"]),
 
   pdfs: defineTable({
-    userId: v.string(), // Changed to proper ID reference
-    classId: v.id("classes"), // Changed to proper ID reference
+    createdBy: v.string(),
+    classId: v.id("classes"),
     fileUrl: v.string(),
     name: v.string(),
     size: v.number(),
-  }).index("by_class_user", ["classId", "userId"]),
+  })
+    .index("by_class_user", ["classId", "createdBy"])
+    .index("by_user", ["createdBy"]),
 
   lessonPdfs: defineTable({
     lessonId: v.id("lessons"),
@@ -39,8 +46,8 @@ export default defineSchema({
     .index("by_classId", ["classId"]),
 
   tests: defineTable({
-    userId: v.string(), // Changed to proper ID reference
-    classId: v.id("classes"), // Changed to proper ID reference
+    createdBy: v.string(),
+    classId: v.id("classes"),
     title: v.string(),
     description: v.optional(v.string()),
     questions: v.array(
@@ -51,14 +58,16 @@ export default defineSchema({
         correctAnswer: v.array(v.string()),
       })
     ),
-  }).index("by_user", ["userId"]),
+  })
+    .index("by_user", ["createdBy"])
+    .index("by_class", ["classId"]),
 
   testReviews: defineTable({
-    userId: v.string(), // Changed to proper ID reference
-    classId: v.id("classes"), // Changed to proper ID reference
+    createdBy: v.string(),
+    classId: v.id("classes"),
     title: v.string(),
     description: v.optional(v.string()),
-    testId: v.id("tests"), // Changed to proper ID reference
+    testId: v.id("tests"),
     questions: v.array(
       v.object({
         questionText: v.string(),
@@ -70,5 +79,7 @@ export default defineSchema({
         feedback: v.optional(v.string()),
       })
     ),
-  }).index("by_user", ["userId"]),
+  })
+    .index("by_user", ["createdBy"])
+    .index("by_class", ["classId"]),
 });

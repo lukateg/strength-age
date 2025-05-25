@@ -2,8 +2,7 @@ import { useCallback } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { toast } from "sonner";
-
-import { type Id } from "../../convex/_generated/dataModel";
+import { toastError } from "@/lib/utils";
 
 type CreateClassParams = {
   title: string;
@@ -22,14 +21,15 @@ export const useClassMutations = () => {
   const createClass = useCallback(
     async (params: CreateClassParams) => {
       try {
-        await createClassMutation({
+        const classId = await createClassMutation({
           ...params,
         });
 
         toast.success("Class created successfully.");
+        return classId;
       } catch (error) {
-        console.error("Failed to create class:", error);
-        toast.error("Failed to create class. Please try again.");
+        console.log("error", error);
+        toastError(error, "Failed to create class. Please try again.");
       }
     },
     [createClassMutation]
@@ -45,7 +45,7 @@ export const useClassMutations = () => {
         toast.success("Class updated successfully.");
       } catch (error) {
         console.error("Failed to update class:", error);
-        toast.error("Failed to update class. Please try again.");
+        toastError(error, "Failed to update class. Please try again.");
       }
     },
     [updateClassMutation]
@@ -61,7 +61,7 @@ export const useClassMutations = () => {
         toast.success("Class deleted successfully.");
       } catch (error) {
         console.error("Failed to delete class:", error);
-        toast.error("Failed to delete class. Please try again.");
+        toastError(error, "Failed to delete class. Please try again.");
       }
     },
     [deleteClassMutation]

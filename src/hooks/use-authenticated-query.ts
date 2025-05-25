@@ -1,6 +1,5 @@
 import { makeUseQueryWithStatus } from "convex-helpers/react";
-import { extractErrorMessage } from "@/lib/utils";
-import { toast } from "sonner";
+import { toastError } from "@/lib/utils";
 
 import { useQueries } from "convex-helpers/react/cache/hooks";
 import { useConvexAuth } from "convex/react";
@@ -45,8 +44,7 @@ export function useAuthenticatedQueryWithStatus<
   );
 
   if (queryResult.status === "error") {
-    const errorMessage = extractErrorMessage(queryResult.error);
-    toast.error(errorMessage);
+    toastError(queryResult.error, "Failed to fetch data. Please try again.");
   }
 
   return queryResult;

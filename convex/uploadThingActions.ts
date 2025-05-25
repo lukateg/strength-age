@@ -4,7 +4,7 @@ import { internalAction } from "./_generated/server";
 import { v } from "convex/values";
 
 import { UTApi } from "uploadthing/server";
-import { createAppError } from "./utils/utils";
+import { createAppError } from "./utils";
 
 const utapi = new UTApi();
 
@@ -15,6 +15,7 @@ export const deleteFileFromUploadThing = internalAction({
       name: v.string(),
       size: v.number(),
       _creationTime: v.number(),
+      _id: v.string(),
     }),
   },
   handler: async (ctx, args) => {

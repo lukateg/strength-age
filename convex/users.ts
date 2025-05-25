@@ -8,13 +8,20 @@ export const upsertFromClerk = internalMutation({
     const userAttributes = {
       name: `${data.first_name} ${data.last_name}`,
       clerkId: data.id,
+      subscriptionTier: "free",
     };
 
     const user = await userByClerkId(ctx, data.id);
     if (user === null) {
+      // For new users, insert with free tier
       await ctx.db.insert("users", userAttributes);
     } else {
-      await ctx.db.patch(user._id, userAttributes);
+      // For existing users, only update name and clerkId, preserve their subscription tier
+      await ctx.db.patch(user._id, {
+        name: userAttributes.name,
+        clerkId: userAttributes.clerkId,
+        subscriptionTier: userAttributes.subscriptionTier,
+      });
     }
   },
 });

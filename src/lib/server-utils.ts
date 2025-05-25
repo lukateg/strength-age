@@ -80,7 +80,8 @@ export async function generateQuizForLesson(
   difficulty: number,
   questionCount: number,
   testName: string,
-  description: string
+  description: string,
+  additionalInstructions?: string
 ) {
   const combinedText = lessonTexts.join("\n\n");
   const prompt = createQuizPrompt(
@@ -89,7 +90,8 @@ export async function generateQuizForLesson(
     difficulty,
     questionCount,
     testName,
-    description
+    description,
+    additionalInstructions
   );
 
   try {

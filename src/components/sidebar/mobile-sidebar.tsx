@@ -13,18 +13,12 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-import { BookOpen, Brain, Home, Menu, Plus, Settings } from "lucide-react";
+import { Menu, Plus } from "lucide-react";
+import { NAVIGATION } from "./constants";
 
 const MobileSidebar = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-
-  const navigation = [
-    { name: "Dashboard", href: "/app", icon: Home },
-    { name: "My Classes", href: "/app/classes", icon: BookOpen },
-    { name: "Test Generator", href: "/app/tests", icon: Brain },
-    { name: "Settings", href: "/app/settings", icon: Settings },
-  ];
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -46,7 +40,7 @@ const MobileSidebar = () => {
 
           <div className="flex-1 px-3 py-2">
             <nav className="space-y-1">
-              {navigation.map((item) => (
+              {NAVIGATION.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}

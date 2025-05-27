@@ -5,7 +5,7 @@ import { ModeToggle } from "./mode-toggle";
 
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
-import MobileSidebar from "./mobile-sidebar";
+import MobileSidebar from "./sidebar/mobile-sidebar";
 import Logo from "./logo";
 import { Button } from "./ui/button";
 

@@ -5,20 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Brain, Home, Layout, Settings } from "lucide-react";
+import { Layout } from "lucide-react";
+import { NAVIGATION } from "./constants";
 // import { useLoadingContext } from "@/providers/loading-context";
 
 const Sidebar = () => {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
   // const { setLoading } = useLoadingContext();
-
-  const navigation = [
-    { name: "Dashboard", href: "/", icon: Home },
-    { name: "My Classes", href: "/app/classes", icon: BookOpen },
-    { name: "Test Generator", href: "/app/tests", icon: Brain },
-    { name: "Settings", href: "/app/settings", icon: Settings },
-  ];
 
   return (
     <aside
@@ -41,7 +35,7 @@ const Sidebar = () => {
         )}
       >
         <ul className="flex h-full grow flex-col gap-3 overflow-hidden py-2">
-          {navigation.map((item) => {
+          {NAVIGATION.map((item) => {
             // console.log(pathname === item.href, "[pathname === item.href]");
             return (
               <li key={item.name}>

@@ -37,6 +37,7 @@ create reusable components for error and not found case and use them across the 
 -- check if you can persist test generation on the backend so it continues even if user refreshes the page
 -- check why progress bar slows down the app
 -- implement AI cost monitoring setup
+-- implement unsubscribe payment system
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)

@@ -12,7 +12,7 @@ import { ConvexReactClient } from "convex/react";
 
 import { Toaster } from "@/components/ui/sonner";
 
-import Sidebar from "@/components/sidebar";
+import Sidebar from "@/components/sidebar/sidebar";
 import ErrorBoundary from "@/components/error-boundary";
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);

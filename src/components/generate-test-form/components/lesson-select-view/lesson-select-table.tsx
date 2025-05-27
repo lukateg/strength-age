@@ -20,11 +20,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { type ControllerRenderProps } from "react-hook-form";
 import { type TestFormValues } from "@/components/generate-test-form/generate-test-form";
 import { type LessonsType } from "@/types/types";
+import { type Id } from "convex/_generated/dataModel";
 
 import { Loader2 } from "lucide-react";
 
 export type Lesson = {
-  _id: string;
+  _id: Id<"lessons">;
   title: string;
 };
 
@@ -44,11 +45,20 @@ export default function LessonSelectTable({
           <Checkbox
             checked={
               lessons?.length
-                ? lessons?.every((lesson) => field.value.includes(lesson._id))
+                ? lessons?.every((lesson) =>
+                    field.value.some((v) => v.lessonId === lesson._id)
+                  )
                 : false
             }
             onCheckedChange={(value) =>
-              field.onChange(value ? lessons?.map((lesson) => lesson._id) : [])
+              field.onChange(
+                value
+                  ? lessons?.map((lesson) => ({
+                      lessonId: lesson._id,
+                      lessonTitle: lesson.title,
+                    }))
+                  : []
+              )
             }
             aria-label="Select all"
             className="h-4 w-4"
@@ -58,12 +68,22 @@ export default function LessonSelectTable({
       cell: ({ row }) => (
         <div className="flex justify-center w-[20px]">
           <Checkbox
-            checked={field.value.includes(row.getValue("_id"))}
+            checked={field.value.some(
+              (v) => v.lessonId === row.getValue("_id")
+            )}
             onCheckedChange={(checked) =>
               field.onChange(
                 checked
-                  ? [...field.value, row.getValue("_id")]
-                  : field.value.filter((id) => id !== row.getValue("_id"))
+                  ? [
+                      ...field.value,
+                      {
+                        lessonId: row.getValue("_id"),
+                        lessonTitle: row.getValue("title"),
+                      },
+                    ]
+                  : field.value.filter(
+                      (lesson) => lesson.lessonId !== row.getValue("_id")
+                    )
               )
             }
             aria-label="Select row"

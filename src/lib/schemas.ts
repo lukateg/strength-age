@@ -80,10 +80,33 @@ export const createLessonSchema = z.object({
   showExistingMaterials: z.boolean(),
 });
 
+export const generatedTestSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  questions: z.array(questionSchema).min(1), // Ensure at least one question
+});
+
 export const testSchema = z.object({
   title: z.string(),
   description: z.string(),
   questions: z.array(questionSchema).min(1), // Ensure at least one question
+  classId: z.custom<Id<"classes">>((val) => val !== undefined && val !== ""),
+  difficulty: z.number().min(0).max(100),
+  questionTypes: z
+    .array(z.enum(["multiple_choice", "true_false", "short_answer"]))
+    .min(1, "Select at least one question type"),
+  lessons: z
+    .array(
+      z.object({
+        lessonId: z.custom<Id<"lessons">>(
+          (val) => val !== undefined && val !== ""
+        ),
+        lessonTitle: z.string(),
+      })
+    )
+    .min(1, "Select at least one lesson"),
+  questionAmount: z.number().min(1),
+  additionalInstructions: z.string().optional(),
 });
 
 export const testReviewSchema = z.object({
@@ -101,11 +124,20 @@ export const testFormSchema = z.object({
   distribution: z.enum(["equal", "proportional"]),
   questionAmount: z.number().min(1),
   difficulty: z.number().min(0).max(100),
-  additionalInstructions: z.string(),
+  additionalInstructions: z.string().optional(),
   questionTypes: z
-    .array(z.string())
+    .array(z.enum(["multiple_choice", "true_false", "short_answer"]))
     .min(1, "Select at least one question type"),
-  lessons: z.array(z.string()).min(1, "Select at least one lesson"),
+  lessons: z
+    .array(
+      z.object({
+        lessonId: z.custom<Id<"lessons">>(
+          (val) => val !== undefined && val !== ""
+        ),
+        lessonTitle: z.string(),
+      })
+    )
+    .min(1, "Select at least one lesson"),
 });
 
 export const createAnswerSchema = (test: Doc<"tests"> | undefined | null) => {

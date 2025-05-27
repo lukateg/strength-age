@@ -50,6 +50,22 @@ export default defineSchema({
     classId: v.id("classes"),
     title: v.string(),
     description: v.optional(v.string()),
+    difficulty: v.number(),
+    questionTypes: v.array(
+      v.union(
+        v.literal("multiple_choice"),
+        v.literal("true_false"),
+        v.literal("short_answer")
+      )
+    ),
+    questionAmount: v.number(),
+    lessons: v.array(
+      v.object({
+        lessonId: v.id("lessons"),
+        lessonTitle: v.string(),
+      })
+    ),
+    additionalInstructions: v.optional(v.string()),
     questions: v.array(
       v.object({
         questionText: v.string(),
@@ -81,5 +97,6 @@ export default defineSchema({
     ),
   })
     .index("by_user", ["createdBy"])
-    .index("by_class", ["classId"]),
+    .index("by_class", ["classId"])
+    .index("by_test", ["testId"]),
 });

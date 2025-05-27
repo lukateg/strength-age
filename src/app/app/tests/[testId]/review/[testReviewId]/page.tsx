@@ -7,7 +7,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 import TestReviewStats from "./components/test-review-stats";
 import TestReviewSkeleton from "./components/test-review-skeleton";
-import RetryTestButton from "@/components/retry-test-button";
 import NotFound from "@/components/not-found";
 
 import {
@@ -20,6 +19,7 @@ import {
   CheckCircle,
   AlertCircle,
   Send,
+  RefreshCcw,
 } from "lucide-react";
 
 import { useParams, useRouter } from "next/navigation";
@@ -28,6 +28,8 @@ import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query
 
 import { type Id } from "convex/_generated/dataModel";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
+import AlertDialogModal from "@/components/alert-dialog";
+import { useLoadingContext } from "@/providers/loading-context";
 
 export default function ReviewPage() {
   const {
@@ -35,12 +37,22 @@ export default function ReviewPage() {
     testId,
   }: { testReviewId: Id<"testReviews">; testId: Id<"tests"> } = useParams();
   const router = useRouter();
+  const { setLoading } = useLoadingContext();
   const testReview = useAuthenticatedQueryWithStatus(
     api.tests.getTestReviewById,
     {
       testReviewId,
     }
   );
+
+  const handleRetakeTest = async () => {
+    setLoading(true, "Loading test...");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    router.push(`/app/tests/${testId}/active`);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    setLoading(false);
+  };
 
   const handleBackNavigation = () => {
     router.back();
@@ -99,16 +111,19 @@ export default function ReviewPage() {
                 Test Results
               </CardTitle>
             </div>
-            <RetryTestButton
-              to={`/app/tests/${testId}`}
-              variant="default"
-              className="text-xs md:text-base"
-            >
-              <span className="flex items-center gap-2">
-                <RotateCcw className="w-4 h-4" />
-                Retake Test
-              </span>
-            </RetryTestButton>
+
+            <AlertDialogModal
+              onConfirm={handleRetakeTest}
+              title="Retake Test"
+              description="After you press confirm you will be redirected to the test. Good luck!"
+              variant="positive"
+              alertTrigger={
+                <Button className="text-xs md:text-base" variant="positive">
+                  <RefreshCcw className="h-4 w-4 mr-2" />
+                  Retake Test
+                </Button>
+              }
+            />
           </div>
         </CardHeader>
         <CardContent>

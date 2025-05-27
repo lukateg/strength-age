@@ -4,12 +4,12 @@ import { useTestMutations } from "@/hooks/use-test-mutations";
 import { useTests } from "@/providers/tests-provider";
 
 import ListCard, { ListItem } from "@/components/list-card";
-import RetryTestButton from "@/components/retry-test-button";
 import AlertDialogModal from "@/components/alert-dialog";
 
 import { Button } from "@/components/ui/button";
 
-import { FileText, RotateCcw, Trash } from "lucide-react";
+import { Eye, FileText, Trash } from "lucide-react";
+import Link from "next/link";
 
 export default function TestsSection() {
   const { testsByUser } = useTests();
@@ -25,10 +25,12 @@ export default function TestsSection() {
       renderItem={(test) => (
         <ListItem key={test._id} icon={FileText} title={test.title}>
           <div className="flex gap-2">
-            <RetryTestButton to={`/app/tests/${test._id}`} variant="outline">
-              <RotateCcw className="h-4 w-4" />
-              <span className="hidden md:block ml-2">Retry</span>
-            </RetryTestButton>
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/app/tests/${test._id}`}>
+                <Eye className="h-4 w-4" />
+                <span className="hidden md:block ml-2">Preview</span>
+              </Link>
+            </Button>
 
             <AlertDialogModal
               onConfirm={async () => {

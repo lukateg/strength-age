@@ -19,9 +19,8 @@ const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isTestRoute =
-    /^\/app\/tests\/[^/]+$/.test(pathname) &&
-    pathname !== "/app/tests/generate-test";
+
+  const isActiveTestRoute = /^\/app\/tests\/[^/]+\/active$/.test(pathname);
 
   return (
     <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
@@ -36,7 +35,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             >
               <div className="flex h-screen">
                 <div className="hidden md:flex">
-                  {isTestRoute ? null : <Sidebar />}
+                  {isActiveTestRoute ? null : <Sidebar />}
                 </div>
 
                 <div className="flex-1 pt-16 flex flex-col">

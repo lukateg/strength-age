@@ -7,7 +7,12 @@ import { FormMessage } from "@/components/ui/form";
 import { type Control } from "react-hook-form";
 import { type TestFormValues } from "../../generate-test-form";
 
-const QUESTION_TYPES = [
+type QuestionType = {
+  id: "multiple_choice" | "true_false" | "short_answer";
+  label: string;
+};
+
+const QUESTION_TYPES: QuestionType[] = [
   { id: "multiple_choice", label: "Multiple Choice" },
   { id: "true_false", label: "True/False" },
   // { id: "fill-blanks", label: "Fill in the Blanks" },

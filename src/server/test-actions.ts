@@ -22,7 +22,7 @@ export async function generateTest(
       throw new Error("Base URL is not defined");
     }
     const requestBody = {
-      lessonIds: formData.lessons,
+      lessonIds: formData.lessons.map((lesson) => lesson.lessonId),
       questionAmount: formData.questionAmount,
       questionTypes: formData.questionTypes,
       difficulty: formData.difficulty,
@@ -33,10 +33,9 @@ export async function generateTest(
         ? {}
         : { questionDistribution: formData.distribution }),
     };
-    console.log("SERVER ACTION: Request body:", requestBody);
     const { getToken } = await auth();
+
     const authToken = await getToken();
-    // console.log("Token:", authToken);
     const response = await fetch(`${baseUrl}${endpoint}`, {
       method: "POST",
       headers: {
@@ -46,8 +45,6 @@ export async function generateTest(
       body: JSON.stringify(requestBody),
     });
 
-    console.log("SERVER ACTION: Response:", response);
-
     if (!response.ok) {
       const errorData = (await response.json()) as { error?: string };
       throw new Error(errorData.error ?? response.statusText);
@@ -56,8 +53,21 @@ export async function generateTest(
     const { response: generatedTest } = (await response.json()) as {
       response: GeneratedTest;
     };
-
-    return generatedTest;
+    // Only return the fields that are expected by the Convex mutation
+    return {
+      title: generatedTest.title,
+      description: generatedTest.description,
+      questions: generatedTest.questions,
+      classId: formData.classId,
+      difficulty: formData.difficulty,
+      questionTypes: formData.questionTypes,
+      questionAmount: formData.questionAmount,
+      lessons: formData.lessons.map((lesson) => ({
+        lessonId: lesson.lessonId,
+        lessonTitle: lesson.lessonTitle,
+      })),
+      additionalInstructions: formData.additionalInstructions,
+    };
   } catch (error) {
     console.error("Error generating test:", error);
     throw error;

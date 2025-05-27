@@ -32,17 +32,29 @@ create reusable components for error and not found case and use them across the 
 -- make theme switch and not dropdown
 -- all errors in mutations should be handled with error is instance of an error display error message
 -- if you delete users table and user is not deleted from clerk next time he logs in he will not be in the users table
+-- retake test opens up a modal that will have instructions and a green confirmation button to start the test
+-- incrementing test name index if already exists with same name should maybe work just in case of the first element
+-- check if you can persist test generation on the backend so it continues even if user refreshes the page
+-- check why progress bar slows down the app
+-- implement AI cost monitoring setup
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
 -- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
 -- lesson title is not working when generating multiple lesson test
--- header overlaps the layout on the mobile
+-- header overlaps the layout on the mobileå
 
 test fast clicks on submit buttons that do not have disabled props
 
+ZA SUTRA
+-- write a bit better confirm test modal text
+-- fix test review naming convention
+-- fix test review scroll problem
+-- redesigne test results page
+
+
 PLAN:
--- add test preview page that would be oppened when test is generated or before retrying test that has basic info and a start (positive) button
+
 -- handle case when LLM is not working
 -- fix bugs
 
@@ -86,6 +98,7 @@ FUTURE FEATURES:
 - audio lessons
 - invite multiple people to the scheduled test at specific tieme and display leaderbord with result at the end
 - pausing or blockin test when changing window while working on a test
+- mobile app and generating summaries from materials and voice lessons from summaries
 
 # MVP Plan for Teach.me
 ✅ Core Features
@@ -127,28 +140,6 @@ Use PostHog or Plausible for broader app usage tracking.
 ✅ Analytics: Convex for user stats + PostHog/Plausible for tracking
 
 ✅ Hosting: Hostinger + Coolify / vercel / netlify
-
-
-## 🚀 TODO:
-
-✅ Initialize GitHub repo & set up Next.js with Convex.
-
-✅ Deploy to Netlify and build CI.
-
-✅ Set up authentication (NextAuth.js or Clerk).
-
-✅ Create a landing page.
-
-✅ Protect app page and create redirect if un/authenticated.
-
-[ ] Build UI for class management & PDF uploads.
-
-[ ] Hook up Upload thing.
-
-[ ] Set up AI pipeline for test generation.
-
-[ ] Integrate analytics.
-
 
 # Teach-me core features and strategie
 

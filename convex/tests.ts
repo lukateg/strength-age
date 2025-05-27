@@ -6,11 +6,27 @@ import { internal } from "./_generated/api";
 import { type DataModel, type Id } from "./_generated/dataModel";
 import { type GenericMutationCtx } from "convex/server";
 
-export const createTest = mutation({
+export const uploadTest = mutation({
   args: {
     title: v.string(),
     description: v.string(),
     classId: v.id("classes"),
+    difficulty: v.number(),
+    questionTypes: v.array(
+      v.union(
+        v.literal("multiple_choice"),
+        v.literal("true_false"),
+        v.literal("short_answer")
+      )
+    ),
+    questionAmount: v.number(),
+    lessons: v.array(
+      v.object({
+        lessonId: v.id("lessons"),
+        lessonTitle: v.string(),
+      })
+    ),
+    additionalInstructions: v.optional(v.string()),
     questions: v.array(
       v.object({
         questionText: v.string(),
@@ -29,7 +45,7 @@ export const createTest = mutation({
       .collect();
 
     if (existingTest.length > 0) {
-      title = `${args.title} ${existingTest.length + 1}`;
+      title = `${args.title} #${existingTest.length + 1}`;
     }
     const testId = await ctx.db.insert("tests", {
       title,
@@ -37,6 +53,11 @@ export const createTest = mutation({
       questions: args.questions,
       createdBy: userId,
       classId: args.classId,
+      difficulty: args.difficulty,
+      questionTypes: args.questionTypes,
+      questionAmount: args.questionAmount,
+      lessons: args.lessons,
+      additionalInstructions: args.additionalInstructions,
     });
     return testId;
   },
@@ -62,9 +83,17 @@ export const createTestReview = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await AuthenticationRequired({ ctx });
+    let title = args.title;
+    const existingTestReview = await ctx.db
+      .query("testReviews")
+      .filter((q) => q.eq(q.field("title"), args.title))
+      .collect();
 
+    if (existingTestReview.length > 0) {
+      title = `${args.title} #${existingTestReview.length + 1}`;
+    }
     const testId = await ctx.db.insert("testReviews", {
-      title: args.title,
+      title,
       description: args.description,
       questions: args.questions,
       createdBy: userId,
@@ -203,6 +232,35 @@ export const getTestReviewsByClassId = query({
     const testReviews = await ctx.db
       .query("testReviews")
       .withIndex("by_class", (q) => q.eq("classId", normalizedId))
+      .collect();
+    return testReviews;
+  },
+});
+
+export const getTestReviewsByTestId = query({
+  args: {
+    testId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await AuthenticationRequired({ ctx });
+    const normalizedId = ctx.db.normalizeId("tests", args.testId);
+
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid test ID" });
+    }
+
+    const test = await ctx.db.get(normalizedId);
+    if (!test) {
+      throw createAppError({ message: "Test not found" });
+    }
+
+    if (test.createdBy !== userId) {
+      throw createAppError({ message: "Not authorized to access this test" });
+    }
+
+    const testReviews = await ctx.db
+      .query("testReviews")
+      .withIndex("by_test", (q) => q.eq("testId", normalizedId))
       .collect();
     return testReviews;
   },

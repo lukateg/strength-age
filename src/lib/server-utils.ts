@@ -4,11 +4,12 @@ import pdfParse from "pdf-parse";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "../../convex/_generated/api";
 
+import { createQuizPrompt } from "./utils";
+import { generatedTestSchema } from "./schemas";
+import { ConvexError } from "convex/values";
+
 import { type Id } from "convex/_generated/dataModel";
 import { type GenerativeModel } from "@google/generative-ai";
-import { createQuizPrompt } from "./utils";
-import { testSchema } from "./schemas";
-import { ConvexError } from "convex/values";
 
 type LessonPdf = {
   fileUrl: string;
@@ -59,7 +60,6 @@ export async function fetchLessonPdfs(
   lessonIds: Id<"lessons">[],
   token: string
 ) {
-  console.log("Fetching lesson PDFs", lessonIds, token);
   return Promise.all(
     lessonIds.map(async (lessonId) => {
       const pdfsForLesson = await fetchQuery(
@@ -98,7 +98,7 @@ export async function generateQuizForLesson(
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
     const parsedData = JSON.parse(responseText) as Record<string, unknown>;
-    return testSchema.parse(parsedData);
+    return generatedTestSchema.parse(parsedData);
   } catch (error) {
     console.error("Error generating quiz for lesson:", error);
     throw error;

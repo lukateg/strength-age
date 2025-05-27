@@ -4,48 +4,57 @@ import { useMutation } from "convex/react";
 
 import { toast } from "sonner";
 import { toastError } from "@/lib/utils";
+import { generateTest } from "@/server/test-actions";
 import { api } from "../../convex/_generated/api";
 
 import { type Id } from "../../convex/_generated/dataModel";
 import { type z } from "zod";
-import { type testSchema, type testReviewSchema } from "@/lib/schemas";
-
-type CreateTestParams = z.infer<typeof testSchema> & {
-  classId: Id<"classes">;
-};
+import { type testReviewSchema } from "@/lib/schemas";
+import { type TestFormValues } from "@/components/generate-test-form/generate-test-form";
 
 type CreateTestReviewParams = z.infer<typeof testReviewSchema> & {
   classId: Id<"classes">;
 };
 
 export const useTestMutations = () => {
-  const { user } = useUser(); // Clerk provides the logged-in user
+  const { user } = useUser();
   const userId = user?.id;
 
-  const createTestMutation = useMutation(api.tests.createTest);
+  const uploadTestMutation = useMutation(api.tests.uploadTest);
   const createTestReviewMutation = useMutation(api.tests.createTestReview);
   const deleteTestReviewMutation = useMutation(api.tests.deleteTestReview);
   const deleteTestMutation = useMutation(api.tests.deleteTest);
 
-  const createTest = useCallback(
-    async (params: CreateTestParams) => {
-      try {
-        if (!userId) {
-          toast.error("You must be logged in to create a test.");
-          return;
-        }
-        const testId = await createTestMutation({ ...params });
+  const generateAndUploadTest = async (formData: TestFormValues) => {
+    const toastId = toast.loading("Generating test...", {
+      description: "Please wait while we generate your test.",
+      duration: Infinity,
+    });
 
-        toast.success("Test created successfully.");
+    try {
+      generateTest(formData)
+        .then(async (generatedTest) => {
+          await uploadTestMutation({
+            ...generatedTest,
+          });
 
-        return testId;
-      } catch (error) {
-        toastError(error, "Failed to create test. Please try again.");
-        throw error;
-      }
-    },
-    [userId, createTestMutation]
-  );
+          toast.dismiss(toastId);
+          toast.success("Test generated successfully!");
+        })
+        .catch((error) => {
+          toast.dismiss(toastId);
+          let errorMessage =
+            "An unknown error occurred. Please try again later.";
+          if (error instanceof Error) {
+            errorMessage = error.message;
+          }
+          toast.error(errorMessage);
+        });
+    } catch (error) {
+      toast.dismiss(toastId);
+      toastError(error, "Failed to create test. Please try again.");
+    }
+  };
 
   const createTestReview = useCallback(
     async (params: CreateTestReviewParams) => {
@@ -67,7 +76,6 @@ export const useTestMutations = () => {
         return testReviewId;
       } catch (error) {
         toastError(error, "Failed to create test review. Please try again.");
-        throw error;
       }
     },
     [userId, createTestReviewMutation]
@@ -110,7 +118,7 @@ export const useTestMutations = () => {
   );
 
   return {
-    createTest,
+    generateAndUploadTest,
     createTestReview,
     deleteTestReview,
     deleteTest,

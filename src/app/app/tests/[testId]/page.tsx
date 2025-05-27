@@ -1,36 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { Card } from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 import { api } from "../../../../../convex/_generated/api";
 
-import TestFooter from "./components/test-footer";
-import QuestionAnswers from "./components/question-answers";
 import TestSkeleton from "./components/test-skeleton";
-import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 import NotFound from "@/components/not-found";
+import Link from "next/link";
 
 import { useTestMutations } from "@/hooks/use-test-mutations";
+import { ArrowLeft, Brain, RefreshCcw, Eye, Trash, Play } from "lucide-react";
+import { TestDetails } from "./components/test-details";
+import { TestActions } from "./components/test-actions";
+import { ListItem } from "@/components/list-card";
+import ListCard from "@/components/list-card";
+import AlertDialogModal from "@/components/alert-dialog";
+import TestIncludedMaterials from "./components/test-included-materials";
 import { useLoadingContext } from "@/providers/loading-context";
-import { toast } from "sonner";
-
-import { useRouter } from "next/navigation";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { createAnswerSchema } from "@/lib/schemas";
-
-import { type Id } from "../../../../../convex/_generated/dataModel";
-import type * as z from "zod";
-import { Pause, CircleX, DoorOpen } from "lucide-react";
-import { reviewTest } from "@/server/test-actions";
 
 export type TestQuestion = {
   questionText: string;
@@ -39,65 +28,23 @@ export type TestQuestion = {
   correctAnswer: string[];
 };
 
-export default function TestPage() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const { testId }: { testId: Id<"tests"> } = useParams();
-  const { setLoading, loading } = useLoadingContext();
+export default function TestPreviewPage() {
+  const { testId }: { testId: string } = useParams();
+  const { deleteTestReview } = useTestMutations();
+  const { setLoading } = useLoadingContext();
+
+  const router = useRouter();
 
   const test = useAuthenticatedQueryWithStatus(api.tests.getTestById, {
     testId,
   });
 
-  const { createTestReview } = useTestMutations();
-  const router = useRouter();
-  const questionsPerPage = 10;
-  const startIndex = (currentPage - 1) * questionsPerPage;
-  const endIndex = startIndex + questionsPerPage;
-  const currentQuestions = test?.data?.questions.slice(startIndex, endIndex);
-
-  const formSchema = createAnswerSchema(test?.data);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {},
-    mode: "onSubmit",
-  });
-
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    if (!test) {
-      return;
+  const testReviews = useAuthenticatedQueryWithStatus(
+    api.tests.getTestReviewsByTestId,
+    {
+      testId,
     }
-    setLoading(true, "Reviewing test...");
-
-    if (!test.data) {
-      return;
-    }
-    const requestBody = {
-      test: test.data,
-      answers: data,
-    };
-
-    try {
-      const responseData = await reviewTest(requestBody);
-
-      const testReviewId = await createTestReview({
-        ...responseData,
-        testId: test.data._id,
-        classId: test.data.classId,
-      });
-      void router.replace(`/app/tests/${testId}/review/${testReviewId}`);
-    } catch (error) {
-      let errorMessage = "An unknown error occurred. Please try again later.";
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      toast.error("Error reviewing test", {
-        description: errorMessage,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  );
 
   if (test.isPending) {
     return <TestSkeleton />;
@@ -107,67 +54,115 @@ export default function TestPage() {
     return <NotFound />;
   }
 
+  if (!test.data) {
+    return <NotFound />;
+  }
+
+  const handleRetakeTest = async () => {
+    setLoading(true, "Loading test...");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    router.push(`/app/tests/${testId}/active`);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    setLoading(false);
+  };
+
   return (
-    <ScrollArea className="max-w-screen-xl mx-auto">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="mb-8 text-center flex justify-between items-center">
-            <Button
-              variant="destructive"
-              onClick={() => router.back()}
-              type="button"
-            >
-              <DoorOpen />
-              <span className="hidden md:block md:ml-2">Exit Test</span>
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+          onClick={() => router.back()}
+        >
+          <ArrowLeft className="h-6 w-6" />
+        </Button>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <Brain className="h-6 w-6 text-primary" />
+            <h1 className="text-2xl font-bold">{test.data.title}</h1>
+          </div>
+          <p className="text-muted-foreground">{test.data.description}</p>
+        </div>
+
+        <AlertDialogModal
+          onConfirm={handleRetakeTest}
+          title="Retake Test"
+          description="After you press confirm you will be redirected to the test. Good luck!"
+          variant="positive"
+          alertTrigger={
+            <Button className="text-xs md:text-base" variant="positive">
+              <Play className="h-4 w-4 mr-2" />
+              Start Test!
             </Button>
-            <div className="flex-1">
-              <h1 className="text-xl md:text-3xl font-bold mb-2">
-                {test.data?.title}
-              </h1>
-              <p className="text-sm md:text-base text-muted-foreground hidden md:block">
-                {test.data?.description}
-              </p>
-            </div>
-
-            <FeatureFlagTooltip>
-              <Button type="button" variant="positive" disabled>
-                <Pause className="w-4 h-4" />
-                <span className="hidden md:block md:ml-2">Pause Test</span>
-              </Button>
-            </FeatureFlagTooltip>
-          </div>
-
-          <div className="space-y-6 ">
-            {currentQuestions?.map((question, index) => (
-              <Card key={startIndex + index} className="p-6">
-                <div className="mb-4">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    Question {startIndex + index + 1}
-                  </span>
-                  <h2 className="text-xl font-semibold mt-1">
-                    {question.questionText}
-                  </h2>
-                </div>
-
-                <QuestionAnswers
-                  question={question}
-                  index={index}
-                  startIndex={startIndex}
-                  form={form}
-                />
-              </Card>
-            ))}
-          </div>
-        </form>
-        <TestFooter
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          test={test.data}
-          questionsPerPage={questionsPerPage}
-          handleSubmit={form.handleSubmit(onSubmit)}
-          isLoading={loading}
+          }
         />
-      </Form>
-    </ScrollArea>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-3">
+        <div className="col-span-2 space-y-4">
+          <TestDetails
+            questionCount={test.data.questions.length}
+            questionTypes={test.data.questionTypes}
+            difficulty={test.data.difficulty}
+            lessons={test.data.lessons.map((lesson) => ({
+              _id: lesson.lessonId,
+              title: lesson.lessonTitle,
+            }))}
+            classId={test.data.classId}
+          />
+
+          <TestActions handleRetakeTest={handleRetakeTest} />
+        </div>
+
+        <div className="col-span-1">
+          <TestIncludedMaterials testId={testId} />
+        </div>
+      </div>
+
+      <ListCard
+        title="Previous Attempts"
+        description="All test attempts you took"
+        height="h-[400px] md:h-[300px]"
+        items={testReviews?.data}
+        isLoading={testReviews?.isPending}
+        renderItem={(testReview) => (
+          <ListItem key={testReview._id} icon={Brain} title={testReview.title}>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Link
+                  href={`/app/tests/${testReview.testId}/review/${testReview._id}`}
+                  className="flex items-center"
+                >
+                  <Eye className="h-4 w-4" />
+                  <span className="hidden md:block ml-2">Results</span>
+                </Link>
+              </Button>
+
+              <AlertDialogModal
+                onConfirm={async () => {
+                  if (testReview?._id) {
+                    await deleteTestReview(testReview._id);
+                  }
+                }}
+                title="Delete Test Review"
+                description="Are you sure you want to delete this test review?"
+                variant="destructive"
+                alertTrigger={
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs md:text-base"
+                  >
+                    <Trash className="h-4 w-4 text-red-500" />
+                  </Button>
+                }
+              />
+            </div>
+          </ListItem>
+        )}
+      />
+    </div>
   );
 }

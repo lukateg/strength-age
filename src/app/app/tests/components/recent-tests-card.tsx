@@ -5,12 +5,12 @@ import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query
 import { useTestMutations } from "@/hooks/use-test-mutations";
 
 import AlertDialogModal from "@/components/alert-dialog";
-import RetryTestButton from "@/components/retry-test-button";
 import ListCard, { ListItem } from "@/components/list-card";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 
-import { BookOpen, RotateCcw, Trash } from "lucide-react";
+import { BookOpen, Eye, Trash } from "lucide-react";
 export default function RecentTests() {
   const recentTests = useAuthenticatedQueryWithStatus(
     api.tests.getWeeklyTestsByUserId
@@ -26,10 +26,12 @@ export default function RecentTests() {
       renderItem={(test) => (
         <ListItem key={test._id} icon={BookOpen} title={test.title}>
           <div className="flex gap-2">
-            <RetryTestButton to={`/app/tests/${test._id}`} variant="outline">
-              <RotateCcw className="h-4 w-4" />
-              <span className="hidden md:block ml-2">Retry</span>
-            </RetryTestButton>
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/app/tests/${test._id}`}>
+                <Eye className="h-4 w-4" />
+                <span className="hidden md:block ml-2">Preview</span>
+              </Link>
+            </Button>
 
             <AlertDialogModal
               onConfirm={async () => {

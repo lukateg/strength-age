@@ -100,6 +100,8 @@ export async function POST(req: NextRequest) {
       additionalInstructions
     );
     console.log("API: Quiz generated:", quiz);
+
+    console.log("API: Quiz generated:", quiz);
     return Response.json({ response: quiz });
   } catch (error) {
     console.error("Error generating test:", error);

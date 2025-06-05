@@ -260,6 +260,25 @@ export const syncStripeDataToConvex = internalAction({
           paymentMethod: undefined,
         },
       });
+
+      // Update user's subscription tier to none
+      const stripeCustomer = await ctx.runQuery(
+        internal.stripe.getStripeCustomer,
+        {
+          customerId,
+        }
+      );
+      if (stripeCustomer) {
+        const user = await ctx.runQuery(internal.users.getUserByClerkId, {
+          clerkId: stripeCustomer.userId,
+        });
+        if (user) {
+          await ctx.runMutation(internal.users.updateUser, {
+            userId: user._id,
+            data: { subscriptionTier: "free" },
+          });
+        }
+      }
       return;
     }
 
@@ -276,6 +295,14 @@ export const syncStripeDataToConvex = internalAction({
       subscriptionId: subscription.id,
       status: subscription.status,
     });
+
+    // Map price IDs to tiers
+    const tierMap: Record<string, "starter" | "pro"> = {
+      [process.env.STRIPE_STARTER_MONTHLY_PRICE_ID!]: "starter",
+      [process.env.STRIPE_STARTER_YEARLY_PRICE_ID!]: "starter",
+      [process.env.STRIPE_PRO_MONTHLY_PRICE_ID!]: "pro",
+      [process.env.STRIPE_PRO_YEARLY_PRICE_ID!]: "pro",
+    };
 
     // Store complete subscription state
     const subData = {
@@ -308,6 +335,28 @@ export const syncStripeDataToConvex = internalAction({
       customerId,
       data: subData,
     });
+
+    // Update user's subscription tier
+    const stripeCustomer = await ctx.runQuery(
+      internal.stripe.getStripeCustomer,
+      {
+        customerId,
+      }
+    );
+    if (stripeCustomer) {
+      const user = await ctx.runQuery(internal.users.getUserByClerkId, {
+        clerkId: stripeCustomer.userId,
+      });
+      if (user) {
+        const tier = subData.priceId
+          ? (tierMap[subData.priceId] ?? "free")
+          : "free";
+        await ctx.runMutation(internal.users.updateUser, {
+          userId: user._id,
+          data: { subscriptionTier: tier },
+        });
+      }
+    }
 
     return subData;
   },

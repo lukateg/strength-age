@@ -1,6 +1,7 @@
 import { internalMutation, type QueryCtx } from "./_generated/server";
 import { type UserJSON } from "@clerk/backend";
 import { v, type Validator } from "convex/values";
+import { internalQuery } from "./_generated/server";
 
 export const upsertFromClerk = internalMutation({
   args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
@@ -8,7 +9,7 @@ export const upsertFromClerk = internalMutation({
     const userAttributes = {
       name: `${data.first_name} ${data.last_name}`,
       clerkId: data.id,
-      subscriptionTier: "free",
+      subscriptionTier: "free" as "free" | "starter" | "pro",
     };
 
     const user = await userByClerkId(ctx, data.id);
@@ -61,3 +62,27 @@ export async function getCurrentUser(ctx: QueryCtx) {
   }
   return await userByClerkId(ctx, identity.subject);
 }
+
+export const getUserByClerkId = internalQuery({
+  args: { clerkId: v.string() },
+  handler: async (ctx, { clerkId }) => {
+    return await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
+      .first();
+  },
+});
+
+export const updateUser = internalMutation({
+  args: {
+    userId: v.id("users"),
+    data: v.object({
+      subscriptionTier: v.optional(
+        v.union(v.literal("free"), v.literal("starter"), v.literal("pro"))
+      ),
+    }),
+  },
+  handler: async (ctx, { userId, data }) => {
+    await ctx.db.patch(userId, data);
+  },
+});

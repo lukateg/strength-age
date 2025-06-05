@@ -5,17 +5,37 @@ import { PricingCard } from "./components/pricing-card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, CreditCard } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { useAction } from "convex/react";
+import { api } from "convex/_generated/api";
 
 export default function PricingSection() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">(
     "monthly"
   );
+  const stripePaymentAction = useAction(api.stripe.handleStripeCheckout);
 
   const toggleBillingPeriod = () => {
     setBillingPeriod(billingPeriod === "monthly" ? "yearly" : "monthly");
   };
 
-  const discount = 0.1; // 20% discount for yearly billing
+  const discount = 0.1; // 10% discount for yearly billing
+
+  const handleSubscribe = async (priceId: string) => {
+    console.log("handleSubscribe", priceId);
+    try {
+      const url = await stripePaymentAction({
+        priceId,
+        redirectRootUrl: window.location.origin,
+        // cancelUrl: `${window.location.origin}/app/pricing`,
+      });
+
+      if (url) {
+        window.location.href = url;
+      }
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+    }
+  };
 
   return (
     <div className="mx-auto container p-6 space-y-14">
@@ -96,6 +116,13 @@ export default function PricingSection() {
             buttonText="Upgrade Now"
             buttonVariant="default"
             popular={true}
+            onClick={() =>
+              handleSubscribe(
+                billingPeriod === "monthly"
+                  ? process.env.NEXT_PUBLIC_STRIPE_STARTER_MONTHLY_PRICE_ID!
+                  : process.env.NEXT_PUBLIC_STRIPE_STARTER_YEARLY_PRICE_ID!
+              )
+            }
           />
 
           <PricingCard
@@ -118,6 +145,13 @@ export default function PricingSection() {
             ]}
             buttonText="Go Pro"
             buttonVariant="default"
+            onClick={() =>
+              handleSubscribe(
+                billingPeriod === "monthly"
+                  ? process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID!
+                  : process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID!
+              )
+            }
           />
         </div>
       </div>

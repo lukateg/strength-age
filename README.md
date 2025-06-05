@@ -39,6 +39,7 @@ create reusable components for error and not found case and use them across the 
 -- implement AI cost monitoring setup
 -- implement unsubscribe payment system
 
+
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
 -- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson

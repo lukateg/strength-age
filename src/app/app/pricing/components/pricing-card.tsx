@@ -22,6 +22,7 @@ interface PricingCardProps {
   buttonText: string;
   buttonVariant?: "default" | "outline" | "secondary";
   popular?: boolean;
+  onClick?: () => void;
 }
 
 export function PricingCard({
@@ -33,6 +34,7 @@ export function PricingCard({
   buttonText,
   buttonVariant = "default",
   popular = false,
+  onClick,
 }: PricingCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -86,6 +88,7 @@ export function PricingCard({
               buttonVariant === "default" &&
               "bg-primary text-primary-foreground hover:bg-primary/90"
           )}
+          onClick={onClick}
         >
           {buttonText}
         </Button>

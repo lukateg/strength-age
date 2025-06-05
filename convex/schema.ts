@@ -6,7 +6,27 @@ export default defineSchema({
     name: v.string(),
     clerkId: v.string(),
     subscriptionTier: v.optional(v.string()),
+    stripeCustomerId: v.optional(v.string()),
   }).index("by_clerkId", ["clerkId"]),
+
+  stripeCustomers: defineTable({
+    userId: v.string(),
+    stripeCustomerId: v.string(),
+    subscriptionId: v.optional(v.string()),
+    status: v.optional(v.string()),
+    priceId: v.optional(v.string()),
+    currentPeriodStart: v.optional(v.number()),
+    currentPeriodEnd: v.optional(v.number()),
+    cancelAtPeriodEnd: v.optional(v.boolean()),
+    paymentMethod: v.optional(
+      v.object({
+        brand: v.optional(v.string()),
+        last4: v.optional(v.string()),
+      })
+    ),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_stripeCustomerId", ["stripeCustomerId"]),
 
   classes: defineTable({
     title: v.string(),

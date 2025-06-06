@@ -12,6 +12,7 @@ import type * as classes from "../classes.js";
 import type * as http from "../http.js";
 import type * as lessons from "../lessons.js";
 import type * as materials from "../materials.js";
+import type * as shared_permissions from "../shared/permissions.js";
 import type * as stripe from "../stripe.js";
 import type * as tests from "../tests.js";
 import type * as uploadThingActions from "../uploadThingActions.js";
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   lessons: typeof lessons;
   materials: typeof materials;
+  "shared/permissions": typeof shared_permissions;
   stripe: typeof stripe;
   tests: typeof tests;
   uploadThingActions: typeof uploadThingActions;

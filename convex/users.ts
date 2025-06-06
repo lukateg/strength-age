@@ -1,4 +1,4 @@
-import { internalMutation, type QueryCtx } from "./_generated/server";
+import { internalMutation, query, type QueryCtx } from "./_generated/server";
 import { type UserJSON } from "@clerk/backend";
 import { v, type Validator } from "convex/values";
 import { internalQuery } from "./_generated/server";
@@ -10,6 +10,7 @@ export const upsertFromClerk = internalMutation({
       name: `${data.first_name} ${data.last_name}`,
       clerkId: data.id,
       subscriptionTier: "free" as "free" | "starter" | "pro",
+      roles: ["user"] as ("admin" | "user")[],
     };
 
     const user = await userByClerkId(ctx, data.id);
@@ -22,6 +23,7 @@ export const upsertFromClerk = internalMutation({
         name: userAttributes.name,
         clerkId: userAttributes.clerkId,
         subscriptionTier: userAttributes.subscriptionTier,
+        roles: userAttributes.roles,
       });
     }
   },
@@ -49,27 +51,20 @@ async function userByClerkId(ctx: QueryCtx, clerkId: string) {
     .unique();
 }
 
-export async function getCurrentUserOrThrow(ctx: QueryCtx) {
-  const userRecord = await getCurrentUser(ctx);
-  if (!userRecord) throw new Error("Can't get current user");
-  return userRecord;
-}
-
-export async function getCurrentUser(ctx: QueryCtx) {
-  const identity = await ctx.auth.getUserIdentity();
-  if (identity === null) {
-    return null;
-  }
-  return await userByClerkId(ctx, identity.subject);
-}
+export const getCurrentUserQuery = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      return null;
+    }
+    return await userByClerkId(ctx, identity.subject);
+  },
+});
 
 export const getUserByClerkId = internalQuery({
   args: { clerkId: v.string() },
   handler: async (ctx, { clerkId }) => {
-    return await ctx.db
-      .query("users")
-      .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
-      .first();
+    return userByClerkId(ctx, clerkId);
   },
 });
 

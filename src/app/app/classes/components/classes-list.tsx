@@ -1,15 +1,26 @@
-"use client";
-
-import { useClasses } from "@/providers/classes-provider";
-
 import { Skeleton } from "@/components/ui/skeleton";
 
 import ClassCard from "./class-card/class-card";
 import NotFound from "@/components/not-found";
 
-export default function ClassesList() {
-  const { classes } = useClasses();
+import { type Doc } from "convex/_generated/dataModel";
+import { type QueryStatus } from "@/hooks/use-authenticated-query";
+import { type FunctionReference } from "convex/server";
+import { type EmptyObject } from "react-hook-form";
 
+export default function ClassesList({
+  classes,
+}: {
+  classes: QueryStatus<
+    FunctionReference<
+      "query",
+      "public",
+      EmptyObject,
+      Doc<"classes">[],
+      string | undefined
+    >
+  >;
+}) {
   if (classes.isPending) {
     return (
       <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">

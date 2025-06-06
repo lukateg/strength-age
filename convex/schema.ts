@@ -5,9 +5,12 @@ export default defineSchema({
   users: defineTable({
     clerkId: v.string(),
     name: v.string(),
-    subscriptionTier: v.optional(
-      v.union(v.literal("free"), v.literal("starter"), v.literal("pro"))
+    subscriptionTier: v.union(
+      v.literal("free"),
+      v.literal("starter"),
+      v.literal("pro")
     ),
+    roles: v.array(v.union(v.literal("admin"), v.literal("user"))),
   }).index("by_clerkId", ["clerkId"]),
 
   stripeCustomers: defineTable({

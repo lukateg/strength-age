@@ -1,5 +1,9 @@
 import { v } from "convex/values";
-import { AuthenticationRequired, createAppError } from "./utils";
+import {
+  AuthenticationRequired,
+  createAppError,
+  checkPermission,
+} from "./utils";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 
@@ -49,9 +53,20 @@ export const createClass = mutation({
   handler: async (ctx, { title, description }) => {
     const userId = await AuthenticationRequired({ ctx });
 
+    // Check if user has permission to create a class
+    await checkPermission(ctx, userId, "classes", "create", {
+      existingClassesLength: (
+        await ctx.db
+          .query("classes")
+          .withIndex("by_user", (q) => q.eq("createdBy", userId))
+          .collect()
+      ).length,
+    });
+
     const existingClass = await ctx.db
       .query("classes")
-      .withIndex("by_class_name", (q) => q.eq("title", title))
+      .withIndex("by_user", (q) => q.eq("createdBy", userId))
+      .filter((q) => q.eq(q.field("title"), title))
       .first();
 
     if (existingClass) {

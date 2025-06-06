@@ -15,8 +15,11 @@ import {
 } from "./_generated/server";
 
 import { ConvexError } from "convex/values";
+import { hasPermission } from "./shared/permissions";
+
 import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
 import { type DataModel } from "./_generated/dataModel";
+import { type Permissions } from "./shared/permissions";
 
 /** Custom query that requires authentication */
 export const authQuery = customQuery(
@@ -53,7 +56,7 @@ export async function AuthenticationRequired({
 }) {
   const identity = await ctx.auth.getUserIdentity();
   if (identity === null) {
-    throw new ConvexError({ message: "Not authenticated!" });
+    throw createAppError({ message: "Not authenticated!" });
   }
   return identity.subject;
 }
@@ -93,4 +96,28 @@ export async function checkResourceOwnership<T extends { createdBy: string }>(
   }
 
   return userId;
+}
+
+/** Helper to check permissions in backend functions */
+export async function checkPermission<Resource extends keyof Permissions>(
+  ctx: QueryCtx | MutationCtx,
+  userId: string,
+  resource: Resource,
+  action: Permissions[Resource]["action"],
+  data?: Permissions[Resource]["dataType"]
+) {
+  const user = await ctx.db
+    .query("users")
+    .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+    .first();
+
+  if (!user) {
+    throw createAppError({ message: "User not found!" });
+  }
+
+  if (!hasPermission(user, resource, action, data)) {
+    throw createAppError({ message: "Permission denied!" });
+  }
+
+  return user;
 }

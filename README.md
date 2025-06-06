@@ -21,6 +21,7 @@ create reusable components for error and not found case and use them across the 
 -- retry test multiple times and redirect back willaredirect you through multiple test reviews SOLUTION: create reusable test review component and new route for test review from class, then use the review component on both routes and just different router back route in header on different routes
 
 
+-- add progress bar from 0.1 do 1.0 version on the landing page and display that as progress from beta to live app
 -- create main page components like main-header and reuse it across the app
 -- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class
 -- replace all history back buttons with normal routes and align all layout patterns
@@ -38,6 +39,9 @@ create reusable components for error and not found case and use them across the 
 -- check why progress bar slows down the app
 -- implement AI cost monitoring setup
 -- implement unsubscribe payment system
+-- change all const userId = await AuthenticationRequired({ ctx }); to const user = await checkPermission({ ctx });
+-- checkAuthentication returns user and checkPermission takes user and checks permissions
+-- check if protecting routes by permissions is necessery
 
 
 BUGS

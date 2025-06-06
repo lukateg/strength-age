@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { api } from "convex/_generated/api";
+import { api } from "../../../../convex/_generated/api";
 import { fetchAction } from "convex/nextjs";
 
 export const dynamic = "force-dynamic";

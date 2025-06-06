@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, CreditCard } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useAction } from "convex/react";
-import { api } from "convex/_generated/api";
+import { api } from "../../../../convex/_generated/api";
+import { useUserContext } from "@/providers/user-provider";
 
 export default function PricingSection() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">(
     "monthly"
   );
+  const { user } = useUserContext();
   const stripePaymentAction = useAction(api.stripe.handleStripeCheckout);
 
   const toggleBillingPeriod = () => {
@@ -92,8 +94,12 @@ export default function PricingSection() {
               "Each test can use up to 30 pages of input",
               "Share test results through read-only links",
             ]}
-            buttonText="Get Started"
+            buttonText={
+              user?.subscriptionTier === "free" ? "Current Plan" : "Get Started"
+            }
             buttonVariant="outline"
+            isActive={user?.subscriptionTier === "free"}
+            disabled={user?.subscriptionTier === "free"}
           />
 
           <PricingCard
@@ -113,9 +119,15 @@ export default function PricingSection() {
               "Each test can use up to 50 pages of input",
               "Test results can be shared and taken by others",
             ]}
-            buttonText="Upgrade Now"
+            buttonText={
+              user?.subscriptionTier === "starter"
+                ? "Current Plan"
+                : "Upgrade Now"
+            }
             buttonVariant="default"
             popular={true}
+            isActive={user?.subscriptionTier === "starter"}
+            disabled={user?.subscriptionTier === "starter"}
             onClick={() =>
               handleSubscribe(
                 billingPeriod === "monthly"
@@ -143,8 +155,12 @@ export default function PricingSection() {
               "Collaborative classes with shared materials",
               "Collaborative editing of test results",
             ]}
-            buttonText="Go Pro"
+            buttonText={
+              user?.subscriptionTier === "pro" ? "Current Plan" : "Go Pro"
+            }
             buttonVariant="default"
+            isActive={user?.subscriptionTier === "pro"}
+            disabled={user?.subscriptionTier === "pro"}
             onClick={() =>
               handleSubscribe(
                 billingPeriod === "monthly"

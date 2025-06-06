@@ -23,6 +23,8 @@ interface PricingCardProps {
   buttonVariant?: "default" | "outline" | "secondary";
   popular?: boolean;
   onClick?: () => void;
+  isActive?: boolean;
+  disabled?: boolean;
 }
 
 export function PricingCard({
@@ -35,6 +37,8 @@ export function PricingCard({
   buttonVariant = "default",
   popular = false,
   onClick,
+  isActive = false,
+  disabled = false,
 }: PricingCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -43,7 +47,8 @@ export function PricingCard({
       className={cn(
         "flex flex-col h-full transition-all duration-300 transform",
         popular && "border-primary shadow-lg relative",
-        isHovered && "scale-[1.02]"
+        isHovered && "scale-[1.02]",
+        isActive && "border-2 border-purple-400"
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -89,6 +94,7 @@ export function PricingCard({
               "bg-primary text-primary-foreground hover:bg-primary/90"
           )}
           onClick={onClick}
+          disabled={disabled}
         >
           {buttonText}
         </Button>

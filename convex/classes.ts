@@ -38,13 +38,18 @@ export const getClassById = query({
     if (!normalizedId) {
       throw createAppError({ message: "Invalid item ID" });
     }
-    const classResponse = await ctx.db.get(normalizedId);
 
-    if (classResponse?.createdBy !== userId) {
-      throw createAppError({ message: "Not authorized to access this class" });
+    const classItem = await ctx.db.get(normalizedId);
+
+    if (!classItem) {
+      throw createAppError({ message: "Class not found" });
     }
 
-    return classResponse;
+    await checkPermission(ctx, userId, "classes", "view", {
+      class: classItem,
+    });
+
+    return classItem;
   },
 });
 
@@ -53,14 +58,13 @@ export const createClass = mutation({
   handler: async (ctx, { title, description }) => {
     const userId = await AuthenticationRequired({ ctx });
 
-    // Check if user has permission to create a class
+    const existingClasses = await ctx.db
+      .query("classes")
+      .withIndex("by_user", (q) => q.eq("createdBy", userId))
+      .collect();
+
     await checkPermission(ctx, userId, "classes", "create", {
-      existingClassesLength: (
-        await ctx.db
-          .query("classes")
-          .withIndex("by_user", (q) => q.eq("createdBy", userId))
-          .collect()
-      ).length,
+      existingClassesLength: existingClasses.length,
     });
 
     const existingClass = await ctx.db
@@ -97,14 +101,15 @@ export const updateClass = mutation({
       throw createAppError({ message: "Invalid item ID" });
     }
 
-    const existingClass = await ctx.db.get(normalizedId);
-    if (!existingClass) {
+    const classItem = await ctx.db.get(normalizedId);
+
+    if (!classItem) {
       throw createAppError({ message: "Class not found" });
     }
 
-    if (existingClass.createdBy !== userId) {
-      throw createAppError({ message: "Not authorized to update this class" });
-    }
+    await checkPermission(ctx, userId, "classes", "update", {
+      class: classItem,
+    });
 
     return await ctx.db.patch(normalizedId, {
       title,
@@ -124,14 +129,15 @@ export const deleteClass = mutation({
       throw createAppError({ message: "Invalid item ID" });
     }
 
-    const existingClass = await ctx.db.get(normalizedId);
-    if (!existingClass) {
-      throw new Error("Class not found");
+    const classItem = await ctx.db.get(normalizedId);
+
+    if (!classItem) {
+      throw createAppError({ message: "Class not found" });
     }
 
-    if (existingClass.createdBy !== userId) {
-      throw new Error("Not authorized to delete this class");
-    }
+    await checkPermission(ctx, userId, "classes", "delete", {
+      class: classItem,
+    });
 
     await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
       classId: normalizedId,

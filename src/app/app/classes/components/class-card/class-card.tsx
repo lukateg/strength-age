@@ -32,7 +32,7 @@ export default function ClassCard({
         </div>
 
         <div className="absolute top-2 right-2">
-          <ClassCardDropdown classId={classItem._id} />
+          <ClassCardDropdown classItem={classItem} />
         </div>
       </CardHeader>
 

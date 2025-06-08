@@ -15,7 +15,7 @@ export default function ClassesPage() {
   const { classes } = useClasses();
 
   const canCreateClass = can("classes", "create", {
-    existingClassesLength: classes?.data?.length,
+    existingClassesLength: classes?.data?.length ?? 0,
   });
 
   return (
@@ -27,14 +27,15 @@ export default function ClassesPage() {
             Manage your classes and materials
           </p>
         </div>
-        {canCreateClass && (
-          <Button asChild>
-            <Link href="/app/classes/create-class">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Class
-            </Link>
-          </Button>
-        )}
+        <Button disabled={!canCreateClass}>
+          <Link
+            href="/app/classes/create-class"
+            className={"flex items-center justify-center"}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {canCreateClass ? "Create Class" : "Upgrade to create classes"}
+          </Link>
+        </Button>
       </div>
 
       <ClassesList classes={classes} />

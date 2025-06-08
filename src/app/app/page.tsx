@@ -12,6 +12,7 @@ import DashboardStats from "@/components/dashboard-stats";
 
 import { Plus } from "lucide-react";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
+import { useUserContext } from "@/providers/user-provider";
 
 export default function Dashboard() {
   const classes = useAuthenticatedQueryWithStatus(
@@ -24,6 +25,11 @@ export default function Dashboard() {
   const testReviews = useAuthenticatedQueryWithStatus(
     api.tests.getAllTestReviewsByUser
   );
+  const { can } = useUserContext();
+
+  const canCreateClass = can("classes", "create", {
+    existingClassesLength: classes?.data?.length ?? 0,
+  });
 
   const stats = generateStats(
     classes.data,
@@ -43,10 +49,13 @@ export default function Dashboard() {
             Your AI-powered learning assistant
           </p>
         </div>
-        <Button asChild className="hidden md:flex">
-          <Link href="/app/classes/create-class">
+        <Button className="hidden md:flex" disabled={!canCreateClass}>
+          <Link
+            href="/app/classes/create-class"
+            className={"flex items-center justify-center"}
+          >
             <Plus className="h-4 w-4 mr-2" />
-            Create New Class
+            {canCreateClass ? "Create New Class" : "Upgrade to create classes"}
           </Link>
         </Button>
       </div>

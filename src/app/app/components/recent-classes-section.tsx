@@ -32,7 +32,7 @@ export default function RecentClasses() {
               </Link>
             </Button>
 
-            <ClassCardDropdown classId={classItem._id} />
+            <ClassCardDropdown classItem={classItem} />
           </div>
         </ListItem>
       )}

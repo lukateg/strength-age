@@ -4,10 +4,7 @@ import { createContext, useContext } from "react";
 import { api } from "../../convex/_generated/api";
 import { type Doc } from "../../convex/_generated/dataModel";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import {
-  hasPermission,
-  type Permissions,
-} from "../../convex/shared/permissions";
+import { hasPermission, type Permissions } from "../../convex/shared/abac";
 
 interface UserContextType {
   user: Doc<"users"> | null;

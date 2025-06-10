@@ -26,6 +26,7 @@ import FormSelect from "@/components/form-select";
 import SectionHeader from "@/components/page-components/page-header";
 import NotFound from "@/components/not-found";
 import PageSkeleton from "@/components/page-components/page-skeleton";
+import TotalStorageUsedCard from "@/components/file-upload/total-storage-used-card";
 
 import { type Id } from "../../../../../../convex/_generated/dataModel";
 
@@ -84,6 +85,9 @@ export default function FileUploadPage() {
         backRoute={`/app/classes/${classId}`}
         editButtonText={"Upload Materials"}
       />
+
+      <TotalStorageUsedCard materialsToUpload={materialsToUpload} />
+
       <Card>
         <CardHeader>
           <CardTitle>Upload Files</CardTitle>

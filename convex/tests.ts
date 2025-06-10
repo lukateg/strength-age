@@ -1,6 +1,10 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { AuthenticationRequired, createAppError } from "./utils";
+import {
+  AuthenticationRequired,
+  checkPermission,
+  createAppError,
+} from "./utils";
 import { internal } from "./_generated/api";
 
 import { type DataModel, type Id } from "./_generated/dataModel";
@@ -38,6 +42,16 @@ export const uploadTest = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await AuthenticationRequired({ ctx });
+
+    const existingTests = await ctx.db
+      .query("tests")
+      .withIndex("by_user", (q) => q.eq("createdBy", userId))
+      .collect();
+
+    await checkPermission(ctx, userId, "tests", "create", {
+      existingTestsLength: existingTests.length,
+    });
+
     let title = args.title;
     const existingTest = await ctx.db
       .query("tests")
@@ -133,9 +147,9 @@ export const getAllTestsByClassId = query({
       return null;
     }
 
-    if (classResponse.createdBy !== userId) {
-      throw createAppError({ message: "Not authorized to access this class" });
-    }
+    await checkPermission(ctx, userId, "classes", "view", {
+      class: classResponse,
+    });
 
     const tests = await ctx.db
       .query("tests")
@@ -162,9 +176,10 @@ export const getTestById = query({
       return null;
     }
 
-    if (test.createdBy !== userId) {
-      throw createAppError({ message: "Not authorized to access this test" });
-    }
+    await checkPermission(ctx, userId, "tests", "view", {
+      test,
+    });
+
     return test;
   },
 });
@@ -186,11 +201,10 @@ export const getTestReviewById = query({
       return null;
     }
 
-    if (testReview.createdBy !== userId) {
-      throw createAppError({
-        message: "Not authorized to access this test review",
-      });
-    }
+    await checkPermission(ctx, userId, "testReviews", "view", {
+      testResult: testReview,
+    });
+
     return testReview;
   },
 });
@@ -225,9 +239,9 @@ export const getTestReviewsByClassId = query({
       return null;
     }
 
-    if (classResponse.createdBy !== userId) {
-      throw createAppError({ message: "Not authorized to access this class" });
-    }
+    await checkPermission(ctx, userId, "classes", "view", {
+      class: classResponse,
+    });
 
     const testReviews = await ctx.db
       .query("testReviews")
@@ -251,12 +265,12 @@ export const getTestReviewsByTestId = query({
 
     const test = await ctx.db.get(normalizedId);
     if (!test) {
-      throw createAppError({ message: "Test not found" });
+      return null;
     }
 
-    if (test.createdBy !== userId) {
-      throw createAppError({ message: "Not authorized to access this test" });
-    }
+    await checkPermission(ctx, userId, "tests", "view", {
+      test,
+    });
 
     const testReviews = await ctx.db
       .query("testReviews")
@@ -373,11 +387,9 @@ export const deleteTestReview = mutation({
       });
     }
 
-    if (testReview.createdBy !== userId) {
-      throw createAppError({
-        message: "Not authorized to delete this test review",
-      });
-    }
+    await checkPermission(ctx, userId, "testReviews", "delete", {
+      testResult: testReview,
+    });
 
     await ctx.db.delete(testReviewId);
 
@@ -397,11 +409,9 @@ export const deleteTest = mutation({
       });
     }
 
-    if (test.createdBy !== userId) {
-      throw createAppError({
-        message: "Not authorized to delete this test",
-      });
-    }
+    await checkPermission(ctx, userId, "tests", "delete", {
+      test,
+    });
 
     await ctx.db.delete(testId);
 

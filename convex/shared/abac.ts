@@ -3,21 +3,44 @@ import { type Doc } from "../_generated/dataModel";
 // Types
 export type Role = "admin" | "user";
 
+// TODO:
+
+// CASE 1
+// create wrapper permision convex query functions that will be used inside of the components
+// expand dataType to include more params
+// use this code as a schema for the wrapper functions
+// create a convex functions that are performing permision checks with this abac schema
+// create separate query functions for each convex function that uses abac schema
+// use the convex functions inside on the backend when querying the database and when checking permissions
+
+// CASE 2
+
 export type Permissions = {
   classes: {
     dataType: { class?: Doc<"classes">; existingClassesLength?: number };
     action: "view" | "create" | "update" | "delete";
   };
   lessons: {
-    dataType: { lesson: Doc<"lessons">; existingLessonsLength?: number };
+    dataType: {
+      lesson?: Doc<"lessons">;
+      existingLessonsLength?: number;
+      class?: Doc<"classes">;
+    };
     action: "view" | "create" | "update" | "delete";
   };
   tests: {
-    dataType: { test: Doc<"tests">; existingTestsLength?: number };
+    dataType: {
+      test?: Doc<"tests">;
+      existingTestsLength?: number;
+      class?: Doc<"classes">;
+    };
     action: "view" | "create" | "delete" | "share";
   };
   materials: {
-    dataType: { pdf: Doc<"pdfs">; existingMaterialsLength?: number };
+    dataType: {
+      pdf?: Doc<"pdfs">;
+      uploadedFilesSize?: number;
+    };
     action: "view" | "create" | "delete";
   };
   testReviews: {
@@ -49,7 +72,8 @@ export const LIMITATIONS = {
     classes: 1,
     lessons: 3,
     tests: 3,
-    materials: 50, // 50 MB
+    materials: 10485760, // 10 MB in bytes (10 * 1024 * 1024)
+    // materials: 52428800, // 50 MB in bytes (50 * 1024 * 1024)
     testShare: false,
     resultsShare: true,
   },
@@ -57,7 +81,7 @@ export const LIMITATIONS = {
     classes: 3,
     lessons: 10,
     tests: 10,
-    materials: 250, // 250 MB
+    materials: 262144000, // 250 MB in bytes (250 * 1024 * 1024)
     testShare: true,
     resultsShare: true,
   },
@@ -65,7 +89,7 @@ export const LIMITATIONS = {
     classes: 100,
     lessons: 100,
     tests: 100,
-    materials: 500, // 500 MB
+    materials: 524288000, // 500 MB in bytes (500 * 1024 * 1024)
     testShare: true,
     resultsShare: true,
   },
@@ -114,26 +138,25 @@ const ROLES = {
       delete: (user, { class: class_ }) => class_?.createdBy === user.clerkId,
     },
     lessons: {
-      view: (user, { lesson }) => lesson.createdBy === user.clerkId,
-      create: (user, { existingLessonsLength }) =>
+      view: (user, { lesson }) => lesson?.createdBy === user.clerkId,
+      create: (user, { existingLessonsLength, class: class_ }) =>
         LIMITATIONS[user.subscriptionTier].lessons >
-        (existingLessonsLength ?? 0) + 1,
-      update: (user, { lesson }) => lesson.createdBy === user.clerkId,
-      delete: (user, { lesson }) => lesson.createdBy === user.clerkId,
+          (existingLessonsLength ?? 0) && class_?.createdBy === user.clerkId,
+      update: (user, { lesson }) => lesson?.createdBy === user.clerkId,
+      delete: (user, { lesson }) => lesson?.createdBy === user.clerkId,
     },
     materials: {
-      view: (user, { pdf }) => pdf.createdBy === user.clerkId,
-      create: (user, { existingMaterialsLength }) =>
-        LIMITATIONS[user.subscriptionTier].materials >
-        (existingMaterialsLength ?? 0) + 1,
-      delete: (user, { pdf }) => pdf.createdBy === user.clerkId,
+      view: (user, { pdf }) => pdf?.createdBy === user.clerkId,
+      create: (user, { uploadedFilesSize }) =>
+        LIMITATIONS[user.subscriptionTier].materials > (uploadedFilesSize ?? 0),
+      delete: (user, { pdf }) => pdf?.createdBy === user.clerkId,
     },
     tests: {
-      view: (user, { test }) => test.createdBy === user.clerkId,
+      view: (user, { test }) => test?.createdBy === user.clerkId,
       create: (user, { existingTestsLength }) =>
         LIMITATIONS[user.subscriptionTier].tests >
         (existingTestsLength ?? 0) + 1,
-      delete: (user, { test }) => test.createdBy === user.clerkId,
+      delete: (user, { test }) => test?.createdBy === user.clerkId,
       share: (user) => LIMITATIONS[user.subscriptionTier].testShare,
     },
     testReviews: {

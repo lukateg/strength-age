@@ -1,5 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { auth } from "@clerk/nextjs/server";
+import { hasPermission } from "../../../../convex/shared/abac";
+import { api } from "../../../../convex/_generated/api";
 
 import {
   calculateProportionalQuestionsPerLesson,
@@ -13,6 +15,7 @@ import {
 
 import { type NextRequest } from "next/server";
 import { type Id } from "convex/_generated/dataModel";
+import { fetchQuery } from "convex/nextjs";
 
 export const runtime = "nodejs";
 
@@ -60,6 +63,28 @@ export async function POST(req: NextRequest) {
 
     if (!token) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await fetchQuery(api.users.getCurrentUserQuery, {}, { token });
+    if (!user) {
+      return Response.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const existingTests = await fetchQuery(
+      api.tests.getAllTestsByUser,
+      {},
+      { token }
+    );
+
+    const canGenerateTest = hasPermission(user, "tests", "create", {
+      existingTestsLength: existingTests.length ?? 0,
+    });
+
+    if (!canGenerateTest) {
+      return Response.json(
+        { error: "You need to upgrade to generate tests." },
+        { status: 403 }
+      );
     }
 
     // Fetch and process PDFs

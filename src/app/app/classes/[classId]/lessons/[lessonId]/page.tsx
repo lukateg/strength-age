@@ -1,5 +1,6 @@
 "use client";
 
+import { useUserContext } from "@/providers/user-provider";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 import { useParams } from "next/navigation";
 import { api } from "../../../../../../../convex/_generated/api";
@@ -23,6 +24,12 @@ export default function LessonPage() {
     lessonId,
   });
 
+  const { can } = useUserContext();
+
+  const canEditLesson = can("lessons", "update", {
+    lesson: lesson.data,
+  });
+
   if (lesson.isPending) {
     return <PageSkeleton />;
   }
@@ -30,6 +37,7 @@ export default function LessonPage() {
   if (lesson.isError) {
     return <NotFound />;
   }
+
   if (!lesson.data) {
     return (
       <div className="text-center py-12">
@@ -47,8 +55,12 @@ export default function LessonPage() {
         title={lesson.data?.title}
         description={lesson.data?.description}
         backRoute={`/app/classes/${classId}`}
-        editRoute={`/app/classes/${classId}/edit-lesson?lessonId=${lessonId}`}
-        editButtonText={"Edit Lesson"}
+        editRoute={
+          canEditLesson
+            ? `/app/classes/${classId}/edit-lesson?lessonId=${lessonId}`
+            : undefined
+        }
+        editButtonText={canEditLesson ? "Edit Lesson" : undefined}
       />
       <Tabs defaultValue="lessonMaterials" className="space-y-6">
         <TabsList>

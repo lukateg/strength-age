@@ -2,6 +2,8 @@
 
 import { useTestMutations } from "@/hooks/use-test-mutations";
 import { useClass } from "@/providers/class-context-provider";
+import { useUserContext } from "@/providers/user-provider";
+import { useClasses } from "@/providers/classes-provider";
 
 import {
   Card,
@@ -19,7 +21,14 @@ import { BookOpen, Brain, Eye, Trash, Upload } from "lucide-react";
 
 export default function TestsSection({ classId }: { classId: string }) {
   const { testsByClass, testReviewsByClass } = useClass();
+  const { testsByUser } = useClasses();
   const { deleteTest, deleteTestReview } = useTestMutations();
+
+  const { can } = useUserContext();
+
+  const canGenerateTest = can("tests", "create", {
+    existingTestsLength: testsByUser.data?.length ?? 0,
+  });
 
   return (
     <Card>
@@ -30,10 +39,13 @@ export default function TestsSection({ classId }: { classId: string }) {
             AI-generated tests from your materials
           </CardDescription>
         </div>
-        <Button asChild className="text-xs md:text-base">
-          <Link href={`/app/classes/${classId}/generate-test`}>
+        <Button disabled={!canGenerateTest} className="text-xs md:text-base">
+          <Link
+            href={`/app/classes/${classId}/generate-test`}
+            className="flex items-center justify-center"
+          >
             <Upload className="h-4 w-4 mr-2" />
-            Generate Test
+            {canGenerateTest ? "Generate Test" : "Upgrade to generate"}
           </Link>
         </Button>
       </CardHeader>

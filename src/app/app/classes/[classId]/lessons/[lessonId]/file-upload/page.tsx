@@ -27,6 +27,7 @@ import AddFilesButton from "@/components/ui/add-files-button";
 import FormSelect from "@/components/form-select";
 import SectionHeader from "@/components/page-components/page-header";
 import UploadFilesButton from "@/components/upload-files-button";
+import TotalStorageUsedCard from "@/components/file-upload/total-storage-used-card";
 
 import { type Id } from "convex/_generated/dataModel";
 
@@ -92,6 +93,9 @@ export default function FileUploadPage() {
         editRoute={`/app/classes/${classId}/edit-lesson?lessonId=${lessonId}`}
         editButtonText={"Edit Lesson"}
       />
+
+      <TotalStorageUsedCard materialsToUpload={materialsToUpload} />
+
       <Card>
         <CardHeader>
           <CardTitle>Upload Files</CardTitle>

@@ -11,6 +11,7 @@ import NotFound from "@/components/not-found";
 
 import { useParams } from "next/navigation";
 import { useClass } from "@/providers/class-context-provider";
+import { useUserContext } from "@/providers/user-provider";
 
 import { type Id } from "convex/_generated/dataModel";
 import SectionHeader from "@/components/page-components/page-header";
@@ -18,6 +19,11 @@ import SectionHeader from "@/components/page-components/page-header";
 export default function ClassPage() {
   const { classId }: { classId: Id<"classes"> } = useParams();
   const { classData } = useClass();
+  const { can } = useUserContext();
+
+  const canEditClass = can("classes", "update", {
+    class: classData.data,
+  });
 
   if (classData.isPending) {
     return <PageSkeleton />;
@@ -43,8 +49,12 @@ export default function ClassPage() {
         title={classData.data?.title}
         description={classData.data?.description}
         backRoute={`/app/classes`}
-        editRoute={`/app/classes/edit-class?classId=${classId}`}
-        editButtonText={"Edit Class"}
+        editRoute={
+          canEditClass
+            ? `/app/classes/edit-class?classId=${classId}`
+            : undefined
+        }
+        editButtonText={canEditClass ? "Edit Class" : undefined}
       />
       <Tabs defaultValue="lessons" className="space-y-6">
         <TabsList>

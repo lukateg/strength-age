@@ -1,6 +1,7 @@
 "use client";
 
 import { useClass } from "@/providers/class-context-provider";
+import { useUserContext } from "@/providers/user-provider";
 
 import { Button } from "@/components/ui/button";
 
@@ -16,7 +17,13 @@ export default function LessonsSectionComponent({
 }: {
   classId: string;
 }) {
-  const { lessonsByClass } = useClass();
+  const { lessonsByClass, classData } = useClass();
+  const { can } = useUserContext();
+
+  const canCreateLesson = can("lessons", "create", {
+    existingLessonsLength: lessonsByClass.data?.length ?? 0,
+    class: classData.data,
+  });
 
   return (
     <ListCard
@@ -25,8 +32,11 @@ export default function LessonsSectionComponent({
       items={lessonsByClass.data}
       isLoading={lessonsByClass.isPending}
       cardAction={
-        <Button asChild>
-          <Link href={`/app/classes/${classId}/new-lesson`}>
+        <Button disabled={!canCreateLesson}>
+          <Link
+            href={`/app/classes/${classId}/new-lesson`}
+            className={"flex items-center justify-center"}
+          >
             <Plus className="h-4 w-4 mr-2" />
             Add new lesson
           </Link>

@@ -18,7 +18,7 @@ export default function TestIncludedMaterials({ testId }: { testId: string }) {
   );
 
   const totalAttempts = testReviews.data?.length ?? 0;
-  const bestSuccessRatePercentages = testReviews.data
+  const bestSuccessRatePercentages = testReviews.data?.length
     ? Math.max(
         ...testReviews.data.map((review) => {
           const correctAnswers = review.questions.filter(
@@ -29,7 +29,7 @@ export default function TestIncludedMaterials({ testId }: { testId: string }) {
       )
     : 0;
 
-  const totalSuccessRatePercentage = testReviews.data
+  const totalSuccessRatePercentage = testReviews.data?.length
     ? testReviews.data.reduce((acc, review) => {
         const correctAnswers = review.questions.filter(
           (q) => q.isCorrect

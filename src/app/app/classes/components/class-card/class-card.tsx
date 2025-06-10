@@ -1,4 +1,7 @@
-import Link from "next/link";
+"use client";
+
+import { useUserContext } from "@/providers/user-provider";
+import { useClasses } from "@/providers/classes-provider";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -8,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Link from "next/link";
 
 import ClassCardDropdown from "./class-card-dropdown";
 
@@ -20,6 +24,12 @@ export default function ClassCard({
 }: {
   classItem: Doc<"classes">;
 }) {
+  const { can } = useUserContext();
+  const { testsByUser } = useClasses();
+  const canGenerateTest = can("tests", "create", {
+    existingTestsLength: testsByUser?.data?.length ?? 0,
+  });
+
   return (
     <Card key={classItem.title} className="relative">
       <CardHeader className="flex flex-row justify-between">
@@ -47,9 +57,14 @@ export default function ClassCard({
               View Class
             </Button>
           </Link>
-          <Link href={`/app/classes/${classItem._id}/generate-test`}>
-            <Button className="w-full">Generate Test</Button>
-          </Link>
+          <Button disabled={!canGenerateTest}>
+            <Link
+              href={`/app/classes/${classItem._id}/generate-test`}
+              className="flex items-center justify-center"
+            >
+              {canGenerateTest ? "Generate Test" : "Upgrade to generate"}
+            </Link>
+          </Button>
         </div>
       </CardContent>
     </Card>

@@ -5,6 +5,7 @@ import { api } from "../../../../../../convex/_generated/api";
 import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
+import { useUserContext } from "@/providers/user-provider";
 
 import LessonForm from "@/app/app/classes/[classId]/lessons/[lessonId]/components/lesson-form/lesson-form";
 import NotFound from "@/app/not-found";
@@ -19,6 +20,7 @@ export default function EditLessonPage() {
   const lessonId = searchParams.get("lessonId");
 
   const { classId, updateLesson, deleteLesson } = useLessonMutations();
+  const { can } = useUserContext();
 
   const lessonRequest = useAuthenticatedQueryWithStatus(
     api.lessons.getLessonById,
@@ -26,6 +28,10 @@ export default function EditLessonPage() {
       lessonId: lessonId ?? "skip",
     }
   );
+
+  const canDeleteLesson = can("lessons", "delete", {
+    lesson: lessonRequest.data,
+  });
 
   const onSubmit = (data: EditLessonFormData) => {
     void updateLesson({
@@ -61,19 +67,22 @@ export default function EditLessonPage() {
         description="Edit the lesson details"
         backRoute={`/app/classes/${classId}/lessons/${lessonId}`}
       />
+
       <LessonForm
         onSubmit={onSubmit}
         isEditMode={true}
         defaultValues={lessonRequest.data}
       />
 
-      <DangerZone
-        onDelete={() => {
-          void deleteLesson(lessonId ?? "skip").then(() =>
-            router.push(`/app/classes/${classId}`)
-          );
-        }}
-      />
+      {canDeleteLesson && (
+        <DangerZone
+          onDelete={() => {
+            void deleteLesson(lessonId ?? "skip").then(() =>
+              router.push(`/app/classes/${classId}`)
+            );
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -100,6 +100,19 @@ export const getAllPDFsByUser = query({
   },
 });
 
+export const getTotalSizeOfPdfsByUser = query({
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const pdfs = await ctx.db
+      .query("pdfs")
+      .withIndex("by_user", (q) => q.eq("createdBy", userId))
+      .collect();
+
+    return pdfs.reduce((acc, pdf) => acc + pdf.size, 0);
+  },
+});
+
 export const getPdfsForLesson = query({
   args: { lessonId: v.string() },
   handler: async (ctx, args) => {

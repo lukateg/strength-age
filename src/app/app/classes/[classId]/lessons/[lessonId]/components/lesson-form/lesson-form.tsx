@@ -26,6 +26,7 @@ import { Loader2 } from "lucide-react";
 import { type LessonFormData } from "@/types/lesson";
 import { type Doc } from "convex/_generated/dataModel";
 import { useClass } from "@/providers/class-context-provider";
+import TotalStorageUsedCard from "@/components/file-upload/total-storage-used-card";
 
 export default function LessonForm({
   isEditMode = false,
@@ -91,17 +92,21 @@ export default function LessonForm({
           />
 
           {!isEditMode && (
-            <AddMaterialsView<LessonFormData>
-              showExistingMaterials={showExistingMaterials}
-              onShowExistingMaterialsChange={(checked) =>
-                setValue("showExistingMaterials", checked)
-              }
-              materialsToUpload={materialsToUpload}
-              allMaterials={materialsByClass.data}
-              control={control}
-              setValue={setValue}
-              clearErrors={clearErrors}
-            />
+            <>
+              <TotalStorageUsedCard materialsToUpload={materialsToUpload} />
+
+              <AddMaterialsView<LessonFormData>
+                showExistingMaterials={showExistingMaterials}
+                onShowExistingMaterialsChange={(checked) =>
+                  setValue("showExistingMaterials", checked)
+                }
+                materialsToUpload={materialsToUpload}
+                allMaterials={materialsByClass.data}
+                control={control}
+                setValue={setValue}
+                clearErrors={clearErrors}
+              />
+            </>
           )}
 
           <div className="flex justify-end gap-4">

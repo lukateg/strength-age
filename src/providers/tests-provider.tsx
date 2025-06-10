@@ -14,7 +14,7 @@ import {
 
 interface TestsContextType {
   userId?: string;
-  testsByUser?: QueryStatus<typeof api.tests.getAllTestsByUser>;
+  testsByUser: QueryStatus<typeof api.tests.getAllTestsByUser>;
   testReviewsByUser?: QueryStatus<typeof api.tests.getAllTestReviewsByUser>;
   weeklyTestReviews?: QueryStatus<
     typeof api.tests.getWeeklyTestReviewsByUserId

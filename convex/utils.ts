@@ -15,11 +15,11 @@ import {
 } from "./_generated/server";
 
 import { ConvexError } from "convex/values";
-import { hasPermission } from "./shared/permissions";
+import { hasPermission } from "./shared/abac";
 
 import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
 import { type DataModel } from "./_generated/dataModel";
-import { type Permissions } from "./shared/permissions";
+import { type Permissions } from "./shared/abac";
 
 /** Custom query that requires authentication */
 export const authQuery = customQuery(

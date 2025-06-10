@@ -1,10 +1,12 @@
 "use client";
-import Link from "next/link";
+
+import { useUserContext } from "@/providers/user-provider";
 
 import { Button } from "@/components/ui/button";
 import { FilePlus2 } from "lucide-react";
 import { useTests } from "@/providers/tests-provider";
 
+import Link from "next/link";
 import RecentTests from "./components/recent-tests-card";
 import RecentReviews from "./components/recent-reviews-card";
 import DashboardStats from "../../../components/dashboard-stats";
@@ -24,6 +26,12 @@ export default function Tests() {
     testsByUser?.data
   );
 
+  const { can } = useUserContext();
+
+  const canGenerateTest = can("tests", "create", {
+    existingTestsLength: testsByUser?.data?.length ?? 0,
+  });
+
   return (
     <div>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -33,11 +41,11 @@ export default function Tests() {
             Let AI generate tests from your materials
           </p>
         </div>
-        <Button>
+        <Button disabled={!canGenerateTest}>
           <Link href={`/app/tests/generate-test`}>
             <span className="flex items-center gap-2">
               <FilePlus2 size={16} />
-              Generate Test
+              {canGenerateTest ? "Generate Test" : "Upgrade to generate"}
             </span>
           </Link>
         </Button>

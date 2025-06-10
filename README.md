@@ -41,8 +41,14 @@ create reusable components for error and not found case and use them across the 
 -- implement unsubscribe payment system
 -- change all const userId = await AuthenticationRequired({ ctx }); to const user = await checkPermission({ ctx });
 -- checkAuthentication returns user and checkPermission takes user and checks permissions
--- check if protecting routes by permissions is necessery
-
+-- secure routes
+-- same way as you added checkPermission add checkValidation on BE, so it goes in order checkAuthentification(), checkPermission(), checkValidation()
+-- instead of generic message permission denied write a custom message for each permission fail
+-- protect each rotute with canView permission, then add pending,error,success state, then add no data, data state
+-- make lesson-form-view and add-materials-section same component and fix their names relative to file names and match logic fully
+-- on removing fileToBeUploaded clear the errors from validator
+-- when generating a test you check if test with same name exists but you check if it exists in whole database and not just for a specific user
+-- stats on dashboard should be class 1/1 storage used 12/50 ...
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)

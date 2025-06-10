@@ -3,7 +3,10 @@
 import { createContext, useContext } from "react";
 import { api } from "../../convex/_generated/api";
 import { type Doc } from "../../convex/_generated/dataModel";
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
+import {
+  type QueryStatus,
+  useAuthenticatedQueryWithStatus,
+} from "@/hooks/use-authenticated-query";
 import { hasPermission, type Permissions } from "../../convex/shared/abac";
 
 interface UserContextType {
@@ -14,6 +17,7 @@ interface UserContextType {
     action: Permissions[Resource]["action"],
     data?: Permissions[Resource]["dataType"]
   ) => boolean;
+  userStorageUsage: QueryStatus<typeof api.materials.getTotalSizeOfPdfsByUser>;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -23,6 +27,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     api.users.getCurrentUserQuery
   );
   const user = userQuery.data ?? null;
+
+  const userStorageUsage = useAuthenticatedQueryWithStatus(
+    api.materials.getTotalSizeOfPdfsByUser
+  );
 
   const can = <Resource extends keyof Permissions>(
     resource: Resource,
@@ -39,6 +47,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         user,
         isLoading: userQuery.status === "pending",
         can,
+        userStorageUsage,
       }}
     >
       {children}

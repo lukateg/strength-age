@@ -13,8 +13,6 @@ export type Role = "admin" | "user";
 // create separate query functions for each convex function that uses abac schema
 // use the convex functions inside on the backend when querying the database and when checking permissions
 
-// CASE 2
-
 export type Permissions = {
   classes: {
     dataType: { class?: Doc<"classes">; existingClassesLength?: number };
@@ -154,8 +152,7 @@ const ROLES = {
     tests: {
       view: (user, { test }) => test?.createdBy === user.clerkId,
       create: (user, { existingTestsLength }) =>
-        LIMITATIONS[user.subscriptionTier].tests >
-        (existingTestsLength ?? 0) + 1,
+        LIMITATIONS[user.subscriptionTier].tests > (existingTestsLength ?? 0),
       delete: (user, { test }) => test?.createdBy === user.clerkId,
       share: (user) => LIMITATIONS[user.subscriptionTier].testShare,
     },

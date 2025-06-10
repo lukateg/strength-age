@@ -1,10 +1,26 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { AuthenticationRequired, createAppError } from "./utils";
+import {
+  AuthenticationRequired,
+  checkPermission,
+  createAppError,
+} from "./utils";
 import { internal } from "./_generated/api";
 
 import { type DataModel, type Id } from "./_generated/dataModel";
-import { type GenericMutationCtx } from "convex/server";
+import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
+
+async function getTotalPdfSizeByUser(
+  ctx: GenericMutationCtx<DataModel> | GenericQueryCtx<DataModel>,
+  userId: string
+) {
+  const existingPdfs = await ctx.db
+    .query("pdfs")
+    .withIndex("by_user", (q) => q.eq("createdBy", userId))
+    .collect();
+
+  return existingPdfs.reduce((acc, pdf) => acc + pdf.size, 0);
+}
 
 export const addPdf = mutation({
   args: {
@@ -23,6 +39,12 @@ export const addPdf = mutation({
     if (!normalizedClassId) {
       throw createAppError({ message: "Invalid item ID" });
     }
+
+    const totalSize = await getTotalPdfSizeByUser(ctx, userId);
+
+    await checkPermission(ctx, userId, "materials", "create", {
+      uploadedFilesSize: totalSize + pdf.size,
+    });
 
     const pdfId = await ctx.db.insert("pdfs", {
       createdBy: userId,
@@ -55,6 +77,13 @@ export const addManyPdfs = mutation({
     if (!normalizedClassId) {
       throw createAppError({ message: "Invalid item ID" });
     }
+
+    const totalSize = await getTotalPdfSizeByUser(ctx, userId);
+    const newFilesTotalSize = pdfFiles.reduce((acc, pdf) => acc + pdf.size, 0);
+
+    await checkPermission(ctx, userId, "materials", "create", {
+      uploadedFilesSize: totalSize + newFilesTotalSize,
+    });
 
     for (const pdf of pdfFiles) {
       await ctx.db.insert("pdfs", {
@@ -103,13 +132,7 @@ export const getAllPDFsByUser = query({
 export const getTotalSizeOfPdfsByUser = query({
   handler: async (ctx) => {
     const userId = await AuthenticationRequired({ ctx });
-
-    const pdfs = await ctx.db
-      .query("pdfs")
-      .withIndex("by_user", (q) => q.eq("createdBy", userId))
-      .collect();
-
-    return pdfs.reduce((acc, pdf) => acc + pdf.size, 0);
+    return await getTotalPdfSizeByUser(ctx, userId);
   },
 });
 

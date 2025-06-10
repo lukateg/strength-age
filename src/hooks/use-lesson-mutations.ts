@@ -67,6 +67,7 @@ export const useLessonMutations = () => {
         toast.dismiss(toastId);
         toast.success("PDFs uploaded to lesson successfully");
       } catch (error) {
+        toast.dismiss(toastId);
         toastError(error, "Failed to upload PDFs to lesson. Please try again");
       }
     },

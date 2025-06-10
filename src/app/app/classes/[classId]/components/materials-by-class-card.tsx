@@ -9,6 +9,7 @@ import AlertDialogModal from "@/components/alert-dialog";
 import Link from "next/link";
 
 import { FileText, Trash, Eye, Upload } from "lucide-react";
+import { useUserContext } from "@/providers/user-provider";
 
 export default function MaterialsSectionComponent({
   classId,
@@ -17,7 +18,10 @@ export default function MaterialsSectionComponent({
 }) {
   const { materialsByClass } = useClass();
   const { deletePdf } = useMaterialsMutations();
-
+  const { can, userStorageUsage } = useUserContext();
+  const canUpload = can("materials", "create", {
+    uploadedFilesSize: userStorageUsage.data ?? 0,
+  });
   if (materialsByClass.isError) {
     return <div>Error loading materials</div>;
   }
@@ -29,10 +33,13 @@ export default function MaterialsSectionComponent({
       items={materialsByClass.data}
       isLoading={materialsByClass.isPending}
       cardAction={
-        <Button asChild>
-          <Link href={`/app/classes/${classId}/file-upload`}>
+        <Button disabled={!canUpload}>
+          <Link
+            href={`/app/classes/${classId}/file-upload`}
+            className="flex items-center justify-center"
+          >
             <Upload className="h-4 w-4 mr-2" />
-            Upload Materials
+            {canUpload ? "Upload Materials" : "Upgrade to upload materials"}
           </Link>
         </Button>
       }

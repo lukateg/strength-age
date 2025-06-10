@@ -229,14 +229,9 @@ export const addPdfToLesson = mutation({
     if (!lesson) {
       throw createAppError({ message: "Lesson not found" });
     }
-    await checkPermission(ctx, userId, "lessons", "create", {
+    await checkPermission(ctx, userId, "lessons", "update", {
       lesson,
     });
-    // if (lesson.createdBy !== userId) {
-    //   throw createAppError({
-    //     message: "Not authorized to add PDF to this lesson",
-    //   });
-    // }
 
     // Check if relationship already exists
     const existing = await ctx.db

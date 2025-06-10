@@ -9,24 +9,19 @@ import { useUserContext } from "@/providers/user-provider";
 
 import { UploadCloud, AlertCircle } from "lucide-react";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import { api } from "convex/_generated/api";
-
-// TODO
-// - make this component work with internal state without controls passed
+import { api } from "../../../convex/_generated/api";
 
 type FileUploadProps = {
   onDrop?: (files: File[]) => void;
   maxFiles?: number;
   maxSize?: number;
   existingFiles: File[];
-  // uploadedFilesSize: number;
 };
 
 export default function FileUploadComponent({
   onDrop,
   maxFiles = 10,
   existingFiles,
-  // uploadedFilesSize,
 }: FileUploadProps) {
   const [error, setError] = useState<string | null>(null);
   const maxRoundUploadSize = 20971520; // 20MB
@@ -91,7 +86,6 @@ export default function FileUploadComponent({
         };
       }
 
-      // Check if adding this file would exceed the 20MB per round limit
       const currentRoundSize = existingFiles.reduce(
         (acc, file) => acc + file.size,
         0
@@ -103,7 +97,6 @@ export default function FileUploadComponent({
         };
       }
 
-      // Check if adding this file would exceed storage limit using can() function
       const totalSize =
         (uploadedFilesSize.data ?? 0) + currentRoundSize + file.size;
       const canUpload = can("materials", "create", {

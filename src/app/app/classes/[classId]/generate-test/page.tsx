@@ -1,12 +1,11 @@
-"use client";
-
-import { useClass } from "@/providers/class-context-provider";
-
 import GenerateTestForm from "@/components/generate-test-form/generate-test-form";
 
-export default function GenerateTestPage() {
-  // TODO: refactor this to use classId from the url and use classes from the query inside of the generate test form
-  const { classId } = useClass();
+export default async function GenerateTestPage({
+  params,
+}: {
+  params: Promise<{ classId: string }>;
+}) {
+  const { classId } = await params;
 
   return <GenerateTestForm classId={classId} />;
 }

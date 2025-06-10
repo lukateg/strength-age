@@ -38,7 +38,7 @@ export default function LessonsSectionComponent({
             className={"flex items-center justify-center"}
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add new lesson
+            {canCreateLesson ? "Add new lesson" : "Upgrade to add lesson"}
           </Link>
         </Button>
       }

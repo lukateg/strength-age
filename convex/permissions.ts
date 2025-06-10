@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
-import { LIMITATIONS } from "./shared/abac";
+import { LIMITATIONS } from "../src/shared/abac";
 import { AuthenticationRequired, createAppError } from "./utils";
 
 export const canCreateClass = query({

@@ -9,7 +9,7 @@ import { internal } from "./_generated/api";
 
 import { type Id, type DataModel } from "./_generated/dataModel";
 import { type GenericMutationCtx } from "convex/server";
-import { hasPermission } from "./shared/abac";
+import { hasPermission } from "../src/shared/abac";
 
 export const getLessonsByClass = query({
   args: v.object({

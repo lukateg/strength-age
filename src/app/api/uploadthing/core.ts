@@ -4,7 +4,7 @@ import { fetchMutation, fetchQuery } from "convex/nextjs";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { z } from "zod";
 import { ConvexError } from "convex/values";
-import { hasPermission } from "convex/shared/abac";
+import { hasPermission } from "@/shared/abac";
 const f = createUploadthing();
 
 // FileRouter for your app, can contain multiple FileRoutes

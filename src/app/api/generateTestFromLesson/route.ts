@@ -7,7 +7,7 @@ import { type Id } from "convex/_generated/dataModel";
 
 import { auth } from "@clerk/nextjs/server";
 import { convertPDFToText, generateQuizForLesson } from "@/lib/server-utils";
-import { hasPermission } from "../../../../convex/shared/abac";
+import { hasPermission } from "../../../shared/abac";
 
 if (!process.env.GEMINI_API_KEY) {
   throw new Error("Missing GEMINI_API_KEY environment variable");

@@ -7,7 +7,7 @@ import {
   type QueryStatus,
   useAuthenticatedQueryWithStatus,
 } from "@/hooks/use-authenticated-query";
-import { hasPermission, type Permissions } from "../../convex/shared/abac";
+import { hasPermission, type Permissions } from "../shared/abac";
 
 interface UserContextType {
   user: Doc<"users"> | null;

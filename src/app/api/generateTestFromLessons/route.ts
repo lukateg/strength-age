@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { auth } from "@clerk/nextjs/server";
-import { hasPermission } from "../../../../convex/shared/abac";
+import { hasPermission } from "../../../shared/abac";
 import { api } from "../../../../convex/_generated/api";
 
 import {

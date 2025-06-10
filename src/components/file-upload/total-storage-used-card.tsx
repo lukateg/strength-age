@@ -10,7 +10,7 @@ import {
   CardHeader,
 } from "../ui/card";
 import { Progress } from "../ui/progress";
-import { LIMITATIONS } from "convex/shared/abac";
+import { LIMITATIONS } from "@/shared/abac";
 import { useUserContext } from "@/providers/user-provider";
 
 export default function TotalStorageUsedCard({

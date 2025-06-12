@@ -3,15 +3,11 @@ import { type Doc } from "../../convex/_generated/dataModel";
 // Types
 export type Role = "admin" | "user";
 
-// TODO:
+// TODO
+// Consider rewriting a permissions to be the convex query functions that collect data and perform checks and return boolean
+// then use those functions only on backend for performant results and on the ui only use them when specific elements need to be displayed conditionally
 
-// CASE 1
-// create wrapper permision convex query functions that will be used inside of the components
-// expand dataType to include more params
-// use this code as a schema for the wrapper functions
-// create a convex functions that are performing permision checks with this abac schema
-// create separate query functions for each convex function that uses abac schema
-// use the convex functions inside on the backend when querying the database and when checking permissions
+// also that way consider bundling with my main data queries so I have all data in one place and can use it for both
 
 export type Permissions = {
   classes: {
@@ -43,10 +39,11 @@ export type Permissions = {
   };
   testReviews: {
     dataType: {
-      testResult: Doc<"testReviews">;
+      testReview?: Doc<"testReviews">;
       existingTestResultsLength?: number;
+      hasValidShareToken?: boolean;
     };
-    action: "view" | "delete";
+    action: "view" | "delete" | "share" | "retake";
   };
 };
 
@@ -121,6 +118,8 @@ const ROLES = {
     testReviews: {
       view: true,
       delete: true,
+      share: true,
+      retake: true,
     },
   },
   user: {
@@ -157,8 +156,11 @@ const ROLES = {
       share: (user) => LIMITATIONS[user.subscriptionTier].testShare,
     },
     testReviews: {
-      view: (user, { testResult }) => testResult.createdBy === user.clerkId,
-      delete: (user, { testResult }) => testResult.createdBy === user.clerkId,
+      view: (user, { testReview, hasValidShareToken }) =>
+        testReview?.createdBy === user.clerkId || !!hasValidShareToken,
+      delete: (user, { testReview }) => testReview?.createdBy === user.clerkId,
+      share: (user) => LIMITATIONS[user.subscriptionTier].resultsShare,
+      retake: (user, { testReview }) => testReview?.createdBy === user.clerkId,
     },
   },
 } as const satisfies RolesWithPermissions;

@@ -6,9 +6,10 @@ import {
   createAppError,
 } from "./utils";
 import { internal } from "./_generated/api";
+import { nanoid } from "nanoid";
 
 import { type DataModel, type Id } from "./_generated/dataModel";
-import { type GenericMutationCtx } from "convex/server";
+import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
 
 export const uploadTest = mutation({
   args: {
@@ -184,25 +185,45 @@ export const getTestById = query({
   },
 });
 
+// Helper function to validate share token
+async function validateShareToken(
+  ctx: GenericQueryCtx<DataModel>,
+  shareToken?: string
+) {
+  if (!shareToken) {
+    return false;
+  }
+
+  const share = await ctx.db
+    .query("testReviewShares")
+    .withIndex("by_shareToken", (q) => q.eq("shareToken", shareToken))
+    .first();
+
+  return share && (!share.expiresAt || share.expiresAt > Date.now());
+}
+
 export const getTestReviewById = query({
   args: {
-    testReviewId: v.string(),
+    testReviewId: v.id("testReviews"),
+    shareToken: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, { testReviewId, shareToken }) => {
     const userId = await AuthenticationRequired({ ctx });
-    const normalizedId = ctx.db.normalizeId("testReviews", args.testReviewId);
 
-    if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
-    }
-
-    const testReview = await ctx.db.get(normalizedId);
+    const testReview = await ctx.db.get(testReviewId);
     if (!testReview) {
       return null;
     }
 
+    const isValid = await validateShareToken(ctx, shareToken);
+
+    if (!isValid) {
+      throw createAppError({ message: "Invalid share token" });
+    }
+
     await checkPermission(ctx, userId, "testReviews", "view", {
-      testResult: testReview,
+      testReview,
+      hasValidShareToken: !!isValid,
     });
 
     return testReview;
@@ -388,7 +409,7 @@ export const deleteTestReview = mutation({
     }
 
     await checkPermission(ctx, userId, "testReviews", "delete", {
-      testResult: testReview,
+      testReview: testReview,
     });
 
     await ctx.db.delete(testReviewId);
@@ -416,5 +437,65 @@ export const deleteTest = mutation({
     await ctx.db.delete(testId);
 
     return { success: true };
+  },
+});
+
+export const createTestReviewShareLink = mutation({
+  args: {
+    testReviewId: v.id("testReviews"),
+    expiresInDays: v.optional(v.number()),
+  },
+  handler: async (ctx, { testReviewId, expiresInDays }) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    // Check if user has permission to share this test review
+    const testReview = await ctx.db.get(testReviewId);
+    if (!testReview) {
+      throw createAppError({ message: "Test review not found" });
+    }
+
+    await checkPermission(ctx, userId, "testReviews", "share", {
+      testReview: testReview,
+    });
+
+    // Generate a unique share token
+    const shareToken = nanoid(16);
+    const expiresAt = expiresInDays
+      ? Date.now() + expiresInDays * 24 * 60 * 60 * 1000
+      : undefined;
+
+    // Create share link record
+    await ctx.db.insert("testReviewShares", {
+      testReviewId,
+      createdBy: userId,
+      shareToken,
+      expiresAt,
+      createdAt: Date.now(),
+    });
+
+    return shareToken;
+  },
+});
+
+export const validateTestReviewShareLink = query({
+  args: {
+    shareToken: v.string(),
+  },
+  handler: async (ctx, { shareToken }) => {
+    const share = await ctx.db
+      .query("testReviewShares")
+      .withIndex("by_shareToken", (q) => q.eq("shareToken", shareToken))
+      .first();
+
+    if (!share) {
+      return null;
+    }
+
+    // Check if share link has expired
+    if (share.expiresAt && share.expiresAt < Date.now()) {
+      return null;
+    }
+
+    return share.testReviewId;
   },
 });

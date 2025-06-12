@@ -49,6 +49,13 @@ create reusable components for error and not found case and use them across the 
 -- on removing fileToBeUploaded clear the errors from validator
 -- when generating a test you check if test with same name exists but you check if it exists in whole database and not just for a specific user
 -- stats on dashboard should be class 1/1 storage used 12/50 ...
+-- write a bit better confirm test modal text
+-- fix test review naming convention
+-- fix test review scroll problem
+-- redesigne test results page
+-- choose between checking permissions in each page or returning error if no permission on the backend and then handling it on front with just error
+-- all permission errors should have specific error type and message and should be checked on backend and if error is present display it on frontend so you don't need to check on frontend if user has permission actually to perform an action
+-- write a script to remove shared tokens once they expire
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
@@ -57,13 +64,6 @@ BUGS
 -- header overlaps the layout on the mobileå
 
 test fast clicks on submit buttons that do not have disabled props
-
-ZA SUTRA
--- write a bit better confirm test modal text
--- fix test review naming convention
--- fix test review scroll problem
--- redesigne test results page
-
 
 PLAN:
 

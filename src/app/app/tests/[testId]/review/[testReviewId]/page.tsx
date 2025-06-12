@@ -22,7 +22,9 @@ import {
   RefreshCcw,
 } from "lucide-react";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useUserContext } from "@/providers/user-provider";
+
 import { api } from "../../../../../../../convex/_generated/api";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
@@ -30,20 +32,32 @@ import { type Id } from "convex/_generated/dataModel";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 import AlertDialogModal from "@/components/alert-dialog";
 import { useLoadingContext } from "@/providers/loading-context";
+import TestReviewShareButton from "@/components/test-review-share-button";
 
 export default function ReviewPage() {
   const {
     testReviewId,
     testId,
   }: { testReviewId: Id<"testReviews">; testId: Id<"tests"> } = useParams();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const router = useRouter();
   const { setLoading } = useLoadingContext();
+  const { can } = useUserContext();
+
   const testReview = useAuthenticatedQueryWithStatus(
     api.tests.getTestReviewById,
     {
       testReviewId,
+      shareToken: token ?? undefined,
     }
   );
+
+  const canRetakeTest = can("testReviews", "retake", {
+    testReview: testReview.data ?? undefined,
+  });
+
+  console.log(canRetakeTest, "canRetakeTest");
 
   const handleRetakeTest = async () => {
     setLoading(true, "Loading test...");
@@ -62,18 +76,16 @@ export default function ReviewPage() {
     return <TestReviewSkeleton />;
   }
 
-  if (testReview.isError) {
+  if (testReview.isError || !testReview.data) {
     return <NotFound />;
   }
-  // TODO: find a way to remove this
-  if ((testReview.isSuccess && !testReview.data) || testReview.data === null) {
-    return <NotFound />;
-  }
+
+  const isSharedView = !!token;
 
   return (
     <>
       <div className="flex justify-between items-center">
-        <div className=" flex items-center gap-4">
+        <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
@@ -95,11 +107,9 @@ export default function ReviewPage() {
           </div>
         </div>
 
-        <FeatureFlagTooltip>
-          <Button disabled className="text-xs md:text-base" variant="outline">
-            <Send className="h-4 w-4" />
-          </Button>
-        </FeatureFlagTooltip>
+        {!isSharedView && (
+          <TestReviewShareButton testReviewId={testReviewId} testId={testId} />
+        )}
       </div>
 
       <Card>
@@ -112,18 +122,20 @@ export default function ReviewPage() {
               </CardTitle>
             </div>
 
-            <AlertDialogModal
-              onConfirm={handleRetakeTest}
-              title="Retake Test"
-              description="After you press confirm you will be redirected to the test. Good luck!"
-              variant="positive"
-              alertTrigger={
-                <Button className="text-xs md:text-base" variant="positive">
-                  <RefreshCcw className="h-4 w-4 mr-2" />
-                  Retake Test
-                </Button>
-              }
-            />
+            {!isSharedView && (
+              <AlertDialogModal
+                onConfirm={handleRetakeTest}
+                title="Retake Test"
+                description="After you press confirm you will be redirected to the test. Good luck!"
+                variant="positive"
+                alertTrigger={
+                  <Button className="text-xs md:text-base" variant="positive">
+                    <RefreshCcw className="h-4 w-4 mr-2" />
+                    Retake Test
+                  </Button>
+                }
+              />
+            )}
           </div>
         </CardHeader>
         <CardContent>

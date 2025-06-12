@@ -123,4 +123,14 @@ export default defineSchema({
     .index("by_user", ["createdBy"])
     .index("by_class", ["classId"])
     .index("by_test", ["testId"]),
+
+  testReviewShares: defineTable({
+    testReviewId: v.id("testReviews"),
+    createdBy: v.string(),
+    shareToken: v.string(),
+    expiresAt: v.optional(v.number()),
+    createdAt: v.number(),
+  })
+    .index("by_shareToken", ["shareToken"])
+    .index("by_testReview", ["testReviewId"]),
 });

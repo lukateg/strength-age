@@ -1,5 +1,4 @@
 import { useClassMutations } from "@/hooks/use-class-mutations";
-import { useUserContext } from "@/providers/user-provider";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,22 +13,19 @@ import Link from "next/link";
 
 import { EllipsisVertical, Pencil, Trash } from "lucide-react";
 
-import { type Doc } from "../../../../../../convex/_generated/dataModel";
+import { type api } from "convex/_generated/api";
+import { type FunctionReturnType } from "convex/server";
 
 export default function ClassCardDropdown({
   classItem,
 }: {
-  classItem: Doc<"classes">;
+  classItem: FunctionReturnType<
+    typeof api.classes.getClassesDataByUserId
+  >["classesWithPermissions"][number];
 }) {
+  //TODO move this into separate component and make this one server component
   const { deleteClass } = useClassMutations();
-  const { can } = useUserContext();
 
-  const canEditClass = can("classes", "update", {
-    class: classItem,
-  });
-  const canDeleteClass = can("classes", "delete", {
-    class: classItem,
-  });
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="h-fit p-2">
@@ -38,7 +34,7 @@ export default function ClassCardDropdown({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-16">
-        {canEditClass && (
+        {classItem.canUpdateClass && (
           <Button
             variant="ghost"
             asChild
@@ -53,7 +49,7 @@ export default function ClassCardDropdown({
           </Button>
         )}
 
-        {canDeleteClass && (
+        {classItem.canDeleteClass && (
           <AlertDialogModal
             title="Are you sure?"
             description="This action cannot be undone. This will permanently delete the

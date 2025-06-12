@@ -26,7 +26,7 @@ export const generateStats = (
     {
       title: "Total Classes",
       icon: BookOpen,
-      value: classes?.length,
+      value: classes?.length ?? 0,
       description: "Total number of classes",
     },
     {

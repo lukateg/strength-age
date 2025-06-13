@@ -1,14 +1,12 @@
 "use client";
 
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import { api } from "../../../../../../convex/_generated/api";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 import { CheckSquare, AlignJustify, ToggleLeft } from "lucide-react";
 
 import { type Lesson } from "@/components/generate-test-form/components/lesson-select-view/lesson-select-table";
+import { useClass } from "@/providers/class-context-provider";
 
 type QuestionType = "multiple_choice" | "true_false" | "short_answer";
 
@@ -31,9 +29,7 @@ export function TestDetails({
   lessons,
   classId,
 }: TestDetailsProps) {
-  const classData = useAuthenticatedQueryWithStatus(api.classes.getClassById, {
-    id: classId,
-  });
+  const { classData } = useClass();
 
   const getQuestionTypeIcon = (type: QuestionType) => {
     switch (type) {
@@ -99,7 +95,9 @@ export function TestDetails({
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <p className="text-sm text-muted-foreground">Class:</p>
-            <p className="text-sm font-medium">{classData.data?.title}</p>
+            <p className="text-sm font-medium">
+              {classData.data?.class_.title}
+            </p>
           </div>
 
           <div className="space-y-2">

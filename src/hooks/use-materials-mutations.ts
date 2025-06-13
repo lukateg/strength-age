@@ -11,7 +11,7 @@ import { type ClientUploadedFileData } from "uploadthing/types";
 import { type Id } from "../../convex/_generated/dataModel";
 
 interface UploadPDFParams {
-  classId: Id<"classes">;
+  classId: string;
   pdfFiles: {
     fileUrl: string;
     name: string;

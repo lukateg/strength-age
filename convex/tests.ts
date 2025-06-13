@@ -1,15 +1,131 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import {
-  AuthenticationRequired,
-  checkPermission,
-  createAppError,
-} from "./utils";
+import { AuthenticationRequired, createAppError } from "./utils";
 import { internal } from "./_generated/api";
 import { nanoid } from "nanoid";
 
-import { type DataModel, type Id } from "./_generated/dataModel";
+import { type DataModel, type Id, type Doc } from "./_generated/dataModel";
 import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
+import { hasPermission } from "./permissions";
+import { type Permissions } from "./permissions";
+
+interface TestWithPermissions extends Doc<"tests"> {
+  canDelete: boolean;
+  canShare: boolean;
+}
+
+interface TestReviewWithPermissions extends Doc<"testReviews"> {
+  canDelete: boolean;
+  canShare: boolean;
+  canRetake: boolean;
+}
+
+export interface TestsPageData {
+  tests: TestWithPermissions[];
+  testReviews: TestReviewWithPermissions[];
+  weeklyTestReviews: Doc<"testReviews">[];
+  permissions: {
+    canGenerateTest: boolean;
+  };
+}
+
+// Helper function to get tests with permissions
+export async function getTestsWithPermissions(
+  ctx: GenericQueryCtx<DataModel>,
+  userId: string
+): Promise<TestWithPermissions[]> {
+  const tests = await ctx.db
+    .query("tests")
+    .withIndex("by_user", (q) => q.eq("createdBy", userId))
+    .collect();
+
+  return await Promise.all(
+    tests.map(async (test) => {
+      const [canDelete, canShare] = await Promise.all([
+        hasPermission<"tests">(ctx, userId, "tests", "delete", test),
+        hasPermission<"tests">(ctx, userId, "tests", "share", test),
+      ]);
+
+      return {
+        ...test,
+        canDelete,
+        canShare,
+      };
+    })
+  );
+}
+
+// Helper function to get test reviews with permissions
+export async function getTestReviewsWithPermissions(
+  ctx: GenericQueryCtx<DataModel>,
+  userId: string
+): Promise<TestReviewWithPermissions[]> {
+  const testReviews = await ctx.db
+    .query("testReviews")
+    .withIndex("by_user", (q) => q.eq("createdBy", userId))
+    .collect();
+
+  return await Promise.all(
+    testReviews.map(async (review) => {
+      const [canDelete, canShare, canRetake] = await Promise.all([
+        hasPermission<"testReviews">(ctx, userId, "testReviews", "delete", {
+          testReview: review,
+        }),
+        hasPermission<"testReviews">(ctx, userId, "testReviews", "share", {
+          testReview: review,
+        }),
+        hasPermission<"testReviews">(ctx, userId, "testReviews", "retake", {
+          testReview: review,
+        }),
+      ]);
+
+      return {
+        ...review,
+        canDelete,
+        canShare,
+        canRetake,
+      };
+    })
+  );
+}
+
+// Helper function to get weekly test reviews
+export async function getWeeklyTestReviews(
+  ctx: GenericQueryCtx<DataModel>,
+  userId: string
+): Promise<Doc<"testReviews">[]> {
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  return await ctx.db
+    .query("testReviews")
+    .withIndex("by_user", (q) => q.eq("createdBy", userId))
+    .filter((q) => q.gte(q.field("_creationTime"), sevenDaysAgo.getTime()))
+    .collect();
+}
+
+// export const getTestsPageDataQuery = query({
+//   handler: async (ctx): Promise<TestsPageData> => {
+//     const userId = await AuthenticationRequired({ ctx });
+
+//     const [tests, testReviews, weeklyTestReviews, canGenerateTest] =
+//       await Promise.all([
+//         getTestsWithPermissions(ctx, userId),
+//         getTestReviewsWithPermissions(ctx, userId),
+//         getWeeklyTestReviews(ctx, userId),
+//         hasPermission<"tests">(ctx, userId, "tests", "create"),
+//       ]);
+
+//     return {
+//       tests,
+//       testReviews,
+//       weeklyTestReviews,
+//       permissions: {
+//         canGenerateTest,
+//       },
+//     };
+//   },
+// });
 
 export const uploadTest = mutation({
   args: {
@@ -49,9 +165,9 @@ export const uploadTest = mutation({
       .withIndex("by_user", (q) => q.eq("createdBy", userId))
       .collect();
 
-    await checkPermission(ctx, userId, "tests", "create", {
-      existingTestsLength: existingTests.length,
-    });
+    // await checkPermission(ctx, userId, "tests", "create", {
+    //   existingTestsLength: existingTests.length,
+    // });
 
     let title = args.title;
     const existingTest = await ctx.db
@@ -148,9 +264,9 @@ export const getAllTestsByClassId = query({
       return null;
     }
 
-    await checkPermission(ctx, userId, "classes", "view", {
-      class: classResponse,
-    });
+    // await checkPermission(ctx, userId, "classes", "view", {
+    //   class: classResponse,
+    // });
 
     const tests = await ctx.db
       .query("tests")
@@ -177,9 +293,9 @@ export const getTestById = query({
       return null;
     }
 
-    await checkPermission(ctx, userId, "tests", "view", {
-      test,
-    });
+    // await checkPermission(ctx, userId, "tests", "view", {
+    //   test,
+    // });
 
     return test;
   },
@@ -221,10 +337,10 @@ export const getTestReviewById = query({
       throw createAppError({ message: "Invalid share token" });
     }
 
-    await checkPermission(ctx, userId, "testReviews", "view", {
-      testReview,
-      hasValidShareToken: !!isValid,
-    });
+    // await checkPermission(ctx, userId, "testReviews", "view", {
+    //   testReview,
+    //   hasValidShareToken: !!isValid,
+    // });
 
     return testReview;
   },
@@ -260,9 +376,9 @@ export const getTestReviewsByClassId = query({
       return null;
     }
 
-    await checkPermission(ctx, userId, "classes", "view", {
-      class: classResponse,
-    });
+    // await checkPermission(ctx, userId, "classes", "view", {
+    //   class: classResponse,
+    // });
 
     const testReviews = await ctx.db
       .query("testReviews")
@@ -289,9 +405,9 @@ export const getTestReviewsByTestId = query({
       return null;
     }
 
-    await checkPermission(ctx, userId, "tests", "view", {
-      test,
-    });
+    // await checkPermission(ctx, userId, "tests", "view", {
+    //   test,
+    // });
 
     const testReviews = await ctx.db
       .query("testReviews")
@@ -408,9 +524,9 @@ export const deleteTestReview = mutation({
       });
     }
 
-    await checkPermission(ctx, userId, "testReviews", "delete", {
-      testReview: testReview,
-    });
+    //  await checkPermission(ctx, userId, "testReviews", "delete", {
+    //   testReview: testReview,
+    // });
 
     await ctx.db.delete(testReviewId);
 
@@ -430,9 +546,9 @@ export const deleteTest = mutation({
       });
     }
 
-    await checkPermission(ctx, userId, "tests", "delete", {
-      test,
-    });
+    // await checkPermission(ctx, userId, "tests", "delete", {
+    //   test,
+    // });
 
     await ctx.db.delete(testId);
 
@@ -454,9 +570,9 @@ export const createTestReviewShareLink = mutation({
       throw createAppError({ message: "Test review not found" });
     }
 
-    await checkPermission(ctx, userId, "testReviews", "share", {
-      testReview: testReview,
-    });
+    // await checkPermission(ctx, userId, "testReviews", "share", {
+    //   testReview: testReview,
+    // });
 
     // Generate a unique share token
     const shareToken = nanoid(16);

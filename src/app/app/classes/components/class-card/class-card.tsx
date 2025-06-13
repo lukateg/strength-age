@@ -19,7 +19,7 @@ export default function ClassCard({
   classItem,
 }: {
   classItem: FunctionReturnType<
-    typeof api.classes.getClassesDataByUserId
+    typeof api.pages.classes.getClassesPageData
   >["classesWithPermissions"][number];
 }) {
   return (

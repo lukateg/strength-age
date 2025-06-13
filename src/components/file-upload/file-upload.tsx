@@ -16,20 +16,24 @@ type FileUploadProps = {
   maxFiles?: number;
   maxSize?: number;
   existingFiles: File[];
+  storageUsed: number;
+  storageLimit: number;
 };
 
 export default function FileUploadComponent({
   onDrop,
   maxFiles = 10,
   existingFiles,
+  storageUsed,
+  storageLimit,
 }: FileUploadProps) {
   const [error, setError] = useState<string | null>(null);
   const maxRoundUploadSize = 20971520; // 20MB
-  const { can } = useUserContext();
+  // const { can } = useUserContext();
 
-  const uploadedFilesSize = useAuthenticatedQueryWithStatus(
-    api.materials.getTotalSizeOfPdfsByUser
-  );
+  // const uploadedFilesSize = useAuthenticatedQueryWithStatus(
+  //   api.materials.getTotalSizeOfPdfsByUser
+  // );
 
   const handleDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
@@ -97,13 +101,9 @@ export default function FileUploadComponent({
         };
       }
 
-      const totalSize =
-        (uploadedFilesSize.data ?? 0) + currentRoundSize + file.size;
-      const canUpload = can("materials", "create", {
-        uploadedFilesSize: totalSize,
-      });
+      const totalSize = (storageUsed ?? 0) + currentRoundSize + file.size;
 
-      if (!canUpload) {
+      if (totalSize > storageLimit) {
         return {
           code: "storage-limit-exceeded",
           message: "Adding this file would exceed your storage limit",

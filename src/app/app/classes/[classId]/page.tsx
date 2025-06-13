@@ -2,28 +2,22 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import MaterialsSectionComponent from "./components/materials-by-class-card";
 import LessonsSectionComponent from "./components/lessons-by-class-card/lessons-by-class-card";
 import TestsSection from "./components/tests-by-class-card";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
-import PageSkeleton from "@/components/page-components/page-skeleton";
+import PageSkeleton from "@/components/page-components/main-page-skeleton";
 import NotFound from "@/components/not-found";
+import SectionHeader from "@/components/page-components/page-header";
+import MaterialsByClassCard from "./components/materials-by-class-card";
 
 import { useParams } from "next/navigation";
 import { useClass } from "@/providers/class-context-provider";
-import { useUserContext } from "@/providers/user-provider";
 
 import { type Id } from "convex/_generated/dataModel";
-import SectionHeader from "@/components/page-components/page-header";
 
 export default function ClassPage() {
   const { classId }: { classId: Id<"classes"> } = useParams();
   const { classData } = useClass();
-  const { can } = useUserContext();
-
-  const canEditClass = can("classes", "update", {
-    class: classData.data,
-  });
 
   if (classData.isPending) {
     return <PageSkeleton />;
@@ -43,18 +37,21 @@ export default function ClassPage() {
     );
   }
 
+  const { class_, lessons, permissions, materials, tests, testReviews } =
+    classData.data;
+
   return (
     <div className="space-y-10">
       <SectionHeader
-        title={classData.data?.title}
-        description={classData.data?.description}
+        title={class_.title}
+        description={class_.description}
         backRoute={`/app/classes`}
         editRoute={
-          canEditClass
-            ? `/app/classes/edit-class?classId=${classId}`
+          permissions.canEditClass
+            ? `/app/classes/${classId}/edit-class`
             : undefined
         }
-        editButtonText={canEditClass ? "Edit Class" : undefined}
+        editButtonText={permissions.canEditClass ? "Edit Class" : undefined}
       />
       <Tabs defaultValue="lessons" className="space-y-6">
         <TabsList>
@@ -79,15 +76,28 @@ export default function ClassPage() {
         </TabsList>
 
         <TabsContent value="lessons" className="space-y-4">
-          <LessonsSectionComponent classId={classId} />
+          <LessonsSectionComponent
+            lessons={lessons}
+            canCreateLesson={permissions.canCreateLesson}
+            classId={classId}
+          />
         </TabsContent>
 
         <TabsContent value="materials" className="space-y-4">
-          <MaterialsSectionComponent classId={classId} />
+          <MaterialsByClassCard
+            classId={classId}
+            canUploadMaterials={permissions.canUploadMaterials}
+            materials={materials}
+          />
         </TabsContent>
 
         <TabsContent value="tests" className="space-y-4">
-          <TestsSection classId={classId} />
+          <TestsSection
+            classId={classId}
+            canCreateTest={permissions.canCreateTest}
+            tests={tests}
+            testReviews={testReviews}
+          />
         </TabsContent>
       </Tabs>
     </div>

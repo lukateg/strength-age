@@ -2,6 +2,20 @@ import { internalMutation, query, type QueryCtx } from "./_generated/server";
 import { type UserJSON } from "@clerk/backend";
 import { v, type Validator } from "convex/values";
 import { internalQuery } from "./_generated/server";
+import { AuthenticationRequired } from "./utils";
+import { getTotalStorageUsage } from "./materials";
+
+export const getUserData = query({
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const user = await userByClerkId(ctx, userId);
+
+    const totalStorageUsage = await getTotalStorageUsage(ctx, userId);
+
+    return { ...user, totalStorageUsage };
+  },
+});
 
 export const upsertFromClerk = internalMutation({
   args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk

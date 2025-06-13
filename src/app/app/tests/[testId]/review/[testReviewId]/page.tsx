@@ -43,7 +43,7 @@ export default function ReviewPage() {
   const token = searchParams.get("token");
   const router = useRouter();
   const { setLoading } = useLoadingContext();
-  const { can } = useUserContext();
+  // const { can } = useUserContext();
 
   const testReview = useAuthenticatedQueryWithStatus(
     api.tests.getTestReviewById,
@@ -53,11 +53,9 @@ export default function ReviewPage() {
     }
   );
 
-  const canRetakeTest = can("testReviews", "retake", {
-    testReview: testReview.data ?? undefined,
-  });
-
-  console.log(canRetakeTest, "canRetakeTest");
+  // const canRetakeTest = can("testReviews", "retake", {
+  //   testReview: testReview.data ?? undefined,
+  // });
 
   const handleRetakeTest = async () => {
     setLoading(true, "Loading test...");

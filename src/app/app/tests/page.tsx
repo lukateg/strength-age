@@ -1,10 +1,7 @@
 "use client";
 
-import { useUserContext } from "@/providers/user-provider";
-
 import { Button } from "@/components/ui/button";
 import { FilePlus2 } from "lucide-react";
-import { useTests } from "@/providers/tests-provider";
 
 import Link from "next/link";
 import RecentTests from "./components/recent-tests-card";
@@ -12,25 +9,35 @@ import RecentReviews from "./components/recent-reviews-card";
 import DashboardStats from "../../../components/dashboard-stats";
 import AllTestsCard from "./components/all-tests-card";
 import AllTestReviewsCard from "./components/all-test-reviews-card";
+import MainPageSkeleton from "@/components/page-components/main-page-skeleton";
+import NotFound from "@/components/not-found";
 
 import { generateStats } from "./utils";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
+import { api } from "../../../../convex/_generated/api";
 
 export default function Tests() {
   // TODO: create a function with Promise.all to fetch all the data at useTests and then here implement loading skeleton pattern
-  const { testsByUser, testReviewsByUser, weeklyTestReviews } = useTests();
-
-  const stats = generateStats(
-    testReviewsByUser?.data,
-    weeklyTestReviews?.data,
-    testsByUser?.data
+  // and pass the data to the display components instead of fetching it there
+  const testPageData = useAuthenticatedQueryWithStatus(
+    api.pages.tests.getTestsPageDataQuery
   );
 
-  const { can } = useUserContext();
+  if (testPageData.status === "pending") {
+    return <MainPageSkeleton />;
+  }
 
-  const canGenerateTest = can("tests", "create", {
-    existingTestsLength: testsByUser?.data?.length ?? 0,
-  });
+  if (testPageData.status === "error") {
+    return <NotFound />;
+  }
+
+  const { tests, testReviews, weeklyTestReviews, permissions } =
+    testPageData.data;
+
+  const stats = generateStats(testReviews, weeklyTestReviews, tests);
+
+  const canGenerateTest = permissions.canGenerateTest;
 
   return (
     <div>
@@ -68,18 +75,18 @@ export default function Tests() {
 
         <TabsContent value="recent" className="space-y-4">
           <div className="grid gap-6 xl:grid-cols-2">
-            <RecentTests />
+            <RecentTests tests={tests} />
 
-            <RecentReviews />
+            <RecentReviews testReviews={testReviews} />
           </div>
         </TabsContent>
 
         <TabsContent value="tests" className="space-y-4">
-          <AllTestsCard />
+          <AllTestsCard tests={tests} />
         </TabsContent>
 
         <TabsContent value="reviews" className="space-y-4">
-          <AllTestReviewsCard />
+          <AllTestReviewsCard testReviews={testReviews} />
         </TabsContent>
       </Tabs>
     </div>

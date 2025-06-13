@@ -1,16 +1,12 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import {
-  AuthenticationRequired,
-  checkPermission,
-  createAppError,
-} from "./utils";
+import { AuthenticationRequired, createAppError } from "./utils";
 import { internal } from "./_generated/api";
 
 import { type DataModel, type Id } from "./_generated/dataModel";
 import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
 
-async function getTotalPdfSizeByUser(
+export async function getTotalStorageUsage(
   ctx: GenericMutationCtx<DataModel> | GenericQueryCtx<DataModel>,
   userId: string
 ) {
@@ -40,11 +36,11 @@ export const addPdf = mutation({
       throw createAppError({ message: "Invalid item ID" });
     }
 
-    const totalSize = await getTotalPdfSizeByUser(ctx, userId);
+    const totalSize = await getTotalStorageUsage(ctx, userId);
 
-    await checkPermission(ctx, userId, "materials", "create", {
-      uploadedFilesSize: totalSize + pdf.size,
-    });
+    // await checkPermission(ctx, userId, "materials", "create", {
+    //   uploadedFilesSize: totalSize + pdf.size,
+    // });
 
     const pdfId = await ctx.db.insert("pdfs", {
       createdBy: userId,
@@ -78,12 +74,12 @@ export const addManyPdfs = mutation({
       throw createAppError({ message: "Invalid item ID" });
     }
 
-    const totalSize = await getTotalPdfSizeByUser(ctx, userId);
+    const totalSize = await getTotalStorageUsage(ctx, userId);
     const newFilesTotalSize = pdfFiles.reduce((acc, pdf) => acc + pdf.size, 0);
 
-    await checkPermission(ctx, userId, "materials", "create", {
-      uploadedFilesSize: totalSize + newFilesTotalSize,
-    });
+    //    await checkPermission(ctx, userId, "materials", "create", {
+    //   uploadedFilesSize: totalSize + newFilesTotalSize,
+    // });
 
     for (const pdf of pdfFiles) {
       await ctx.db.insert("pdfs", {
@@ -132,7 +128,7 @@ export const getAllPDFsByUser = query({
 export const getTotalSizeOfPdfsByUser = query({
   handler: async (ctx) => {
     const userId = await AuthenticationRequired({ ctx });
-    return await getTotalPdfSizeByUser(ctx, userId);
+    return await getTotalStorageUsage(ctx, userId);
   },
 });
 

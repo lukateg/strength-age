@@ -1,7 +1,4 @@
 "use client";
-import { api } from "../../../../../convex/_generated/api";
-
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 import { useTestMutations } from "@/hooks/use-test-mutations";
 
 import AlertDialogModal from "@/components/alert-dialog";
@@ -11,18 +8,22 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 import { BookOpen, Eye, Trash } from "lucide-react";
-export default function RecentTests() {
-  const recentTests = useAuthenticatedQueryWithStatus(
-    api.tests.getWeeklyTestsByUserId
-  );
+import { type Doc } from "convex/_generated/dataModel";
+
+export default function RecentTests({ tests }: { tests: Doc<"tests">[] }) {
   const { deleteTest } = useTestMutations();
+
+  const recentTests = tests.sort((a, b) => {
+    return (
+      new Date(b._creationTime).getTime() - new Date(a._creationTime).getTime()
+    );
+  });
 
   return (
     <ListCard
       title="Recent Tests"
       description="Latest AI-generated tests for you"
-      items={recentTests?.data}
-      isLoading={recentTests?.isPending}
+      items={recentTests}
       renderItem={(test) => (
         <ListItem key={test._id} icon={BookOpen} title={test.title}>
           <div className="flex gap-2">

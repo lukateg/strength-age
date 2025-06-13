@@ -1,47 +1,41 @@
 "use client";
-import { api } from "../../../../../convex/_generated/api";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useClassMutations } from "@/hooks/use-class-mutations";
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 import NotFound from "@/components/not-found";
-import ClassFormSkeleton from "../components/class-form-skeleton";
-import ClassForm, { type ClassFormData } from "../components/class-form";
+import ClassFormSkeleton from "../../components/class-form-skeleton";
+import ClassForm, { type ClassFormData } from "../../components/class-form";
 import RedirectBackButton from "@/components/redirect-back-button";
 import DangerZone from "@/components/danger-zone";
 
 import { ArrowLeft, BookOpen } from "lucide-react";
+import { useClass } from "@/providers/class-context-provider";
+
+// TODO: choose between using the class context provider or the query
 
 export default function EditClassPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { updateClass, deleteClass } = useClassMutations();
-  const classId = searchParams.get("classId");
-  const classRequest = useAuthenticatedQueryWithStatus(
-    api.classes.getClassById,
-    {
-      id: classId ?? "skip",
-    }
-  );
+  const { classData } = useClass();
 
   const onSubmit = (data: ClassFormData) => {
     void updateClass({
-      classId: classId ?? "skip",
+      classId: classData.data?.class_._id ?? "skip",
       title: data.title,
       description: data.description,
     }).then(() => router.back());
   };
 
-  if (classRequest.status === "pending") {
+  if (classData.isPending) {
     return <ClassFormSkeleton />;
   }
 
-  if (classRequest.status === "error") {
+  if (classData.isError) {
     return <NotFound />;
   }
 
-  if (!classRequest.data) {
+  if (!classData.data) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium">Class not found</h3>
@@ -52,9 +46,11 @@ export default function EditClassPage() {
     );
   }
 
-  if (classRequest.status === "success") {
+  const { permissions } = classData.data;
+
+  if (classData.data) {
     return (
-      <div className="container mx-auto p-6 space-y-10">
+      <>
         <div className="flex items-center gap-4">
           <RedirectBackButton>
             <ArrowLeft className="h-6 w-6" />
@@ -74,16 +70,20 @@ export default function EditClassPage() {
           onSubmit={onSubmit}
           isEditMode={true}
           defaultValues={{
-            ...classRequest.data,
+            ...classData.data.class_,
           }}
         />
 
-        <DangerZone
-          onDelete={() => {
-            void deleteClass(classId ?? "skip").then(() => router.back());
-          }}
-        />
-      </div>
+        {permissions.canDeleteClass && (
+          <DangerZone
+            onDelete={() => {
+              void deleteClass(classData.data?.class_._id ?? "skip").then(() =>
+                router.back()
+              );
+            }}
+          />
+        )}
+      </>
     );
   }
 }

@@ -1,47 +1,114 @@
+import { AuthenticationRequired, createAppError } from "./utils";
+import { LIMITATIONS } from "@/shared/constants";
+
 import { type DataModel } from "./_generated/dataModel";
 import { type GenericQueryCtx } from "convex/server";
-import { AuthenticationRequired, createAppError } from "./utils";
 import { type Doc } from "./_generated/dataModel";
+
+// Type helpers
+type ExtractClassType<T> = T extends { class: infer C } ? C : never;
 
 // TODO:
 // rename this file to abac.ts
 // move the validator functions into the permissions.ts file
+// probaj ipak da napravis da permission schema radi sinhrono jer izgleda sve te podatke vec fecujes u query funkcijama
+
+// ostavi refaktor baze za drugi put
+// resi permisije za sve i onda refaktoruj
+
+// SECURED
+//  classes, can create class, class card, class dropdown - everything there secured
+//  class page, materials, tests, test reviews - everything there secured
 
 // Types
 export type Role = "admin" | "user";
 
+// Base types for different resources
+type LessonDataType = {
+  lesson: Doc<"lessons">;
+  class: Doc<"classes">;
+};
+
+type ClassOnlyType = Pick<LessonDataType, "class">;
+
+// Define parameter types for each action
+type LessonActionParams = {
+  view: { class: Doc<"classes"> };
+  create: { class: Doc<"classes"> };
+  update: { lesson: Doc<"lessons">; class?: Doc<"classes"> };
+  delete: { lesson: Doc<"lessons">; class?: Doc<"classes"> };
+};
+
+type ClassActionParams = {
+  view: Doc<"classes">;
+  create: void;
+  update: Doc<"classes">;
+  delete: Doc<"classes">;
+};
+
+type TestActionParams = {
+  view: Doc<"tests">;
+  create: void;
+  delete: Doc<"tests">;
+  share: void;
+};
+
+type MaterialActionParams = {
+  view: Doc<"pdfs">;
+  create: void;
+  delete: Doc<"pdfs">;
+};
+
+type TestReviewActionParams = {
+  view: { testReview: Doc<"testReviews">; shareToken?: string };
+  delete: { testReview: Doc<"testReviews"> };
+  share: void;
+  retake: { testReview: Doc<"testReviews"> };
+};
+
+// Map resource types to their action parameters
+type ResourceActionParams = {
+  lessons: LessonActionParams;
+  classes: ClassActionParams;
+  tests: TestActionParams;
+  materials: MaterialActionParams;
+  testReviews: TestReviewActionParams;
+};
+
 export type Permissions = {
   classes: {
     dataType: Doc<"classes">;
-    action: "view" | "create" | "update" | "delete";
+    action: keyof ClassActionParams;
   };
   lessons: {
-    dataType: Doc<"lessons">;
-    action: "view" | "create" | "update" | "delete";
+    dataType: LessonDataType;
+    action: keyof LessonActionParams;
   };
-  // TODO: remove the dataType optional
   tests: {
     dataType?: Doc<"tests">;
-    action: "view" | "create" | "delete" | "share";
+    action: keyof TestActionParams;
   };
   materials: {
     dataType: Doc<"pdfs">;
-    action: "view" | "create" | "delete";
+    action: keyof MaterialActionParams;
   };
   testReviews: {
     dataType: {
       testReview: Doc<"testReviews">;
       shareToken?: string;
     };
-    action: "view" | "delete" | "share" | "retake";
+    action: keyof TestReviewActionParams;
   };
 };
 
-type PermissionCheck<Key extends keyof Permissions> =
+type PermissionCheck<
+  Resource extends keyof Permissions,
+  Action extends keyof ResourceActionParams[Resource],
+> =
   | boolean
   | ((
       ctx: GenericQueryCtx<DataModel>,
-      data: Permissions[Key]["dataType"]
+      data: ResourceActionParams[Resource][Action]
     ) => Promise<boolean>);
 
 // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
@@ -49,38 +116,10 @@ type RolesWithPermissions = {
   [R in Role]: {
     // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
     [K in keyof Permissions]?: {
-      [A in Permissions[K]["action"]]?: PermissionCheck<K>;
+      [A in keyof ResourceActionParams[K]]?: PermissionCheck<K, A>;
     };
   };
 };
-
-// Constants
-export const LIMITATIONS = {
-  free: {
-    classes: 1,
-    lessons: 3,
-    tests: 3,
-    materials: 10485760, // 10 MB in bytes (10 * 1024 * 1024)
-    testShare: false,
-    resultsShare: true,
-  },
-  starter: {
-    classes: 3,
-    lessons: 10,
-    tests: 10,
-    materials: 262144000, // 250 MB in bytes (250 * 1024 * 1024)
-    testShare: true,
-    resultsShare: true,
-  },
-  pro: {
-    classes: 100,
-    lessons: 100,
-    tests: 100,
-    materials: 524288000, // 500 MB in bytes (500 * 1024 * 1024)
-    testShare: true,
-    resultsShare: true,
-  },
-} as const;
 
 const ROLES: RolesWithPermissions = {
   admin: {
@@ -130,7 +169,6 @@ const ROLES: RolesWithPermissions = {
           .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
           .first();
         if (!user) return false;
-        // console.log(user.subscriptionTier, "user.subscriptionTier");
         const existingClasses = await ctx.db
           .query("classes")
           .withIndex("by_user", (q) => q.eq("createdBy", userId))
@@ -158,14 +196,14 @@ const ROLES: RolesWithPermissions = {
     lessons: {
       view: async (
         ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["lessons"]["dataType"]
+        data: LessonActionParams["view"]
       ) => {
         const userId = await AuthenticationRequired({ ctx });
-        return data.createdBy === userId;
+        return data.class.createdBy === userId;
       },
       create: async (
         ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["lessons"]["dataType"]
+        data: LessonActionParams["create"]
       ) => {
         const userId = await AuthenticationRequired({ ctx });
         const user = await ctx.db
@@ -176,7 +214,7 @@ const ROLES: RolesWithPermissions = {
 
         const existingLessons = await ctx.db
           .query("lessons")
-          .withIndex("by_class", (q) => q.eq("classId", data.classId))
+          .withIndex("by_class", (q) => q.eq("classId", data.class._id))
           .collect();
 
         return (
@@ -185,17 +223,17 @@ const ROLES: RolesWithPermissions = {
       },
       update: async (
         ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["lessons"]["dataType"]
+        data: LessonActionParams["update"]
       ) => {
         const userId = await AuthenticationRequired({ ctx });
-        return data.createdBy === userId;
+        return data.lesson.createdBy === userId;
       },
       delete: async (
         ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["lessons"]["dataType"]
+        data: LessonActionParams["delete"]
       ) => {
         const userId = await AuthenticationRequired({ ctx });
-        return data.createdBy === userId;
+        return data.lesson.createdBy === userId;
       },
     },
     materials: {
@@ -223,6 +261,7 @@ const ROLES: RolesWithPermissions = {
           (acc, file) => acc + file.size,
           0
         );
+
         return LIMITATIONS[user.subscriptionTier].materials > totalSize;
       },
       delete: async (
@@ -247,6 +286,7 @@ const ROLES: RolesWithPermissions = {
           .query("users")
           .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
           .first();
+
         if (!user) return false;
 
         const existingTests = await ctx.db
@@ -326,8 +366,8 @@ export async function hasPermission<Resource extends keyof Permissions>(
   ctx: GenericQueryCtx<DataModel>,
   userId: string,
   resource: Resource,
-  action: Permissions[Resource]["action"],
-  data?: Permissions[Resource]["dataType"]
+  action: keyof ResourceActionParams[Resource],
+  data?: ResourceActionParams[Resource][typeof action]
 ) {
   const user = await ctx.db
     .query("users")
@@ -344,7 +384,7 @@ export async function hasPermission<Resource extends keyof Permissions>(
 
       if (typeof permission === "boolean") return permission;
 
-      return await permission(ctx, data);
+      return await permission(ctx, data!);
     })
   );
 

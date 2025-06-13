@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function PageSkeleton() {
+export default function MainPageSkeleton() {
   return (
     <div className="mx-auto container p-6 space-y-10">
       <Skeleton className="h-[55px] w-full" />

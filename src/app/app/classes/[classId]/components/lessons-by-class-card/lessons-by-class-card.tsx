@@ -1,7 +1,7 @@
-"use client";
+// "use client";
 
-import { useClass } from "@/providers/class-context-provider";
-import { useUserContext } from "@/providers/user-provider";
+// import { useClass } from "@/providers/class-context-provider";
+// import { useUserContext } from "@/providers/user-provider";
 
 import { Button } from "@/components/ui/button";
 
@@ -11,26 +11,24 @@ import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 import LessonsItemDropdown from "./lessons-item-dropdown";
 
 import { Eye, FileText, Plus } from "lucide-react";
+import PageSkeleton from "@/components/page-components/main-page-skeleton";
+import NotFound from "@/components/not-found";
+import { type Lesson } from "@/components/generate-test-form/components/lesson-select-view/lesson-select-table";
 
 export default function LessonsSectionComponent({
   classId,
+  lessons,
+  canCreateLesson,
 }: {
   classId: string;
+  lessons: Lesson[];
+  canCreateLesson: boolean;
 }) {
-  const { lessonsByClass, classData } = useClass();
-  const { can } = useUserContext();
-
-  const canCreateLesson = can("lessons", "create", {
-    existingLessonsLength: lessonsByClass.data?.length ?? 0,
-    class: classData.data,
-  });
-
   return (
     <ListCard
       title="Course Lessons"
       description="PDF documents and study materials"
-      items={lessonsByClass.data}
-      isLoading={lessonsByClass.isPending}
+      items={lessons}
       cardAction={
         <Button disabled={!canCreateLesson}>
           <Link

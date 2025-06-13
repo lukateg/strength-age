@@ -4,7 +4,7 @@ import { fetchMutation, fetchQuery } from "convex/nextjs";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { z } from "zod";
 import { ConvexError } from "convex/values";
-import { hasPermission } from "@/shared/abac";
+
 const f = createUploadthing();
 
 // FileRouter for your app, can contain multiple FileRoutes
@@ -53,16 +53,16 @@ export const pdfFileRouter = {
         0
       );
 
-      const canUpload = hasPermission(user, "materials", "create", {
-        uploadedFilesSize: (uploadedFilesSize ?? 0) + pdfsToUploadTotalSize,
-      });
+      // const canUpload = hasPermission(user, "materials", "create", {
+      //   uploadedFilesSize: (uploadedFilesSize ?? 0) + pdfsToUploadTotalSize,
+      // });
 
-      if (!canUpload) {
-        throw new ConvexError({
-          message:
-            "You don't have enough storage to upload materials, please upgrade subscription.",
-        });
-      }
+      // if (!canUpload) {
+      //   throw new ConvexError({
+      //     message:
+      //       "You don't have enough storage to upload materials, please upgrade subscription.",
+      //   });
+      // }
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return {

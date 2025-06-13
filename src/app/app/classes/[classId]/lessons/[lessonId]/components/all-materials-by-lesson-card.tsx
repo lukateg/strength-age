@@ -1,7 +1,5 @@
 "use client";
 
-import { api } from "../../../../../../../../convex/_generated/api";
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 import { useParams } from "next/navigation";
 import { useMaterialsMutations } from "@/hooks/use-materials-mutations";
 
@@ -11,26 +9,24 @@ import ListCard, { ListItem } from "@/components/list-card";
 import AlertDialogModal from "@/components/alert-dialog";
 
 import { FileText, Eye, Trash, Upload } from "lucide-react";
-
+import { type Doc } from "../../../../../../../../convex/_generated/dataModel";
 import Link from "next/link";
 
-export default function AllMaterialsByLessonCard() {
+export default function AllMaterialsByLessonCard({
+  materials,
+}: {
+  materials: Doc<"pdfs">[];
+}) {
   const { lessonId, classId }: { lessonId: string; classId: string } =
     useParams();
-  const pdfsByLesson = useAuthenticatedQueryWithStatus(
-    api.lessons.getLessonPdfs,
-    {
-      lessonId,
-    }
-  );
+
   const { deletePdf } = useMaterialsMutations();
 
   return (
     <ListCard
       title="Materials"
       description="All materials for this lesson"
-      items={pdfsByLesson.data}
-      isLoading={pdfsByLesson.isPending}
+      items={materials}
       cardAction={
         <Button asChild>
           <Link

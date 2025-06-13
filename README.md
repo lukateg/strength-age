@@ -56,6 +56,8 @@ create reusable components for error and not found case and use them across the 
 -- choose between checking permissions in each page or returning error if no permission on the backend and then handling it on front with just error
 -- all permission errors should have specific error type and message and should be checked on backend and if error is present display it on frontend so you don't need to check on frontend if user has permission actually to perform an action
 -- write a script to remove shared tokens once they expire
+-- fetch should be removed from all display table components and data should be passed from the page
+-- dodaj dobre reusable skeletone na prava mesta, obrisi svaku permissions ili authentication poruku
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
@@ -65,8 +67,13 @@ BUGS
 
 test fast clicks on submit buttons that do not have disabled props
 
-PLAN:
+ZA DALJE:
+-- implementiraj nove permisije svuda i napravi pages convex file za svaki pages call
+-- razvrstaj model funkcije u model file, pages u pages i table funkcije u tables
+-- razvrstaj permission util funkcije u poseban fajl i skini autentifikaciju i prosledjuj id iz query funkcija ili pitaj cet sta je bolje
+-- odluci koji ces pattern - fetch u contextu pa import u komponentama ili prefetch on server u komponentama
 
+PLAN:
 -- handle case when LLM is not working
 -- fix bugs
 

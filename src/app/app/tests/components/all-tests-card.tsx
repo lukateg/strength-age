@@ -10,9 +10,9 @@ import { Button } from "@/components/ui/button";
 
 import { Eye, FileText, Trash } from "lucide-react";
 import Link from "next/link";
+import { type Doc } from "convex/_generated/dataModel";
 
-export default function TestsSection() {
-  const { testsByUser } = useTests();
+export default function AllTestsCard({ tests }: { tests: Doc<"tests">[] }) {
   const { deleteTest } = useTestMutations();
 
   return (
@@ -20,8 +20,7 @@ export default function TestsSection() {
       title="Tests"
       description="All tests created by you"
       height="h-[400px] md:h-[650px]"
-      items={testsByUser?.data}
-      isLoading={testsByUser?.isPending}
+      items={tests}
       renderItem={(test) => (
         <ListItem key={test._id} icon={FileText} title={test.title}>
           <div className="flex gap-2">

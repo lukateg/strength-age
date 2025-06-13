@@ -18,17 +18,20 @@ import AlertDialogModal from "@/components/alert-dialog";
 import Link from "next/link";
 
 import { BookOpen, Brain, Eye, Trash, Upload } from "lucide-react";
+import { type Doc } from "convex/_generated/dataModel";
 
-export default function TestsSection({ classId }: { classId: string }) {
-  const { testsByClass, testReviewsByClass } = useClass();
-  const { testsByUser } = useClasses();
+export default function TestsSection({
+  classId,
+  tests,
+  canCreateTest,
+  testReviews,
+}: {
+  classId: string;
+  canCreateTest: boolean;
+  tests: Doc<"tests">[];
+  testReviews: Doc<"testReviews">[];
+}) {
   const { deleteTest, deleteTestReview } = useTestMutations();
-
-  const { can } = useUserContext();
-
-  const canGenerateTest = can("tests", "create", {
-    existingTestsLength: testsByUser.data?.length ?? 0,
-  });
 
   return (
     <Card>
@@ -39,13 +42,13 @@ export default function TestsSection({ classId }: { classId: string }) {
             AI-generated tests from your materials
           </CardDescription>
         </div>
-        <Button disabled={!canGenerateTest} className="text-xs md:text-base">
+        <Button disabled={!canCreateTest} className="text-xs md:text-base">
           <Link
             href={`/app/classes/${classId}/generate-test`}
             className="flex items-center justify-center"
           >
             <Upload className="h-4 w-4 mr-2" />
-            {canGenerateTest ? "Generate Test" : "Upgrade to generate"}
+            {canCreateTest ? "Generate Test" : "Upgrade to generate"}
           </Link>
         </Button>
       </CardHeader>
@@ -54,8 +57,7 @@ export default function TestsSection({ classId }: { classId: string }) {
         <ListCard
           title="Recent Tests"
           description="Latest AI-generated tests for you"
-          items={testsByClass.data}
-          isLoading={testsByClass.isPending}
+          items={tests}
           renderItem={(test) => (
             <ListItem key={test._id} icon={BookOpen} title={test.title}>
               <div className="flex gap-2">
@@ -93,8 +95,7 @@ export default function TestsSection({ classId }: { classId: string }) {
         <ListCard
           title="Recent Test Reviews"
           description="Latest AI test test reviews"
-          items={testReviewsByClass.data}
-          isLoading={testReviewsByClass.isPending}
+          items={testReviews}
           renderItem={(testReview) => (
             <ListItem
               key={testReview._id}

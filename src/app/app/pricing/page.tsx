@@ -95,11 +95,13 @@ export default function PricingSection() {
               "Share test results through read-only links",
             ]}
             buttonText={
-              user?.subscriptionTier === "free" ? "Current Plan" : "Get Started"
+              user.data?.subscriptionTier === "free"
+                ? "Current Plan"
+                : "Get Started"
             }
             buttonVariant="outline"
-            isActive={user?.subscriptionTier === "free"}
-            disabled={user?.subscriptionTier === "free"}
+            isActive={user.data?.subscriptionTier === "free"}
+            disabled={user.data?.subscriptionTier === "free"}
           />
 
           <PricingCard
@@ -120,14 +122,14 @@ export default function PricingSection() {
               "Test results can be shared and taken by others",
             ]}
             buttonText={
-              user?.subscriptionTier === "starter"
+              user.data?.subscriptionTier === "starter"
                 ? "Current Plan"
                 : "Upgrade Now"
             }
             buttonVariant="default"
             popular={true}
-            isActive={user?.subscriptionTier === "starter"}
-            disabled={user?.subscriptionTier === "starter"}
+            isActive={user.data?.subscriptionTier === "starter"}
+            disabled={user.data?.subscriptionTier === "starter"}
             onClick={() =>
               handleSubscribe(
                 billingPeriod === "monthly"
@@ -156,11 +158,11 @@ export default function PricingSection() {
               "Collaborative editing of test results",
             ]}
             buttonText={
-              user?.subscriptionTier === "pro" ? "Current Plan" : "Go Pro"
+              user.data?.subscriptionTier === "pro" ? "Current Plan" : "Go Pro"
             }
             buttonVariant="default"
-            isActive={user?.subscriptionTier === "pro"}
-            disabled={user?.subscriptionTier === "pro"}
+            isActive={user.data?.subscriptionTier === "pro"}
+            disabled={user.data?.subscriptionTier === "pro"}
             onClick={() =>
               handleSubscribe(
                 billingPeriod === "monthly"

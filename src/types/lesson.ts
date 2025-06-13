@@ -12,14 +12,14 @@ export type EditLessonFormData = Omit<
   "materialsToUpload" | "materialsToAdd" | "showExistingMaterials"
 >;
 export interface CreateBasicLessonParams {
-  classId: Id<"classes">;
+  classId: string;
   title: string;
   description?: string;
 }
 
 export interface CreateLessonWithMaterialsParams {
   userId: string;
-  classId: Id<"classes">;
+  classId: string;
   title: string;
   description?: string;
   pdfIds: Id<"pdfs">[];
@@ -27,7 +27,7 @@ export interface CreateLessonWithMaterialsParams {
 
 export interface CreateLessonWithNewMaterialsParams {
   userId: string;
-  classId: Id<"classes">;
+  classId: string;
   title: string;
   description?: string;
   pdfFiles: {

@@ -1,15 +1,10 @@
 import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
-import {
-  AuthenticationRequired,
-  checkPermission,
-  createAppError,
-} from "./utils";
+import { AuthenticationRequired, createAppError } from "./utils";
 import { internal } from "./_generated/api";
 
 import { type Id, type DataModel } from "./_generated/dataModel";
 import { type GenericMutationCtx } from "convex/server";
-import { hasPermission } from "../src/shared/abac";
 
 export const getLessonsByClass = query({
   args: v.object({
@@ -28,9 +23,9 @@ export const getLessonsByClass = query({
       throw createAppError({ message: "Class not found" });
     }
 
-    await checkPermission(ctx, userId, "classes", "view", {
-      class: classResponse,
-    });
+    // await checkPermission(ctx, userId, "classes", "view", {
+    //   class: classResponse,
+    // });
 
     if (classResponse.createdBy !== userId) {
       throw createAppError({ message: "Not authorized to access this class" });
@@ -67,10 +62,10 @@ export const createLesson = mutation({
       .withIndex("by_class", (q) => q.eq("classId", normalizedId))
       .collect();
 
-    await checkPermission(ctx, userId, "lessons", "create", {
-      existingLessonsLength: existingLessons.length,
-      class: classResponse,
-    });
+    // await checkPermission(ctx, userId, "lessons", "create", {
+    //   existingLessonsLength: existingLessons.length,
+    //   class: classResponse,
+    // });
 
     const existingLesson = await ctx.db
       .query("lessons")
@@ -111,9 +106,9 @@ export const getPDFsByLessonId = query({
       throw createAppError({ message: "Lesson not found" });
     }
 
-    await checkPermission(ctx, userId, "lessons", "view", {
-      lesson,
-    });
+    // await checkPermission(ctx, userId, "lessons", "view", {
+    //   lesson,
+    // });
 
     // if (lesson.createdBy !== userId) {
     //   throw createAppError({
@@ -157,9 +152,9 @@ export const getLessonById = query({
     //   throw createAppError({ message: "Not authorized to access this lesson" });
     // }
 
-    await checkPermission(ctx, userId, "lessons", "view", {
-      lesson,
-    });
+    // await checkPermission(ctx, userId, "lessons", "view", {
+    //   lesson,
+    // });
 
     return lesson;
   },
@@ -182,9 +177,9 @@ export const getLessonPdfs = query({
       throw createAppError({ message: "Lesson not found" });
     }
 
-    await checkPermission(ctx, userId, "lessons", "view", {
-      lesson,
-    });
+    // await checkPermission(ctx, userId, "lessons", "view", {
+    //   lesson,
+    // });
 
     // if (lesson.createdBy !== userId) {
     //   throw createAppError({
@@ -229,9 +224,9 @@ export const addPdfToLesson = mutation({
     if (!lesson) {
       throw createAppError({ message: "Lesson not found" });
     }
-    await checkPermission(ctx, userId, "lessons", "update", {
-      lesson,
-    });
+    // await checkPermission(ctx, userId, "lessons", "update", {
+    //   lesson,
+    // });
 
     // Check if relationship already exists
     const existing = await ctx.db
@@ -272,9 +267,9 @@ export const addManyPdfsToLesson = mutation({
       throw createAppError({ message: "Lesson not found" });
     }
 
-    await checkPermission(ctx, userId, "classes", "create", {
-      class: classResponse,
-    });
+    // await checkPermission(ctx, userId, "classes", "create", {
+    //   class: classResponse,
+    // });
 
     // if (classResponse.createdBy !== userId) {
     //   throw createAppError({
@@ -316,9 +311,9 @@ export const getLessonsForPdf = query({
       throw createAppError({ message: "PDF not found" });
     }
 
-    await checkPermission(ctx, userId, "materials", "view", {
-      pdf,
-    });
+    // await checkPermission(ctx, userId, "materials", "view", {
+    //   pdf,
+    // });
 
     // if (pdf.createdBy !== userId) {
     //   throw createAppError({
@@ -356,9 +351,9 @@ export const updateLesson = mutation({
       throw createAppError({ message: "Lesson not found" });
     }
 
-    await checkPermission(ctx, userId, "lessons", "update", {
-      lesson,
-    });
+    // await checkPermission(ctx, userId, "lessons", "update", {
+    //   lesson,
+    // });
 
     // if (lesson.createdBy !== userId) {
     //   throw createAppError({
@@ -502,9 +497,9 @@ export const deleteLesson = mutation({
       throw new Error("Lesson not found");
     }
 
-    await checkPermission(ctx, userId, "lessons", "delete", {
-      lesson: existingLesson,
-    });
+    // await checkPermission(ctx, userId, "lessons", "delete", {
+    //   lesson: existingLesson,
+    // });
 
     // if (existingLesson.createdBy !== userId) {
     //   throw new Error("Not authorized to delete this lesson");

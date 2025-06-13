@@ -1,9 +1,5 @@
 import { v } from "convex/values";
-import {
-  AuthenticationRequired,
-  createAppError,
-  checkPermission,
-} from "./utils";
+import { AuthenticationRequired, createAppError } from "./utils";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 
@@ -18,7 +14,7 @@ import {
 import { deletePdfsByClassIdBatch } from "./materials";
 import { hasPermission } from "./permissions";
 
-export const getClassesDataByUserId = query({
+export const getClassesPageDataByUserId = query({
   handler: async (ctx) => {
     const userId = await AuthenticationRequired({ ctx });
 
@@ -65,7 +61,7 @@ export const getClassesDataByUserId = query({
       })
     );
 
-    return { classesWithPermissions, canCreateClass };
+    return { classesWithPermissions, permissions: { canCreateClass } };
   },
 });
 
@@ -97,14 +93,26 @@ export const getClassById = query({
     const classItem = await ctx.db.get(normalizedId);
 
     if (!classItem) {
-      throw createAppError({ message: "Class not found" });
+      return null;
     }
 
-    await checkPermission(ctx, userId, "classes", "view", {
-      class: classItem,
-    });
+    const canViewClass = await hasPermission(
+      ctx,
+      userId,
+      "classes",
+      "view",
+      classItem
+    );
 
-    return classItem;
+    if (!canViewClass) {
+      throw createAppError({
+        message: "You are not authorized to view this class",
+      });
+    }
+
+    return {
+      class: classItem,
+    };
   },
 });
 
@@ -118,9 +126,9 @@ export const createClass = mutation({
       .withIndex("by_user", (q) => q.eq("createdBy", userId))
       .collect();
 
-    await checkPermission(ctx, userId, "classes", "create", {
-      existingClassesLength: existingClasses.length,
-    });
+    // await checkPermission(ctx, userId, "classes", "create", {
+    //   existingClassesLength: existingClasses.length,
+    // });
 
     const existingClass = await ctx.db
       .query("classes")
@@ -162,9 +170,9 @@ export const updateClass = mutation({
       throw createAppError({ message: "Class not found" });
     }
 
-    await checkPermission(ctx, userId, "classes", "update", {
-      class: classItem,
-    });
+    // await checkPermission(ctx, userId, "classes", "update", {
+    //   class: classItem,
+    // });
 
     return await ctx.db.patch(normalizedId, {
       title,
@@ -190,9 +198,9 @@ export const deleteClass = mutation({
       throw createAppError({ message: "Class not found" });
     }
 
-    await checkPermission(ctx, userId, "classes", "delete", {
-      class: classItem,
-    });
+    //  await checkPermission(ctx, userId, "classes", "delete", {
+    //   class: classItem,
+    // });
 
     await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
       classId: normalizedId,

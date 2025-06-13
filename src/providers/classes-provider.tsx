@@ -13,7 +13,7 @@ interface ClassesContextType {
   classes: QueryStatus<typeof api.classes.getAllClassesByUserId>;
   userId: string | undefined;
   testsByUser: QueryStatus<typeof api.tests.getAllTestsByUser>;
-  classesData: QueryStatus<typeof api.classes.getClassesDataByUserId>;
+  classesData: QueryStatus<typeof api.classes.getClassesPageDataByUserId>;
 }
 
 const ClassContext = createContext<ClassesContextType | null>(null);
@@ -30,7 +30,7 @@ export function ClassesProvider({ children }: { children: React.ReactNode }) {
     api.tests.getAllTestsByUser
   );
   const classesData = useAuthenticatedQueryWithStatus(
-    api.classes.getClassesDataByUserId
+    api.classes.getClassesPageDataByUserId
   );
 
   return (

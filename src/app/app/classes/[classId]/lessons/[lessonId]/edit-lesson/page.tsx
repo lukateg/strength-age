@@ -1,11 +1,8 @@
 "use client";
 
-import { api } from "../../../../../../convex/_generated/api";
-
 import { useLessonMutations } from "@/hooks/use-lesson-mutations";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import { useUserContext } from "@/providers/user-provider";
+import { useLesson } from "@/providers/lesson-provider";
+import { useRouter } from "next/navigation";
 
 import LessonForm from "@/app/app/classes/[classId]/lessons/[lessonId]/components/lesson-form/lesson-form";
 import NotFound from "@/app/not-found";
@@ -16,40 +13,28 @@ import { type EditLessonFormData } from "@/types/lesson";
 
 export default function EditLessonPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const lessonId = searchParams.get("lessonId");
 
-  const { classId, updateLesson, deleteLesson } = useLessonMutations();
-  const { can } = useUserContext();
-
-  const lessonRequest = useAuthenticatedQueryWithStatus(
-    api.lessons.getLessonById,
-    {
-      lessonId: lessonId ?? "skip",
-    }
-  );
-
-  const canDeleteLesson = can("lessons", "delete", {
-    lesson: lessonRequest.data,
-  });
+  const { classId, updateLesson, deleteLesson, isLoading } =
+    useLessonMutations();
+  const { lesson } = useLesson();
 
   const onSubmit = (data: EditLessonFormData) => {
     void updateLesson({
-      lessonId: lessonId ?? "skip",
+      lessonId: lesson.data?.lessonId ?? "skip",
       title: data.title,
       description: data.description,
     }).then(() => router.push(`/app/classes/${classId}`));
   };
 
-  if (lessonRequest.status === "pending") {
-    return <div>lesson skeleton</div>;
+  if (lesson.isPending) {
+    return <div>lesson skeleton loading...</div>;
   }
 
-  if (lessonRequest.status === "error") {
+  if (lesson.isError) {
     return <NotFound />;
   }
 
-  if (!lessonRequest.data) {
+  if (!lesson.data) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium">Lesson not found</h3>
@@ -60,24 +45,28 @@ export default function EditLessonPage() {
     );
   }
 
+  const { permissions } = lesson.data;
+
   return (
     <div className="space-y-10">
       <SectionHeader
         title="Edit Lesson"
         description="Edit the lesson details"
-        backRoute={`/app/classes/${classId}/lessons/${lessonId}`}
+        backRoute={`/app/classes/${classId}/lessons/${lesson.data?.lessonId}`}
       />
 
       <LessonForm
         onSubmit={onSubmit}
         isEditMode={true}
-        defaultValues={lessonRequest.data}
+        materials={lesson.data?.materials ?? []}
+        defaultValues={lesson.data}
+        isSubmitting={isLoading}
       />
 
-      {canDeleteLesson && (
+      {permissions.canDeleteLesson && (
         <DangerZone
           onDelete={() => {
-            void deleteLesson(lessonId ?? "skip").then(() =>
+            void deleteLesson(lesson.data?.lessonId ?? "skip").then(() =>
               router.push(`/app/classes/${classId}`)
             );
           }}

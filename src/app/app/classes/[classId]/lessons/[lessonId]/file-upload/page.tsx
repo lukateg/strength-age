@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 import { useClass } from "@/providers/class-context-provider";
-import { useQuery } from "convex/react";
 
 import type * as z from "zod";
-import { api } from "../../../../../../../../convex/_generated/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addLessonMaterialsSchema } from "@/lib/schemas";
 
@@ -30,31 +28,32 @@ import UploadFilesButton from "@/components/upload-files-button";
 import TotalStorageUsedCard from "@/components/file-upload/total-storage-used-card";
 
 import { type Id } from "convex/_generated/dataModel";
+import { useLesson } from "@/providers/lesson-provider";
+import { useUserContext } from "@/providers/user-provider";
+
+import { LIMITATIONS } from "@/shared/constants";
 
 type FormData = z.infer<ReturnType<typeof addLessonMaterialsSchema>>;
 
 export default function FileUploadPage() {
   const [showExistingMaterials, setShowExistingMaterials] = useState(false);
   const router = useRouter();
-  const { lessonsByClass, materialsByClass } = useClass();
   const { addExistingPdfsToLesson, uploadNewPdfsToLesson, isUploading } =
     useLessonMutations();
-  const { lessonId, classId }: { lessonId: string; classId: string } =
-    useParams();
-  const lessonData = useQuery(api.lessons.getLessonById, {
-    lessonId,
-  });
+  const { lesson } = useLesson();
+  const { classData } = useClass();
+  const { user } = useUserContext();
+
+  const storageLimit =
+    LIMITATIONS[user.data?.subscriptionTier ?? "free"].materials;
 
   const form = useForm<FormData>({
     resolver: zodResolver(addLessonMaterialsSchema(showExistingMaterials)),
     defaultValues: {
-      lessonId,
+      lessonId: lesson.data?.lessonId,
       materialsToAdd: [] as Id<"pdfs">[],
       materialsToUpload: [] as File[],
     },
-  });
-  const uploadedPdfs = useQuery(api.lessons.getPDFsByLessonId, {
-    lessonId,
   });
 
   const { control, watch, getValues, setValue, clearErrors, handleSubmit } =
@@ -63,38 +62,50 @@ export default function FileUploadPage() {
   const materialsToUpload = watch("materialsToUpload", []);
   const materialsToAdd = watch("materialsToAdd", []);
 
+  // TODO implement suspense
+  if (!lesson.data) {
+    return <div>Loading...</div>;
+  }
+
   const handleAddPDFToLesson = async () => {
     const materialsToAdd = getValues("materialsToAdd");
     void addExistingPdfsToLesson({
       pdfIds: materialsToAdd,
-      lessonId: lessonId,
+      lessonId: lesson.data?.lessonId,
     });
 
-    router.push(`/app/classes/${classId}/lessons/${lessonId}`);
+    router.push(
+      `/app/classes/${lesson.data?.classId}/lessons/${lesson.data?.lessonId}`
+    );
   };
 
   const handleUploadNewPdfsToLesson = async () => {
     const materialsToUpload = getValues("materialsToUpload");
-    void uploadNewPdfsToLesson({ lessonId, materialsToUpload });
+    void uploadNewPdfsToLesson({
+      lessonId: lesson.data?.lessonId,
+      materialsToUpload,
+    });
 
-    router.push(`/app/classes/${classId}/lessons/${lessonId}`);
+    router.push(
+      `/app/classes/${lesson.data?.classId}/lessons/${lesson.data?.lessonId}`
+    );
   };
-  // TODO implement suspense
-  if (!lessonData) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="space-y-10">
       <SectionHeader
-        title={lessonData?.title}
-        description={lessonData?.description}
-        backRoute={`/app/classes/${classId}/lessons/${lessonId}`}
-        editRoute={`/app/classes/${classId}/edit-lesson?lessonId=${lessonId}`}
+        title={lesson.data?.title}
+        description={lesson.data?.description}
+        backRoute={`/app/classes/${lesson.data?.classId}/lessons/${lesson.data?.lessonId}`}
+        editRoute={`/app/classes/${lesson.data?.classId}/lessons/${lesson.data?.lessonId}/edit-lesson`}
         editButtonText={"Edit Lesson"}
       />
 
-      <TotalStorageUsedCard materialsToUpload={materialsToUpload} />
+      <TotalStorageUsedCard
+        materialsToUpload={materialsToUpload}
+        storageUsed={user.data?.totalStorageUsage ?? 0}
+        maxStorageLimit={storageLimit}
+      />
 
       <Card>
         <CardHeader>
@@ -111,7 +122,7 @@ export default function FileUploadPage() {
               render={({ field }) => (
                 <FormSelect
                   {...field}
-                  items={lessonsByClass.data}
+                  items={classData.data?.lessons}
                   label="Lesson"
                   placeholder="Select a lesson"
                   defaultValue="none"
@@ -126,11 +137,13 @@ export default function FileUploadPage() {
               showExistingMaterials={showExistingMaterials}
               onShowExistingMaterialsChange={setShowExistingMaterials}
               materialsToUpload={materialsToUpload}
-              allMaterials={materialsByClass.data}
+              allMaterials={classData.data?.materials}
               control={control}
               setValue={setValue}
               clearErrors={clearErrors}
-              uploadedPdfs={uploadedPdfs}
+              uploadedPdfs={lesson.data?.materials}
+              storageLimit={storageLimit}
+              storageUsed={user.data?.totalStorageUsage ?? 0}
             />
 
             <CardFooter>

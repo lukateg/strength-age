@@ -12,23 +12,12 @@ import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 import SectionHeader from "@/components/page-components/page-header";
 
 import { type Id } from "convex/_generated/dataModel";
-import PageSkeleton from "@/components/page-components/page-skeleton";
+import PageSkeleton from "@/components/page-components/main-page-skeleton";
 import NotFound from "@/components/not-found";
+import { useLesson } from "@/providers/lesson-provider";
 
 export default function LessonPage() {
-  const {
-    lessonId,
-    classId,
-  }: { lessonId: Id<"lessons">; classId: Id<"classes"> } = useParams();
-  const lesson = useAuthenticatedQueryWithStatus(api.lessons.getLessonById, {
-    lessonId,
-  });
-
-  const { can } = useUserContext();
-
-  const canEditLesson = can("lessons", "update", {
-    lesson: lesson.data,
-  });
+  const { lesson } = useLesson();
 
   if (lesson.isPending) {
     return <PageSkeleton />;
@@ -48,16 +37,18 @@ export default function LessonPage() {
       </div>
     );
   }
+  const { materials, title, description, canEditLesson, classId, lessonId } =
+    lesson.data;
 
   return (
     <div className="space-y-10">
       <SectionHeader
-        title={lesson.data?.title}
-        description={lesson.data?.description}
+        title={title}
+        description={description}
         backRoute={`/app/classes/${classId}`}
         editRoute={
           canEditLesson
-            ? `/app/classes/${classId}/edit-lesson?lessonId=${lessonId}`
+            ? `/app/classes/${classId}/lessons/${lessonId}/edit-lesson`
             : undefined
         }
         editButtonText={canEditLesson ? "Edit Lesson" : undefined}
@@ -73,7 +64,7 @@ export default function LessonPage() {
         </TabsList>
 
         <TabsContent value="lessonMaterials" className="space-y-4">
-          <AllMaterialsByLessonCard />
+          <AllMaterialsByLessonCard materials={materials} />
         </TabsContent>
       </Tabs>
     </div>

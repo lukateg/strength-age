@@ -20,10 +20,9 @@ export default function ClassCardDropdown({
   classItem,
 }: {
   classItem: FunctionReturnType<
-    typeof api.classes.getClassesDataByUserId
+    typeof api.pages.classes.getClassesPageData
   >["classesWithPermissions"][number];
 }) {
-  //TODO move this into separate component and make this one server component
   const { deleteClass } = useClassMutations();
 
   return (
@@ -41,7 +40,7 @@ export default function ClassCardDropdown({
             className="justify-start w-full h-fit"
           >
             <DropdownMenuItem asChild>
-              <Link href={`/app/classes/edit-class?classId=${classItem._id}`}>
+              <Link href={`/app/classes/${classItem._id}/edit-class`}>
                 <Pencil className="h-4 w-4" />
                 Edit
               </Link>

@@ -2,7 +2,7 @@ import { api } from "../../convex/_generated/api";
 import { toast } from "sonner";
 import { toastError } from "@/lib/utils";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useMutation } from "convex/react";
 import { useClass } from "@/providers/class-context-provider";
 import { useUploadThing } from "./use-upload-thing";
@@ -21,6 +21,7 @@ export const useLessonMutations = () => {
       throw error;
     },
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   // Mutations
   const createLessonMutation = useMutation(api.lessons.createLesson);
@@ -57,7 +58,7 @@ export const useLessonMutations = () => {
       lessonId,
     }: {
       materialsToUpload: File[];
-      lessonId: string;
+      lessonId?: string;
     }) => {
       const toastId = toast.loading("Please wait while we upload your files");
 
@@ -122,6 +123,7 @@ export const useLessonMutations = () => {
   );
 
   return {
+    isLoading,
     isUploading,
     createLesson,
     addExistingPdfsToLesson,

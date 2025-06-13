@@ -11,27 +11,27 @@ import { BookOpen } from "lucide-react";
 
 export default function GenerateTestPage() {
   const { testsByUser } = useTests();
-  const { can } = useUserContext();
+  // const { can } = useUserContext();
 
-  const canGenerateTest = can("tests", "create", {
-    existingTestsLength: testsByUser?.data?.length ?? 0,
-  });
+  // const canGenerateTest = can("tests", "create", {
+  //   existingTestsLength: testsByUser?.data?.length ?? 0,
+  // });
 
   if (testsByUser.isPending) {
     return <div>Loading...</div>;
   }
 
   // TODO: no permission page
-  if (!canGenerateTest) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-2xl font-bold">Upgrade to generate test</h1>
-        <p className="text-muted-foreground">
-          You need to upgrade to generate tests
-        </p>
-      </div>
-    );
-  }
+  // if (!canGenerateTest) {
+  //   return (
+  //     <div className="flex flex-col items-center justify-center h-screen">
+  //       <h1 className="text-2xl font-bold">Upgrade to generate test</h1>
+  //       <p className="text-muted-foreground">
+  //         You need to upgrade to generate tests
+  //       </p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useTests } from "@/providers/tests-provider";
 import { useTestMutations } from "@/hooks/use-test-mutations";
 
 import Link from "next/link";
@@ -9,17 +8,26 @@ import AlertDialogModal from "@/components/alert-dialog";
 import { Button } from "@/components/ui/button";
 
 import { Brain, Eye, Trash } from "lucide-react";
+import { type Doc } from "convex/_generated/dataModel";
 
-export default function RecentReviews() {
-  const { weeklyTestReviews } = useTests();
+export default function RecentReviews({
+  testReviews,
+}: {
+  testReviews: Doc<"testReviews">[];
+}) {
   const { deleteTestReview } = useTestMutations();
+
+  const recentTestReviews = testReviews.sort((a, b) => {
+    return (
+      new Date(b._creationTime).getTime() - new Date(a._creationTime).getTime()
+    );
+  });
 
   return (
     <ListCard
       title="Recent Test Reviews"
       description="Latest AI test test reviews"
-      items={weeklyTestReviews?.data}
-      isLoading={weeklyTestReviews?.isPending}
+      items={recentTestReviews}
       renderItem={(testReview) => (
         <ListItem key={testReview._id} icon={Brain} title={testReview.title}>
           <div className="flex gap-2">

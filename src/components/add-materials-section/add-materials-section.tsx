@@ -21,6 +21,8 @@ interface MaterialSelectionProps<
   setValue: UseFormSetValue<T>;
   clearErrors: UseFormClearErrors<T>;
   uploadedPdfs?: Doc<"pdfs">[];
+  storageUsed: number;
+  storageLimit: number;
 }
 
 export function AddMaterialsView<
@@ -34,6 +36,8 @@ export function AddMaterialsView<
   setValue,
   clearErrors,
   uploadedPdfs,
+  storageUsed,
+  storageLimit,
 }: MaterialSelectionProps<T>) {
   return (
     <>
@@ -51,6 +55,8 @@ export function AddMaterialsView<
         <UploadMaterialsView
           materialsToUpload={materialsToUpload}
           setValue={setValue}
+          storageUsed={storageUsed}
+          storageLimit={storageLimit}
         />
       ) : (
         <SelectMaterialsView

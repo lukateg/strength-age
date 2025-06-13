@@ -1,8 +1,5 @@
 "use client";
 
-import { api } from "../../../../convex/_generated/api";
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-
 import { Button } from "@/components/ui/button";
 
 import ListCard, { ListItem } from "@/components/list-card";
@@ -11,17 +8,21 @@ import Link from "next/link";
 
 import { BookOpen, Eye } from "lucide-react";
 
-export default function RecentClasses() {
-  const classes = useAuthenticatedQueryWithStatus(
-    api.classes.getAllClassesByUserId
-  );
+import { type FunctionReturnType } from "convex/server";
+import { type api } from "../../../../convex/_generated/api";
 
+export default function RecentClasses({
+  classes,
+}: {
+  classes: FunctionReturnType<
+    typeof api.pages.dashboard.getDashboardData
+  >["classes"];
+}) {
   return (
     <ListCard
       title="Recent Classes"
       description="Your recently created or modified classes"
-      items={classes.data}
-      isLoading={classes.isPending}
+      items={classes}
       renderItem={(classItem) => (
         <ListItem key={classItem._id} icon={BookOpen} title={classItem.title}>
           <div className="flex gap-2 items-center">

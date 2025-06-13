@@ -11,9 +11,6 @@ import ClassesPageSkeleton from "./components/classes-page-skeleton";
 import { Plus } from "lucide-react";
 
 export default function ClassesPage() {
-  // const classes = useAuthenticatedQueryWithStatus(
-  //   api.classes.getAllClassesByUserId
-  // );
   const { classesData } = useClasses();
 
   if (classesData?.isPending) {
@@ -24,6 +21,8 @@ export default function ClassesPage() {
     return <NotFound />;
   }
 
+  const { permissions, classesWithPermissions } = classesData?.data;
+
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-8">
@@ -33,20 +32,20 @@ export default function ClassesPage() {
             Manage your classes and materials
           </p>
         </div>
-        <Button disabled={!classesData?.data?.canCreateClass}>
+        <Button disabled={!permissions.canCreateClass}>
           <Link
             href="/app/classes/create-class"
             className={"flex items-center justify-center"}
           >
             <Plus className="h-4 w-4 mr-2" />
-            {classesData?.data?.canCreateClass
+            {permissions.canCreateClass
               ? "Create Class"
               : "Upgrade to create classes"}
           </Link>
         </Button>
       </div>
 
-      <ClassesList classes={classesData?.data?.classesWithPermissions} />
+      <ClassesList classes={classesWithPermissions} />
     </div>
   );
 }

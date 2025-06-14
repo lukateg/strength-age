@@ -15,24 +15,21 @@ import {
 
 import { type Control } from "react-hook-form";
 import { type TestFormValues } from "@/components/generate-test-form/generate-test-form";
-
-import { api } from "../../../../../convex/_generated/api";
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-// TODO: usePreloadQuery for lessons, remove props and add suspense and keep this as server component
+import { type LessonsType } from "@/types/types";
 
 export default function LessonSelectView({
-  // lessons,
   control,
   classId,
+  lessons,
 }: {
-  // lessons?: LessonsType[];
   control: Control<TestFormValues>;
   classId: string;
+  lessons: LessonsType[] | undefined;
 }) {
-  const lessons = useAuthenticatedQueryWithStatus(
-    api.lessons.getLessonsByClass,
-    classId && classId !== "none" ? { classId } : "skip"
-  );
+  const filteredLessons =
+    !lessons || !classId || classId === "none"
+      ? []
+      : lessons.filter((lesson) => lesson.classId === classId);
 
   return (
     <Card>
@@ -54,7 +51,7 @@ export default function LessonSelectView({
                     Please select a class first to view available lessons
                   </div>
                 ) : (
-                  <LessonSelectTable lessons={lessons.data} field={field} />
+                  <LessonSelectTable lessons={filteredLessons} field={field} />
                 )}
               </FormControl>
               <FormMessage />

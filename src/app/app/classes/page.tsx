@@ -11,17 +11,17 @@ import ClassesPageSkeleton from "./components/classes-page-skeleton";
 import { Plus } from "lucide-react";
 
 export default function ClassesPage() {
-  const { classesData } = useClasses();
+  const { classesPageData } = useClasses();
 
-  if (classesData?.isPending) {
+  if (classesPageData?.isPending) {
     return <ClassesPageSkeleton />;
   }
 
-  if (classesData?.isError) {
+  if (classesPageData?.isError) {
     return <NotFound />;
   }
 
-  const { permissions, classesWithPermissions } = classesData?.data;
+  const { permissions, classesWithPermissions } = classesPageData?.data;
 
   return (
     <div className="container mx-auto p-6">

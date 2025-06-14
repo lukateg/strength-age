@@ -47,6 +47,7 @@ export default defineSchema({
     description: v.optional(v.string()),
   })
     .index("by_class", ["classId"])
+    .index("by_user", ["createdBy"])
     .index("by_lesson_name", ["title"]),
 
   pdfs: defineTable({

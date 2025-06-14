@@ -1,10 +1,9 @@
 import { v } from "convex/values";
 import { query } from "../_generated/server";
 import { AuthenticationRequired, createAppError } from "convex/utils";
-import { type GenericQueryCtx } from "convex/server";
-import { type DataModel } from "../_generated/dataModel";
-import { type Id } from "../_generated/dataModel";
 import { hasPermission } from "convex/permissions";
+import { getLessonById } from "../models/lessonsModel";
+import { getMaterialsByLesson } from "../models/materialsModel";
 
 export const getLessonData = query({
   args: { lessonId: v.string() },
@@ -22,7 +21,11 @@ export const getLessonData = query({
     }
 
     const materials = await getMaterialsByLesson(ctx, normalizedId);
-    const lesson = await getLesson(ctx, normalizedId);
+    const lesson = await getLessonById(ctx, normalizedId);
+
+    if (!lesson) {
+      throw createAppError({ message: "Lesson not found" });
+    }
 
     const canEditLesson = await hasPermission(
       ctx,
@@ -57,32 +60,3 @@ export const getLessonData = query({
     };
   },
 });
-
-export const getMaterialsByLesson = async (
-  ctx: GenericQueryCtx<DataModel>,
-  lessonId: Id<"lessons">
-) => {
-  const lessonPdfs = await ctx.db
-    .query("lessonPdfs")
-    .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
-    .collect();
-
-  const pdfs = await Promise.all(
-    lessonPdfs.map(async (lp) => await ctx.db.get(lp.pdfId))
-  );
-
-  return pdfs.filter((pdf): pdf is NonNullable<typeof pdf> => pdf !== null);
-};
-
-export const getLesson = async (
-  ctx: GenericQueryCtx<DataModel>,
-  lessonId: Id<"lessons">
-) => {
-  const lesson = await ctx.db.get(lessonId);
-
-  if (!lesson) {
-    throw createAppError({ message: "Lesson not found" });
-  }
-
-  return lesson;
-};

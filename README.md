@@ -58,6 +58,7 @@ create reusable components for error and not found case and use them across the 
 -- write a script to remove shared tokens once they expire
 -- fetch should be removed from all display table components and data should be passed from the page
 -- dodaj dobre reusable skeletone na prava mesta, obrisi svaku permissions ili authentication poruku
+-- class selection should become FormSelect component that gets passed the title and description or whatever and all data should be fetched on the page.
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
@@ -72,6 +73,12 @@ ZA DALJE:
 -- razvrstaj model funkcije u model file, pages u pages i table funkcije u tables
 -- razvrstaj permission util funkcije u poseban fajl i skini autentifikaciju i prosledjuj id iz query funkcija ili pitaj cet sta je bolje
 -- odluci koji ces pattern - fetch u contextu pa import u komponentama ili prefetch on server u komponentama
+
+-- implementiraj permisije na mutacije
+-- implementiraj pattern gde fetchujes sve podatke na page (ili u context pa ih uzimas iz pagea) i onda ih prosledjujes server komponentama
+-- vidi mozes li negde da izbaci async permisije ako mnogo uzimaju
+
+-- nakon svega ovoga popravljaj loading... i skeletone
 
 PLAN:
 -- handle case when LLM is not working

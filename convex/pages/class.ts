@@ -4,10 +4,12 @@ import { AuthenticationRequired } from "convex/utils";
 
 import { createAppError } from "convex/utils";
 import { v } from "convex/values";
-import { type GenericQueryCtx } from "convex/server";
-import { type DataModel } from "convex/_generated/dataModel";
-import { type Id } from "convex/_generated/dataModel";
 import { getTotalStorageUsage } from "convex/materials";
+
+import { getLessonsByClass } from "../models/lessonsModel";
+import { getMaterialsByClass } from "../models/materialsModel";
+import { getTestsByClass } from "../models/testsModel";
+import { getTestReviewsByClass } from "../models/testReviews";
 
 // TODO: Restructure return to look like {permissions:{}, data:{materials:{materials, canUploadMaterials, totalSize}, lessons, tests, testReviews}}
 export const getClassPageData = query({
@@ -99,51 +101,3 @@ export const getClassPageData = query({
     };
   },
 });
-
-export const getLessonsByClass = async (
-  ctx: GenericQueryCtx<DataModel>,
-  classId: Id<"classes">
-) => {
-  const lessons = await ctx.db
-    .query("lessons")
-    .withIndex("by_class", (q) => q.eq("classId", classId))
-    .collect();
-
-  return lessons;
-};
-
-export const getMaterialsByClass = async (
-  ctx: GenericQueryCtx<DataModel>,
-  classId: Id<"classes">
-) => {
-  const materials = await ctx.db
-    .query("pdfs")
-    .withIndex("by_class_user", (q) => q.eq("classId", classId))
-    .collect();
-
-  return materials;
-};
-
-export const getTestsByClass = async (
-  ctx: GenericQueryCtx<DataModel>,
-  classId: Id<"classes">
-) => {
-  const tests = await ctx.db
-    .query("tests")
-    .withIndex("by_class", (q) => q.eq("classId", classId))
-    .collect();
-
-  return tests;
-};
-
-export const getTestReviewsByClass = async (
-  ctx: GenericQueryCtx<DataModel>,
-  classId: Id<"classes">
-) => {
-  const testReviews = await ctx.db
-    .query("testReviews")
-    .withIndex("by_class", (q) => q.eq("classId", classId))
-    .collect();
-
-  return testReviews;
-};

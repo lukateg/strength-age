@@ -6,7 +6,6 @@ import { Separator } from "@/components/ui/separator";
 import { CheckSquare, AlignJustify, ToggleLeft } from "lucide-react";
 
 import { type Lesson } from "@/components/generate-test-form/components/lesson-select-view/lesson-select-table";
-import { useClass } from "@/providers/class-context-provider";
 
 type QuestionType = "multiple_choice" | "true_false" | "short_answer";
 
@@ -17,7 +16,7 @@ interface TestDetailsProps {
   passingScore?: number; // percentage
   difficulty?: number;
   lessons: Lesson[];
-  classId: string;
+  classTitle?: string;
 }
 
 export function TestDetails({
@@ -27,10 +26,8 @@ export function TestDetails({
   passingScore,
   difficulty = 50,
   lessons,
-  classId,
+  classTitle,
 }: TestDetailsProps) {
-  const { classData } = useClass();
-
   const getQuestionTypeIcon = (type: QuestionType) => {
     switch (type) {
       case "multiple_choice":
@@ -95,9 +92,7 @@ export function TestDetails({
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <p className="text-sm text-muted-foreground">Class:</p>
-            <p className="text-sm font-medium">
-              {classData.data?.class_.title}
-            </p>
+            <p className="text-sm font-medium">{classTitle}</p>
           </div>
 
           <div className="space-y-2">

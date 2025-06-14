@@ -244,18 +244,26 @@ export async function deletePdfsByClassIdBatch(
   }
 
   if (!isDone) {
-    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId,
-      userId,
-      phase: "pdfs",
-      cursor: continueCursor,
-    });
+    await ctx.scheduler.runAfter(
+      0,
+      internal.classes.deleteClassDataInternalMutation,
+      {
+        classId,
+        userId,
+        phase: "pdfs",
+        cursor: continueCursor,
+      }
+    );
   } else {
-    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId,
-      userId,
-      phase: "tests",
-      cursor: undefined,
-    });
+    await ctx.scheduler.runAfter(
+      0,
+      internal.classes.deleteClassDataInternalMutation,
+      {
+        classId,
+        userId,
+        phase: "tests",
+        cursor: undefined,
+      }
+    );
   }
 }

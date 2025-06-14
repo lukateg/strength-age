@@ -399,19 +399,27 @@ export async function deleteLessonPdfsByClassIdBatch(
   }
 
   if (!isDone) {
-    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId,
-      userId,
-      phase: "lessonPdfs",
-      cursor: continueCursor,
-    });
+    await ctx.scheduler.runAfter(
+      0,
+      internal.classes.deleteClassDataInternalMutation,
+      {
+        classId,
+        userId,
+        phase: "lessonPdfs",
+        cursor: continueCursor,
+      }
+    );
   } else {
-    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId,
-      userId,
-      phase: "lessons",
-      cursor: undefined,
-    });
+    await ctx.scheduler.runAfter(
+      0,
+      internal.classes.deleteClassDataInternalMutation,
+      {
+        classId,
+        userId,
+        phase: "lessons",
+        cursor: undefined,
+      }
+    );
   }
 }
 
@@ -432,19 +440,27 @@ export async function deleteLessonsByClassIdBatch(
   }
 
   if (!isDone) {
-    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId,
-      userId,
-      phase: "lessons",
-      cursor: continueCursor,
-    });
+    await ctx.scheduler.runAfter(
+      0,
+      internal.classes.deleteClassDataInternalMutation,
+      {
+        classId,
+        userId,
+        phase: "lessons",
+        cursor: continueCursor,
+      }
+    );
   } else {
-    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId,
-      userId,
-      phase: "pdfs",
-      cursor: undefined,
-    });
+    await ctx.scheduler.runAfter(
+      0,
+      internal.classes.deleteClassDataInternalMutation,
+      {
+        classId,
+        userId,
+        phase: "pdfs",
+        cursor: undefined,
+      }
+    );
   }
 }
 

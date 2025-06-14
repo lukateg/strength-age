@@ -3,7 +3,7 @@ export const LIMITATIONS = {
   free: {
     classes: 1,
     lessons: 3,
-    tests: 1,
+    tests: 2,
     materials: 10485760, // 10 MB in bytes (10 * 1024 * 1024)
     testShare: false,
     resultsShare: true,

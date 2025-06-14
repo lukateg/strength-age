@@ -469,19 +469,27 @@ export async function deleteTestsByClassIdBatch(
   }
 
   if (!isDone) {
-    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId,
-      userId,
-      phase: "tests",
-      cursor: continueCursor,
-    });
+    await ctx.scheduler.runAfter(
+      0,
+      internal.classes.deleteClassDataInternalMutation,
+      {
+        classId,
+        userId,
+        phase: "tests",
+        cursor: continueCursor,
+      }
+    );
   } else {
-    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId,
-      userId,
-      phase: "testReviews",
-      cursor: undefined,
-    });
+    await ctx.scheduler.runAfter(
+      0,
+      internal.classes.deleteClassDataInternalMutation,
+      {
+        classId,
+        userId,
+        phase: "testReviews",
+        cursor: undefined,
+      }
+    );
   }
 }
 
@@ -503,12 +511,16 @@ export async function deleteTestReviewsByClassIdBatch(
   }
 
   if (!isDone) {
-    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId,
-      userId,
-      phase: "testReviews",
-      cursor: continueCursor,
-    });
+    await ctx.scheduler.runAfter(
+      0,
+      internal.classes.deleteClassDataInternalMutation,
+      {
+        classId,
+        userId,
+        phase: "testReviews",
+        cursor: continueCursor,
+      }
+    );
   }
 }
 

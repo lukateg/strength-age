@@ -1,5 +1,4 @@
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import { api } from "../../../../convex/_generated/api";
+import { type api } from "../../../../convex/_generated/api";
 
 import {
   Card,
@@ -14,18 +13,19 @@ import FormSelect from "@/components/form-select";
 
 import { type Control } from "react-hook-form";
 import { type TestFormValues } from "@/components/generate-test-form/generate-test-form";
+import { type FunctionReturnType } from "convex/server";
 
 export default function ClassSelection({
   control,
   disabled,
+  classes,
 }: {
   control: Control<TestFormValues>;
   disabled?: boolean;
+  classes?: FunctionReturnType<
+    typeof api.pages.generateTestPage.getGenerateTestPageData
+  >["classes"];
 }) {
-  const classes = useAuthenticatedQueryWithStatus(
-    api.classes.getAllClassesByUserId
-  );
-
   return (
     <Card>
       <CardHeader>
@@ -39,7 +39,7 @@ export default function ClassSelection({
           render={({ field }) => (
             <FormSelect
               {...field}
-              items={classes.data}
+              items={classes}
               label="Class"
               placeholder="Select a class"
               defaultValue="none"

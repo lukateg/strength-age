@@ -7,7 +7,6 @@ import { type Id } from "convex/_generated/dataModel";
 
 import { auth } from "@clerk/nextjs/server";
 import { convertPDFToText, generateQuizForLesson } from "@/lib/server-utils";
-import { hasPermission } from "../../../shared/abac";
 
 if (!process.env.GEMINI_API_KEY) {
   throw new Error("Missing GEMINI_API_KEY environment variable");
@@ -58,27 +57,21 @@ export async function POST(req: NextRequest) {
       { token }
     );
 
-    const user = await fetchQuery(api.users.getCurrentUserQuery, {}, { token });
-    if (!user) {
-      return Response.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const existingTests = await fetchQuery(
-      api.tests.getAllTestsByUser,
-      {},
+    const canGenerateTest = await fetchQuery(
+      api.permissions.hasPermissionQuery,
+      {
+        resource: "tests",
+        action: "create",
+      },
       { token }
     );
 
-    // const canGenerateTest = hasPermission(user, "tests", "create", {
-    //   existingTestsLength: existingTests.length ?? 0,
-    // });
-
-    // if (!canGenerateTest) {
-    //   return Response.json(
-    //     { error: "You need to upgrade to generate tests." },
-    //     { status: 403 }
-    //   );
-    // }
+    if (!canGenerateTest) {
+      return Response.json(
+        { error: "You need to upgrade to generate tests." },
+        { status: 403 }
+      );
+    }
 
     if (!pdfs.length) {
       return Response.json(

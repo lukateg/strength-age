@@ -14,9 +14,9 @@ type UpdateClassParams = CreateClassParams & {
 };
 
 export const useClassMutations = () => {
-  const createClassMutation = useMutation(api.classes.createClass);
-  const updateClassMutation = useMutation(api.classes.updateClass);
-  const deleteClassMutation = useMutation(api.classes.deleteClass);
+  const createClassMutation = useMutation(api.classes.createClassMutation);
+  const updateClassMutation = useMutation(api.classes.updateClassMutation);
+  const deleteClassMutation = useMutation(api.classes.deleteClassMutation);
 
   const createClass = useCallback(
     async (params: CreateClassParams) => {

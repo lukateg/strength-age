@@ -4,9 +4,8 @@ import { LIMITATIONS } from "@/shared/constants";
 import { type DataModel } from "./_generated/dataModel";
 import { type GenericQueryCtx } from "convex/server";
 import { type Doc } from "./_generated/dataModel";
-
-// Type helpers
-type ExtractClassType<T> = T extends { class: infer C } ? C : never;
+import { v } from "convex/values";
+import { query } from "./_generated/server";
 
 // TODO:
 // rename this file to abac.ts
@@ -390,3 +389,40 @@ export async function hasPermission<Resource extends keyof Permissions>(
 
   return results.some(Boolean);
 }
+
+export const hasPermissionQuery = query({
+  args: {
+    resource: v.union(
+      v.literal("classes"),
+      v.literal("lessons"),
+      v.literal("tests"),
+      v.literal("materials"),
+      v.literal("testReviews")
+    ),
+    action: v.union(
+      v.literal("view"),
+      v.literal("create"),
+      v.literal("update"),
+      v.literal("delete"),
+      v.literal("share"),
+      v.literal("retake")
+    ),
+  },
+  handler: async (ctx, { resource, action }) => {
+    const userId = await AuthenticationRequired({ ctx });
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+      .first();
+
+    if (!user) {
+      throw createAppError({ message: "User not found!" });
+    }
+    return await hasPermission(
+      ctx,
+      userId,
+      resource,
+      action as keyof ResourceActionParams[typeof resource]
+    );
+  },
+});

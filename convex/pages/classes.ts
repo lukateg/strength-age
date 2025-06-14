@@ -1,6 +1,7 @@
 import { query } from "../_generated/server";
 import { AuthenticationRequired } from "../utils";
 import { hasPermission } from "../permissions";
+import { getClassesByUser } from "../models/classesModel";
 
 export const getClassesPageData = query({
   handler: async (ctx) => {
@@ -13,10 +14,7 @@ export const getClassesPageData = query({
       "create"
     );
 
-    const classes = await ctx.db
-      .query("classes")
-      .withIndex("by_user", (q) => q.eq("createdBy", userId))
-      .collect();
+    const classes = await getClassesByUser(ctx, userId);
 
     const classesWithPermissions = await Promise.all(
       classes.map(async (classItem) => {

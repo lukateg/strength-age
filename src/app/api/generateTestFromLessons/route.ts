@@ -1,6 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { auth } from "@clerk/nextjs/server";
-import { hasPermission } from "../../../shared/abac";
 import { api } from "../../../../convex/_generated/api";
 
 import {
@@ -65,20 +64,14 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await fetchQuery(api.users.getCurrentUserQuery, {}, { token });
-    if (!user) {
-      return Response.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const existingTests = await fetchQuery(
-      api.tests.getAllTestsByUser,
-      {},
+    const canGenerateTest = await fetchQuery(
+      api.permissions.hasPermissionQuery,
+      {
+        resource: "tests",
+        action: "create",
+      },
       { token }
     );
-
-    const canGenerateTest = hasPermission(user, "tests", "create", {
-      existingTestsLength: existingTests.length ?? 0,
-    });
 
     if (!canGenerateTest) {
       return Response.json(

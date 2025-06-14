@@ -28,34 +28,6 @@ export function ClassProvider({
   classId: string;
   children: React.ReactNode;
 }) {
-  // const { user } = useUser(); // Clerk provides the logged-in user
-  // const userId = user?.id;
-
-  // TODO: Maybe remove queries from the context so they dont run initially, and instead when the component mounts
-  // Fetch materials for the class
-  // const materialsByClass = useAuthenticatedQueryWithStatus(
-  //   api.materials.getPdfsByClassId,
-  //   {
-  //     classId,
-  //   }
-  // );
-  // // TODO: check if queries by both user and class
-  // const lessonsByClass = useAuthenticatedQueryWithStatus(
-  //   api.lessons.getLessonsByClass,
-  //   {
-  //     classId,
-  //   }
-  // );
-  // const testsByClass = useAuthenticatedQueryWithStatus(
-  //   api.tests.getAllTestsByClassId,
-  //   { classId }
-  // );
-  // const testReviewsByClass = useAuthenticatedQueryWithStatus(
-  //   api.tests.getTestReviewsByClassId,
-  //   {
-  //     classId,
-  //   }
-  // );
   const classData = useAuthenticatedQueryWithStatus(
     api.pages.class.getClassPageData,
     {
@@ -67,11 +39,6 @@ export function ClassProvider({
     <ClassContext.Provider
       value={{
         classId,
-        // userId,
-        // materialsByClass,
-        // lessonsByClass,
-        // testsByClass,
-        // testReviewsByClass,
         classData,
       }}
     >

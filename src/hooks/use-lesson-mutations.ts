@@ -24,12 +24,12 @@ export const useLessonMutations = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Mutations
-  const createLessonMutation = useMutation(api.lessons.createLesson);
+  const createLessonMutation = useMutation(api.lessons.createLessonMutation);
   const addManyPdfsToLessonMutation = useMutation(
-    api.lessons.addManyPdfsToLesson
+    api.lessons.addManyPdfsToLessonMutation
   );
-  const updateLessonMutation = useMutation(api.lessons.updateLesson);
-  const deleteLessonMutation = useMutation(api.lessons.deleteLesson);
+  const updateLessonMutation = useMutation(api.lessons.updateLessonMutation);
+  const deleteLessonMutation = useMutation(api.lessons.deleteLessonMutation);
 
   const createLesson = useCallback(
     async ({ title, description }: LessonFormData) => {

@@ -59,6 +59,7 @@ create reusable components for error and not found case and use them across the 
 -- fetch should be removed from all display table components and data should be passed from the page
 -- dodaj dobre reusable skeletone na prava mesta, obrisi svaku permissions ili authentication poruku
 -- class selection should become FormSelect component that gets passed the title and description or whatever and all data should be fetched on the page.
+-- check deleteLessonsByClassIdBatch TODO comment
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
@@ -77,6 +78,8 @@ ZA DALJE:
 -- implementiraj permisije na mutacije
 -- implementiraj pattern gde fetchujes sve podatke na page (ili u context pa ih uzimas iz pagea) i onda ih prosledjujes server komponentama
 -- vidi mozes li negde da izbaci async permisije ako mnogo uzimaju
+
+NASTAVI REFAKTOR LESSON FUNKCIJA U LESSONS.ts PROVERI SVAKU OD NJIH KAKO SE POZIVA I DA LI JE REDUNDANT
 
 -- nakon svega ovoga popravljaj loading... i skeletone
 

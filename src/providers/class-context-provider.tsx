@@ -11,11 +11,6 @@ import { type QueryStatus } from "@/hooks/use-authenticated-query";
 
 interface ClassContextType {
   classId: string;
-  // userId?: string;
-  // materialsByClass: QueryStatus<typeof api.materials.getPdfsByClassId>; // Replace `any` with your material type
-  // lessonsByClass: QueryStatus<typeof api.lessons.getLessonsByClass>;
-  // testsByClass: QueryStatus<typeof api.tests.getAllTestsByClassId>;
-  // testReviewsByClass: QueryStatus<typeof api.tests.getTestReviewsByClassId>;
   classData: QueryStatus<typeof api.pages.class.getClassPageData>;
 }
 

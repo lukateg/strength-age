@@ -2,10 +2,7 @@ import { v } from "convex/values";
 import { AuthenticationRequired, createAppError } from "./utils";
 import { internalMutation, mutation, query } from "./_generated/server";
 
-import {
-  deleteLessonPdfsByClassIdBatch,
-  deleteLessonsByClassIdBatch,
-} from "./lessons";
+import { deleteLessonPdfsJoinByClassIdBatch } from "./models/lessonPdfsModel";
 import {
   deleteTestReviewsByClassIdBatch,
   deleteTestsByClassIdBatch,
@@ -24,6 +21,7 @@ import {
 import { type DataModel } from "./_generated/dataModel";
 import { type GenericMutationCtx } from "convex/server";
 import { type Id } from "./_generated/dataModel";
+import { deleteLessonsByClassIdBatch } from "./models/lessonsModel";
 
 export const getClassesPageData = query({
   handler: async (ctx) => {
@@ -182,7 +180,7 @@ export const deleteClassMutation = mutation({
       });
     }
 
-    await runDeleteClassDataBatch(ctx, normalizedId, userId);
+    await runDeleteClassDataBatch(ctx, normalizedId, "lessonPdfs", userId);
     await deleteClass(ctx, normalizedId);
 
     return { success: true };
@@ -219,7 +217,12 @@ export const deleteClassDataInternalMutation = internalMutation({
     try {
       switch (phase) {
         case "lessonPdfs":
-          await deleteLessonPdfsByClassIdBatch(ctx, classId, userId, cursor);
+          await deleteLessonPdfsJoinByClassIdBatch(
+            ctx,
+            classId,
+            userId,
+            cursor
+          );
           break;
         case "lessons":
           await deleteLessonsByClassIdBatch(ctx, classId, userId, cursor);

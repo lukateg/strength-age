@@ -3,7 +3,7 @@ import { query } from "../_generated/server";
 import { AuthenticationRequired, createAppError } from "convex/utils";
 import { hasPermission } from "convex/permissions";
 import { getLessonById } from "../models/lessonsModel";
-import { getMaterialsByLesson } from "../models/materialsModel";
+import { getPdfsByLesson } from "../models/materialsModel";
 
 export const getLessonData = query({
   args: { lessonId: v.string() },
@@ -20,7 +20,7 @@ export const getLessonData = query({
       throw createAppError({ message: "Invalid item ID" });
     }
 
-    const materials = await getMaterialsByLesson(ctx, normalizedId);
+    const materials = await getPdfsByLesson(ctx, normalizedId);
     const lesson = await getLessonById(ctx, normalizedId);
 
     if (!lesson) {

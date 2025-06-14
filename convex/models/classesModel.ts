@@ -96,7 +96,9 @@ export const deleteClass = async (
 export const runDeleteClassDataBatch = async (
   ctx: GenericMutationCtx<DataModel>,
   classId: Id<"classes">,
-  userId: string
+  phase: "lessons" | "pdfs" | "lessonPdfs",
+  userId: string,
+  cursor?: string
 ) => {
   await ctx.scheduler.runAfter(
     0,
@@ -104,8 +106,8 @@ export const runDeleteClassDataBatch = async (
     {
       classId,
       userId,
-      phase: "lessonPdfs",
-      cursor: undefined,
+      phase,
+      cursor,
     }
   );
 };

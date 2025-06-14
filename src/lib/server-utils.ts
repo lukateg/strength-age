@@ -63,7 +63,7 @@ export async function fetchLessonPdfs(
   return Promise.all(
     lessonIds.map(async (lessonId) => {
       const pdfsForLesson = await fetchQuery(
-        api.lessons.getPDFsByLessonId,
+        api.lessons.getPdfsByLessonQuery,
         { lessonId },
         { token }
       );

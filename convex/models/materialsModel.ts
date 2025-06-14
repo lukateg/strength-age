@@ -26,7 +26,32 @@ export const getMaterialsByClass = async (
   return materials;
 };
 
-export const getMaterialsByLesson = async (
+export const getPdfsByLessonPdfsJoin = async (
+  ctx: GenericQueryCtx<DataModel>,
+  lessonPdfs: Doc<"lessonPdfs">[]
+): Promise<Doc<"pdfs">[]> => {
+  if (!lessonPdfs.length) return [];
+
+  return ctx.db
+    .query("pdfs")
+    .filter((q) =>
+      q.or(
+        ...lessonPdfs.map((lessonPdf) => q.eq(q.field("_id"), lessonPdf.pdfId))
+      )
+    )
+    .collect();
+};
+
+export const getPdfsByLesson = async (
+  ctx: GenericQueryCtx<DataModel>,
+  lessonId: Id<"lessons">
+) => {
+  const lessonPdfs = await getLessonPdfsJoin(ctx, lessonId);
+
+  return getPdfsByLessonPdfsJoin(ctx, lessonPdfs);
+};
+
+export const getLessonPdfsJoin = async (
   ctx: GenericQueryCtx<DataModel>,
   lessonId: Id<"lessons">
 ) => {
@@ -35,9 +60,17 @@ export const getMaterialsByLesson = async (
     .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
     .collect();
 
-  const pdfs = await Promise.all(
-    lessonPdfs.map(async (lp) => await ctx.db.get(lp.pdfId))
-  );
+  return lessonPdfs;
+};
 
-  return pdfs.filter((pdf): pdf is NonNullable<typeof pdf> => pdf !== null);
+export const getPdfByLessonId = async (
+  ctx: GenericQueryCtx<DataModel>,
+  lessonId: Id<"lessons">,
+  pdfId: Id<"pdfs">
+) => {
+  return await ctx.db
+    .query("lessonPdfs")
+    .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
+    .filter((q) => q.eq(q.field("pdfId"), pdfId))
+    .unique();
 };

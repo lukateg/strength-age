@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     }
 
     const pdfs = await fetchQuery(
-      api.lessons.getPDFsByLessonId,
+      api.lessons.getPdfsByLessonQuery,
       {
         lessonId: lessonIds[0]!,
       },
@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
         // responseSchema: testSchema,
       },
     });
-    console.log("API: Generating quiz...", testName, description);
+
     const quiz = await generateQuizForLesson(
       model,
       successfulTexts,
@@ -115,9 +115,6 @@ export async function POST(req: NextRequest) {
       description,
       additionalInstructions
     );
-    console.log("API: Quiz generated:", quiz);
-
-    console.log("API: Quiz generated:", quiz);
     return Response.json({ response: quiz });
   } catch (error) {
     console.error("Error generating test:", error);

@@ -84,7 +84,7 @@ export const pdfFileRouter = {
 
         if (metadata.lessonId) {
           await fetchMutation(
-            api.lessons.addPdfToLesson,
+            api.lessons.addPdfToLessonMutation,
             {
               lessonId: metadata.lessonId,
               pdfId,

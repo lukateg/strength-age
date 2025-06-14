@@ -85,15 +85,15 @@ export type CreateLessonMutation = ReactMutation<
   >
 >;
 
-export type AddPDFToLessonMutation = ReactMutation<
-  FunctionReference<
-    "mutation",
-    "public",
-    {
-      lessonId: string;
-      pdfIds: Id<"pdfs">[];
-    },
-    null,
-    string | undefined
-  >
->;
+// export type AddPDFToLessonMutation = ReactMutation<
+//   FunctionReference<
+//     "mutation",
+//     "public",
+//     {
+//       lessonId: string;
+//       pdfIds: Id<"pdfs">[];
+//     },
+//     null,
+//     string | undefined
+//   >
+// >;

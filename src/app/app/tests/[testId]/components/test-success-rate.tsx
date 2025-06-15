@@ -1,26 +1,20 @@
-"use client";
-
-import { api } from "../../../../../../convex/_generated/api";
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
+import CircularProgress from "../review/[testReviewId]/components/circular-progress";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-
 import { BookOpen } from "lucide-react";
-import CircularProgress from "../review/[testReviewId]/components/circular-progress";
 
-export default function TestIncludedMaterials({ testId }: { testId: string }) {
-  const testReviews = useAuthenticatedQueryWithStatus(
-    api.tests.getTestReviewsByTestId,
-    {
-      testId,
-    }
-  );
+import { type Doc } from "convex/_generated/dataModel";
 
-  const totalAttempts = testReviews.data?.length ?? 0;
-  const bestSuccessRatePercentages = testReviews.data?.length
+export default function TestSuccessRate({
+  testReviews,
+}: {
+  testReviews: Doc<"testReviews">[];
+}) {
+  const totalAttempts = testReviews?.length ?? 0;
+  const bestSuccessRatePercentages = testReviews?.length
     ? Math.max(
-        ...testReviews.data.map((review) => {
+        ...testReviews.map((review) => {
           const correctAnswers = review.questions.filter(
             (q) => q.isCorrect
           ).length;
@@ -29,8 +23,8 @@ export default function TestIncludedMaterials({ testId }: { testId: string }) {
       )
     : 0;
 
-  const totalSuccessRatePercentage = testReviews.data?.length
-    ? testReviews.data.reduce((acc, review) => {
+  const totalSuccessRatePercentage = testReviews?.length
+    ? testReviews.reduce((acc, review) => {
         const correctAnswers = review.questions.filter(
           (q) => q.isCorrect
         ).length;

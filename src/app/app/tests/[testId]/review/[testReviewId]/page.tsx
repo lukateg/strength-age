@@ -43,19 +43,14 @@ export default function ReviewPage() {
   const token = searchParams.get("token");
   const router = useRouter();
   const { setLoading } = useLoadingContext();
-  // const { can } = useUserContext();
 
-  const testReview = useAuthenticatedQueryWithStatus(
-    api.tests.getTestReviewById,
+  const testReviewPageData = useAuthenticatedQueryWithStatus(
+    api.pages.testReviewPage.getTestReviewByIdQuery,
     {
       testReviewId,
       shareToken: token ?? undefined,
     }
   );
-
-  // const canRetakeTest = can("testReviews", "retake", {
-  //   testReview: testReview.data ?? undefined,
-  // });
 
   const handleRetakeTest = async () => {
     setLoading(true, "Loading test...");
@@ -70,15 +65,19 @@ export default function ReviewPage() {
     router.back();
   };
 
-  if (testReview.isPending) {
+  if (testReviewPageData.isPending) {
     return <TestReviewSkeleton />;
   }
 
-  if (testReview.isError || !testReview.data) {
+  if (testReviewPageData.isError) {
     return <NotFound />;
   }
 
-  const isSharedView = !!token;
+  if (!testReviewPageData.data) {
+    return <NotFound />;
+  }
+
+  const { testReview, permissions } = testReviewPageData.data;
 
   return (
     <>
@@ -96,16 +95,16 @@ export default function ReviewPage() {
             <div className="flex items-center gap-2">
               <BookOpen className="h-6 w-6 text-primary" />
               <h1 className="text-xl md:text-2xl font-bold">
-                {testReview.data.title}
+                {testReview.title}
               </h1>
             </div>
             <p className="text-sm md:text-base text-muted-foreground">
-              {testReview.data.description}
+              {testReview.description}
             </p>
           </div>
         </div>
 
-        {!isSharedView && (
+        {!permissions.isViewedByOwner && (
           <TestReviewShareButton testReviewId={testReviewId} testId={testId} />
         )}
       </div>
@@ -120,7 +119,7 @@ export default function ReviewPage() {
               </CardTitle>
             </div>
 
-            {!isSharedView && (
+            {!permissions.isViewedByOwner && (
               <AlertDialogModal
                 onConfirm={handleRetakeTest}
                 title="Retake Test"
@@ -137,7 +136,7 @@ export default function ReviewPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <TestReviewStats testReview={testReview.data} />
+          <TestReviewStats testReview={testReview} />
 
           <div className="flex items-center gap-2 mb-4">
             <CheckCircle className="h-5 w-5 text-primary" />
@@ -146,7 +145,7 @@ export default function ReviewPage() {
 
           <ScrollArea className="h-[400px] pr-4">
             <div className="space-y-6">
-              {testReview.data?.questions.map((question, index) => (
+              {testReview.questions.map((question, index) => (
                 <Card key={question.questionText} className="p-6 space-y-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-2">

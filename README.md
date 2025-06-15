@@ -60,6 +60,7 @@ create reusable components for error and not found case and use them across the 
 -- dodaj dobre reusable skeletone na prava mesta, obrisi svaku permissions ili authentication poruku
 -- class selection should become FormSelect component that gets passed the title and description or whatever and all data should be fetched on the page.
 -- check deleteLessonsByClassIdBatch TODO comment and lessonQueries used in API routes
+-- every query, mutation and action should have sufix QURY | MUTATUION | ACTION
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)

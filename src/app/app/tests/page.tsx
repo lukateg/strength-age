@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { FilePlus2 } from "lucide-react";
+import { generateStats } from "./utils";
+import { useTests } from "@/providers/tests-provider";
 
 import Link from "next/link";
 import RecentTests from "./components/recent-tests-card";
@@ -12,32 +12,26 @@ import AllTestReviewsCard from "./components/all-test-reviews-card";
 import MainPageSkeleton from "@/components/page-components/main-page-skeleton";
 import NotFound from "@/components/not-found";
 
-import { generateStats } from "./utils";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import { api } from "../../../../convex/_generated/api";
+
+import { FilePlus2 } from "lucide-react";
 
 export default function Tests() {
-  // TODO: create a function with Promise.all to fetch all the data at useTests and then here implement loading skeleton pattern
-  // and pass the data to the display components instead of fetching it there
-  const testPageData = useAuthenticatedQueryWithStatus(
-    api.pages.tests.getTestsPageDataQuery
-  );
+  const { testsPageData } = useTests();
 
-  if (testPageData.status === "pending") {
+  if (testsPageData.isPending) {
     return <MainPageSkeleton />;
   }
 
-  if (testPageData.status === "error") {
+  if (testsPageData.isError) {
     return <NotFound />;
   }
 
-  const { tests, testReviews, weeklyTestReviews, permissions } =
-    testPageData.data;
-
-  const stats = generateStats(testReviews, weeklyTestReviews, tests);
-
+  const { tests, testReviews, permissions } = testsPageData.data;
   const canGenerateTest = permissions.canGenerateTest;
+
+  const stats = generateStats(testReviews, tests);
 
   return (
     <div>

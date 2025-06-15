@@ -3,10 +3,7 @@ import { AuthenticationRequired, createAppError } from "./utils";
 import { internalMutation, mutation, query } from "./_generated/server";
 
 import { deleteLessonPdfsJoinByClassIdBatch } from "./models/lessonPdfsModel";
-import {
-  deleteTestReviewsByClassIdBatch,
-  deleteTestsByClassIdBatch,
-} from "./tests";
+
 import { deletePdfsByClassIdBatch } from "./models/materialsModel";
 import { hasPermission } from "./permissions";
 import {
@@ -22,6 +19,8 @@ import { type DataModel } from "./_generated/dataModel";
 import { type GenericMutationCtx } from "convex/server";
 import { type Id } from "./_generated/dataModel";
 import { deleteLessonsByClassIdBatch } from "./models/lessonsModel";
+import { deleteTestReviewsByClassIdBatch } from "./models/testReviewsModel";
+import { deleteTestsByClassIdBatch } from "./models/testsModel";
 
 export const getClassesPageData = query({
   handler: async (ctx) => {

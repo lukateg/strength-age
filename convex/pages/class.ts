@@ -8,7 +8,7 @@ import { v } from "convex/values";
 import { getLessonsByClass } from "../models/lessonsModel";
 import { getPdfsByClass, getTotalStorageUsage } from "../models/materialsModel";
 import { getTestsByClass } from "../models/testsModel";
-import { getTestReviewsByClass } from "../models/testReviews";
+import { getTestReviewsByClass } from "../models/testReviewsModel";
 
 // TODO: Restructure return to look like {permissions:{}, data:{materials:{materials, canUploadMaterials, totalSize}, lessons, tests, testReviews}}
 export const getClassPageData = query({

@@ -10,10 +10,8 @@ import { query } from "./_generated/server";
 // TODO:
 // rename this file to abac.ts
 // move the validator functions into the permissions.ts file
-// probaj ipak da napravis da permission schema radi sinhrono jer izgleda sve te podatke vec fecujes u query funkcijama
-
-// ostavi refaktor baze za drugi put
-// resi permisije za sve i onda refaktoruj
+// sve stvari koje mogu sinhrono resavaj sa prosledjivanjem propsa, a one koje moraju async resavaj sa async fukncijama u permission shemi
+// refactor authenticationRequired to be isAuthenticated and to return whole user object to be passed here to minimise queries
 
 // SECURED
 //  classes, can create class, class card, class dropdown - everything there secured
@@ -322,8 +320,8 @@ const ROLES: RolesWithPermissions = {
         data: Permissions["testReviews"]["dataType"]
       ) => {
         const userId = await AuthenticationRequired({ ctx });
-        if (data.shareToken && typeof data.shareToken === "string") {
-          const shareToken: string = data.shareToken;
+        if (data.shareToken) {
+          const shareToken = data.shareToken;
           const share = await ctx.db
             .query("testReviewShares")
             .withIndex("by_shareToken", (q) => q.eq("shareToken", shareToken))
@@ -343,14 +341,15 @@ const ROLES: RolesWithPermissions = {
         return data.testReview.createdBy === userId;
       },
       share: async (ctx: GenericQueryCtx<DataModel>) => {
-        const userId = await AuthenticationRequired({ ctx });
-        const user = await ctx.db
-          .query("users")
-          .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
-          .first();
-        if (!user) return false;
+        return true;
+        // const userId = await AuthenticationRequired({ ctx });
+        // const user = await ctx.db
+        //   .query("users")
+        //   .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+        //   .first();
+        // if (!user) return false;
 
-        return LIMITATIONS[user.subscriptionTier].resultsShare;
+        // return LIMITATIONS[user.subscriptionTier].resultsShare;
       },
       retake: async (
         ctx: GenericQueryCtx<DataModel>,

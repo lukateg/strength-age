@@ -12,7 +12,7 @@ import NotFound from "@/components/not-found";
 import Link from "next/link";
 import ListCard from "@/components/list-card";
 import AlertDialogModal from "@/components/alert-dialog";
-import TestIncludedMaterials from "./components/test-included-materials";
+import TestSuccessRate from "./components/test-success-rate";
 
 import { useTestMutations } from "@/hooks/use-test-mutations";
 import { ArrowLeft, Brain, Eye, Trash, Play } from "lucide-react";
@@ -113,7 +113,7 @@ export default function TestPreviewPage() {
         </div>
 
         <div className="col-span-1">
-          <TestIncludedMaterials testId={testId} />
+          <TestSuccessRate testReviews={testData.data.testReviews} />
         </div>
       </div>
 

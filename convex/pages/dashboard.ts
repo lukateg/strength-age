@@ -4,7 +4,7 @@ import { hasPermission } from "../permissions";
 import { getClassesWithPermissions } from "../models/classesModel";
 import { getPdfsByUser } from "../models/materialsModel";
 import { getTestsByUser } from "../models/testsModel";
-import { getTestReviewsByUser } from "../models/testReviews";
+import { getTestReviewsByUser } from "../models/testReviewsModel";
 
 import { type Doc } from "../_generated/dataModel";
 export interface ClassWithPermissions extends Doc<"classes"> {

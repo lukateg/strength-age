@@ -40,18 +40,6 @@ export const pdfFileRouter = {
         {},
         { token }
       );
-      const uploadedFilesSize = await fetchQuery(
-        api.materials.getTotalSizeOfPdfsByUser,
-        {},
-        { token }
-      );
-
-      if (!user) throw new ConvexError({ message: "Unauthorized" });
-
-      const pdfsToUploadTotalSize = files.reduce(
-        (acc, file) => acc + file.size,
-        0
-      );
 
       // const canUpload = hasPermission(user, "materials", "create", {
       //   uploadedFilesSize: (uploadedFilesSize ?? 0) + pdfsToUploadTotalSize,
@@ -74,7 +62,7 @@ export const pdfFileRouter = {
     .onUploadComplete(async ({ metadata, file }) => {
       try {
         const pdfId = await fetchMutation(
-          api.materials.addPdf,
+          api.materials.addPdfMutation,
           {
             classId: metadata.classId,
             pdf: { fileUrl: file.ufsUrl, name: file.name, size: file.size },

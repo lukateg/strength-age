@@ -1,10 +1,11 @@
+import { internal } from "convex/_generated/api";
 import { type Doc, type DataModel } from "convex/_generated/dataModel";
 
 import { type Id } from "convex/_generated/dataModel";
-import { type GenericQueryCtx } from "convex/server";
+import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
+import { runDeleteClassDataBatch } from "./classesModel";
 
-// Helper function to get materials
-export const getMaterialsByUser = async (
+export const getPdfsByUser = async (
   ctx: GenericQueryCtx<DataModel>,
   userId: string
 ): Promise<Doc<"pdfs">[]> => {
@@ -14,7 +15,31 @@ export const getMaterialsByUser = async (
     .collect();
 };
 
-export const getMaterialsByClass = async (
+export const createPdf = async (
+  ctx: GenericMutationCtx<DataModel>,
+  pdf: Omit<Doc<"pdfs">, "_creationTime" | "_id" | "createdBy" | "classId">,
+  createdBy: string,
+  classId: Id<"classes">
+) => {
+  return await ctx.db.insert("pdfs", {
+    ...pdf,
+    createdBy,
+    classId,
+  });
+};
+
+export const createManyPdfs = async (
+  ctx: GenericMutationCtx<DataModel>,
+  pdfs: Omit<Doc<"pdfs">, "_creationTime" | "_id" | "createdBy" | "classId">[],
+  createdBy: string,
+  classId: Id<"classes">
+) => {
+  for (const pdf of pdfs) {
+    await createPdf(ctx, pdf, createdBy, classId);
+  }
+};
+
+export const getPdfsByClass = async (
   ctx: GenericQueryCtx<DataModel>,
   classId: Id<"classes">
 ) => {
@@ -73,4 +98,55 @@ export const getPdfByLessonId = async (
     .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
     .filter((q) => q.eq(q.field("pdfId"), pdfId))
     .unique();
+};
+
+export async function getTotalStorageUsage(
+  ctx: GenericQueryCtx<DataModel>,
+  userId: string
+) {
+  const existingPdfs = await ctx.db
+    .query("pdfs")
+    .withIndex("by_user", (q) => q.eq("createdBy", userId))
+    .collect();
+
+  return existingPdfs.reduce((acc, pdf) => acc + pdf.size, 0);
+}
+
+export async function deletePdfsByClassIdBatch(
+  ctx: GenericMutationCtx<DataModel>,
+  classId: Id<"classes">,
+  userId: string,
+  cursor?: string
+) {
+  const BATCH_SIZE = 100;
+
+  const { page, isDone, continueCursor } = await ctx.db
+    .query("pdfs")
+    .withIndex("by_class_user", (q) => q.eq("classId", classId))
+    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
+
+  for (const pdf of page) {
+    await runDeletePdfFromUploadThing(ctx, pdf);
+
+    await ctx.db.delete(pdf._id);
+  }
+
+  if (!isDone) {
+    await runDeleteClassDataBatch(ctx, classId, "pdfs", userId, continueCursor);
+  } else {
+    await runDeleteClassDataBatch(ctx, classId, "tests", userId);
+  }
+}
+
+export const runDeletePdfFromUploadThing = async (
+  ctx: GenericMutationCtx<DataModel>,
+  pdf: Doc<"pdfs">
+) => {
+  await ctx.scheduler.runAfter(
+    0,
+    internal.uploadThingActions.deleteFileFromUploadThing,
+    {
+      pdf,
+    }
+  );
 };

@@ -54,7 +54,9 @@ type TestActionParams = {
 
 type MaterialActionParams = {
   view: Doc<"pdfs">;
-  create: void;
+  create: {
+    newFilesSize: number;
+  };
   delete: Doc<"pdfs">;
 };
 
@@ -243,7 +245,10 @@ const ROLES: RolesWithPermissions = {
         const userId = await AuthenticationRequired({ ctx });
         return data.createdBy === userId;
       },
-      create: async (ctx: GenericQueryCtx<DataModel>) => {
+      create: async (
+        ctx: GenericQueryCtx<DataModel>,
+        data: MaterialActionParams["create"]
+      ) => {
         const userId = await AuthenticationRequired({ ctx });
         const user = await ctx.db
           .query("users")
@@ -255,11 +260,9 @@ const ROLES: RolesWithPermissions = {
           .query("pdfs")
           .withIndex("by_user", (q) => q.eq("createdBy", userId))
           .collect();
-
-        const totalSize = uploadedFiles.reduce(
-          (acc, file) => acc + file.size,
-          0
-        );
+        const totalSize =
+          uploadedFiles.reduce((acc, file) => acc + file.size, 0) +
+          data.newFilesSize;
 
         return LIMITATIONS[user.subscriptionTier].materials > totalSize;
       },

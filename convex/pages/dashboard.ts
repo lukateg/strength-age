@@ -2,7 +2,7 @@ import { query } from "../_generated/server";
 import { AuthenticationRequired } from "../utils";
 import { hasPermission } from "../permissions";
 import { getClassesWithPermissions } from "../models/classesModel";
-import { getMaterialsByUser } from "../models/materialsModel";
+import { getPdfsByUser } from "../models/materialsModel";
 import { getTestsByUser } from "../models/testsModel";
 import { getTestReviewsByUser } from "../models/testReviews";
 
@@ -37,7 +37,7 @@ export const getDashboardData = query({
     // Fetch all data in parallel using helper functions
     const [classes, materials, tests, testReviews] = await Promise.all([
       getClassesWithPermissions(ctx, userId),
-      getMaterialsByUser(ctx, userId),
+      getPdfsByUser(ctx, userId),
       getTestsByUser(ctx, userId),
       getTestReviewsByUser(ctx, userId),
     ]);

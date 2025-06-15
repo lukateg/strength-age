@@ -1,16 +1,37 @@
 import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
 import { type Id, type DataModel } from "../_generated/dataModel";
 import { runDeleteClassDataBatch } from "./classesModel";
+import { createAppError } from "convex/utils";
 
-export const getLessonPdfsByLessonId = async (
-  ctx: GenericQueryCtx<DataModel>,
-  lessonId: Id<"lessons">
-) => {
-  return await ctx.db
+// export const getLessonPdfsByLessonId = async (
+//   ctx: GenericQueryCtx<DataModel>,
+//   lessonId: Id<"lessons">
+// ) => {
+//   return await ctx.db
+//     .query("lessonPdfs")
+//     .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
+//     .collect();
+// };
+
+export async function deleteLessonPdfsJoinByPdfId(
+  ctx: GenericMutationCtx<DataModel>,
+  pdfId: string
+) {
+  const normalizedPdfId = ctx.db.normalizeId("pdfs", pdfId);
+
+  if (!normalizedPdfId) {
+    throw createAppError({ message: "Invalid item ID" });
+  }
+
+  const lessonPdfs = await ctx.db
     .query("lessonPdfs")
-    .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
+    .withIndex("by_pdfId", (q) => q.eq("pdfId", normalizedPdfId))
     .collect();
-};
+
+  for (const lessonPdf of lessonPdfs) {
+    await ctx.db.delete(lessonPdf._id);
+  }
+}
 
 export async function deleteLessonPdfsJoinByClassIdBatch(
   ctx: GenericMutationCtx<DataModel>,

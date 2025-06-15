@@ -28,8 +28,8 @@ export const useMaterialsMutations = () => {
   });
 
   // Mutations
-  const addManyPdfsMutation = useMutation(api.materials.addManyPdfs);
-  const deletePdfMutation = useMutation(api.materials.deletePdf);
+  const addManyPdfsMutation = useMutation(api.materials.addManyPdfsMutation);
+  const deletePdfMutation = useMutation(api.materials.deletePdfMutation);
 
   const uploadManyPdfs = useCallback(
     async (params: {

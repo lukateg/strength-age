@@ -3,7 +3,7 @@ import { type UserJSON } from "@clerk/backend";
 import { v, type Validator } from "convex/values";
 import { internalQuery } from "./_generated/server";
 import { AuthenticationRequired } from "./utils";
-import { getTotalStorageUsage } from "./materials";
+import { getTotalStorageUsage } from "./models/materialsModel";
 
 export const getUserData = query({
   handler: async (ctx) => {

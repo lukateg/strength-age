@@ -4,10 +4,9 @@ import { AuthenticationRequired } from "convex/utils";
 
 import { createAppError } from "convex/utils";
 import { v } from "convex/values";
-import { getTotalStorageUsage } from "convex/materials";
 
 import { getLessonsByClass } from "../models/lessonsModel";
-import { getMaterialsByClass } from "../models/materialsModel";
+import { getPdfsByClass, getTotalStorageUsage } from "../models/materialsModel";
 import { getTestsByClass } from "../models/testsModel";
 import { getTestReviewsByClass } from "../models/testReviews";
 
@@ -30,7 +29,7 @@ export const getClassPageData = query({
     }
 
     const lessons = await getLessonsByClass(ctx, normalizedId);
-    const materials = await getMaterialsByClass(ctx, normalizedId);
+    const materials = await getPdfsByClass(ctx, normalizedId);
     const tests = await getTestsByClass(ctx, normalizedId);
     const testReviews = await getTestReviewsByClass(ctx, normalizedId);
     const totalStorageUsage = await getTotalStorageUsage(ctx, userId);
@@ -74,11 +73,15 @@ export const getClassPageData = query({
       }
     );
 
+    // TODO: write this better
     const canUploadMaterials = await hasPermission(
       ctx,
       userId,
       "materials",
-      "create"
+      "create",
+      {
+        newFilesSize: 0,
+      }
     );
 
     const canCreateTest = await hasPermission(ctx, userId, "tests", "create");

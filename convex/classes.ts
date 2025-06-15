@@ -7,7 +7,7 @@ import {
   deleteTestReviewsByClassIdBatch,
   deleteTestsByClassIdBatch,
 } from "./tests";
-import { deletePdfsByClassIdBatch } from "./materials";
+import { deletePdfsByClassIdBatch } from "./models/materialsModel";
 import { hasPermission } from "./permissions";
 import {
   createClass,
@@ -214,27 +214,52 @@ export const deleteClassDataInternalMutation = internalMutation({
       cursor?: string;
     }
   ) => {
+    const normalizedClassId = ctx.db.normalizeId("classes", classId);
+    if (!normalizedClassId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
     try {
       switch (phase) {
         case "lessonPdfs":
           await deleteLessonPdfsJoinByClassIdBatch(
             ctx,
-            classId,
+            normalizedClassId,
             userId,
             cursor
           );
           break;
         case "lessons":
-          await deleteLessonsByClassIdBatch(ctx, classId, userId, cursor);
+          await deleteLessonsByClassIdBatch(
+            ctx,
+            normalizedClassId,
+            userId,
+            cursor
+          );
           break;
         case "pdfs":
-          await deletePdfsByClassIdBatch(ctx, classId, userId, cursor);
+          await deletePdfsByClassIdBatch(
+            ctx,
+            normalizedClassId,
+            userId,
+            cursor
+          );
           break;
         case "tests":
-          await deleteTestsByClassIdBatch(ctx, classId, userId, cursor);
+          await deleteTestsByClassIdBatch(
+            ctx,
+            normalizedClassId,
+            userId,
+            cursor
+          );
           break;
         case "testReviews":
-          await deleteTestReviewsByClassIdBatch(ctx, classId, userId, cursor);
+          await deleteTestReviewsByClassIdBatch(
+            ctx,
+            normalizedClassId,
+            userId,
+            cursor
+          );
           break;
       }
     } catch (error) {

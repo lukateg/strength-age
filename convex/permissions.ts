@@ -16,6 +16,11 @@ import { query } from "./_generated/server";
 // SECURED
 //  classes, can create class, class card, class dropdown - everything there secured
 //  class page, materials, tests, test reviews - everything there secured
+// lessons queries and mutations
+// test and test review
+
+// -- left api routes and mutations
+// - users, cleanup comments, stripe, webhooks, http, check all
 
 // Types
 export type Role = "admin" | "user";

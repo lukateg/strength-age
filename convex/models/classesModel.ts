@@ -1,7 +1,7 @@
 import { type DataModel, type Id } from "convex/_generated/dataModel";
 import { hasPermission } from "../permissions";
 import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
-import { type ClassWithPermissions } from "convex/pages/dashboard";
+import { type ClassWithPermissions } from "convex/pages/dashboardPage";
 import { internal } from "../_generated/api";
 
 export const getClassById = async (

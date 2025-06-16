@@ -1,5 +1,5 @@
 import { query } from "convex/_generated/server";
-import { hasPermission } from "convex/permissions";
+import { hasPermission } from "convex/models/permissionsModel";
 import { AuthenticationRequired } from "convex/utils";
 
 import { createAppError } from "convex/utils";

@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { hasPermission } from "./permissions";
+import { hasPermission } from "./models/permissionsModel";
 import { AuthenticationRequired, createAppError } from "./utils";
 import { mutation, query } from "./_generated/server";
 import {

@@ -1,7 +1,7 @@
 import { query } from "../_generated/server";
 import { AuthenticationRequired, createAppError } from "convex/utils";
 import { getClassesByUser } from "../models/classesModel";
-import { hasPermission } from "convex/permissions";
+import { hasPermission } from "convex/models/permissionsModel";
 import { getLessonsByUser } from "../models/lessonsModel";
 
 export const getGenerateTestPageData = query({

@@ -1,6 +1,6 @@
 import { query } from "../_generated/server";
 import { AuthenticationRequired } from "../utils";
-import { hasPermission } from "../permissions";
+import { hasPermission } from "../models/permissionsModel";
 import { getClassesWithPermissions } from "../models/classesModel";
 import { getPdfsByUser } from "../models/materialsModel";
 import { getTestsByUser } from "../models/testsModel";

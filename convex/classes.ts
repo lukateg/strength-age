@@ -5,7 +5,7 @@ import { internalMutation, mutation, query } from "./_generated/server";
 import { deleteLessonPdfsJoinByClassIdBatch } from "./models/lessonPdfsModel";
 
 import { deletePdfsByClassIdBatch } from "./models/materialsModel";
-import { hasPermission } from "./permissions";
+import { hasPermission } from "./models/permissionsModel";
 import {
   createClass,
   deleteClass,

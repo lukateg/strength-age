@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { query } from "../_generated/server";
 import { AuthenticationRequired, createAppError } from "convex/utils";
-import { hasPermission } from "convex/permissions";
+import { hasPermission } from "convex/models/permissionsModel";
 import { getLessonById } from "../models/lessonsModel";
 import { getPdfsByLesson } from "../models/materialsModel";
 

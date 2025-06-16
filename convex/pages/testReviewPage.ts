@@ -1,13 +1,9 @@
 import { AuthenticationRequired } from "convex/utils";
-import {
-  getTestReviewsByTitle,
-  validateTestReviewShareToken,
-} from "convex/models/testReviewsModel";
-import { hasPermission } from "convex/permissions";
+import { validateTestReviewShareToken } from "convex/models/testReviewsModel";
+import { hasPermission } from "convex/models/permissionsModel";
 import { createAppError } from "convex/utils";
 import { v } from "convex/values";
-import { mutation, query } from "convex/_generated/server";
-import { nanoid } from "nanoid";
+import { query } from "convex/_generated/server";
 
 export const getTestReviewByIdQuery = query({
   args: {

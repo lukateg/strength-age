@@ -62,6 +62,7 @@ create reusable components for error and not found case and use them across the 
 -- check deleteLessonsByClassIdBatch TODO comment and lessonQueries used in API routes
 -- every query, mutation and action should have sufix QURY | MUTATUION | ACTION
 -- on each page check if data === null and then return NotFound since BE returns null instead of throwing an errors, errors are for permissions so we do not get strange errrors on backend all the time
+-- test fast clicks on submit buttons that do not have disabled props
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
@@ -69,24 +70,9 @@ BUGS
 -- lesson title is not working when generating multiple lesson test
 -- header overlaps the layout on the mobileå
 
-test fast clicks on submit buttons that do not have disabled props
 
-ZA DALJE:
--- implementiraj nove permisije svuda i napravi pages convex file za svaki pages call
--- razvrstaj model funkcije u model file, pages u pages i table funkcije u tables
--- razvrstaj permission util funkcije u poseban fajl i skini autentifikaciju i prosledjuj id iz query funkcija ili pitaj cet sta je bolje
--- odluci koji ces pattern - fetch u contextu pa import u komponentama ili prefetch on server u komponentama
-
--- implementiraj pattern gde fetchujes sve podatke na page (ili u context pa ih uzimas iz pagea) i onda ih prosledjujes server komponentama
 
 -- nakon svega ovoga popravljaj loading... i skeletone
-
-// TODO:
-// rename this file to abac.ts
-// move the validator functions into the permissions.ts file
-// sve stvari koje mogu sinhrono resavaj sa prosledjivanjem propsa, a one koje moraju async resavaj sa async fukncijama u permission shemi
-// refactor authenticationRequired to be isAuthenticated and to return whole user object to be passed here to minimise queries
-// extract generateTestDataQuery into util functions and corect folder
 
 PLAN:
 -- handle case when LLM is not working
@@ -116,7 +102,6 @@ MAYBE IN FUTURE
 -- set each form to not be redirectable back to
 
 -TEST GENERATION
--- add additional prompt section to test generation so user can add additional instruction for test
 -- add importing previous tests when generating test so AI knows not to generate same questions
 --  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation to single class page
 -- implement custom question number per lesson

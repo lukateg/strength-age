@@ -1,7 +1,7 @@
 import { internal } from "convex/_generated/api";
-import { Doc, type DataModel } from "convex/_generated/dataModel";
+import { type DataModel } from "convex/_generated/dataModel";
 import { type Id } from "convex/_generated/dataModel";
-import { GenericMutationCtx, type GenericQueryCtx } from "convex/server";
+import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
 import { runDeleteClassDataBatch } from "./classesModel";
 
 export const getLessonById = async (

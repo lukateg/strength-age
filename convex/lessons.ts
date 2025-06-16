@@ -3,7 +3,7 @@ import { internalMutation, mutation } from "./_generated/server";
 import { AuthenticationRequired, createAppError } from "./utils";
 
 import { getClassById } from "./models/classesModel";
-import { hasPermission } from "./permissions";
+import { hasPermission } from "./models/permissionsModel";
 import {
   getLessonByTitle,
   createLesson,

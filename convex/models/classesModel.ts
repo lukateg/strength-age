@@ -1,5 +1,5 @@
 import { type DataModel, type Id } from "convex/_generated/dataModel";
-import { hasPermission } from "../permissions";
+import { hasPermission } from "../models/permissionsModel";
 import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
 import { type ClassWithPermissions } from "convex/pages/dashboardPage";
 import { internal } from "../_generated/api";

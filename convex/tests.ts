@@ -2,11 +2,11 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { AuthenticationRequired, createAppError } from "./utils";
 
-import { hasPermission } from "./permissions";
+import { hasPermission } from "./models/permissionsModel";
 import { getTestsByTitle } from "./models/testsModel";
 import { getLessonPdfJoinsByLessonIds } from "./models/lessonPdfsModel";
 import { getPdfsByIds, sortPdfsByLessonJoins } from "./models/materialsModel";
-import { Id } from "./_generated/dataModel";
+import { type Id } from "./_generated/dataModel";
 
 export const getTestByIdQuery = query({
   args: {

@@ -1,6 +1,6 @@
 import { AuthenticationRequired } from "convex/utils";
 import { query } from "../_generated/server";
-import { hasPermission } from "convex/permissions";
+import { hasPermission } from "convex/models/permissionsModel";
 
 import { getTestsWithPermissions } from "convex/models/testsModel";
 import { getTestReviewsWithPermissions } from "convex/models/testReviewsModel";

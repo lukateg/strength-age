@@ -1,6 +1,6 @@
 import { query } from "../_generated/server";
 import { AuthenticationRequired } from "../utils";
-import { hasPermission } from "../permissions";
+import { hasPermission } from "../models/permissionsModel";
 import { getClassesByUser } from "../models/classesModel";
 
 export const getClassesPageData = query({

@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
 import { AuthenticationRequired, createAppError } from "./utils";
-import { hasPermission } from "./permissions";
+import { hasPermission } from "./models/permissionsModel";
 
 import {
   createManyPdfs,

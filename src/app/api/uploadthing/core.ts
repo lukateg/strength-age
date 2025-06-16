@@ -42,10 +42,7 @@ export const pdfFileRouter = {
         },
         { token }
       );
-      console.log(
-        ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> canUpload",
-        canUpload
-      );
+
       if (!canUpload) {
         throw new ConvexError({
           message:

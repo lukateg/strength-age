@@ -9,7 +9,7 @@ export const getTestPageData = query({
     testId: v.string(),
   },
   handler: async (ctx, { testId }) => {
-    const userId = await AuthenticationRequired({ ctx });
+    await AuthenticationRequired({ ctx });
     const normalizedId = ctx.db.normalizeId("tests", testId);
 
     if (!normalizedId) {

@@ -1,5 +1,5 @@
 import { runDeleteClassDataBatch } from "./classesModel";
-import { hasPermission } from "convex/permissions";
+import { hasPermission } from "convex/models/permissionsModel";
 import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
 import { type Doc, type Id, type DataModel } from "convex/_generated/dataModel";
 import { type TestReviewWithPermissions } from "convex/pages/testsPage";

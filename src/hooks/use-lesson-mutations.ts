@@ -2,7 +2,7 @@ import { api } from "../../convex/_generated/api";
 import { toast } from "sonner";
 import { toastError } from "@/lib/utils";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useMutation } from "convex/react";
 import { useClass } from "@/providers/class-context-provider";
 import { useUploadThing } from "./use-upload-thing";
@@ -21,14 +21,15 @@ export const useLessonMutations = () => {
       throw error;
     },
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   // Mutations
-  const createLessonMutation = useMutation(api.lessons.createLesson);
+  const createLessonMutation = useMutation(api.lessons.createLessonMutation);
   const addManyPdfsToLessonMutation = useMutation(
-    api.lessons.addManyPdfsToLesson
+    api.lessons.addManyPdfsToLessonMutation
   );
-  const updateLessonMutation = useMutation(api.lessons.updateLesson);
-  const deleteLessonMutation = useMutation(api.lessons.deleteLesson);
+  const updateLessonMutation = useMutation(api.lessons.updateLessonMutation);
+  const deleteLessonMutation = useMutation(api.lessons.deleteLessonMutation);
 
   const createLesson = useCallback(
     async ({ title, description }: LessonFormData) => {
@@ -57,7 +58,7 @@ export const useLessonMutations = () => {
       lessonId,
     }: {
       materialsToUpload: File[];
-      lessonId: string;
+      lessonId?: string;
     }) => {
       const toastId = toast.loading("Please wait while we upload your files");
 
@@ -67,6 +68,7 @@ export const useLessonMutations = () => {
         toast.dismiss(toastId);
         toast.success("PDFs uploaded to lesson successfully");
       } catch (error) {
+        toast.dismiss(toastId);
         toastError(error, "Failed to upload PDFs to lesson. Please try again");
       }
     },
@@ -121,6 +123,7 @@ export const useLessonMutations = () => {
   );
 
   return {
+    isLoading,
     isUploading,
     createLesson,
     addExistingPdfsToLesson,

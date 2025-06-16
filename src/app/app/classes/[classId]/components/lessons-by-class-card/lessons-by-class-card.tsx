@@ -1,6 +1,7 @@
-"use client";
+// "use client";
 
-import { useClass } from "@/providers/class-context-provider";
+// import { useClass } from "@/providers/class-context-provider";
+// import { useUserContext } from "@/providers/user-provider";
 
 import { Button } from "@/components/ui/button";
 
@@ -10,25 +11,32 @@ import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 import LessonsItemDropdown from "./lessons-item-dropdown";
 
 import { Eye, FileText, Plus } from "lucide-react";
+import PageSkeleton from "@/components/page-components/main-page-skeleton";
+import NotFound from "@/components/not-found";
+import { type Lesson } from "@/components/generate-test-form/components/lesson-select-view/lesson-select-table";
 
 export default function LessonsSectionComponent({
   classId,
+  lessons,
+  canCreateLesson,
 }: {
   classId: string;
+  lessons: Lesson[];
+  canCreateLesson: boolean;
 }) {
-  const { lessonsByClass } = useClass();
-
   return (
     <ListCard
       title="Course Lessons"
       description="PDF documents and study materials"
-      items={lessonsByClass.data}
-      isLoading={lessonsByClass.isPending}
+      items={lessons}
       cardAction={
-        <Button asChild>
-          <Link href={`/app/classes/${classId}/new-lesson`}>
+        <Button disabled={!canCreateLesson}>
+          <Link
+            href={`/app/classes/${classId}/new-lesson`}
+            className={"flex items-center justify-center"}
+          >
             <Plus className="h-4 w-4 mr-2" />
-            Add new lesson
+            {canCreateLesson ? "Add new lesson" : "Upgrade to add lesson"}
           </Link>
         </Button>
       }

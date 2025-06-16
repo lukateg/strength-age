@@ -22,7 +22,9 @@ import {
   RefreshCcw,
 } from "lucide-react";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useUserContext } from "@/providers/user-provider";
+
 import { api } from "../../../../../../../convex/_generated/api";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
@@ -30,18 +32,23 @@ import { type Id } from "convex/_generated/dataModel";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 import AlertDialogModal from "@/components/alert-dialog";
 import { useLoadingContext } from "@/providers/loading-context";
+import TestReviewShareButton from "@/components/test-review-share-button";
 
 export default function ReviewPage() {
   const {
     testReviewId,
     testId,
   }: { testReviewId: Id<"testReviews">; testId: Id<"tests"> } = useParams();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const router = useRouter();
   const { setLoading } = useLoadingContext();
-  const testReview = useAuthenticatedQueryWithStatus(
-    api.tests.getTestReviewById,
+
+  const testReviewPageData = useAuthenticatedQueryWithStatus(
+    api.pages.testReviewPage.getTestReviewByIdQuery,
     {
       testReviewId,
+      shareToken: token ?? undefined,
     }
   );
 
@@ -58,22 +65,24 @@ export default function ReviewPage() {
     router.back();
   };
 
-  if (testReview.isPending) {
+  if (testReviewPageData.isPending) {
     return <TestReviewSkeleton />;
   }
 
-  if (testReview.isError) {
+  if (testReviewPageData.isError) {
     return <NotFound />;
   }
-  // TODO: find a way to remove this
-  if ((testReview.isSuccess && !testReview.data) || testReview.data === null) {
+
+  if (!testReviewPageData.data) {
     return <NotFound />;
   }
+
+  const { testReview, permissions } = testReviewPageData.data;
 
   return (
     <>
       <div className="flex justify-between items-center">
-        <div className=" flex items-center gap-4">
+        <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
@@ -86,20 +95,18 @@ export default function ReviewPage() {
             <div className="flex items-center gap-2">
               <BookOpen className="h-6 w-6 text-primary" />
               <h1 className="text-xl md:text-2xl font-bold">
-                {testReview.data.title}
+                {testReview.title}
               </h1>
             </div>
             <p className="text-sm md:text-base text-muted-foreground">
-              {testReview.data.description}
+              {testReview.description}
             </p>
           </div>
         </div>
 
-        <FeatureFlagTooltip>
-          <Button disabled className="text-xs md:text-base" variant="outline">
-            <Send className="h-4 w-4" />
-          </Button>
-        </FeatureFlagTooltip>
+        {!permissions.isViewedByOwner && (
+          <TestReviewShareButton testReviewId={testReviewId} testId={testId} />
+        )}
       </div>
 
       <Card>
@@ -112,22 +119,24 @@ export default function ReviewPage() {
               </CardTitle>
             </div>
 
-            <AlertDialogModal
-              onConfirm={handleRetakeTest}
-              title="Retake Test"
-              description="After you press confirm you will be redirected to the test. Good luck!"
-              variant="positive"
-              alertTrigger={
-                <Button className="text-xs md:text-base" variant="positive">
-                  <RefreshCcw className="h-4 w-4 mr-2" />
-                  Retake Test
-                </Button>
-              }
-            />
+            {!permissions.isViewedByOwner && (
+              <AlertDialogModal
+                onConfirm={handleRetakeTest}
+                title="Retake Test"
+                description="After you press confirm you will be redirected to the test. Good luck!"
+                variant="positive"
+                alertTrigger={
+                  <Button className="text-xs md:text-base" variant="positive">
+                    <RefreshCcw className="h-4 w-4 mr-2" />
+                    Retake Test
+                  </Button>
+                }
+              />
+            )}
           </div>
         </CardHeader>
         <CardContent>
-          <TestReviewStats testReview={testReview.data} />
+          <TestReviewStats testReview={testReview} />
 
           <div className="flex items-center gap-2 mb-4">
             <CheckCircle className="h-5 w-5 text-primary" />
@@ -136,7 +145,7 @@ export default function ReviewPage() {
 
           <ScrollArea className="h-[400px] pr-4">
             <div className="space-y-6">
-              {testReview.data?.questions.map((question, index) => (
+              {testReview.questions.map((question, index) => (
                 <Card key={question.questionText} className="p-6 space-y-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-2">

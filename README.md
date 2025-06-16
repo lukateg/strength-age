@@ -21,6 +21,7 @@ create reusable components for error and not found case and use them across the 
 -- retry test multiple times and redirect back willaredirect you through multiple test reviews SOLUTION: create reusable test review component and new route for test review from class, then use the review component on both routes and just different router back route in header on different routes
 
 
+-- add progress bar from 0.1 do 1.0 version on the landing page and display that as progress from beta to live app
 -- create main page components like main-header and reuse it across the app
 -- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class
 -- replace all history back buttons with normal routes and align all layout patterns
@@ -37,6 +38,31 @@ create reusable components for error and not found case and use them across the 
 -- check if you can persist test generation on the backend so it continues even if user refreshes the page
 -- check why progress bar slows down the app
 -- implement AI cost monitoring setup
+-- implement unsubscribe payment system
+-- change all const userId = await AuthenticationRequired({ ctx }); to const user = await checkPermission({ ctx });
+-- checkAuthentication returns user and checkPermission takes user and checks permissions
+-- secure routes
+-- same way as you added checkPermission add checkValidation on BE, so it goes in order checkAuthentification(), checkPermission(), checkValidation()
+-- instead of generic message permission denied write a custom message for each permission fail
+-- protect each rotute with canView permission, then add pending,error,success state, then add no data, data state
+-- make lesson-form-view and add-materials-section same component and fix their names relative to file names and match logic fully
+-- on removing fileToBeUploaded clear the errors from validator
+-- when generating a test you check if test with same name exists but you check if it exists in whole database and not just for a specific user
+-- stats on dashboard should be class 1/1 storage used 12/50 ...
+-- write a bit better confirm test modal text
+-- fix test review naming convention
+-- fix test review scroll problem
+-- redesigne test results page
+-- choose between checking permissions in each page or returning error if no permission on the backend and then handling it on front with just error
+-- all permission errors should have specific error type and message and should be checked on backend and if error is present display it on frontend so you don't need to check on frontend if user has permission actually to perform an action
+-- write a script to remove shared tokens once they expire
+-- fetch should be removed from all display table components and data should be passed from the page
+-- dodaj dobre reusable skeletone na prava mesta, obrisi svaku permissions ili authentication poruku
+-- class selection should become FormSelect component that gets passed the title and description or whatever and all data should be fetched on the page.
+-- check deleteLessonsByClassIdBatch TODO comment and lessonQueries used in API routes
+-- every query, mutation and action should have sufix QURY | MUTATUION | ACTION
+-- on each page check if data === null and then return NotFound since BE returns null instead of throwing an errors, errors are for permissions so we do not get strange errrors on backend all the time
+-- test fast clicks on submit buttons that do not have disabled props
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
@@ -44,17 +70,11 @@ BUGS
 -- lesson title is not working when generating multiple lesson test
 -- header overlaps the layout on the mobileå
 
-test fast clicks on submit buttons that do not have disabled props
 
-ZA SUTRA
--- write a bit better confirm test modal text
--- fix test review naming convention
--- fix test review scroll problem
--- redesigne test results page
 
+-- nakon svega ovoga popravljaj loading... i skeletone
 
 PLAN:
-
 -- handle case when LLM is not working
 -- fix bugs
 
@@ -82,7 +102,6 @@ MAYBE IN FUTURE
 -- set each form to not be redirectable back to
 
 -TEST GENERATION
--- add additional prompt section to test generation so user can add additional instruction for test
 -- add importing previous tests when generating test so AI knows not to generate same questions
 --  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation to single class page
 -- implement custom question number per lesson

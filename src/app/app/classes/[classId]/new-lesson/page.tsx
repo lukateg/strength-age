@@ -8,17 +8,20 @@ import LessonForm from "../lessons/[lessonId]/components/lesson-form/lesson-form
 import SectionHeader from "@/components/page-components/page-header";
 
 import { type createLessonSchema } from "@/lib/schemas";
+import { useClass } from "@/providers/class-context-provider";
 
 type LessonFormData = z.infer<typeof createLessonSchema>;
 
 export default function NewLessonPage() {
   const router = useRouter();
+  const { classData } = useClass();
 
   const {
     classId,
     createLesson,
     uploadNewPdfsToLesson,
     addExistingPdfsToLesson,
+    isUploading,
   } = useLessonMutations();
 
   const onSubmit = async (data: LessonFormData) => {
@@ -45,6 +48,10 @@ export default function NewLessonPage() {
     router.push(`/app/classes/${classId}`);
   };
 
+  if (!classData.data) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="space-y-10">
       <SectionHeader
@@ -52,7 +59,11 @@ export default function NewLessonPage() {
         description="Create a new lesson for your class"
         backRoute={`/app/classes/${classId}`}
       />
-      <LessonForm onSubmit={onSubmit} />
+      <LessonForm
+        onSubmit={onSubmit}
+        materials={classData.data?.materials}
+        isSubmitting={isUploading}
+      />
     </div>
   );
 }

@@ -1,18 +1,16 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { auth } from "@clerk/nextjs/server";
+import { api } from "../../../../convex/_generated/api";
 
 import {
   calculateProportionalQuestionsPerLesson,
   shuffleArray,
 } from "@/lib/utils";
-import {
-  convertPdfsToText,
-  fetchLessonPdfs,
-  generateQuizForLesson,
-} from "@/lib/server-utils";
+import { convertPdfsToText, generateQuizForLesson } from "@/lib/server-utils";
 
 import { type NextRequest } from "next/server";
 import { type Id } from "convex/_generated/dataModel";
+import { fetchQuery } from "convex/nextjs";
 
 export const runtime = "nodejs";
 
@@ -62,16 +60,20 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Fetch and process PDFs
-    const lessonPdfs = await fetchLessonPdfs(lessonIds, token);
-    if (!lessonPdfs.length) {
+    const { pdfsByLesson, canGenerateTest } = await fetchQuery(
+      api.tests.getGenerateTestFromLessonsDataQuery,
+      { lessonIds },
+      { token }
+    );
+
+    if (!canGenerateTest) {
       return Response.json(
-        { error: "No PDFs found for these lessons" },
-        { status: 404 }
+        { error: "You need to upgrade to generate tests." },
+        { status: 403 }
       );
     }
 
-    const extractedTexts = await convertPdfsToText(lessonPdfs);
+    const extractedTexts = await convertPdfsToText(pdfsByLesson);
     if (!extractedTexts.length) {
       return Response.json(
         { error: "Failed to extract text from PDFs" },

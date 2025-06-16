@@ -18,11 +18,21 @@ import AdditionalInstructionsView from "./components/additional-instructions-vie
 import { testFormSchema, type testSchema } from "@/lib/schemas";
 
 import { type z } from "zod";
+import { type FunctionReturnType } from "convex/server";
+import { type api } from "../../../convex/_generated/api";
 
 export type TestFormValues = z.infer<typeof testFormSchema>;
 export type GeneratedTest = z.infer<typeof testSchema>;
 
-export default function GenerateTestForm({ classId }: { classId?: string }) {
+export default function GenerateTestForm({
+  classId,
+  generatePageData,
+}: {
+  classId?: string;
+  generatePageData: FunctionReturnType<
+    typeof api.pages.generateTestPage.getGenerateTestPageData
+  >;
+}) {
   const router = useRouter();
   const { generateAndUploadTest } = useTestMutations();
 
@@ -57,9 +67,17 @@ export default function GenerateTestForm({ classId }: { classId?: string }) {
         <div className="grid gap-6">
           <BasicInformationView control={control} />
 
-          <ClassSelection control={control} disabled={!!classId} />
+          <ClassSelection
+            control={control}
+            disabled={!!classId}
+            classes={generatePageData.classes}
+          />
 
-          <LessonSelectView classId={selectedClassId} control={control} />
+          <LessonSelectView
+            control={control}
+            classId={selectedClassId}
+            lessons={generatePageData.lessons}
+          />
 
           <QuestionConfigurationView
             control={control}

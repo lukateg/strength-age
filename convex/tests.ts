@@ -1,12 +1,48 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { AuthenticationRequired, createAppError } from "./utils";
-import { internal } from "./_generated/api";
 
-import { type DataModel, type Id } from "./_generated/dataModel";
-import { type GenericMutationCtx } from "convex/server";
+import { hasPermission } from "./models/permissionsModel";
+import { getTestsByTitle } from "./models/testsModel";
+import { getLessonPdfJoinsByLessonIds } from "./models/lessonPdfsModel";
+import { getPdfsByIds, sortPdfsByLessonJoins } from "./models/materialsModel";
+import { type Id } from "./_generated/dataModel";
 
-export const uploadTest = mutation({
+export const getTestByIdQuery = query({
+  args: {
+    testId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const normalizedId = ctx.db.normalizeId("tests", args.testId);
+    if (!normalizedId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
+    const test = await ctx.db.get(normalizedId);
+    if (!test) {
+      return null;
+    }
+
+    const canViewTest = await hasPermission<"tests">(
+      ctx,
+      userId,
+      "tests",
+      "view",
+      test
+    );
+    if (!canViewTest) {
+      throw createAppError({
+        message: "You are not allowed to view this test",
+      });
+    }
+
+    return test;
+  },
+});
+
+export const uploadTestMutation = mutation({
   args: {
     title: v.string(),
     description: v.string(),
@@ -38,20 +74,28 @@ export const uploadTest = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await AuthenticationRequired({ ctx });
-    let title = args.title;
-    const existingTest = await ctx.db
-      .query("tests")
-      .filter((q) => q.eq(q.field("title"), args.title))
-      .collect();
 
+    const canCreateTest = await hasPermission<"tests">(
+      ctx,
+      userId,
+      "tests",
+      "create"
+    );
+    if (!canCreateTest) {
+      throw createAppError({ message: "You are not allowed to create tests" });
+    }
+
+    let title = args.title;
+    const existingTest = await getTestsByTitle(ctx, args.title);
     if (existingTest.length > 0) {
       title = `${args.title} #${existingTest.length + 1}`;
     }
+
     const testId = await ctx.db.insert("tests", {
       title,
+      createdBy: userId,
       description: args.description,
       questions: args.questions,
-      createdBy: userId,
       classId: args.classId,
       difficulty: args.difficulty,
       questionTypes: args.questionTypes,
@@ -63,329 +107,7 @@ export const uploadTest = mutation({
   },
 });
 
-export const createTestReview = mutation({
-  args: {
-    title: v.string(),
-    description: v.string(),
-    classId: v.id("classes"),
-    testId: v.id("tests"),
-    questions: v.array(
-      v.object({
-        questionText: v.string(),
-        questionType: v.string(),
-        availableAnswers: v.optional(v.array(v.string())),
-        correctAnswer: v.array(v.string()),
-        isCorrect: v.boolean(),
-        answer: v.union(v.array(v.string()), v.string()),
-        feedback: v.optional(v.string()),
-      })
-    ),
-  },
-  handler: async (ctx, args) => {
-    const userId = await AuthenticationRequired({ ctx });
-    let title = args.title;
-    const existingTestReview = await ctx.db
-      .query("testReviews")
-      .filter((q) => q.eq(q.field("title"), args.title))
-      .collect();
-
-    if (existingTestReview.length > 0) {
-      title = `${args.title} #${existingTestReview.length + 1}`;
-    }
-    const testId = await ctx.db.insert("testReviews", {
-      title,
-      description: args.description,
-      questions: args.questions,
-      createdBy: userId,
-      classId: args.classId,
-      testId: args.testId,
-    });
-    return testId;
-  },
-});
-
-export const getAllTestsByUser = query({
-  handler: async (ctx) => {
-    const userId = await AuthenticationRequired({ ctx });
-
-    const tests = await ctx.db
-      .query("tests")
-      .withIndex("by_user", (q) => q.eq("createdBy", userId))
-      .collect();
-    return tests;
-  },
-});
-
-export const getAllTestsByClassId = query({
-  args: {
-    classId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const userId = await AuthenticationRequired({ ctx });
-    const normalizedId = ctx.db.normalizeId("classes", args.classId);
-
-    if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
-    }
-    const classResponse = await ctx.db.get(normalizedId);
-
-    if (!classResponse) {
-      return null;
-    }
-
-    if (classResponse.createdBy !== userId) {
-      throw createAppError({ message: "Not authorized to access this class" });
-    }
-
-    const tests = await ctx.db
-      .query("tests")
-      .withIndex("by_class", (q) => q.eq("classId", normalizedId))
-      .collect();
-    return tests;
-  },
-});
-
-export const getTestById = query({
-  args: {
-    testId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const userId = await AuthenticationRequired({ ctx });
-    const normalizedId = ctx.db.normalizeId("tests", args.testId);
-
-    if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
-    }
-
-    const test = await ctx.db.get(normalizedId);
-    if (!test) {
-      return null;
-    }
-
-    if (test.createdBy !== userId) {
-      throw createAppError({ message: "Not authorized to access this test" });
-    }
-    return test;
-  },
-});
-
-export const getTestReviewById = query({
-  args: {
-    testReviewId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const userId = await AuthenticationRequired({ ctx });
-    const normalizedId = ctx.db.normalizeId("testReviews", args.testReviewId);
-
-    if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
-    }
-
-    const testReview = await ctx.db.get(normalizedId);
-    if (!testReview) {
-      return null;
-    }
-
-    if (testReview.createdBy !== userId) {
-      throw createAppError({
-        message: "Not authorized to access this test review",
-      });
-    }
-    return testReview;
-  },
-});
-
-export const getAllTestReviewsByUser = query({
-  handler: async (ctx) => {
-    const userId = await AuthenticationRequired({ ctx });
-
-    const testReviews = await ctx.db
-      .query("testReviews")
-      .withIndex("by_user", (q) => q.eq("createdBy", userId))
-      .collect();
-    return testReviews;
-  },
-});
-
-export const getTestReviewsByClassId = query({
-  args: {
-    classId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const userId = await AuthenticationRequired({ ctx });
-    const normalizedId = ctx.db.normalizeId("classes", args.classId);
-
-    if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
-    }
-
-    const classResponse = await ctx.db.get(normalizedId);
-
-    if (!classResponse) {
-      return null;
-    }
-
-    if (classResponse.createdBy !== userId) {
-      throw createAppError({ message: "Not authorized to access this class" });
-    }
-
-    const testReviews = await ctx.db
-      .query("testReviews")
-      .withIndex("by_class", (q) => q.eq("classId", normalizedId))
-      .collect();
-    return testReviews;
-  },
-});
-
-export const getTestReviewsByTestId = query({
-  args: {
-    testId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const userId = await AuthenticationRequired({ ctx });
-    const normalizedId = ctx.db.normalizeId("tests", args.testId);
-
-    if (!normalizedId) {
-      throw createAppError({ message: "Invalid test ID" });
-    }
-
-    const test = await ctx.db.get(normalizedId);
-    if (!test) {
-      throw createAppError({ message: "Test not found" });
-    }
-
-    if (test.createdBy !== userId) {
-      throw createAppError({ message: "Not authorized to access this test" });
-    }
-
-    const testReviews = await ctx.db
-      .query("testReviews")
-      .withIndex("by_test", (q) => q.eq("testId", normalizedId))
-      .collect();
-    return testReviews;
-  },
-});
-
-export const getWeeklyTestReviewsByUserId = query({
-  handler: async (ctx) => {
-    const userId = await AuthenticationRequired({ ctx });
-
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    const recentReviews = await ctx.db
-      .query("testReviews")
-      .withIndex("by_user", (q) => q.eq("createdBy", userId))
-      .filter((q) => q.gte(q.field("_creationTime"), sevenDaysAgo.getTime()))
-      .collect();
-
-    return recentReviews;
-  },
-});
-
-export const getWeeklyTestsByUserId = query({
-  handler: async (ctx) => {
-    const userId = await AuthenticationRequired({ ctx });
-
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    const recentTests = await ctx.db
-      .query("tests")
-      .withIndex("by_user", (q) => q.eq("createdBy", userId))
-      .filter((q) => q.gte(q.field("_creationTime"), sevenDaysAgo.getTime()))
-      .collect();
-
-    return recentTests;
-  },
-});
-
-export async function deleteTestsByClassIdBatch(
-  ctx: GenericMutationCtx<DataModel>,
-  classId: Id<"classes">,
-  userId: string,
-  cursor?: string
-) {
-  const BATCH_SIZE = 100;
-  const { page, isDone, continueCursor } = await ctx.db
-    .query("tests")
-    .withIndex("by_user", (q) => q.eq("createdBy", userId))
-    .filter((q) => q.eq(q.field("classId"), classId))
-    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
-
-  for (const test of page) {
-    await ctx.db.delete(test._id);
-  }
-
-  if (!isDone) {
-    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId,
-      userId,
-      phase: "tests",
-      cursor: continueCursor,
-    });
-  } else {
-    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId,
-      userId,
-      phase: "testReviews",
-      cursor: undefined,
-    });
-  }
-}
-
-export async function deleteTestReviewsByClassIdBatch(
-  ctx: GenericMutationCtx<DataModel>,
-  classId: Id<"classes">,
-  userId: string,
-  cursor?: string
-) {
-  const BATCH_SIZE = 100;
-  const { page, isDone, continueCursor } = await ctx.db
-    .query("testReviews")
-    .withIndex("by_user", (q) => q.eq("createdBy", userId))
-    .filter((q) => q.eq(q.field("classId"), classId))
-    .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
-
-  for (const review of page) {
-    await ctx.db.delete(review._id);
-  }
-
-  if (!isDone) {
-    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId,
-      userId,
-      phase: "testReviews",
-      cursor: continueCursor,
-    });
-  }
-}
-
-export const deleteTestReview = mutation({
-  args: { testReviewId: v.id("testReviews") },
-  handler: async (ctx, { testReviewId }) => {
-    const userId = await AuthenticationRequired({ ctx });
-
-    const testReview = await ctx.db.get(testReviewId);
-    if (!testReview) {
-      throw createAppError({
-        message: "Test review not found",
-      });
-    }
-
-    if (testReview.createdBy !== userId) {
-      throw createAppError({
-        message: "Not authorized to delete this test review",
-      });
-    }
-
-    await ctx.db.delete(testReviewId);
-
-    return { success: true };
-  },
-});
-
-export const deleteTest = mutation({
+export const deleteTestMutation = mutation({
   args: { testId: v.id("tests") },
   handler: async (ctx, { testId }) => {
     const userId = await AuthenticationRequired({ ctx });
@@ -396,15 +118,69 @@ export const deleteTest = mutation({
         message: "Test not found",
       });
     }
-
-    if (test.createdBy !== userId) {
+    const canDeleteTest = await hasPermission<"tests">(
+      ctx,
+      userId,
+      "tests",
+      "delete",
+      test
+    );
+    if (!canDeleteTest) {
       throw createAppError({
-        message: "Not authorized to delete this test",
+        message: "You are not allowed to delete this test",
       });
     }
 
     await ctx.db.delete(testId);
-
     return { success: true };
+  },
+});
+
+export const getGenerateTestFromLessonsDataQuery = query({
+  args: v.object({
+    lessonIds: v.array(v.string()),
+  }),
+  handler: async (ctx, { lessonIds }) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const normalizedLessonIds = lessonIds
+      .map((id) => ctx.db.normalizeId("lessons", id))
+      .filter((id): id is Id<"lessons"> => id !== null);
+    if (normalizedLessonIds.length === 0) {
+      throw createAppError({ message: "No valid lesson IDs provided" });
+    }
+
+    const lessons = await Promise.all(
+      normalizedLessonIds.map(async (id) => ctx.db.get(id))
+    );
+    for (const lesson of lessons) {
+      if (!lesson) continue;
+      const canViewPdfs = await hasPermission(ctx, userId, "lessons", "view", {
+        lesson,
+      });
+      if (!canViewPdfs) {
+        throw createAppError({
+          message: "Not authorized to access PDFs for one or more lessons",
+        });
+      }
+    }
+    const lessonPdfJoins = await getLessonPdfJoinsByLessonIds(
+      ctx,
+      normalizedLessonIds
+    );
+
+    const pdfIds = [...new Set(lessonPdfJoins.map((lp) => lp.pdfId))];
+
+    const pdfs = await getPdfsByIds(ctx, pdfIds);
+
+    const pdfsByLesson = sortPdfsByLessonJoins(
+      pdfs,
+      lessonPdfJoins,
+      normalizedLessonIds
+    );
+
+    const canGenerateTest = await hasPermission(ctx, userId, "tests", "create");
+
+    return { pdfsByLesson, canGenerateTest };
   },
 });

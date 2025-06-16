@@ -1,6 +1,21 @@
-import { internalMutation, type QueryCtx } from "./_generated/server";
+import { internalMutation, query, type QueryCtx } from "./_generated/server";
 import { type UserJSON } from "@clerk/backend";
 import { v, type Validator } from "convex/values";
+import { internalQuery } from "./_generated/server";
+import { AuthenticationRequired } from "./utils";
+import { getTotalStorageUsage } from "./models/materialsModel";
+
+export const getUserData = query({
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const user = await userByClerkId(ctx, userId);
+
+    const totalStorageUsage = await getTotalStorageUsage(ctx, userId);
+
+    return { ...user, totalStorageUsage };
+  },
+});
 
 export const upsertFromClerk = internalMutation({
   args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
@@ -8,7 +23,8 @@ export const upsertFromClerk = internalMutation({
     const userAttributes = {
       name: `${data.first_name} ${data.last_name}`,
       clerkId: data.id,
-      subscriptionTier: "free",
+      subscriptionTier: "free" as "free" | "starter" | "pro",
+      roles: ["user"] as ("admin" | "user")[],
     };
 
     const user = await userByClerkId(ctx, data.id);
@@ -21,6 +37,7 @@ export const upsertFromClerk = internalMutation({
         name: userAttributes.name,
         clerkId: userAttributes.clerkId,
         subscriptionTier: userAttributes.subscriptionTier,
+        roles: userAttributes.roles,
       });
     }
   },
@@ -41,6 +58,23 @@ export const deleteFromClerk = internalMutation({
   },
 });
 
+export const getCurrentUserQuery = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      return null;
+    }
+    return await userByClerkId(ctx, identity.subject);
+  },
+});
+
+export const getUserByClerkId = internalQuery({
+  args: { clerkId: v.string() },
+  handler: async (ctx, { clerkId }) => {
+    return userByClerkId(ctx, clerkId);
+  },
+});
+
 async function userByClerkId(ctx: QueryCtx, clerkId: string) {
   return await ctx.db
     .query("users")
@@ -48,16 +82,16 @@ async function userByClerkId(ctx: QueryCtx, clerkId: string) {
     .unique();
 }
 
-export async function getCurrentUserOrThrow(ctx: QueryCtx) {
-  const userRecord = await getCurrentUser(ctx);
-  if (!userRecord) throw new Error("Can't get current user");
-  return userRecord;
-}
-
-export async function getCurrentUser(ctx: QueryCtx) {
-  const identity = await ctx.auth.getUserIdentity();
-  if (identity === null) {
-    return null;
-  }
-  return await userByClerkId(ctx, identity.subject);
-}
+export const updateUser = internalMutation({
+  args: {
+    userId: v.id("users"),
+    data: v.object({
+      subscriptionTier: v.optional(
+        v.union(v.literal("free"), v.literal("starter"), v.literal("pro"))
+      ),
+    }),
+  },
+  handler: async (ctx, { userId, data }) => {
+    await ctx.db.patch(userId, data);
+  },
+});

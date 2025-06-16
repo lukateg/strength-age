@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,17 +6,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Link from "next/link";
 
 import ClassCardDropdown from "./class-card-dropdown";
 
 import { BookOpen } from "lucide-react";
 
-import { type Doc } from "convex/_generated/dataModel";
+import { type api } from "convex/_generated/api";
+import { type FunctionReturnType } from "convex/server";
 
 export default function ClassCard({
   classItem,
 }: {
-  classItem: Doc<"classes">;
+  classItem: FunctionReturnType<
+    typeof api.pages.classesPage.getClassesPageData
+  >["classesWithPermissions"][number];
 }) {
   return (
     <Card key={classItem.title} className="relative">
@@ -32,7 +34,7 @@ export default function ClassCard({
         </div>
 
         <div className="absolute top-2 right-2">
-          <ClassCardDropdown classId={classItem._id} />
+          <ClassCardDropdown classItem={classItem} />
         </div>
       </CardHeader>
 
@@ -47,9 +49,16 @@ export default function ClassCard({
               View Class
             </Button>
           </Link>
-          <Link href={`/app/classes/${classItem._id}/generate-test`}>
-            <Button className="w-full">Generate Test</Button>
-          </Link>
+          <Button disabled={!classItem.canGenerateTest}>
+            <Link
+              href={`/app/classes/${classItem._id}/generate-test`}
+              className="flex items-center justify-center"
+            >
+              {classItem.canGenerateTest
+                ? "Generate Test"
+                : "Upgrade to generate"}
+            </Link>
+          </Button>
         </div>
       </CardContent>
     </Card>

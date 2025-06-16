@@ -1,74 +1,69 @@
 import { v } from "convex/values";
 import { AuthenticationRequired, createAppError } from "./utils";
 import { internalMutation, mutation, query } from "./_generated/server";
-import { internal } from "./_generated/api";
 
+import { deleteLessonPdfsJoinByClassIdBatch } from "./models/lessonPdfsModel";
+
+import { deletePdfsByClassIdBatch } from "./models/materialsModel";
+import { hasPermission } from "./models/permissionsModel";
 import {
-  deleteLessonPdfsByClassIdBatch,
-  deleteLessonsByClassIdBatch,
-} from "./lessons";
-import {
-  deleteTestReviewsByClassIdBatch,
-  deleteTestsByClassIdBatch,
-} from "./tests";
-import { deletePdfsByClassIdBatch } from "./materials";
+  createClass,
+  deleteClass,
+  findClassByTitle,
+  getClassById,
+  getClassesByUser,
+  runDeleteClassDataBatch,
+  updateClass,
+} from "./models/classesModel";
+import { type DataModel } from "./_generated/dataModel";
+import { type GenericMutationCtx } from "convex/server";
+import { type Id } from "./_generated/dataModel";
+import { deleteLessonsByClassIdBatch } from "./models/lessonsModel";
+import { deleteTestReviewsByClassIdBatch } from "./models/testReviewsModel";
+import { deleteTestsByClassIdBatch } from "./models/testsModel";
 
 export const getAllClassesByUserId = query({
   handler: async (ctx) => {
     const userId = await AuthenticationRequired({ ctx });
 
-    return await ctx.db
+    const classes = await ctx.db
       .query("classes")
       .withIndex("by_user", (q) => q.eq("createdBy", userId))
       .collect();
+
+    return classes;
   },
 });
 
-export const getClassById = query({
-  args: { id: v.string() },
-  handler: async (ctx, { id }) => {
-    const userId = await AuthenticationRequired({ ctx });
-
-    const normalizedId = ctx.db.normalizeId("classes", id);
-
-    if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
-    }
-    const classResponse = await ctx.db.get(normalizedId);
-
-    if (classResponse?.createdBy !== userId) {
-      throw createAppError({ message: "Not authorized to access this class" });
-    }
-
-    return classResponse;
-  },
-});
-
-export const createClass = mutation({
+export const createClassMutation = mutation({
   args: { title: v.string(), description: v.string() },
   handler: async (ctx, { title, description }) => {
     const userId = await AuthenticationRequired({ ctx });
 
-    const existingClass = await ctx.db
-      .query("classes")
-      .withIndex("by_class_name", (q) => q.eq("title", title))
-      .first();
+    const canCreateClass = await hasPermission(
+      ctx,
+      userId,
+      "classes",
+      "create"
+    );
+    if (!canCreateClass) {
+      throw createAppError({
+        message: "You are not authorized to create a class",
+      });
+    }
 
-    if (existingClass) {
+    const existingClassName = await findClassByTitle(ctx, userId, title);
+    if (existingClassName) {
       throw createAppError({
         message: "Class with same title already exists.",
       });
     }
 
-    return await ctx.db.insert("classes", {
-      title,
-      description,
-      createdBy: userId,
-    });
+    return await createClass(ctx, userId, title, description);
   },
 });
 
-export const updateClass = mutation({
+export const updateClassMutation = mutation({
   args: {
     classId: v.string(),
     title: v.string(),
@@ -76,62 +71,74 @@ export const updateClass = mutation({
   },
   handler: async (ctx, { classId, title, description }) => {
     const userId = await AuthenticationRequired({ ctx });
-    const normalizedId = ctx.db.normalizeId("classes", classId);
 
+    const normalizedId = ctx.db.normalizeId("classes", classId);
     if (!normalizedId) {
       throw createAppError({ message: "Invalid item ID" });
     }
 
-    const existingClass = await ctx.db.get(normalizedId);
-    if (!existingClass) {
-      throw createAppError({ message: "Class not found" });
+    const classItem = await getClassById(ctx, normalizedId);
+    if (!classItem) {
+      throw createAppError({
+        message: "Class you are trying to update does not exist",
+      });
     }
 
-    if (existingClass.createdBy !== userId) {
-      throw createAppError({ message: "Not authorized to update this class" });
+    const canUpdateClass = await hasPermission(
+      ctx,
+      userId,
+      "classes",
+      "update",
+      classItem
+    );
+    if (!canUpdateClass) {
+      throw createAppError({
+        message: "You are not authorized to update this class",
+      });
     }
 
-    return await ctx.db.patch(normalizedId, {
-      title,
-      description,
-    });
+    return await updateClass(ctx, normalizedId, title, description);
   },
 });
 
-export const deleteClass = mutation({
+export const deleteClassMutation = mutation({
   args: { classId: v.string() },
   handler: async (ctx, { classId }) => {
     const userId = await AuthenticationRequired({ ctx });
 
     const normalizedId = ctx.db.normalizeId("classes", classId);
-
     if (!normalizedId) {
       throw createAppError({ message: "Invalid item ID" });
     }
 
-    const existingClass = await ctx.db.get(normalizedId);
-    if (!existingClass) {
-      throw new Error("Class not found");
+    const classItem = await getClassById(ctx, normalizedId);
+    if (!classItem) {
+      throw createAppError({
+        message: "Class you are trying to delete does not exist",
+      });
     }
 
-    if (existingClass.createdBy !== userId) {
-      throw new Error("Not authorized to delete this class");
-    }
-
-    await ctx.scheduler.runAfter(0, internal.classes.batchDeleteClassData, {
-      classId: normalizedId,
+    const canDeleteClass = await hasPermission(
+      ctx,
       userId,
-      phase: "lessonPdfs",
-      cursor: undefined,
-    });
+      "classes",
+      "delete",
+      classItem
+    );
+    if (!canDeleteClass) {
+      throw createAppError({
+        message: "You are not authorized to delete this class",
+      });
+    }
 
-    await ctx.db.delete(normalizedId);
+    await runDeleteClassDataBatch(ctx, normalizedId, "lessonPdfs", userId);
+    await deleteClass(ctx, normalizedId);
 
     return { success: true };
   },
 });
 
-export const batchDeleteClassData = internalMutation({
+export const deleteClassDataInternalMutation = internalMutation({
   args: {
     classId: v.id("classes"),
     userId: v.string(),
@@ -144,23 +151,66 @@ export const batchDeleteClassData = internalMutation({
     ),
     cursor: v.optional(v.string()),
   },
-  handler: async (ctx, { classId, userId, phase, cursor }) => {
+  handler: async (
+    ctx: GenericMutationCtx<DataModel>,
+    {
+      classId,
+      userId,
+      phase,
+      cursor,
+    }: {
+      classId: Id<"classes">;
+      userId: string;
+      phase: "lessons" | "pdfs" | "lessonPdfs" | "tests" | "testReviews";
+      cursor?: string;
+    }
+  ) => {
+    const normalizedClassId = ctx.db.normalizeId("classes", classId);
+    if (!normalizedClassId) {
+      throw createAppError({ message: "Invalid item ID" });
+    }
+
     try {
       switch (phase) {
         case "lessonPdfs":
-          await deleteLessonPdfsByClassIdBatch(ctx, classId, userId, cursor);
+          await deleteLessonPdfsJoinByClassIdBatch(
+            ctx,
+            normalizedClassId,
+            userId,
+            cursor
+          );
           break;
         case "lessons":
-          await deleteLessonsByClassIdBatch(ctx, classId, userId, cursor);
+          await deleteLessonsByClassIdBatch(
+            ctx,
+            normalizedClassId,
+            userId,
+            cursor
+          );
           break;
         case "pdfs":
-          await deletePdfsByClassIdBatch(ctx, classId, userId, cursor);
+          await deletePdfsByClassIdBatch(
+            ctx,
+            normalizedClassId,
+            userId,
+            cursor
+          );
           break;
         case "tests":
-          await deleteTestsByClassIdBatch(ctx, classId, userId, cursor);
+          await deleteTestsByClassIdBatch(
+            ctx,
+            normalizedClassId,
+            userId,
+            cursor
+          );
           break;
         case "testReviews":
-          await deleteTestReviewsByClassIdBatch(ctx, classId, userId, cursor);
+          await deleteTestReviewsByClassIdBatch(
+            ctx,
+            normalizedClassId,
+            userId,
+            cursor
+          );
           break;
       }
     } catch (error) {

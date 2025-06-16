@@ -3,33 +3,24 @@
 import { createContext, useContext } from "react";
 import { api } from "../../convex/_generated/api";
 
-import { useUser } from "@clerk/nextjs";
 import {
   type QueryStatus,
   useAuthenticatedQueryWithStatus,
 } from "@/hooks/use-authenticated-query";
 
 interface ClassesContextType {
-  classes: QueryStatus<typeof api.classes.getAllClassesByUserId>;
-  userId: string | undefined;
-  testsByUser: QueryStatus<typeof api.tests.getAllTestsByUser>;
+  classesPageData: QueryStatus<typeof api.pages.classesPage.getClassesPageData>;
 }
 
 const ClassContext = createContext<ClassesContextType | null>(null);
 
 export function ClassesProvider({ children }: { children: React.ReactNode }) {
-  const { user } = useUser(); // Clerk provides the logged-in user
-  const userId = user?.id;
-
-  const classes = useAuthenticatedQueryWithStatus(
-    api.classes.getAllClassesByUserId
-  );
-  const testsByUser = useAuthenticatedQueryWithStatus(
-    api.tests.getAllTestsByUser
+  const classesPageData = useAuthenticatedQueryWithStatus(
+    api.pages.classesPage.getClassesPageData
   );
 
   return (
-    <ClassContext.Provider value={{ classes, userId, testsByUser }}>
+    <ClassContext.Provider value={{ classesPageData }}>
       {children}
     </ClassContext.Provider>
   );

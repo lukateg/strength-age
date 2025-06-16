@@ -1,6 +1,5 @@
 "use client";
 
-import { useTests } from "@/providers/tests-provider";
 import { useTestMutations } from "@/hooks/use-test-mutations";
 
 import Link from "next/link";
@@ -10,9 +9,13 @@ import AlertDialogModal from "@/components/alert-dialog";
 import { Button } from "@/components/ui/button";
 
 import { Brain, Eye, Trash } from "lucide-react";
+import { type Doc } from "convex/_generated/dataModel";
 
-export default function TestReviewsSection() {
-  const { testReviewsByUser } = useTests();
+export default function AllTestReviewsCard({
+  testReviews,
+}: {
+  testReviews: Doc<"testReviews">[];
+}) {
   const { deleteTestReview } = useTestMutations();
 
   return (
@@ -20,8 +23,7 @@ export default function TestReviewsSection() {
       title="Test Reviews"
       description="All test reviews created by you"
       height="h-[400px] md:h-[650px]"
-      items={testReviewsByUser?.data}
-      isLoading={testReviewsByUser?.isPending}
+      items={testReviews}
       renderItem={(testReview) => (
         <ListItem key={testReview._id} icon={Brain} title={testReview.title}>
           <div className="flex gap-2">

@@ -1,8 +1,5 @@
 "use client";
 
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import { api } from "../../../../../../convex/_generated/api";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
@@ -19,7 +16,7 @@ interface TestDetailsProps {
   passingScore?: number; // percentage
   difficulty?: number;
   lessons: Lesson[];
-  classId: string;
+  classTitle?: string;
 }
 
 export function TestDetails({
@@ -29,12 +26,8 @@ export function TestDetails({
   passingScore,
   difficulty = 50,
   lessons,
-  classId,
+  classTitle,
 }: TestDetailsProps) {
-  const classData = useAuthenticatedQueryWithStatus(api.classes.getClassById, {
-    id: classId,
-  });
-
   const getQuestionTypeIcon = (type: QuestionType) => {
     switch (type) {
       case "multiple_choice":
@@ -99,7 +92,7 @@ export function TestDetails({
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <p className="text-sm text-muted-foreground">Class:</p>
-            <p className="text-sm font-medium">{classData.data?.title}</p>
+            <p className="text-sm font-medium">{classTitle}</p>
           </div>
 
           <div className="space-y-2">

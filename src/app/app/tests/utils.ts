@@ -3,10 +3,9 @@ import { FileText, BookOpen, Brain, Users } from "lucide-react";
 
 export const generateStats = (
   testReviewsByUser?: Doc<"testReviews">[] | null,
-  weeklyTestReviews?: Doc<"testReviews">[] | null,
   testsByUser?: Doc<"tests">[] | null
 ) => {
-  if (!testReviewsByUser || !weeklyTestReviews || !testsByUser) {
+  if (!testReviewsByUser || !testsByUser) {
     return null;
   }
 
@@ -19,6 +18,13 @@ export const generateStats = (
   const averageSuccessRate = testReviewsByUser.length
     ? Math.round((successRate / testReviewsByUser.length) * 100)
     : 0;
+
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const weeklyTestReviews = testReviewsByUser.filter(
+    (review) => review._creationTime >= sevenDaysAgo.getTime()
+  );
 
   const weeklySuccessRate = weeklyTestReviews.reduce((acc, review) => {
     const score = review.questions.filter((q) => q.isCorrect).length;

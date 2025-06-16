@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { useClassMutations } from "@/hooks/use-class-mutations";
 
 import { Button } from "@/components/ui/button";
@@ -9,15 +8,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import AlertDialogModal from "@/components/alert-dialog";
+import Link from "next/link";
+
 import { EllipsisVertical, Pencil, Trash } from "lucide-react";
 
-import { type Id } from "../../../../../../convex/_generated/dataModel";
-import AlertDialogModal from "@/components/alert-dialog";
+import { type api } from "convex/_generated/api";
+import { type FunctionReturnType } from "convex/server";
 
 export default function ClassCardDropdown({
-  classId,
+  classItem,
 }: {
-  classId: Id<"classes">;
+  classItem: FunctionReturnType<
+    typeof api.pages.classesPage.getClassesPageData
+  >["classesWithPermissions"][number];
 }) {
   const { deleteClass } = useClassMutations();
 
@@ -29,34 +33,42 @@ export default function ClassCardDropdown({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-16">
-        <Button variant="ghost" asChild className="justify-start w-full h-fit">
-          <DropdownMenuItem asChild>
-            <Link href={`/app/classes/edit-class?classId=${classId}`}>
-              <Pencil className="h-4 w-4" />
-              Edit
-            </Link>
-          </DropdownMenuItem>
-        </Button>
+        {classItem.canUpdateClass && (
+          <Button
+            variant="ghost"
+            asChild
+            className="justify-start w-full h-fit"
+          >
+            <DropdownMenuItem asChild>
+              <Link href={`/app/classes/${classItem._id}/edit-class`}>
+                <Pencil className="h-4 w-4" />
+                Edit
+              </Link>
+            </DropdownMenuItem>
+          </Button>
+        )}
 
-        <AlertDialogModal
-          title="Are you sure?"
-          description="This action cannot be undone. This will permanently delete the
+        {classItem.canDeleteClass && (
+          <AlertDialogModal
+            title="Are you sure?"
+            description="This action cannot be undone. This will permanently delete the
                 class and all associated materials, lessons, and tests."
-          onConfirm={() => deleteClass(classId)}
-          alertTrigger={
-            <Button
-              variant="destructive-ghost"
-              asChild
-              className="justify-start w-full h-fit"
-            >
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                <Trash className="h-4 w-4" />
-                Delete
-              </DropdownMenuItem>
-            </Button>
-          }
-          variant="destructive"
-        />
+            onConfirm={() => deleteClass(classItem._id)}
+            alertTrigger={
+              <Button
+                variant="destructive-ghost"
+                asChild
+                className="justify-start w-full h-fit"
+              >
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  <Trash className="h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </Button>
+            }
+            variant="destructive"
+          />
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

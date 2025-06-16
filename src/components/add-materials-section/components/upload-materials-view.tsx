@@ -12,11 +12,15 @@ import {
 interface UploadMaterialsViewProps<T extends { materialsToUpload: File[] }> {
   setValue: UseFormSetValue<T>;
   materialsToUpload: File[];
+  storageUsed: number;
+  storageLimit: number;
 }
 
 export function UploadMaterialsView<T extends { materialsToUpload: File[] }>({
   setValue,
   materialsToUpload,
+  storageUsed,
+  storageLimit,
 }: UploadMaterialsViewProps<T>) {
   const handleFileChange = (newMaterials: File[]) => {
     if (newMaterials.length) {
@@ -37,6 +41,8 @@ export function UploadMaterialsView<T extends { materialsToUpload: File[] }>({
       <FileUploadComponent
         onDrop={handleFileChange}
         existingFiles={materialsToUpload}
+        storageUsed={storageUsed}
+        storageLimit={storageLimit}
       />
 
       {!!materialsToUpload.length && (

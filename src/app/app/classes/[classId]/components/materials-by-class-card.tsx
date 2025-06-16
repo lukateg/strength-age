@@ -1,7 +1,6 @@
 "use client";
 
 import { useMaterialsMutations } from "@/hooks/use-materials-mutations";
-import { useClass } from "@/providers/class-context-provider";
 import { Button } from "@/components/ui/button";
 
 import ListCard, { ListItem } from "@/components/list-card";
@@ -9,30 +8,34 @@ import AlertDialogModal from "@/components/alert-dialog";
 import Link from "next/link";
 
 import { FileText, Trash, Eye, Upload } from "lucide-react";
+import { type Doc } from "convex/_generated/dataModel";
 
-export default function MaterialsSectionComponent({
+export default function MaterialsByClassCard({
   classId,
+  canUploadMaterials,
+  materials,
 }: {
   classId: string;
+  canUploadMaterials: boolean;
+  materials: Doc<"pdfs">[];
 }) {
-  const { materialsByClass } = useClass();
   const { deletePdf } = useMaterialsMutations();
-
-  if (materialsByClass.isError) {
-    return <div>Error loading materials</div>;
-  }
 
   return (
     <ListCard
       title="Course Materials"
       description="PDF documents and study materials"
-      items={materialsByClass.data}
-      isLoading={materialsByClass.isPending}
+      items={materials}
       cardAction={
-        <Button asChild>
-          <Link href={`/app/classes/${classId}/file-upload`}>
+        <Button disabled={!canUploadMaterials}>
+          <Link
+            href={`/app/classes/${classId}/file-upload`}
+            className="flex items-center justify-center"
+          >
             <Upload className="h-4 w-4 mr-2" />
-            Upload Materials
+            {canUploadMaterials
+              ? "Upload Materials"
+              : "Upgrade to upload materials"}
           </Link>
         </Button>
       }

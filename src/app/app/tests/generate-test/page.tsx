@@ -1,12 +1,28 @@
 "use client";
 
+import { api } from "../../../../../convex/_generated/api";
+import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
+
 import GenerateTestForm from "@/components/generate-test-form/generate-test-form";
 import RedirectBackButton from "@/components/redirect-back-button";
+import NotFound from "@/components/not-found";
 
 import { ArrowLeft } from "lucide-react";
 import { BookOpen } from "lucide-react";
 
 export default function GenerateTestPage() {
+  const generateTestPageData = useAuthenticatedQueryWithStatus(
+    api.pages.generateTestPage.getGenerateTestPageData
+  );
+
+  if (generateTestPageData.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (generateTestPageData.isError) {
+    return <NotFound />;
+  }
+
   return (
     <>
       <div className="flex items-center gap-4">
@@ -24,7 +40,7 @@ export default function GenerateTestPage() {
         </div>
       </div>
 
-      <GenerateTestForm />
+      <GenerateTestForm generatePageData={generateTestPageData.data} />
     </>
   );
 }

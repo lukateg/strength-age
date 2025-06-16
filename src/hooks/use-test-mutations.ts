@@ -20,10 +20,17 @@ export const useTestMutations = () => {
   const { user } = useUser();
   const userId = user?.id;
 
-  const uploadTestMutation = useMutation(api.tests.uploadTest);
-  const createTestReviewMutation = useMutation(api.tests.createTestReview);
-  const deleteTestReviewMutation = useMutation(api.tests.deleteTestReview);
-  const deleteTestMutation = useMutation(api.tests.deleteTest);
+  const uploadTestMutation = useMutation(api.tests.uploadTestMutation);
+  const createTestReviewMutation = useMutation(
+    api.testReviews.createTestReviewMutation
+  );
+  const deleteTestReviewMutation = useMutation(
+    api.testReviews.deleteTestReviewMutation
+  );
+  const deleteTestMutation = useMutation(api.tests.deleteTestMutation);
+  const createTestReviewShareLinkMutation = useMutation(
+    api.testReviews.createTestReviewShareLinkMutation
+  );
 
   const generateAndUploadTest = async (formData: TestFormValues) => {
     const toastId = toast.loading("Generating test...", {
@@ -117,10 +124,29 @@ export const useTestMutations = () => {
     [deleteTestMutation]
   );
 
+  const createTestReviewShareLink = useCallback(
+    async (testReviewId: Id<"testReviews">) => {
+      try {
+        const shareToken = await createTestReviewShareLinkMutation({
+          testReviewId,
+          expiresInDays: 7,
+        });
+        return shareToken;
+      } catch (error) {
+        toastError(
+          error,
+          "Failed to create test review share link. Please try again."
+        );
+      }
+    },
+    [createTestReviewShareLinkMutation]
+  );
+
   return {
     generateAndUploadTest,
     createTestReview,
     deleteTestReview,
     deleteTest,
+    createTestReviewShareLink,
   };
 };

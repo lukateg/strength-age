@@ -3,7 +3,6 @@
 import Link from "next/link";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 import { createLessonSchema } from "@/lib/schemas";
 import { useForm } from "react-hook-form";
 
@@ -26,15 +25,22 @@ import { Loader2 } from "lucide-react";
 import { type LessonFormData } from "@/types/lesson";
 import { type Doc } from "convex/_generated/dataModel";
 import { useClass } from "@/providers/class-context-provider";
+import TotalStorageUsedCard from "@/components/file-upload/total-storage-used-card";
+import { LIMITATIONS } from "@/shared/constants";
+import { useUserContext } from "@/providers/user-provider";
 
 export default function LessonForm({
   isEditMode = false,
   onSubmit,
   defaultValues,
+  materials,
+  isSubmitting,
 }: {
   isEditMode?: boolean;
   onSubmit: (data: LessonFormData) => void;
   defaultValues?: Doc<"lessons">;
+  materials: Doc<"pdfs">[];
+  isSubmitting: boolean;
 }) {
   const form = useForm<LessonFormData>({
     resolver: zodResolver(createLessonSchema),
@@ -48,11 +54,13 @@ export default function LessonForm({
   });
 
   const { handleSubmit, control, setValue, watch, clearErrors } = form;
-  const { classId, isUploading } = useLessonMutations();
-  const { materialsByClass } = useClass();
-
+  const { classId } = useClass();
+  const { user } = useUserContext();
   const materialsToUpload = watch("materialsToUpload", []);
   const showExistingMaterials = watch("showExistingMaterials", false);
+
+  const storageLimit =
+    LIMITATIONS[user.data?.subscriptionTier ?? "free"].materials;
 
   return (
     <Form {...form}>
@@ -91,17 +99,27 @@ export default function LessonForm({
           />
 
           {!isEditMode && (
-            <AddMaterialsView<LessonFormData>
-              showExistingMaterials={showExistingMaterials}
-              onShowExistingMaterialsChange={(checked) =>
-                setValue("showExistingMaterials", checked)
-              }
-              materialsToUpload={materialsToUpload}
-              allMaterials={materialsByClass.data}
-              control={control}
-              setValue={setValue}
-              clearErrors={clearErrors}
-            />
+            <>
+              <TotalStorageUsedCard
+                materialsToUpload={materialsToUpload}
+                storageUsed={user.data?.totalStorageUsage ?? 0}
+                maxStorageLimit={storageLimit}
+              />
+
+              <AddMaterialsView<LessonFormData>
+                showExistingMaterials={showExistingMaterials}
+                onShowExistingMaterialsChange={(checked) =>
+                  setValue("showExistingMaterials", checked)
+                }
+                materialsToUpload={materialsToUpload}
+                allMaterials={materials}
+                control={control}
+                setValue={setValue}
+                clearErrors={clearErrors}
+                storageUsed={user.data?.totalStorageUsage ?? 0}
+                storageLimit={storageLimit}
+              />
+            </>
           )}
 
           <div className="flex justify-end gap-4">
@@ -109,12 +127,12 @@ export default function LessonForm({
               <Link href={`/app/classes/${classId}`}>Cancel</Link>
             </Button>
 
-            <Button type="submit" disabled={isUploading}>
+            <Button type="submit" disabled={isSubmitting}>
               <div className="flex items-center">
-                {isUploading && (
+                {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {isUploading
+                {isSubmitting
                   ? `${isEditMode ? "Updating" : "Creating"} Lesson...`
                   : `${isEditMode ? "Update" : "Create"} Lesson`}
               </div>

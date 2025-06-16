@@ -10,15 +10,15 @@ import { api } from "../../../../../convex/_generated/api";
 import TestSkeleton from "./components/test-skeleton";
 import NotFound from "@/components/not-found";
 import Link from "next/link";
+import ListCard from "@/components/list-card";
+import AlertDialogModal from "@/components/alert-dialog";
+import TestSuccessRate from "./components/test-success-rate";
 
 import { useTestMutations } from "@/hooks/use-test-mutations";
-import { ArrowLeft, Brain, RefreshCcw, Eye, Trash, Play } from "lucide-react";
+import { ArrowLeft, Brain, Eye, Trash, Play } from "lucide-react";
 import { TestDetails } from "./components/test-details";
 import { TestActions } from "./components/test-actions";
 import { ListItem } from "@/components/list-card";
-import ListCard from "@/components/list-card";
-import AlertDialogModal from "@/components/alert-dialog";
-import TestIncludedMaterials from "./components/test-included-materials";
 import { useLoadingContext } from "@/providers/loading-context";
 
 export type TestQuestion = {
@@ -35,26 +35,22 @@ export default function TestPreviewPage() {
 
   const router = useRouter();
 
-  const test = useAuthenticatedQueryWithStatus(api.tests.getTestById, {
-    testId,
-  });
-
-  const testReviews = useAuthenticatedQueryWithStatus(
-    api.tests.getTestReviewsByTestId,
+  const testData = useAuthenticatedQueryWithStatus(
+    api.pages.testPage.getTestPageData,
     {
       testId,
     }
   );
 
-  if (test.isPending) {
+  if (testData.isPending) {
     return <TestSkeleton />;
   }
 
-  if (test.isError) {
+  if (testData.isError) {
     return <NotFound />;
   }
 
-  if (!test.data) {
+  if (!testData.data) {
     return <NotFound />;
   }
 
@@ -81,9 +77,9 @@ export default function TestPreviewPage() {
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <Brain className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold">{test.data.title}</h1>
+            <h1 className="text-2xl font-bold">{testData.data.title}</h1>
           </div>
-          <p className="text-muted-foreground">{test.data.description}</p>
+          <p className="text-muted-foreground">{testData.data.description}</p>
         </div>
 
         <AlertDialogModal
@@ -103,21 +99,21 @@ export default function TestPreviewPage() {
       <div className="grid gap-6 md:grid-cols-3">
         <div className="col-span-2 space-y-4">
           <TestDetails
-            questionCount={test.data.questions.length}
-            questionTypes={test.data.questionTypes}
-            difficulty={test.data.difficulty}
-            lessons={test.data.lessons.map((lesson) => ({
+            questionCount={testData.data.questions.length}
+            questionTypes={testData.data.questionTypes}
+            difficulty={testData.data.difficulty}
+            lessons={testData.data.lessons.map((lesson) => ({
               _id: lesson.lessonId,
               title: lesson.lessonTitle,
             }))}
-            classId={test.data.classId}
+            classTitle={testData.data.class?.title}
           />
 
           <TestActions handleRetakeTest={handleRetakeTest} />
         </div>
 
         <div className="col-span-1">
-          <TestIncludedMaterials testId={testId} />
+          <TestSuccessRate testReviews={testData.data.testReviews} />
         </div>
       </div>
 
@@ -125,8 +121,8 @@ export default function TestPreviewPage() {
         title="Previous Attempts"
         description="All test attempts you took"
         height="h-[400px] md:h-[300px]"
-        items={testReviews?.data}
-        isLoading={testReviews?.isPending}
+        items={testData.data.testReviews}
+        isLoading={testData.isPending}
         renderItem={(testReview) => (
           <ListItem key={testReview._id} icon={Brain} title={testReview.title}>
             <div className="flex gap-2">

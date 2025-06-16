@@ -8,23 +8,24 @@ import { useDropzone, type FileRejection } from "react-dropzone";
 
 import { UploadCloud, AlertCircle } from "lucide-react";
 
-// TODO
-// - make this component work with internal state without controls passed
-
 type FileUploadProps = {
   onDrop?: (files: File[]) => void;
   maxFiles?: number;
   maxSize?: number;
   existingFiles: File[];
+  storageUsed: number;
+  storageLimit: number;
 };
 
 export default function FileUploadComponent({
   onDrop,
   maxFiles = 10,
-  maxSize = 20971520, // 20MB
   existingFiles,
+  storageUsed,
+  storageLimit,
 }: FileUploadProps) {
   const [error, setError] = useState<string | null>(null);
+  const maxRoundUploadSize = 20971520; // 20MB
 
   const handleDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
@@ -52,7 +53,7 @@ export default function FileUploadComponent({
       //   [".docx"],
       // "text/plain": [".txt"],
     },
-    maxSize,
+    maxSize: maxRoundUploadSize,
     maxFiles,
     validator: (file) => {
       if (
@@ -74,10 +75,30 @@ export default function FileUploadComponent({
         };
       }
 
-      if (file.size > maxSize) {
+      if (file.size > maxRoundUploadSize) {
         return {
           code: "file-size-too-large",
-          message: `File size must be less than ${maxSize / 1048576}MB`,
+          message: `File size must be less than ${maxRoundUploadSize / 1048576}MB`,
+        };
+      }
+
+      const currentRoundSize = existingFiles.reduce(
+        (acc, file) => acc + file.size,
+        0
+      );
+      if (currentRoundSize + file.size > maxRoundUploadSize) {
+        return {
+          code: "round-size-too-large",
+          message: `Total upload size cannot exceed ${maxRoundUploadSize / 1048576}MB per round`,
+        };
+      }
+
+      const totalSize = (storageUsed ?? 0) + currentRoundSize + file.size;
+
+      if (totalSize > storageLimit) {
+        return {
+          code: "storage-limit-exceeded",
+          message: "Adding this file would exceed your storage limit",
         };
       }
 

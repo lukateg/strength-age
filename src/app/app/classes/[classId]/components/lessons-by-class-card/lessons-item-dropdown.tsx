@@ -34,7 +34,7 @@ export default function LessonsItemDropdown({
         <Button variant="ghost" asChild className="justify-start w-full h-fit">
           <DropdownMenuItem asChild>
             <Link
-              href={`/app/classes/${classId}/edit-lesson?lessonId=${lessonId}`}
+              href={`/app/classes/${classId}/lessons/${lessonId}/edit-lesson`}
             >
               <Pencil className="h-4 w-4" />
               Edit

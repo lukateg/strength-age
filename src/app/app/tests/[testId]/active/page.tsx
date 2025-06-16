@@ -28,7 +28,7 @@ import { createAnswerSchema } from "@/lib/schemas";
 
 import { type Id } from "../../../../../../convex/_generated/dataModel";
 import type * as z from "zod";
-import { Pause, CircleX, DoorOpen } from "lucide-react";
+import { Pause, DoorOpen } from "lucide-react";
 import { reviewTest } from "@/server/test-actions";
 
 export type TestQuestion = {
@@ -43,7 +43,7 @@ export default function ActiveTestPage() {
   const { testId }: { testId: Id<"tests"> } = useParams();
   const { setLoading, loading } = useLoadingContext();
 
-  const test = useAuthenticatedQueryWithStatus(api.tests.getTestById, {
+  const test = useAuthenticatedQueryWithStatus(api.tests.getTestByIdQuery, {
     testId,
   });
 
@@ -78,12 +78,12 @@ export default function ActiveTestPage() {
 
     try {
       const responseData = await reviewTest(requestBody);
-
       const testReviewId = await createTestReview({
         ...responseData,
         testId: test.data._id,
         classId: test.data.classId,
       });
+
       void router.replace(`/app/tests/${testId}/review/${testReviewId}`);
     } catch (error) {
       let errorMessage = "An unknown error occurred. Please try again later.";

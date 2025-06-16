@@ -3,10 +3,34 @@ import { v } from "convex/values";
 
 export default defineSchema({
   users: defineTable({
-    name: v.string(),
     clerkId: v.string(),
-    subscriptionTier: v.optional(v.string()),
+    name: v.string(),
+    subscriptionTier: v.union(
+      v.literal("free"),
+      v.literal("starter"),
+      v.literal("pro")
+    ),
+    roles: v.array(v.union(v.literal("admin"), v.literal("user"))),
   }).index("by_clerkId", ["clerkId"]),
+
+  stripeCustomers: defineTable({
+    userId: v.string(),
+    stripeCustomerId: v.string(),
+    subscriptionId: v.optional(v.string()),
+    status: v.optional(v.string()),
+    priceId: v.optional(v.string()),
+    currentPeriodStart: v.optional(v.number()),
+    currentPeriodEnd: v.optional(v.number()),
+    cancelAtPeriodEnd: v.optional(v.boolean()),
+    paymentMethod: v.optional(
+      v.object({
+        brand: v.optional(v.string()),
+        last4: v.optional(v.string()),
+      })
+    ),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_stripeCustomerId", ["stripeCustomerId"]),
 
   classes: defineTable({
     title: v.string(),
@@ -23,6 +47,7 @@ export default defineSchema({
     description: v.optional(v.string()),
   })
     .index("by_class", ["classId"])
+    .index("by_user", ["createdBy"])
     .index("by_lesson_name", ["title"]),
 
   pdfs: defineTable({
@@ -99,4 +124,14 @@ export default defineSchema({
     .index("by_user", ["createdBy"])
     .index("by_class", ["classId"])
     .index("by_test", ["testId"]),
+
+  testReviewShares: defineTable({
+    testReviewId: v.id("testReviews"),
+    createdBy: v.string(),
+    shareToken: v.string(),
+    expiresAt: v.optional(v.number()),
+    createdAt: v.number(),
+  })
+    .index("by_shareToken", ["shareToken"])
+    .index("by_testReview", ["testReviewId"]),
 });

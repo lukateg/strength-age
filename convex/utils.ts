@@ -15,6 +15,7 @@ import {
 } from "./_generated/server";
 
 import { ConvexError } from "convex/values";
+
 import { type GenericMutationCtx, type GenericQueryCtx } from "convex/server";
 import { type DataModel } from "./_generated/dataModel";
 
@@ -53,7 +54,7 @@ export async function AuthenticationRequired({
 }) {
   const identity = await ctx.auth.getUserIdentity();
   if (identity === null) {
-    throw new ConvexError({ message: "Not authenticated!" });
+    throw createAppError({ message: "Not authenticated!" });
   }
   return identity.subject;
 }
@@ -73,6 +74,7 @@ export function isAppError(
   );
 }
 
+// TODO: check if this is used
 export async function checkResourceOwnership<T extends { createdBy: string }>(
   ctx: GenericQueryCtx<DataModel> | GenericMutationCtx<DataModel>,
   resource: T | null,

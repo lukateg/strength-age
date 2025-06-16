@@ -1,11 +1,10 @@
 "use client";
 
-// import { UserNav } from "./user-nav";
-import { ModeToggle } from "./mode-toggle";
+import { ThemeToggle } from "./theme-toggle";
 
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
-import MobileSidebar from "./mobile-sidebar";
+import MobileSidebar from "./sidebar/mobile-sidebar";
 import Logo from "./logo";
 import { Button } from "./ui/button";
 
@@ -22,7 +21,7 @@ export function Header() {
         <div className="ml-auto flex items-center space-x-4">
           {/* Saved for dev purposes  */}
 
-          <ModeToggle />
+          <ThemeToggle />
 
           <SignedOut>
             <Button variant="default" asChild>

@@ -1,10 +1,10 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { api } from "../../../../convex/_generated/api";
-import { fetchMutation } from "convex/nextjs";
+import { fetchMutation, fetchQuery } from "convex/nextjs";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { z } from "zod";
-import { type Id } from "convex/_generated/dataModel";
 import { ConvexError } from "convex/values";
+
 const f = createUploadthing();
 
 // FileRouter for your app, can contain multiple FileRoutes
@@ -16,8 +16,8 @@ export const pdfFileRouter = {
        * For full list of options and defaults, see the File Route API reference
        * @see https://docs.uploadthing.com/file-routes#route-config
        */
-      maxFileSize: "8MB",
-      maxFileCount: 100,
+      maxFileSize: "16MB",
+      maxFileCount: 10,
     },
   })
     .input(
@@ -27,15 +27,28 @@ export const pdfFileRouter = {
       })
     )
     // Set permissions and file types for this FileRoute
-    .middleware(async ({ input }) => {
-      // This code runs on your server before upload
-      const user = await currentUser();
-      if (!user) throw new ConvexError({ message: "Unauthorized" });
-
+    .middleware(async ({ input, files }) => {
       const { getToken } = await auth();
+
+      // This code runs on your server before upload
       const token = await getToken({ template: "convex" });
       if (!token)
         throw new ConvexError({ message: "No Convex token available" });
+
+      const canUpload = await fetchQuery(
+        api.permissions.canUploadMaterialsQuery,
+        {
+          newFilesSize: files.reduce((acc, file) => acc + file.size, 0),
+        },
+        { token }
+      );
+
+      if (!canUpload) {
+        throw new ConvexError({
+          message:
+            "You don't have enough storage to upload materials, please upgrade subscription.",
+        });
+      }
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return {
@@ -47,7 +60,7 @@ export const pdfFileRouter = {
     .onUploadComplete(async ({ metadata, file }) => {
       try {
         const pdfId = await fetchMutation(
-          api.materials.addPdf,
+          api.materials.addPdfMutation,
           {
             classId: metadata.classId,
             pdf: { fileUrl: file.ufsUrl, name: file.name, size: file.size },
@@ -57,7 +70,7 @@ export const pdfFileRouter = {
 
         if (metadata.lessonId) {
           await fetchMutation(
-            api.lessons.addPdfToLesson,
+            api.lessons.addPdfToLessonMutation,
             {
               lessonId: metadata.lessonId,
               pdfId,

@@ -44,27 +44,33 @@ export async function POST(req: NextRequest) {
 
     const { getToken } = await auth();
     const token = await getToken({ template: "convex" });
-
     if (!token) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const pdfs = await fetchQuery(
-      api.lessons.getPDFsByLessonId,
+      api.tests.getGenerateTestFromLessonsDataQuery,
       {
-        lessonId: lessonIds[0]!,
+        lessonIds: [lessonIds[0]!],
       },
       { token }
     );
 
-    if (!pdfs.length) {
+    if (!pdfs.canGenerateTest) {
+      return Response.json(
+        { error: "Not authorized to generate test" },
+        { status: 403 }
+      );
+    }
+
+    if (!pdfs.pdfsByLesson[0]?.length) {
       return Response.json(
         { error: "No PDFs found for this lesson" },
         { status: 404 }
       );
     }
 
-    const extractionPromises = pdfs.map((pdf) =>
+    const extractionPromises = pdfs.pdfsByLesson[0].map((pdf) =>
       convertPDFToText({ fileUrl: pdf.fileUrl, _id: pdf._id })
     );
     const extractedTexts = await Promise.all(extractionPromises);
@@ -88,7 +94,7 @@ export async function POST(req: NextRequest) {
         // responseSchema: testSchema,
       },
     });
-    console.log("API: Generating quiz...", testName, description);
+
     const quiz = await generateQuizForLesson(
       model,
       successfulTexts,
@@ -99,9 +105,6 @@ export async function POST(req: NextRequest) {
       description,
       additionalInstructions
     );
-    console.log("API: Quiz generated:", quiz);
-
-    console.log("API: Quiz generated:", quiz);
     return Response.json({ response: quiz });
   } catch (error) {
     console.error("Error generating test:", error);

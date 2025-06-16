@@ -1,12 +1,46 @@
 "use client";
-
-import { useClass } from "@/providers/class-context-provider";
+import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 import GenerateTestForm from "@/components/generate-test-form/generate-test-form";
+import { api } from "../../../../../../convex/_generated/api";
+import NotFound from "@/components/not-found";
+import RedirectBackButton from "@/components/redirect-back-button";
+import { ArrowLeft, BookOpen } from "lucide-react";
 
 export default function GenerateTestPage() {
-  // TODO: refactor this to use classId from the url and use classes from the query inside of the generate test form
-  const { classId } = useClass();
+  const generatePageData = useAuthenticatedQueryWithStatus(
+    api.pages.generateTestPage.getGenerateTestPageData
+  );
 
-  return <GenerateTestForm classId={classId} />;
+  if (generatePageData.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (generatePageData.isError) {
+    return <NotFound />;
+  }
+
+  return (
+    <>
+      <div className="flex items-center gap-4">
+        <RedirectBackButton>
+          <ArrowLeft className="h-6 w-6" />
+        </RedirectBackButton>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-6 w-6 text-primary" />
+            <h1 className="text-2xl font-bold">Generate Test</h1>
+          </div>
+          <p className="text-muted-foreground">
+            Create test from existing classes and materials
+          </p>
+        </div>
+      </div>
+
+      <GenerateTestForm
+        classId={generatePageData.data?.classes[0]?._id}
+        generatePageData={generatePageData.data}
+      />
+    </>
+  );
 }

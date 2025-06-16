@@ -1,19 +1,14 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation } from "./_generated/server";
 import { AuthenticationRequired, createAppError } from "./utils";
-import { internal } from "./_generated/api";
-
-import { type DataModel, type Id } from "./_generated/dataModel";
-import { type GenericMutationCtx } from "convex/server";
 import { hasPermission } from "./permissions";
+
 import {
   createManyPdfs,
   createPdf,
-  getTotalStorageUsage,
   runDeletePdfFromUploadThing,
 } from "./models/materialsModel";
 import { deleteLessonPdfsJoinByPdfId } from "./models/lessonPdfsModel";
-import { runDeleteClassDataBatch } from "./models/classesModel";
 
 export const addPdfMutation = mutation({
   args: {

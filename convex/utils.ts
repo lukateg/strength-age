@@ -74,6 +74,7 @@ export function isAppError(
   );
 }
 
+// TODO: check if this is used
 export async function checkResourceOwnership<T extends { createdBy: string }>(
   ctx: GenericQueryCtx<DataModel> | GenericMutationCtx<DataModel>,
   resource: T | null,

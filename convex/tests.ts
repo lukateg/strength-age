@@ -4,7 +4,9 @@ import { AuthenticationRequired, createAppError } from "./utils";
 
 import { hasPermission } from "./permissions";
 import { getTestsByTitle } from "./models/testsModel";
-import { validateTestReviewShareToken } from "./models/testReviewsModel";
+import { getLessonPdfJoinsByLessonIds } from "./models/lessonPdfsModel";
+import { getPdfsByIds, sortPdfsByLessonJoins } from "./models/materialsModel";
+import { Id } from "./_generated/dataModel";
 
 export const getTestByIdQuery = query({
   args: {
@@ -131,5 +133,54 @@ export const deleteTestMutation = mutation({
 
     await ctx.db.delete(testId);
     return { success: true };
+  },
+});
+
+export const getGenerateTestFromLessonsDataQuery = query({
+  args: v.object({
+    lessonIds: v.array(v.string()),
+  }),
+  handler: async (ctx, { lessonIds }) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const normalizedLessonIds = lessonIds
+      .map((id) => ctx.db.normalizeId("lessons", id))
+      .filter((id): id is Id<"lessons"> => id !== null);
+    if (normalizedLessonIds.length === 0) {
+      throw createAppError({ message: "No valid lesson IDs provided" });
+    }
+
+    const lessons = await Promise.all(
+      normalizedLessonIds.map(async (id) => ctx.db.get(id))
+    );
+    for (const lesson of lessons) {
+      if (!lesson) continue;
+      const canViewPdfs = await hasPermission(ctx, userId, "lessons", "view", {
+        lesson,
+      });
+      if (!canViewPdfs) {
+        throw createAppError({
+          message: "Not authorized to access PDFs for one or more lessons",
+        });
+      }
+    }
+    const lessonPdfJoins = await getLessonPdfJoinsByLessonIds(
+      ctx,
+      normalizedLessonIds
+    );
+
+    const pdfIds = [...new Set(lessonPdfJoins.map((lp) => lp.pdfId))];
+
+    const pdfs = await getPdfsByIds(ctx, pdfIds);
+
+    const pdfsByLesson = sortPdfsByLessonJoins(
+      pdfs,
+      lessonPdfJoins,
+      normalizedLessonIds
+    );
+
+    const canGenerateTest = await hasPermission(ctx, userId, "tests", "create");
+
+    return { pdfsByLesson, canGenerateTest };
   },
 });

@@ -9,7 +9,7 @@ import {
 } from "@/hooks/use-authenticated-query";
 
 interface LessonContextType {
-  lesson: QueryStatus<typeof api.pages.lesson.getLessonData>;
+  lesson: QueryStatus<typeof api.pages.lessonPage.getLessonPageData>;
 }
 
 const LessonContext = createContext<LessonContextType | null>(null);
@@ -22,7 +22,7 @@ export function LessonProvider({
   lessonId: string;
 }) {
   const lesson = useAuthenticatedQueryWithStatus(
-    api.pages.lesson.getLessonData,
+    api.pages.lessonPage.getLessonPageData,
     {
       lessonId,
     }

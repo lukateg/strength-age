@@ -104,12 +104,16 @@ export const runDeleteLessonDataBatch = async (
   phase: "pdfs",
   cursor?: string
 ) => {
-  await ctx.scheduler.runAfter(0, internal.lessons.batchDeleteLessonData, {
-    lessonId,
-    userId,
-    phase,
-    cursor,
-  });
+  await ctx.scheduler.runAfter(
+    0,
+    internal.lessons.deleteLessonDataInternalMutation,
+    {
+      lessonId,
+      userId,
+      phase,
+      cursor,
+    }
+  );
 };
 
 export async function deleteLessonsByClassIdBatch(

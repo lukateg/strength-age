@@ -7,7 +7,7 @@ export default function ClassesList({
   classes,
 }: {
   classes?: FunctionReturnType<
-    typeof api.pages.classes.getClassesPageData
+    typeof api.pages.classesPage.getClassesPageData
   >["classesWithPermissions"];
 }) {
   if (classes && classes.length === 0) {

@@ -47,6 +47,6 @@ export const getClassesPageData = query({
       })
     );
 
-    return { classesWithPermissions, canCreateClass };
+    return { classesWithPermissions, permissions: { canCreateClass } };
   },
 });

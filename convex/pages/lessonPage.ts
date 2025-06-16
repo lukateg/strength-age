@@ -5,7 +5,7 @@ import { hasPermission } from "convex/permissions";
 import { getLessonById } from "../models/lessonsModel";
 import { getPdfsByLesson } from "../models/materialsModel";
 
-export const getLessonData = query({
+export const getLessonPageData = query({
   args: { lessonId: v.string() },
   handler: async (ctx, { lessonId }) => {
     const userId = await AuthenticationRequired({ ctx });

@@ -9,14 +9,14 @@ import {
 } from "@/hooks/use-authenticated-query";
 
 interface ClassesContextType {
-  classesPageData: QueryStatus<typeof api.classes.getClassesPageData>;
+  classesPageData: QueryStatus<typeof api.pages.classesPage.getClassesPageData>;
 }
 
 const ClassContext = createContext<ClassesContextType | null>(null);
 
 export function ClassesProvider({ children }: { children: React.ReactNode }) {
   const classesPageData = useAuthenticatedQueryWithStatus(
-    api.classes.getClassesPageData
+    api.pages.classesPage.getClassesPageData
   );
 
   return (

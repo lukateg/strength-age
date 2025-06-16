@@ -7,21 +7,6 @@ import { type Doc } from "./_generated/dataModel";
 import { v } from "convex/values";
 import { query } from "./_generated/server";
 
-// TODO:
-// rename this file to abac.ts
-// move the validator functions into the permissions.ts file
-// sve stvari koje mogu sinhrono resavaj sa prosledjivanjem propsa, a one koje moraju async resavaj sa async fukncijama u permission shemi
-// refactor authenticationRequired to be isAuthenticated and to return whole user object to be passed here to minimise queries
-
-// SECURED
-//  classes, can create class, class card, class dropdown - everything there secured
-//  class page, materials, tests, test reviews - everything there secured
-// lessons queries and mutations
-// test and test review
-
-// -- left api routes and mutations
-// - users, cleanup comments, stripe, webhooks, http, check all
-
 // Types
 export type Role = "admin" | "user";
 
@@ -31,11 +16,9 @@ type LessonDataType = {
   class: Doc<"classes">;
 };
 
-type ClassOnlyType = Pick<LessonDataType, "class">;
-
 // Define parameter types for each action
 type LessonActionParams = {
-  view: { class: Doc<"classes"> };
+  view: { lesson: Doc<"lessons"> };
   create: { class: Doc<"classes"> };
   update: { lesson: Doc<"lessons">; class?: Doc<"classes"> };
   delete: { lesson: Doc<"lessons">; class?: Doc<"classes"> };
@@ -111,9 +94,10 @@ type PermissionCheck<
 > =
   | boolean
   | ((
-      ctx: GenericQueryCtx<DataModel>,
-      data: ResourceActionParams[Resource][Action]
-    ) => Promise<boolean>);
+      data: ResourceActionParams[Resource][Action],
+      user: Doc<"users">,
+      ctx?: GenericQueryCtx<DataModel>
+    ) => boolean | Promise<boolean>);
 
 // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 type RolesWithPermissions = {
@@ -159,64 +143,32 @@ const ROLES: RolesWithPermissions = {
   },
   user: {
     classes: {
-      view: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["classes"]["dataType"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        return data.createdBy === userId;
+      view: (data, user) => {
+        return data.createdBy === user.clerkId;
       },
-      create: async (ctx: GenericQueryCtx<DataModel>) => {
-        const userId = await AuthenticationRequired({ ctx });
-        const user = await ctx.db
-          .query("users")
-          .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
-          .first();
-        if (!user) return false;
-        const existingClasses = await ctx.db
+      create: async (data, user, ctx) => {
+        const existingClasses = await ctx!.db
           .query("classes")
-          .withIndex("by_user", (q) => q.eq("createdBy", userId))
+          .withIndex("by_user", (q) => q.eq("createdBy", user.clerkId))
           .collect();
 
         return (
           LIMITATIONS[user.subscriptionTier].classes > existingClasses.length
         );
       },
-      update: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["classes"]["dataType"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        return data.createdBy === userId;
+      update: (data, user) => {
+        return data.createdBy === user.clerkId;
       },
-      delete: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["classes"]["dataType"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        return data.createdBy === userId;
+      delete: (data, user) => {
+        return data.createdBy === user.clerkId;
       },
     },
     lessons: {
-      view: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: LessonActionParams["view"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        return data.class.createdBy === userId;
+      view: (data, user) => {
+        return data.lesson.createdBy === user.clerkId;
       },
-      create: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: LessonActionParams["create"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        const user = await ctx.db
-          .query("users")
-          .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
-          .first();
-        if (!user) return false;
-
-        const existingLessons = await ctx.db
+      create: async (data, user, ctx) => {
+        const existingLessons = await ctx!.db
           .query("lessons")
           .withIndex("by_class", (q) => q.eq("classId", data.class._id))
           .collect();
@@ -225,43 +177,21 @@ const ROLES: RolesWithPermissions = {
           LIMITATIONS[user.subscriptionTier].lessons > existingLessons.length
         );
       },
-      update: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: LessonActionParams["update"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        return data.lesson.createdBy === userId;
+      update: (data, user) => {
+        return data.lesson.createdBy === user.clerkId;
       },
-      delete: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: LessonActionParams["delete"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        return data.lesson.createdBy === userId;
+      delete: (data, user) => {
+        return data.lesson.createdBy === user.clerkId;
       },
     },
     materials: {
-      view: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["materials"]["dataType"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        return data.createdBy === userId;
+      view: (data, user) => {
+        return data.createdBy === user.clerkId;
       },
-      create: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: MaterialActionParams["create"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        const user = await ctx.db
-          .query("users")
-          .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
-          .first();
-        if (!user) return false;
-
-        const uploadedFiles = await ctx.db
+      create: async (data, user, ctx) => {
+        const uploadedFiles = await ctx!.db
           .query("pdfs")
-          .withIndex("by_user", (q) => q.eq("createdBy", userId))
+          .withIndex("by_user", (q) => q.eq("createdBy", user.clerkId))
           .collect();
         const totalSize =
           uploadedFiles.reduce((acc, file) => acc + file.size, 0) +
@@ -269,65 +199,34 @@ const ROLES: RolesWithPermissions = {
 
         return LIMITATIONS[user.subscriptionTier].materials > totalSize;
       },
-      delete: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["materials"]["dataType"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        return data.createdBy === userId;
+      delete: (data, user) => {
+        return data.createdBy === user.clerkId;
       },
     },
     tests: {
-      view: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["tests"]["dataType"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        return data?.createdBy === userId;
+      view: (data, user) => {
+        return data?.createdBy === user.clerkId;
       },
-      create: async (ctx: GenericQueryCtx<DataModel>) => {
-        const userId = await AuthenticationRequired({ ctx });
-        const user = await ctx.db
-          .query("users")
-          .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
-          .first();
-
-        if (!user) return false;
-
-        const existingTests = await ctx.db
+      create: async (data, user, ctx) => {
+        const existingTests = await ctx!.db
           .query("tests")
-          .withIndex("by_user", (q) => q.eq("createdBy", userId))
+          .withIndex("by_user", (q) => q.eq("createdBy", user.clerkId))
           .collect();
 
         return LIMITATIONS[user.subscriptionTier].tests > existingTests.length;
       },
-      delete: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["tests"]["dataType"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        return data?.createdBy === userId;
+      delete: (data, user) => {
+        return data?.createdBy === user.clerkId;
       },
-      share: async (ctx: GenericQueryCtx<DataModel>) => {
-        const userId = await AuthenticationRequired({ ctx });
-        const user = await ctx.db
-          .query("users")
-          .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
-          .first();
-        if (!user) return false;
-
+      share: (data, user) => {
         return LIMITATIONS[user.subscriptionTier].testShare;
       },
     },
     testReviews: {
-      view: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["testReviews"]["dataType"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
+      view: async (data, user, ctx) => {
         if (data.shareToken) {
           const shareToken = data.shareToken;
-          const share = await ctx.db
+          const share = await ctx!.db
             .query("testReviewShares")
             .withIndex("by_shareToken", (q) => q.eq("shareToken", shareToken))
             .first();
@@ -336,32 +235,16 @@ const ROLES: RolesWithPermissions = {
             share && (!share.expiresAt || share.expiresAt > Date.now())
           );
         }
-        return data.testReview.createdBy === userId;
+        return data.testReview.createdBy === user.clerkId;
       },
-      delete: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["testReviews"]["dataType"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        return data.testReview.createdBy === userId;
+      delete: (data, user) => {
+        return data.testReview.createdBy === user.clerkId;
       },
-      share: async (ctx: GenericQueryCtx<DataModel>) => {
+      share: () => {
         return true;
-        // const userId = await AuthenticationRequired({ ctx });
-        // const user = await ctx.db
-        //   .query("users")
-        //   .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
-        //   .first();
-        // if (!user) return false;
-
-        // return LIMITATIONS[user.subscriptionTier].resultsShare;
       },
-      retake: async (
-        ctx: GenericQueryCtx<DataModel>,
-        data: Permissions["testReviews"]["dataType"]
-      ) => {
-        const userId = await AuthenticationRequired({ ctx });
-        return data.testReview.createdBy === userId;
+      retake: (data, user) => {
+        return data.testReview.createdBy === user.clerkId;
       },
     },
   },
@@ -383,53 +266,56 @@ export async function hasPermission<Resource extends keyof Permissions>(
   if (!user) {
     throw createAppError({ message: "User not found!" });
   }
+
+  const roles = user.roles;
+
   const results = await Promise.all(
-    user.roles.map(async (role) => {
+    roles.map(async (role) => {
       const permission = ROLES[role][resource]?.[action];
       if (permission == null) return false;
 
       if (typeof permission === "boolean") return permission;
 
-      return await permission(ctx, data!);
+      return permission(data!, user, ctx);
     })
   );
 
   return results.some(Boolean);
 }
 
-export const hasPermissionQuery = query({
+export const canUploadMaterialsQuery = query({
   args: {
-    resource: v.union(
-      v.literal("classes"),
-      v.literal("lessons"),
-      v.literal("tests"),
-      v.literal("materials"),
-      v.literal("testReviews")
-    ),
-    action: v.union(
-      v.literal("view"),
-      v.literal("create"),
-      v.literal("update"),
-      v.literal("delete"),
-      v.literal("share"),
-      v.literal("retake")
-    ),
+    newFilesSize: v.optional(v.number()),
   },
-  handler: async (ctx, { resource, action }) => {
-    const userId = await AuthenticationRequired({ ctx });
+  handler: async (ctx, args) => {
+    const identity = await AuthenticationRequired({ ctx });
     const user = await ctx.db
       .query("users")
-      .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity))
       .first();
 
     if (!user) {
       throw createAppError({ message: "User not found!" });
     }
-    return await hasPermission(
-      ctx,
-      userId,
-      resource,
-      action as keyof ResourceActionParams[typeof resource]
-    );
+
+    return hasPermission(ctx, user._id, "materials", "create", {
+      newFilesSize: args.newFilesSize ?? 0,
+    });
+  },
+});
+
+export const canCreateTestQuery = query({
+  handler: async (ctx) => {
+    const identity = await AuthenticationRequired({ ctx });
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity))
+      .first();
+
+    if (!user) {
+      throw createAppError({ message: "User not found!" });
+    }
+
+    return hasPermission(ctx, user._id, "tests", "create");
   },
 });

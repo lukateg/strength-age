@@ -44,43 +44,33 @@ export async function POST(req: NextRequest) {
 
     const { getToken } = await auth();
     const token = await getToken({ template: "convex" });
-
     if (!token) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const pdfs = await fetchQuery(
-      api.lessons.getPdfsByLessonQuery,
+      api.tests.getGenerateTestFromLessonsDataQuery,
       {
-        lessonId: lessonIds[0]!,
+        lessonIds: [lessonIds[0]!],
       },
       { token }
     );
 
-    const canGenerateTest = await fetchQuery(
-      api.permissions.hasPermissionQuery,
-      {
-        resource: "tests",
-        action: "create",
-      },
-      { token }
-    );
-
-    if (!canGenerateTest) {
+    if (!pdfs.canGenerateTest) {
       return Response.json(
-        { error: "You need to upgrade to generate tests." },
+        { error: "Not authorized to generate test" },
         { status: 403 }
       );
     }
 
-    if (!pdfs.length) {
+    if (!pdfs.pdfsByLesson[0]?.length) {
       return Response.json(
         { error: "No PDFs found for this lesson" },
         { status: 404 }
       );
     }
 
-    const extractionPromises = pdfs.map((pdf) =>
+    const extractionPromises = pdfs.pdfsByLesson[0].map((pdf) =>
       convertPDFToText({ fileUrl: pdf.fileUrl, _id: pdf._id })
     );
     const extractedTexts = await Promise.all(extractionPromises);

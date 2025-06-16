@@ -58,13 +58,6 @@ export const deleteFromClerk = internalMutation({
   },
 });
 
-async function userByClerkId(ctx: QueryCtx, clerkId: string) {
-  return await ctx.db
-    .query("users")
-    .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
-    .unique();
-}
-
 export const getCurrentUserQuery = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -81,6 +74,13 @@ export const getUserByClerkId = internalQuery({
     return userByClerkId(ctx, clerkId);
   },
 });
+
+async function userByClerkId(ctx: QueryCtx, clerkId: string) {
+  return await ctx.db
+    .query("users")
+    .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
+    .unique();
+}
 
 export const updateUser = internalMutation({
   args: {

@@ -19,7 +19,7 @@ export const getTestPageData = query({
     const test = await getTestById(ctx, normalizedId);
 
     if (!test) {
-      throw createAppError({ message: "Test not found" });
+      return null;
     }
 
     const testReviews = await getTestReviewsByTestId(ctx, normalizedId);

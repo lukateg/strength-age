@@ -9,14 +9,14 @@ import {
 } from "@/hooks/use-authenticated-query";
 
 interface TestsContextType {
-  testsPageData: QueryStatus<typeof api.pages.tests.getTestsPageDataQuery>;
+  testsPageData: QueryStatus<typeof api.pages.testsPage.getTestsPageDataQuery>;
 }
 
 const TestsContext = createContext<TestsContextType | null>(null);
 
 export function TestsProvider({ children }: { children: React.ReactNode }) {
   const testsPageData = useAuthenticatedQueryWithStatus(
-    api.pages.tests.getTestsPageDataQuery
+    api.pages.testsPage.getTestsPageDataQuery
   );
 
   return (

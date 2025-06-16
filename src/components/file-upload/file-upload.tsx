@@ -5,11 +5,8 @@ import { toast } from "sonner";
 
 import { useCallback, useState } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
-import { useUserContext } from "@/providers/user-provider";
 
 import { UploadCloud, AlertCircle } from "lucide-react";
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import { api } from "../../../convex/_generated/api";
 
 type FileUploadProps = {
   onDrop?: (files: File[]) => void;
@@ -29,11 +26,6 @@ export default function FileUploadComponent({
 }: FileUploadProps) {
   const [error, setError] = useState<string | null>(null);
   const maxRoundUploadSize = 20971520; // 20MB
-  // const { can } = useUserContext();
-
-  // const uploadedFilesSize = useAuthenticatedQueryWithStatus(
-  //   api.materials.getTotalSizeOfPdfsByUser
-  // );
 
   const handleDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {

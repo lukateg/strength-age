@@ -61,3 +61,19 @@ export async function deleteLessonPdfsJoinByClassIdBatch(
     await runDeleteClassDataBatch(ctx, classId, "pdfs", userId);
   }
 }
+
+export const getLessonPdfJoinsByLessonIds = async (
+  ctx: GenericQueryCtx<DataModel>,
+  lessonIds: Id<"lessons">[]
+) => {
+  return (
+    await Promise.all(
+      lessonIds.map((lessonId) =>
+        ctx.db
+          .query("lessonPdfs")
+          .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
+          .collect()
+      )
+    )
+  ).flat();
+};

@@ -16,7 +16,7 @@ import { generateStats } from "./utils";
 
 export default function Dashboard() {
   const dashboardData = useAuthenticatedQueryWithStatus(
-    api.pages.dashboard.getDashboardData
+    api.pages.dashboardPage.getDashboardPageData
   );
 
   const stats = generateStats(

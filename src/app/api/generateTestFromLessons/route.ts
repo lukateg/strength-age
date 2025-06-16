@@ -6,11 +6,7 @@ import {
   calculateProportionalQuestionsPerLesson,
   shuffleArray,
 } from "@/lib/utils";
-import {
-  convertPdfsToText,
-  fetchLessonPdfs,
-  generateQuizForLesson,
-} from "@/lib/server-utils";
+import { convertPdfsToText, generateQuizForLesson } from "@/lib/server-utils";
 
 import { type NextRequest } from "next/server";
 import { type Id } from "convex/_generated/dataModel";
@@ -64,12 +60,9 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const canGenerateTest = await fetchQuery(
-      api.permissions.hasPermissionQuery,
-      {
-        resource: "tests",
-        action: "create",
-      },
+    const { pdfsByLesson, canGenerateTest } = await fetchQuery(
+      api.tests.getGenerateTestFromLessonsDataQuery,
+      { lessonIds },
       { token }
     );
 
@@ -80,16 +73,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Fetch and process PDFs
-    const lessonPdfs = await fetchLessonPdfs(lessonIds, token);
-    if (!lessonPdfs.length) {
-      return Response.json(
-        { error: "No PDFs found for these lessons" },
-        { status: 404 }
-      );
-    }
-
-    const extractedTexts = await convertPdfsToText(lessonPdfs);
+    const extractedTexts = await convertPdfsToText(pdfsByLesson);
     if (!extractedTexts.length) {
       return Response.json(
         { error: "Failed to extract text from PDFs" },

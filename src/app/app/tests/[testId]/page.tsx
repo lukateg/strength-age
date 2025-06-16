@@ -36,7 +36,7 @@ export default function TestPreviewPage() {
   const router = useRouter();
 
   const testData = useAuthenticatedQueryWithStatus(
-    api.pages.test.getTestPageData,
+    api.pages.testPage.getTestPageData,
     {
       testId,
     }

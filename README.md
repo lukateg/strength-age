@@ -61,6 +61,7 @@ create reusable components for error and not found case and use them across the 
 -- class selection should become FormSelect component that gets passed the title and description or whatever and all data should be fetched on the page.
 -- check deleteLessonsByClassIdBatch TODO comment and lessonQueries used in API routes
 -- every query, mutation and action should have sufix QURY | MUTATUION | ACTION
+-- on each page check if data === null and then return NotFound since BE returns null instead of throwing an errors, errors are for permissions so we do not get strange errrors on backend all the time
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
@@ -76,11 +77,16 @@ ZA DALJE:
 -- razvrstaj permission util funkcije u poseban fajl i skini autentifikaciju i prosledjuj id iz query funkcija ili pitaj cet sta je bolje
 -- odluci koji ces pattern - fetch u contextu pa import u komponentama ili prefetch on server u komponentama
 
--- implementiraj permisije na mutacije
 -- implementiraj pattern gde fetchujes sve podatke na page (ili u context pa ih uzimas iz pagea) i onda ih prosledjujes server komponentama
--- vidi mozes li negde da izbaci async permisije ako mnogo uzimaju
 
 -- nakon svega ovoga popravljaj loading... i skeletone
+
+// TODO:
+// rename this file to abac.ts
+// move the validator functions into the permissions.ts file
+// sve stvari koje mogu sinhrono resavaj sa prosledjivanjem propsa, a one koje moraju async resavaj sa async fukncijama u permission shemi
+// refactor authenticationRequired to be isAuthenticated and to return whole user object to be passed here to minimise queries
+// extract generateTestDataQuery into util functions and corect folder
 
 PLAN:
 -- handle case when LLM is not working

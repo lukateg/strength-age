@@ -100,6 +100,23 @@ export const getPdfByLessonId = async (
     .unique();
 };
 
+export const getPdfsByIds = async (
+  ctx: GenericQueryCtx<DataModel>,
+  pdfIds: Id<"pdfs">[]
+) => {
+  const pdfs = (
+    await Promise.all(
+      pdfIds.map((pdfId) =>
+        ctx.db
+          .query("pdfs")
+          .filter((q) => q.eq(q.field("_id"), pdfId))
+          .collect()
+      )
+    )
+  ).flat();
+  return pdfs;
+};
+
 export async function getTotalStorageUsage(
   ctx: GenericQueryCtx<DataModel>,
   userId: string
@@ -144,9 +161,22 @@ export const runDeletePdfFromUploadThing = async (
 ) => {
   await ctx.scheduler.runAfter(
     0,
-    internal.uploadThingActions.deleteFileFromUploadThing,
+    internal.uploadThing.deleteFileFromUploadThing,
     {
       pdf,
     }
   );
+};
+
+export const sortPdfsByLessonJoins = (
+  pdfs: Doc<"pdfs">[],
+  lessonPdfJoins: Doc<"lessonPdfs">[],
+  lessonIds: Id<"lessons">[]
+) => {
+  return lessonIds.map((lessonId) => {
+    const lessonPdfIds = lessonPdfJoins
+      .filter((lp) => lp.lessonId === lessonId)
+      .map((lp) => lp.pdfId);
+    return pdfs.filter((pdf) => lessonPdfIds.includes(pdf._id));
+  });
 };

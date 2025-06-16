@@ -1,11 +1,8 @@
 import { v } from "convex/values";
-import { internalMutation, mutation, query } from "./_generated/server";
+import { internalMutation, mutation } from "./_generated/server";
 import { AuthenticationRequired, createAppError } from "./utils";
-import { internal } from "./_generated/api";
 
-import { type Id, type DataModel } from "./_generated/dataModel";
-import { type GenericMutationCtx } from "convex/server";
-import { getClassById, runDeleteClassDataBatch } from "./models/classesModel";
+import { getClassById } from "./models/classesModel";
 import { hasPermission } from "./permissions";
 import {
   getLessonByTitle,
@@ -16,7 +13,7 @@ import {
   runDeleteLessonDataBatch,
   deleteLesson,
 } from "./models/lessonsModel";
-import { getPdfsByLesson, getPdfByLessonId } from "./models/materialsModel";
+import { getPdfByLessonId } from "./models/materialsModel";
 
 export const createLessonMutation = mutation({
   args: v.object({
@@ -150,38 +147,6 @@ export const deleteLessonMutation = mutation({
   },
 });
 
-// REFACTOR ON ROUTES
-export const getPdfsByLessonQuery = query({
-  args: v.object({
-    lessonId: v.string(),
-  }),
-  handler: async (ctx, { lessonId }) => {
-    const userId = await AuthenticationRequired({ ctx });
-    const normalizedId = ctx.db.normalizeId("lessons", lessonId);
-
-    if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
-    }
-
-    const lesson = await ctx.db.get(normalizedId);
-    if (!lesson) {
-      throw createAppError({ message: "Lesson not found" });
-    }
-
-    const canViewPdfs = await hasPermission(ctx, userId, "lessons", "view", {
-      lesson,
-    });
-    if (!canViewPdfs) {
-      throw createAppError({
-        message: "Not authorized to access PDFs for this lesson",
-      });
-    }
-
-    const pdfsByLesson = await getPdfsByLesson(ctx, normalizedId);
-    return pdfsByLesson;
-  },
-});
-
 export const addPdfToLessonMutation = mutation({
   args: v.object({
     lessonId: v.string(),
@@ -287,7 +252,7 @@ export const addManyPdfsToLessonMutation = mutation({
   },
 });
 
-export const batchDeleteLessonData = internalMutation({
+export const deleteLessonDataInternalMutation = internalMutation({
   args: {
     lessonId: v.id("lessons"),
     userId: v.string(),

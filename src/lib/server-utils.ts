@@ -55,24 +55,6 @@ export async function convertPdfsToText(lessonPdfs: LessonPdf[][]) {
   );
 }
 
-// Extracted function to fetch PDFs
-export async function fetchLessonPdfs(
-  lessonIds: Id<"lessons">[],
-  token: string
-) {
-  return Promise.all(
-    lessonIds.map(async (lessonId) => {
-      const pdfsForLesson = await fetchQuery(
-        api.lessons.getPdfsByLessonQuery,
-        { lessonId },
-        { token }
-      );
-      console.log("PDFs for lesson", pdfsForLesson);
-      return pdfsForLesson;
-    })
-  );
-}
-
 export async function generateQuizForLesson(
   model: GenerativeModel,
   lessonTexts: string[],

@@ -30,7 +30,7 @@ import type * as permissions from "../permissions.js";
 import type * as stripe from "../stripe.js";
 import type * as testReviews from "../testReviews.js";
 import type * as tests from "../tests.js";
-import type * as uploadThingActions from "../uploadThingActions.js";
+import type * as uploadThing from "../uploadThing.js";
 import type * as users from "../users.js";
 import type * as utils from "../utils.js";
 
@@ -71,7 +71,7 @@ declare const fullApi: ApiFromModules<{
   stripe: typeof stripe;
   testReviews: typeof testReviews;
   tests: typeof tests;
-  uploadThingActions: typeof uploadThingActions;
+  uploadThing: typeof uploadThing;
   users: typeof users;
   utils: typeof utils;
 }>;

@@ -15,7 +15,7 @@ export default function RecentClasses({
   classes,
 }: {
   classes: FunctionReturnType<
-    typeof api.pages.dashboard.getDashboardData
+    typeof api.pages.dashboardPage.getDashboardPageData
   >["classes"];
 }) {
   return (

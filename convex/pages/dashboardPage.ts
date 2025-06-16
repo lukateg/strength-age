@@ -23,7 +23,7 @@ export interface DashboardData {
   };
 }
 
-export const getDashboardData = query({
+export const getDashboardPageData = query({
   handler: async (ctx): Promise<DashboardData> => {
     const userId = await AuthenticationRequired({ ctx });
 

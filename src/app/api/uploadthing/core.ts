@@ -4,6 +4,7 @@ import { fetchMutation, fetchQuery } from "convex/nextjs";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { z } from "zod";
 import { ConvexError } from "convex/values";
+import { createAppError } from "convex/utils";
 
 const f = createUploadthing();
 
@@ -33,24 +34,25 @@ export const pdfFileRouter = {
       // This code runs on your server before upload
       const token = await getToken({ template: "convex" });
       if (!token)
-        throw new ConvexError({ message: "No Convex token available" });
+        throw createAppError({ message: "No Convex token available" });
 
-      const user = await fetchQuery(
-        api.users.getCurrentUserQuery,
-        {},
+      const canUpload = await fetchQuery(
+        api.permissions.canUploadMaterialsQuery,
+        {
+          newFilesSize: files.reduce((acc, file) => acc + file.size, 0),
+        },
         { token }
       );
-
-      // const canUpload = hasPermission(user, "materials", "create", {
-      //   uploadedFilesSize: (uploadedFilesSize ?? 0) + pdfsToUploadTotalSize,
-      // });
-
-      // if (!canUpload) {
-      //   throw new ConvexError({
-      //     message:
-      //       "You don't have enough storage to upload materials, please upgrade subscription.",
-      //   });
-      // }
+      console.log(
+        ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> canUpload",
+        canUpload
+      );
+      if (!canUpload) {
+        throw createAppError({
+          message:
+            "You don't have enough storage to upload materials, please upgrade subscription.",
+        });
+      }
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return {

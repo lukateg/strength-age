@@ -6,7 +6,7 @@ import {
   type ResourceActionParams,
   type Permissions,
   ROLES,
-} from "./permissions";
+} from "./schemas/abacSchema";
 
 export async function hasPermission<Resource extends keyof Permissions>(
   ctx: GenericQueryCtx<DataModel>,

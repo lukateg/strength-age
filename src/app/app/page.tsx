@@ -1,5 +1,6 @@
 "use client";
 
+import { useUserContext } from "@/providers/user-provider";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
@@ -11,13 +12,14 @@ import NotFound from "@/components/not-found";
 import DashboardStats from "@/components/dashboard-stats";
 import MainPageSkeleton from "@/components/page-components/main-page-skeleton";
 
-import { Plus } from "lucide-react";
 import { generateStats } from "./utils";
+import { getSubscriptionTier } from "@/lib/utils";
 
 export default function Dashboard() {
   const dashboardData = useAuthenticatedQueryWithStatus(
     api.pages.dashboardPage.getDashboardPageData
   );
+  const { user } = useUserContext();
 
   const stats = generateStats(
     dashboardData.data?.classes,
@@ -25,6 +27,8 @@ export default function Dashboard() {
     dashboardData.data?.tests,
     dashboardData.data?.testReviews
   );
+
+  const subscriptionTier = getSubscriptionTier(user?.data?.subscriptionTier);
 
   if (dashboardData.isPending) {
     return <MainPageSkeleton />;
@@ -53,10 +57,10 @@ export default function Dashboard() {
             href="/app/classes/create-class"
             className={"flex items-center justify-center"}
           >
-            <Plus className="h-4 w-4 mr-2" />
-            {dashboardData.data?.permissions.canCreateClass
-              ? "Create New Class"
-              : "Upgrade to create classes"}
+            <div className="flex items-center gap-2">
+              <subscriptionTier.icon className="h-4 w-4" />
+              <span>{`${subscriptionTier.name} tier`}</span>
+            </div>
           </Link>
         </Button>
       </div>

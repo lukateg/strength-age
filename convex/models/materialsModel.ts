@@ -143,9 +143,12 @@ export async function deletePdfsByClassIdBatch(
     .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
 
   for (const pdf of page) {
-    await runDeletePdfFromUploadThing(ctx, pdf);
-
-    await ctx.db.delete(pdf._id);
+    // Only delete the PDF if it's not referenced by any lessons
+    const isReferenced = await isPdfReferencedByLessons(ctx, pdf._id);
+    if (!isReferenced) {
+      await runDeletePdfFromUploadThing(ctx, pdf);
+      await ctx.db.delete(pdf._id);
+    }
   }
 
   if (!isDone) {
@@ -154,6 +157,18 @@ export async function deletePdfsByClassIdBatch(
     await runDeleteClassDataBatch(ctx, classId, "tests", userId);
   }
 }
+
+export const isPdfReferencedByLessons = async (
+  ctx: GenericQueryCtx<DataModel>,
+  pdfId: Id<"pdfs">
+): Promise<boolean> => {
+  const references = await ctx.db
+    .query("lessonPdfs")
+    .withIndex("by_pdfId", (q) => q.eq("pdfId", pdfId))
+    .collect();
+
+  return references.length > 0;
+};
 
 export const runDeletePdfFromUploadThing = async (
   ctx: GenericMutationCtx<DataModel>,

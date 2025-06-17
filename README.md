@@ -22,6 +22,7 @@ DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS)
 -- fix test review scroll problem
 -- add progress bar from 0.1 do 1.0 version on the landing page and display that as progress from beta to live app
 -- implement subscription page and whole system for unsubscribe
+-- change create new class for subscription plan
 
 
 PATTERN TASKS:
@@ -30,15 +31,7 @@ PATTERN TASKS:
 -- create custom fetch function with convex token
 -- instead of generic message permission denied write a custom message for each permission fail
 
-// - lesson page should be new page because redirect works bad
--- retry test multiple times and redirect back willaredirect you through multiple test reviews SOLUTION: create reusable test review component and new route for test review from class, then use the review component on both routes and just different router back route in header on different routes
-
--- check deleteLessonsByClassIdBatch TODO comment and lessonQueries used in API routes
 -- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class
-
--- replace all history back buttons with normal routes and align all layout patterns
--- dashboard -> create new class -> cancel -> redirects to classes instead of dashboard
-
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)

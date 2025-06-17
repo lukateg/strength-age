@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   title: z
@@ -40,6 +41,7 @@ export default function ClassForm({
   defaultValues?: { title: string; description?: string };
   isSubmitting: boolean;
 }) {
+  const router = useRouter();
   const form = useForm<ClassFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -85,8 +87,12 @@ export default function ClassForm({
           />
 
           <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" asChild>
-              <Link href={`/app/classes`}>Cancel</Link>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.back()}
+            >
+              Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
               {isEditMode ? "Save Changes" : "Create Class"}

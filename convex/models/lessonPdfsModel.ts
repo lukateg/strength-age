@@ -58,6 +58,7 @@ export async function deleteLessonPdfsJoinByClassIdBatch(
       continueCursor
     );
   } else {
+    // After deleting all lessonPdfs for this class, safely delete PDFs that are no longer referenced
     await runDeleteClassDataBatch(ctx, classId, "pdfs", userId);
   }
 }

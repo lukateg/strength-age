@@ -13,7 +13,11 @@ import {
   runDeleteLessonDataBatch,
   deleteLesson,
 } from "./models/lessonsModel";
-import { getPdfByLessonId } from "./models/materialsModel";
+import {
+  getPdfByLessonId,
+  isPdfReferencedByLessons,
+  runDeletePdfFromUploadThing,
+} from "./models/materialsModel";
 
 export const createLessonMutation = mutation({
   args: v.object({
@@ -269,11 +273,25 @@ export const deleteLessonDataInternalMutation = internalMutation({
         .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
         .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
 
-      // Delete each PDF referenced in this batch
+      // Delete each lessonPdf entry and check if PDF should be deleted
       for (const lessonPdf of lessonPdfsBatch.page) {
-        await ctx.db.delete(lessonPdf.pdfId);
-        // Also delete the lessonPdf entry
+        // Delete the lessonPdf entry first
         await ctx.db.delete(lessonPdf._id);
+
+        // Check if this PDF is still referenced by any other lessons before deleting
+        const isReferenced = await isPdfReferencedByLessons(
+          ctx,
+          lessonPdf.pdfId
+        );
+
+        // Only delete the PDF if it's not referenced by any other lessons
+        if (!isReferenced) {
+          const pdf = await ctx.db.get(lessonPdf.pdfId);
+          if (pdf) {
+            await runDeletePdfFromUploadThing(ctx, pdf);
+            await ctx.db.delete(lessonPdf.pdfId);
+          }
+        }
       }
 
       // Continue with next batch if needed

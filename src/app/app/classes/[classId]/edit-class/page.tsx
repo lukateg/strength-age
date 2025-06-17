@@ -11,6 +11,7 @@ import DangerZone from "@/components/danger-zone";
 
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { useClass } from "@/providers/class-context-provider";
+import { getPreviousRoute } from "@/lib/utils";
 
 // TODO: choose between using the class context provider or the query
 

@@ -141,7 +141,7 @@ export async function deleteLessonsByClassIdBatch(
       continueCursor
     );
   } else {
-    // TODO: check if pdf that is on the lesson is not in another lesson and you delete it, it will be deleted from the other lesson
-    await runDeleteClassDataBatch(ctx, classId, "pdfs", userId);
+    // Move to deleting lessonPdfs join table first, then handle PDFs safely
+    await runDeleteClassDataBatch(ctx, classId, "lessonPdfs", userId);
   }
 }

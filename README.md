@@ -9,6 +9,7 @@ check before launch:
 // -- check if all routes are covered with the fallback and if URL security is enough
 // -- check if actions that require modals have them
 // -- check if -- remove all loading... 
+// -- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class (if you want that then you need to store the class name with class ID everywhere since tests and test reviews need to display from which class they are created)
 
 DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS):
 -- stats on dashboard should be class 1/1 storage used 12/50 ...
@@ -23,6 +24,8 @@ DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS)
 -- add progress bar from 0.1 do 1.0 version on the landing page and display that as progress from beta to live app
 -- implement subscription page and whole system for unsubscribe
 -- change create new class for subscription plan
+-- header overlaps the layout on the mobileå
+-- fix test review naming convention by not even adding a name and just using a design you screenshoted
 
 
 PATTERN TASKS:
@@ -31,14 +34,14 @@ PATTERN TASKS:
 -- create custom fetch function with convex token
 -- instead of generic message permission denied write a custom message for each permission fail
 
--- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class
-
-BUGS
+CAN'T REPRODUCE
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
 -- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
--- lesson title is not working when generating multiple lesson test
--- header overlaps the layout on the mobileå
+
+BUGS
 -- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
+
+
 
 PLAN:
 -- fix bugs

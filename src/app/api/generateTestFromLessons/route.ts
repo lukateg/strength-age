@@ -148,8 +148,8 @@ export async function POST(req: NextRequest) {
     );
 
     const combinedTest = {
-      title: "Comprehensive Test",
-      description: "Test covering multiple lessons",
+      title: testName,
+      description: description,
       questions: shuffleArray(allQuestions),
     };
 

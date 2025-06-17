@@ -6,17 +6,22 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useLoadingContext } from "@/providers/loading-context";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
-import TestReviewSkeleton from "./components/test-review-skeleton";
 import NotFound from "@/components/not-found";
-import TestReviewPage from "./components/test-review-page";
 
 import { type Id } from "convex/_generated/dataModel";
+import TestReviewPage from "@/app/app/tests/[testId]/review/[testReviewId]/components/test-review-page";
+import TestReviewSkeleton from "@/app/app/tests/[testId]/review/[testReviewId]/components/test-review-skeleton";
 
 export default function ReviewPage() {
   const {
     testReviewId,
     testId,
-  }: { testReviewId: Id<"testReviews">; testId: Id<"tests"> } = useParams();
+    classId,
+  }: {
+    testReviewId: Id<"testReviews">;
+    testId: Id<"tests">;
+    classId: Id<"classes">;
+  } = useParams();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const router = useRouter();
@@ -56,7 +61,7 @@ export default function ReviewPage() {
   return (
     <TestReviewPage
       testReview={testReview}
-      backRoute={`/app/tests`}
+      backRoute={`/app/classes/${classId}`}
       isViewedByOwner={permissions.isViewedByOwner}
       canTakeTest={permissions.canTakeTest}
       handleRetakeTest={handleRetakeTest}

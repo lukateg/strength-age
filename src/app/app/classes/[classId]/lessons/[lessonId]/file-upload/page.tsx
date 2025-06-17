@@ -32,6 +32,9 @@ import { useLesson } from "@/providers/lesson-provider";
 import { useUserContext } from "@/providers/user-provider";
 
 import { LIMITATIONS } from "@/shared/constants";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Pencil } from "lucide-react";
 
 type FormData = z.infer<ReturnType<typeof addLessonMaterialsSchema>>;
 
@@ -101,8 +104,16 @@ export default function FileUploadPage() {
         title={lesson.data?.title}
         description={lesson.data?.description}
         backRoute={`/app/classes/${lesson.data?.classId}/lessons/${lesson.data?.lessonId}`}
-        editRoute={`/app/classes/${lesson.data?.classId}/lessons/${lesson.data?.lessonId}/edit-lesson`}
-        editButtonText={"Edit Lesson"}
+        actionButton={
+          <Button className="text-xs md:text-base" asChild>
+            <Link
+              href={`/app/classes/${lesson.data?.classId}/lessons/${lesson.data?.lessonId}/edit-lesso`}
+            >
+              <Pencil className="h-4 w-4 mr-2" />
+              Edit Lesson
+            </Link>
+          </Button>
+        }
       />
 
       <TotalStorageUsedCard

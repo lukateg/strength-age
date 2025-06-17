@@ -1,6 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 import LessonsSectionComponent from "./components/lessons-by-class-card/lessons-by-class-card";
 import TestsSection from "./components/tests-by-class-card";
@@ -9,10 +10,12 @@ import PageSkeleton from "@/components/page-components/main-page-skeleton";
 import NotFound from "@/components/not-found";
 import SectionHeader from "@/components/page-components/page-header";
 import MaterialsByClassCard from "./components/materials-by-class-card";
+import Link from "next/link";
 
 import { useParams } from "next/navigation";
 import { useClass } from "@/providers/class-context-provider";
 
+import { Pencil } from "lucide-react";
 import { type Id } from "convex/_generated/dataModel";
 
 export default function ClassPage() {
@@ -46,12 +49,16 @@ export default function ClassPage() {
         title={class_.title}
         description={class_.description}
         backRoute={`/app/classes`}
-        editRoute={
-          permissions.canEditClass
-            ? `/app/classes/${classId}/edit-class`
-            : undefined
+        actionButton={
+          permissions.canEditClass && (
+            <Button className="text-xs md:text-base" asChild>
+              <Link href={`/app/classes/${classId}/edit-class`}>
+                <Pencil className="h-4 w-4 mr-2" />
+                Edit Class
+              </Link>
+            </Button>
+          )
         }
-        editButtonText={permissions.canEditClass ? "Edit Class" : undefined}
       />
       <Tabs defaultValue="lessons" className="space-y-6">
         <TabsList>

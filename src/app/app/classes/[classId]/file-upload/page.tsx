@@ -27,10 +27,13 @@ import SectionHeader from "@/components/page-components/page-header";
 import NotFound from "@/components/not-found";
 import PageSkeleton from "@/components/page-components/main-page-skeleton";
 import TotalStorageUsedCard from "@/components/file-upload/total-storage-used-card";
+import Link from "next/link";
 
 import { type Id } from "../../../../../../convex/_generated/dataModel";
 import { useUserContext } from "@/providers/user-provider";
 import { LIMITATIONS } from "@/shared/constants";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
 
 const formSchema = z.object({
   lessonId: z.custom<Id<"lessons">>(),
@@ -89,7 +92,6 @@ export default function FileUploadPage() {
         title={classData.data?.class_.title}
         description={classData.data?.class_.description}
         backRoute={`/app/classes/${classData.data?.class_._id}`}
-        editButtonText={"Upload Materials"}
       />
 
       <TotalStorageUsedCard

@@ -15,6 +15,9 @@ import { type Id } from "convex/_generated/dataModel";
 import PageSkeleton from "@/components/page-components/main-page-skeleton";
 import NotFound from "@/components/not-found";
 import { useLesson } from "@/providers/lesson-provider";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Pencil } from "lucide-react";
 
 export default function LessonPage() {
   const { lesson } = useLesson();
@@ -46,12 +49,18 @@ export default function LessonPage() {
         title={title}
         description={description}
         backRoute={`/app/classes/${classId}`}
-        editRoute={
-          canEditLesson
-            ? `/app/classes/${classId}/lessons/${lessonId}/edit-lesson`
-            : undefined
+        actionButton={
+          canEditLesson && (
+            <Button className="text-xs md:text-base" asChild>
+              <Link
+                href={`/app/classes/${classId}/lessons/${lessonId}/edit-lesson`}
+              >
+                <Pencil className="h-4 w-4 mr-2" />
+                Edit Lesson
+              </Link>
+            </Button>
+          )
         }
-        editButtonText={canEditLesson ? "Edit Lesson" : undefined}
       />
       <Tabs defaultValue="lessonMaterials" className="space-y-6">
         <TabsList>

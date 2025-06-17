@@ -103,7 +103,7 @@ export default function TestsSection({
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" asChild>
                   <Link
-                    href={`/app/tests/${testReview.testId}/review/${testReview._id}`}
+                    href={`/app/classes/${classId}/review/${testReview._id}`}
                   >
                     <Eye className="h-4 w-4" />
                     <span className="hidden md:block ml-2">Results</span>

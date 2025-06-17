@@ -47,7 +47,7 @@ export default function ActiveTestPage() {
     testId,
   });
 
-  const { createTestReview } = useTestMutations();
+  const { createTestReview, isPending } = useTestMutations();
   const router = useRouter();
   const questionsPerPage = 10;
   const startIndex = (currentPage - 1) * questionsPerPage;
@@ -164,7 +164,7 @@ export default function ActiveTestPage() {
           test={test.data}
           questionsPerPage={questionsPerPage}
           handleSubmit={form.handleSubmit(onSubmit)}
-          isLoading={loading}
+          isLoading={loading || isPending}
         />
       </Form>
     </ScrollArea>

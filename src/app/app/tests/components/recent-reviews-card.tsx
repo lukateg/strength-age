@@ -15,7 +15,7 @@ export default function RecentReviews({
 }: {
   testReviews: Doc<"testReviews">[];
 }) {
-  const { deleteTestReview } = useTestMutations();
+  const { deleteTestReview, isPending } = useTestMutations();
 
   const recentTestReviews = testReviews.sort((a, b) => {
     return (
@@ -54,6 +54,7 @@ export default function RecentReviews({
                   variant="outline"
                   size="sm"
                   className="text-xs md:text-base"
+                  disabled={isPending}
                 >
                   <Trash className="h-4 w-4 text-red-500" />
                 </Button>

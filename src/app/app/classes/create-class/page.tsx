@@ -11,7 +11,7 @@ import { ArrowLeft, BookOpen } from "lucide-react";
 
 export default function CreateClassPage() {
   const router = useRouter();
-  const { createClass } = useClassMutations();
+  const { createClass, isPending } = useClassMutations();
 
   const onSubmit = async (data: ClassFormData) => {
     const classId = await createClass({
@@ -38,7 +38,7 @@ export default function CreateClassPage() {
           </p>
         </div>
       </div>
-      <ClassForm onSubmit={onSubmit} />
+      <ClassForm onSubmit={onSubmit} isSubmitting={isPending} />
     </div>
   );
 }

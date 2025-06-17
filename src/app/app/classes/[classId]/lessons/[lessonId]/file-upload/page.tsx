@@ -38,8 +38,12 @@ type FormData = z.infer<ReturnType<typeof addLessonMaterialsSchema>>;
 export default function FileUploadPage() {
   const [showExistingMaterials, setShowExistingMaterials] = useState(false);
   const router = useRouter();
-  const { addExistingPdfsToLesson, uploadNewPdfsToLesson, isUploading } =
-    useLessonMutations();
+  const {
+    addExistingPdfsToLesson,
+    uploadNewPdfsToLesson,
+    isUploading,
+    isPending,
+  } = useLessonMutations();
   const { lesson } = useLesson();
   const { classData } = useClass();
   const { user } = useUserContext();
@@ -157,7 +161,7 @@ export default function FileUploadPage() {
                   className="w-full"
                   startUpload={handleUploadNewPdfsToLesson}
                   materialsToUpload={materialsToUpload}
-                  isUploading={isUploading}
+                  isUploading={isUploading || isPending}
                 />
               )}
             </CardFooter>

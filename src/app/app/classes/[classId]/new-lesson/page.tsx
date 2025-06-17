@@ -22,6 +22,7 @@ export default function NewLessonPage() {
     uploadNewPdfsToLesson,
     addExistingPdfsToLesson,
     isUploading,
+    isPending,
   } = useLessonMutations();
 
   const onSubmit = async (data: LessonFormData) => {
@@ -62,7 +63,7 @@ export default function NewLessonPage() {
       <LessonForm
         onSubmit={onSubmit}
         materials={classData.data?.materials}
-        isSubmitting={isUploading}
+        isSubmitting={isUploading || isPending}
       />
     </div>
   );

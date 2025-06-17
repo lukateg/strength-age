@@ -33,10 +33,12 @@ export default function ClassForm({
   isEditMode = false,
   onSubmit,
   defaultValues,
+  isSubmitting,
 }: {
   isEditMode?: boolean;
   onSubmit: (data: ClassFormData) => void;
   defaultValues?: { title: string; description?: string };
+  isSubmitting: boolean;
 }) {
   const form = useForm<ClassFormData>({
     resolver: zodResolver(formSchema),
@@ -86,7 +88,7 @@ export default function ClassForm({
             <Button type="button" variant="outline" asChild>
               <Link href={`/app/classes`}>Cancel</Link>
             </Button>
-            <Button type="submit">
+            <Button type="submit" disabled={isSubmitting}>
               {isEditMode ? "Save Changes" : "Create Class"}
             </Button>
           </div>

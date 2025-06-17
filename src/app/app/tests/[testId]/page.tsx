@@ -30,7 +30,7 @@ export type TestQuestion = {
 
 export default function TestPreviewPage() {
   const { testId }: { testId: string } = useParams();
-  const { deleteTestReview } = useTestMutations();
+  const { deleteTestReview, isPending } = useTestMutations();
   const { setLoading } = useLoadingContext();
 
   const router = useRouter();
@@ -150,6 +150,7 @@ export default function TestPreviewPage() {
                     variant="outline"
                     size="sm"
                     className="text-xs md:text-base"
+                    disabled={isPending}
                   >
                     <Trash className="h-4 w-4 text-red-500" />
                   </Button>

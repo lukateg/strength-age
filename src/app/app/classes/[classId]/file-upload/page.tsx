@@ -51,7 +51,8 @@ export default function FileUploadPage() {
     defaultValues: { lessonId: "", materialsToUpload: [] },
   });
   const { watch, setValue } = form;
-  const { uploadNewPdfsToLesson, isUploading } = useLessonMutations();
+  const { uploadNewPdfsToLesson, isUploading, isPending } =
+    useLessonMutations();
 
   const materialsToUpload = watch("materialsToUpload", []);
   const storageLimit =
@@ -141,7 +142,7 @@ export default function FileUploadPage() {
           <UploadFilesButton
             startUpload={handleUpload}
             materialsToUpload={materialsToUpload}
-            isUploading={isUploading}
+            isUploading={isUploading || isPending}
             className="w-full"
           />
         </CardFooter>

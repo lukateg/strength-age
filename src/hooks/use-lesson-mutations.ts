@@ -21,7 +21,7 @@ export const useLessonMutations = () => {
       throw error;
     },
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   // Mutations
   const createLessonMutation = useMutation(api.lessons.createLessonMutation);
@@ -34,6 +34,7 @@ export const useLessonMutations = () => {
   const createLesson = useCallback(
     async ({ title, description }: LessonFormData) => {
       try {
+        setIsPending(true);
         const params: CreateBasicLessonParams = {
           classId,
           title,
@@ -47,6 +48,8 @@ export const useLessonMutations = () => {
         return lessonId;
       } catch (error) {
         toastError(error, "Failed to create lesson. Please try again.");
+      } finally {
+        setIsPending(false);
       }
     },
     [classId, createLessonMutation]
@@ -63,6 +66,7 @@ export const useLessonMutations = () => {
       const toastId = toast.loading("Please wait while we upload your files");
 
       try {
+        setIsPending(true);
         await startUpload(materialsToUpload, { lessonId, classId });
 
         toast.dismiss(toastId);
@@ -70,6 +74,8 @@ export const useLessonMutations = () => {
       } catch (error) {
         toast.dismiss(toastId);
         toastError(error, "Failed to upload PDFs to lesson. Please try again");
+      } finally {
+        setIsPending(false);
       }
     },
     [startUpload, classId]
@@ -78,6 +84,7 @@ export const useLessonMutations = () => {
   const addExistingPdfsToLesson = useCallback(
     async (params: AddPDFToLessonParams) => {
       try {
+        setIsPending(true);
         await addManyPdfsToLessonMutation({
           lessonId: params.lessonId,
           pdfIds: params.pdfIds,
@@ -87,6 +94,8 @@ export const useLessonMutations = () => {
         toast.success("PDFs added to lesson successfully");
       } catch (error) {
         toastError(error, "Failed to add PDFs to lesson. Please try again");
+      } finally {
+        setIsPending(false);
       }
     },
     [addManyPdfsToLessonMutation, classId]
@@ -96,6 +105,7 @@ export const useLessonMutations = () => {
     async (data: { lessonId: string } & EditLessonFormData) => {
       const { lessonId, title, description } = data;
       try {
+        setIsPending(true);
         await updateLessonMutation({
           lessonId,
           title,
@@ -105,6 +115,8 @@ export const useLessonMutations = () => {
         toast.success("Lesson updated successfully");
       } catch (error) {
         toastError(error, "Failed to update lesson. Please try again.");
+      } finally {
+        setIsPending(false);
       }
     },
     [updateLessonMutation]
@@ -113,17 +125,20 @@ export const useLessonMutations = () => {
   const deleteLesson = useCallback(
     async (lessonId: string) => {
       try {
+        setIsPending(true);
         await deleteLessonMutation({ lessonId });
         toast.success("Lesson deleted successfully");
       } catch (error) {
         toastError(error, "Failed to delete lesson. Please try again.");
+      } finally {
+        setIsPending(false);
       }
     },
     [deleteLessonMutation]
   );
 
   return {
-    isLoading,
+    isPending,
     isUploading,
     createLesson,
     addExistingPdfsToLesson,

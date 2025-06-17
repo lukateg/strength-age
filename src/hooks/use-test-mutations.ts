@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 
@@ -19,6 +19,7 @@ type CreateTestReviewParams = z.infer<typeof testReviewSchema> & {
 export const useTestMutations = () => {
   const { user } = useUser();
   const userId = user?.id;
+  const [isPending, setIsPending] = useState(false);
 
   const uploadTestMutation = useMutation(api.tests.uploadTestMutation);
   const createTestReviewMutation = useMutation(
@@ -39,6 +40,7 @@ export const useTestMutations = () => {
     });
 
     try {
+      setIsPending(true);
       generateTest(formData)
         .then(async (generatedTest) => {
           await uploadTestMutation({
@@ -60,6 +62,8 @@ export const useTestMutations = () => {
     } catch (error) {
       toast.dismiss(toastId);
       toastError(error, "Failed to create test. Please try again.");
+    } finally {
+      setIsPending(false);
     }
   };
 
@@ -70,6 +74,7 @@ export const useTestMutations = () => {
           toast.error("You must be logged in to create a test review.");
           return;
         }
+        setIsPending(true);
         const testReviewId = await createTestReviewMutation({
           testId: params.testId,
           title: params.title,
@@ -83,6 +88,8 @@ export const useTestMutations = () => {
         return testReviewId;
       } catch (error) {
         toastError(error, "Failed to create test review. Please try again.");
+      } finally {
+        setIsPending(false);
       }
     },
     [userId, createTestReviewMutation]
@@ -96,11 +103,14 @@ export const useTestMutations = () => {
       });
 
       try {
+        setIsPending(true);
         await deleteTestReviewMutation({ testReviewId });
         toast.dismiss(toastId);
         toast.success("Test review deleted successfully.");
       } catch (error) {
         toastError(error, "Failed to delete test review. Please try again.");
+      } finally {
+        setIsPending(false);
       }
     },
     [deleteTestReviewMutation]
@@ -114,11 +124,14 @@ export const useTestMutations = () => {
       });
 
       try {
+        setIsPending(true);
         await deleteTestMutation({ testId });
         toast.dismiss(toastId);
         toast.success("Test deleted successfully.");
       } catch (error) {
         toastError(error, "Failed to delete test. Please try again.");
+      } finally {
+        setIsPending(false);
       }
     },
     [deleteTestMutation]
@@ -127,6 +140,7 @@ export const useTestMutations = () => {
   const createTestReviewShareLink = useCallback(
     async (testReviewId: Id<"testReviews">) => {
       try {
+        setIsPending(true);
         const shareToken = await createTestReviewShareLinkMutation({
           testReviewId,
           expiresInDays: 7,
@@ -137,6 +151,8 @@ export const useTestMutations = () => {
           error,
           "Failed to create test review share link. Please try again."
         );
+      } finally {
+        setIsPending(false);
       }
     },
     [createTestReviewShareLinkMutation]
@@ -148,5 +164,6 @@ export const useTestMutations = () => {
     deleteTestReview,
     deleteTest,
     createTestReviewShareLink,
+    isPending,
   };
 };

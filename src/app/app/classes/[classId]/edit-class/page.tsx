@@ -16,7 +16,7 @@ import { useClass } from "@/providers/class-context-provider";
 
 export default function EditClassPage() {
   const router = useRouter();
-  const { updateClass, deleteClass } = useClassMutations();
+  const { updateClass, deleteClass, isPending } = useClassMutations();
   const { classData } = useClass();
 
   const onSubmit = (data: ClassFormData) => {
@@ -72,6 +72,7 @@ export default function EditClassPage() {
           defaultValues={{
             ...classData.data.class_,
           }}
+          isSubmitting={isPending}
         />
 
         {permissions.canDeleteClass && (
@@ -81,6 +82,7 @@ export default function EditClassPage() {
                 router.back()
               );
             }}
+            isDeleting={isPending}
           />
         )}
       </>

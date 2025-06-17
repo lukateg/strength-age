@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { toast } from "sonner";
@@ -14,6 +14,8 @@ type UpdateClassParams = CreateClassParams & {
 };
 
 export const useClassMutations = () => {
+  const [isPending, setIsPending] = useState(false);
+
   const createClassMutation = useMutation(api.classes.createClassMutation);
   const updateClassMutation = useMutation(api.classes.updateClassMutation);
   const deleteClassMutation = useMutation(api.classes.deleteClassMutation);
@@ -21,6 +23,7 @@ export const useClassMutations = () => {
   const createClass = useCallback(
     async (params: CreateClassParams) => {
       try {
+        setIsPending(true);
         const classId = await createClassMutation({
           ...params,
         });
@@ -30,6 +33,8 @@ export const useClassMutations = () => {
       } catch (error) {
         console.log("error", error);
         toastError(error, "Failed to create class. Please try again.");
+      } finally {
+        setIsPending(false);
       }
     },
     [createClassMutation]
@@ -38,6 +43,7 @@ export const useClassMutations = () => {
   const updateClass = useCallback(
     async (params: UpdateClassParams) => {
       try {
+        setIsPending(true);
         await updateClassMutation({
           ...params,
         });
@@ -46,6 +52,8 @@ export const useClassMutations = () => {
       } catch (error) {
         console.error("Failed to update class:", error);
         toastError(error, "Failed to update class. Please try again.");
+      } finally {
+        setIsPending(false);
       }
     },
     [updateClassMutation]
@@ -54,6 +62,7 @@ export const useClassMutations = () => {
   const deleteClass = useCallback(
     async (classId: string) => {
       try {
+        setIsPending(true);
         await deleteClassMutation({
           classId,
         });
@@ -62,6 +71,8 @@ export const useClassMutations = () => {
       } catch (error) {
         console.error("Failed to delete class:", error);
         toastError(error, "Failed to delete class. Please try again.");
+      } finally {
+        setIsPending(false);
       }
     },
     [deleteClassMutation]
@@ -71,5 +82,6 @@ export const useClassMutations = () => {
     createClass,
     updateClass,
     deleteClass,
+    isPending,
   };
 };

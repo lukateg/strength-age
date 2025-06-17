@@ -9,55 +9,45 @@ check before launch:
 // -- check if actions that require modals have them
 // -- check if -- remove all loading... 
 
+DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS):
+-- redesigne test results page
+-- create main page components like main-header and reuse it across the app
+-- add mobile design to the sections again
+-- write a bit better confirm test modal text
+-- fix test review naming convention
+-- fix test review scroll problem
 
-create consistent pattern for loading skeleton, error case, and not found case
-create reusable components for error and not found case and use them across the app
+PATTERN TASKS:
+-- each component add suspense, error boundary with custom permission support and skeleton, then in the component handle only noData scenario
 -- create custom fetch function with convex token
+
+
+
 // - add error messages for each scenario that comes from the server -- iplement solution across all mutations and whole app
 // - lesson page should be new page because redirect works bad
 -- handle case when statusText: 'Service Unavailable' 
 -- implement proper error boundary
-
+-- on removing fileToBeUploaded clear the errors from validator
 -- retry test multiple times and redirect back willaredirect you through multiple test reviews SOLUTION: create reusable test review component and new route for test review from class, then use the review component on both routes and just different router back route in header on different routes
 
-
--- create main page components like main-header and reuse it across the app
 -- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class
 -- replace all history back buttons with normal routes and align all layout patterns
 
--- add mobile design to the sections again
 -- dashboard -> create new class -> cancel -> redirects to classes instead of dashboard
 -- if you delete users table and user is not deleted from clerk next time he logs in he will not be in the users table
--- retake test opens up a modal that will have instructions and a green confirmation button to start the test
 -- incrementing test name index if already exists with same name should maybe work just in case of the first element
--- check if you can persist test generation on the backend so it continues even if user refreshes the page
--- check why progress bar slows down the app
--- implement AI cost monitoring setup
+
 -- implement unsubscribe payment system
--- change all const userId = await AuthenticationRequired({ ctx }); to const user = await checkPermission({ ctx });
--- checkAuthentication returns user and checkPermission takes user and checks permissions
--- secure routes
--- same way as you added checkPermission add checkValidation on BE, so it goes in order checkAuthentification(), checkPermission(), checkValidation()
 -- instead of generic message permission denied write a custom message for each permission fail
--- protect each rotute with canView permission, then add pending,error,success state, then add no data, data state
--- make lesson-form-view and add-materials-section same component and fix their names relative to file names and match logic fully
--- on removing fileToBeUploaded clear the errors from validator
--- when generating a test you check if test with same name exists but you check if it exists in whole database and not just for a specific user
+
 -- stats on dashboard should be class 1/1 storage used 12/50 ...
--- write a bit better confirm test modal text
--- fix test review naming convention
--- fix test review scroll problem
--- redesigne test results page
--- choose between checking permissions in each page or returning error if no permission on the backend and then handling it on front with just error
--- all permission errors should have specific error type and message and should be checked on backend and if error is present display it on frontend so you don't need to check on frontend if user has permission actually to perform an action
--- write a script to remove shared tokens once they expire
+
 -- fetch should be removed from all display table components and data should be passed from the page
 -- dodaj dobre reusable skeletone na prava mesta, obrisi svaku permissions ili authentication poruku
 -- class selection should become FormSelect component that gets passed the title and description or whatever and all data should be fetched on the page.
 -- check deleteLessonsByClassIdBatch TODO comment and lessonQueries used in API routes
 -- every query, mutation and action should have sufix QURY | MUTATUION | ACTION
 -- on each page check if data === null and then return NotFound since BE returns null instead of throwing an errors, errors are for permissions so we do not get strange errrors on backend all the time
--- test fast clicks on submit buttons that do not have disabled props
 -- add progress bar from 0.1 do 1.0 version on the landing page and display that as progress from beta to live app
 
 BUGS
@@ -78,7 +68,7 @@ PLAN:
 -- fix bugs
 
 -- Add analytics
-
+-- implement AI cost monitoring setup
 -- SEO check
 -- restyle the and add colors to the app
 -- check free tier plan and work out permisions and free plan for max classes, lessons, pdfs in mb, tests and ai token calls
@@ -118,6 +108,9 @@ FUTURE FEATURES AND ENHANCMENTS:
 - pausing or blockin test when changing window while working on a test
 - mobile app and generating summaries from materials and voice lessons from summaries
 - creating app with 1 empty lesson and 1 regular should notify user that one is empty
+- same way as you add authRequired and checkPermission, add checkValidation if needed
+-- check if you can persist test generation on the backend so it continues even if user refreshes the page
+
 
 # MVP Plan for Teach.me
 ✅ Core Features

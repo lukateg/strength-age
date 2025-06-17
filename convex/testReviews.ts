@@ -3,10 +3,43 @@ import { hasPermission } from "./models/permissionsModel";
 import { AuthenticationRequired, createAppError } from "./utils";
 import { mutation, query } from "./_generated/server";
 import {
-  getTestReviewsByTitle,
+  getTestReviewsWithSameTitleByUser,
   validateTestReviewShareToken,
 } from "./models/testReviewsModel";
 import { nanoid } from "nanoid";
+
+import { internalMutation, internalAction } from "./_generated/server";
+import { internal } from "./_generated/api";
+
+export const deleteExpiredShareLinks = internalMutation({
+  args: {
+    batchSize: v.optional(v.number()),
+  },
+  handler: async (ctx, { batchSize = 100 }) => {
+    const now = Date.now();
+    // Query for expired share links
+    const shares = await ctx.db
+      .query("testReviewShares")
+      .withIndex("expiresAt", (q) => q.lt("expiresAt", now))
+      .take(batchSize);
+
+    for (const share of shares) {
+      await ctx.db.delete(share._id);
+    }
+
+    // Check if there are more expired links to process
+    const hasMore = await ctx.db
+      .query("testReviewShares")
+      .withIndex("expiresAt", (q) => q.lt("expiresAt", now))
+      .take(1)
+      .then((results) => results.length > 0);
+
+    return {
+      deletedCount: shares.length,
+      hasMore,
+    };
+  },
+});
 
 export const validateTestReviewShareLinkQuery = query({
   args: {
@@ -72,7 +105,11 @@ export const createTestReviewMutation = mutation({
     const userId = await AuthenticationRequired({ ctx });
 
     let title = args.title;
-    const existingTestReview = await getTestReviewsByTitle(ctx, args.title);
+    const existingTestReview = await getTestReviewsWithSameTitleByUser(
+      ctx,
+      args.title,
+      userId
+    );
     if (existingTestReview.length > 0) {
       title = `${args.title} #${existingTestReview.length + 1}`;
     }
@@ -131,5 +168,36 @@ export const createTestReviewShareLinkMutation = mutation({
     });
 
     return shareToken;
+  },
+});
+
+export const scheduledDeleteExpiredShareLinks = internalAction({
+  args: {
+    batchSize: v.optional(v.number()),
+  },
+  handler: async (ctx, { batchSize = 100 }) => {
+    let hasMore = true;
+    let totalDeleted = 0;
+
+    while (hasMore) {
+      const result = await ctx.runMutation(
+        internal.testReviews.deleteExpiredShareLinks,
+        {
+          batchSize,
+        }
+      );
+
+      totalDeleted += result.deletedCount;
+      hasMore = result.hasMore;
+
+      // If we deleted any records, wait a bit before the next batch
+      if (result.deletedCount > 0) {
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 second delay
+      }
+    }
+
+    return {
+      totalDeleted,
+    };
   },
 });

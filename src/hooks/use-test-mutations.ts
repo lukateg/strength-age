@@ -35,7 +35,8 @@ export const useTestMutations = () => {
 
   const generateAndUploadTest = async (formData: TestFormValues) => {
     const toastId = toast.loading("Generating test...", {
-      description: "Please wait while we generate your test.",
+      description:
+        "Please don't refresh or close the page, or the test will be lost.",
       duration: Infinity,
     });
 

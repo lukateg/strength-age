@@ -123,7 +123,8 @@ export default defineSchema({
   })
     .index("by_user", ["createdBy"])
     .index("by_class", ["classId"])
-    .index("by_test", ["testId"]),
+    .index("by_test", ["testId"])
+    .index("by_title_and_user", ["title", "createdBy"]),
 
   testReviewShares: defineTable({
     testReviewId: v.id("testReviews"),
@@ -133,5 +134,6 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index("by_shareToken", ["shareToken"])
-    .index("by_testReview", ["testReviewId"]),
+    .index("by_testReview", ["testReviewId"])
+    .index("expiresAt", ["expiresAt"]),
 });

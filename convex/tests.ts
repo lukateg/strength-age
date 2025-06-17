@@ -3,7 +3,7 @@ import { mutation, query } from "./_generated/server";
 import { AuthenticationRequired, createAppError } from "./utils";
 
 import { hasPermission } from "./models/permissionsModel";
-import { getTestsByTitle } from "./models/testsModel";
+import { getTestsWithSameTitleByUser } from "./models/testsModel";
 import { getLessonPdfJoinsByLessonIds } from "./models/lessonPdfsModel";
 import { getPdfsByIds, sortPdfsByLessonJoins } from "./models/materialsModel";
 import { type Id } from "./_generated/dataModel";
@@ -86,7 +86,11 @@ export const uploadTestMutation = mutation({
     }
 
     let title = args.title;
-    const existingTest = await getTestsByTitle(ctx, args.title);
+    const existingTest = await getTestsWithSameTitleByUser(
+      ctx,
+      args.title,
+      userId
+    );
     if (existingTest.length > 0) {
       title = `${args.title} #${existingTest.length + 1}`;
     }
@@ -142,7 +146,7 @@ export const getGenerateTestFromLessonsDataQuery = query({
   }),
   handler: async (ctx, { lessonIds }) => {
     const userId = await AuthenticationRequired({ ctx });
-
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> userId", userId);
     const normalizedLessonIds = lessonIds
       .map((id) => ctx.db.normalizeId("lessons", id))
       .filter((id): id is Id<"lessons"> => id !== null);

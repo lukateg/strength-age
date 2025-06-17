@@ -63,7 +63,9 @@ export const useLessonMutations = () => {
       materialsToUpload: File[];
       lessonId?: string;
     }) => {
-      const toastId = toast.loading("Please wait while we upload your files");
+      const toastId = toast.loading(
+        "We're uploading your files. Please don't refresh or close the page."
+      );
 
       try {
         setIsPending(true);

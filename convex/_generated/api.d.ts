@@ -29,7 +29,6 @@ import type * as pages_testPage from "../pages/testPage.js";
 import type * as pages_testReviewPage from "../pages/testReviewPage.js";
 import type * as pages_testsPage from "../pages/testsPage.js";
 import type * as permissions from "../permissions.js";
-import type * as permissionsModel from "../permissionsModel.js";
 import type * as schemas_abacSchema from "../schemas/abacSchema.js";
 import type * as stripe from "../stripe.js";
 import type * as testReviews from "../testReviews.js";
@@ -74,7 +73,6 @@ declare const fullApi: ApiFromModules<{
   "pages/testReviewPage": typeof pages_testReviewPage;
   "pages/testsPage": typeof pages_testsPage;
   permissions: typeof permissions;
-  permissionsModel: typeof permissionsModel;
   "schemas/abacSchema": typeof schemas_abacSchema;
   stripe: typeof stripe;
   testReviews: typeof testReviews;

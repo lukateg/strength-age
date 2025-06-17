@@ -61,6 +61,7 @@ export default function ReviewPage() {
     setLoading(false);
   };
 
+  // here
   const handleBackNavigation = () => {
     router.back();
   };
@@ -104,7 +105,7 @@ export default function ReviewPage() {
           </div>
         </div>
 
-        {!permissions.isViewedByOwner && (
+        {permissions.isViewedByOwner && (
           <TestReviewShareButton testReviewId={testReviewId} testId={testId} />
         )}
       </div>
@@ -119,7 +120,7 @@ export default function ReviewPage() {
               </CardTitle>
             </div>
 
-            {!permissions.isViewedByOwner && (
+            {permissions.canTakeTest && (
               <AlertDialogModal
                 onConfirm={handleRetakeTest}
                 title="Retake Test"

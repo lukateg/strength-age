@@ -28,7 +28,7 @@ import { createAnswerSchema } from "@/lib/schemas";
 
 import { type Id } from "../../../../../../convex/_generated/dataModel";
 import type * as z from "zod";
-import { Pause, DoorOpen } from "lucide-react";
+import { Pause, DoorOpen, Wand2 } from "lucide-react";
 import { reviewTest } from "@/server/test-actions";
 
 export type TestQuestion = {
@@ -96,6 +96,35 @@ export default function ActiveTestPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const autoFillAnswers = () => {
+    if (!test.data) return;
+
+    type FormValues = z.infer<ReturnType<typeof createAnswerSchema>>;
+    const answers: Partial<FormValues> = {};
+
+    test.data.questions.forEach((question, index) => {
+      const fieldName = `question-${index}` as never;
+      if (question.questionType === "multiple_choice") {
+        // For multiple choice, select the first answer
+        answers[fieldName] = [question.availableAnswers?.[0] ?? ""] as never;
+      } else if (question.questionType === "true_false") {
+        // For true/false, select "True"
+        answers[fieldName] = "True" as never;
+      } else if (question.questionType === "short_answer") {
+        // For short answer, fill with a placeholder
+        answers[fieldName] = "Sample answer" as never;
+      }
+    });
+
+    // Set all form values at once
+    Object.entries(answers).forEach(([key, value]) => {
+      form.setValue(
+        key as keyof FormValues,
+        value as FormValues[keyof FormValues]
+      );
+    });
   };
 
   if (test.isPending) {
@@ -167,6 +196,18 @@ export default function ActiveTestPage() {
           isLoading={loading || isPending}
         />
       </Form>
+
+      {process.env.NODE_ENV === "development" && (
+        <Button
+          onClick={autoFillAnswers}
+          className="fixed bottom-4 right-4 z-50"
+          variant="secondary"
+          size="icon"
+          title="Auto-fill answers (Dev only)"
+        >
+          <Wand2 className="h-4 w-4" />
+        </Button>
+      )}
     </ScrollArea>
   );
 }

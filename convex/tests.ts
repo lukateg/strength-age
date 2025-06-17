@@ -146,7 +146,6 @@ export const getGenerateTestFromLessonsDataQuery = query({
   }),
   handler: async (ctx, { lessonIds }) => {
     const userId = await AuthenticationRequired({ ctx });
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> userId", userId);
     const normalizedLessonIds = lessonIds
       .map((id) => ctx.db.normalizeId("lessons", id))
       .filter((id): id is Id<"lessons"> => id !== null);

@@ -29,7 +29,7 @@ export type ClassActionParams = {
 };
 
 export type TestActionParams = {
-  view: Doc<"tests">;
+  view: Doc<"tests"> | null;
   create: void;
   delete: Doc<"tests">;
   share: void;
@@ -239,9 +239,6 @@ export const ROLES: RolesWithPermissions = {
       },
       share: () => {
         return true;
-      },
-      retake: (data, user) => {
-        return data.testReview.createdBy === user.clerkId;
       },
     },
   },

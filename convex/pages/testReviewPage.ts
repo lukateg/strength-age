@@ -41,12 +41,14 @@ export const getTestReviewByIdQuery = query({
       });
     }
 
-    const canRetakeTest = await hasPermission<"testReviews">(
+    const test = await ctx.db.get(testReview.testId);
+
+    const canTakeTest = await hasPermission<"tests">(
       ctx,
       userId,
-      "testReviews",
-      "retake",
-      { testReview }
+      "tests",
+      "view",
+      test
     );
 
     const canDeleteTestReview = await hasPermission<"testReviews">(
@@ -59,7 +61,7 @@ export const getTestReviewByIdQuery = query({
     return {
       testReview,
       permissions: {
-        canRetakeTest,
+        canTakeTest,
         canDeleteTestReview,
         isViewedByOwner: canDeleteTestReview,
       },

@@ -1,6 +1,7 @@
 # TODO:
 
 check before launch:
+// -- fetch should be removed from all display table components and data should be passed from the page
 // -- add maximum pdf size per prompt when generating text so we do not exceed AI limit per prompt
 // -- check if all components are server components if possible
 // -- check if there is better retry logic when calling the AI
@@ -10,61 +11,43 @@ check before launch:
 // -- check if -- remove all loading... 
 
 DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS):
--- redesigne test results page
+-- stats on dashboard should be class 1/1 storage used 12/50 ...
+-- redesign test results page
+-- nakon svega ovoga popravljaj loading... i skeletone
+-- edit section buttons should have beautifull purple design maybe
 -- create main page components like main-header and reuse it across the app
 -- add mobile design to the sections again
 -- write a bit better confirm test modal text
 -- fix test review naming convention
 -- fix test review scroll problem
+-- add progress bar from 0.1 do 1.0 version on the landing page and display that as progress from beta to live app
+-- implement subscription page and whole system for unsubscribe
+
 
 PATTERN TASKS:
+-- on each page check if data === null and then return NotFound since BE returns null instead of throwing an errors, errors are for permissions so we do not get strange errrors on backend all the time
 -- each component add suspense, error boundary with custom permission support and skeleton, then in the component handle only noData scenario
 -- create custom fetch function with convex token
-
-
-
-// - add error messages for each scenario that comes from the server -- iplement solution across all mutations and whole app
-// - lesson page should be new page because redirect works bad
--- handle case when statusText: 'Service Unavailable' 
--- implement proper error boundary
--- on removing fileToBeUploaded clear the errors from validator
--- retry test multiple times and redirect back willaredirect you through multiple test reviews SOLUTION: create reusable test review component and new route for test review from class, then use the review component on both routes and just different router back route in header on different routes
-
--- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class
--- replace all history back buttons with normal routes and align all layout patterns
-
--- dashboard -> create new class -> cancel -> redirects to classes instead of dashboard
--- if you delete users table and user is not deleted from clerk next time he logs in he will not be in the users table
--- incrementing test name index if already exists with same name should maybe work just in case of the first element
-
--- implement unsubscribe payment system
 -- instead of generic message permission denied write a custom message for each permission fail
 
--- stats on dashboard should be class 1/1 storage used 12/50 ...
+// - lesson page should be new page because redirect works bad
+-- retry test multiple times and redirect back willaredirect you through multiple test reviews SOLUTION: create reusable test review component and new route for test review from class, then use the review component on both routes and just different router back route in header on different routes
 
--- fetch should be removed from all display table components and data should be passed from the page
--- dodaj dobre reusable skeletone na prava mesta, obrisi svaku permissions ili authentication poruku
--- class selection should become FormSelect component that gets passed the title and description or whatever and all data should be fetched on the page.
 -- check deleteLessonsByClassIdBatch TODO comment and lessonQueries used in API routes
--- every query, mutation and action should have sufix QURY | MUTATUION | ACTION
--- on each page check if data === null and then return NotFound since BE returns null instead of throwing an errors, errors are for permissions so we do not get strange errrors on backend all the time
--- add progress bar from 0.1 do 1.0 version on the landing page and display that as progress from beta to live app
+-- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class
+
+-- replace all history back buttons with normal routes and align all layout patterns
+-- dashboard -> create new class -> cancel -> redirects to classes instead of dashboard
+
 
 BUGS
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
 -- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
 -- lesson title is not working when generating multiple lesson test
 -- header overlaps the layout on the mobileå
-
-
-
--- nakon svega ovoga popravljaj loading... i skeletone
-
-RESTYLE:
--- edit section buttons should have beautifull purple design maybe
+-- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
 
 PLAN:
--- handle case when LLM is not working
 -- fix bugs
 
 -- Add analytics

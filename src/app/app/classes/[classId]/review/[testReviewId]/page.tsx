@@ -6,11 +6,21 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useLoadingContext } from "@/providers/loading-context";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
-import NotFound from "@/components/not-found";
+import NotFound from "@/components/data-query/not-found";
+import QueryState from "@/components/data-query/query-state";
 
-import { type Id } from "convex/_generated/dataModel";
+import { type Id, type Doc } from "convex/_generated/dataModel";
 import TestReviewPage from "@/app/app/tests/[testId]/review/[testReviewId]/components/test-review-page";
 import TestReviewSkeleton from "@/app/app/tests/[testId]/review/[testReviewId]/components/test-review-skeleton";
+
+// type TestReviewData = {
+//   testReview: Doc<"testReviews">;
+//   permissions: {
+//     canTakeTest: boolean;
+//     canDeleteTestReview: boolean;
+//     isViewedByOwner: boolean;
+//   };
+// };
 
 export default function ReviewPage() {
   const {
@@ -44,27 +54,24 @@ export default function ReviewPage() {
     setLoading(false);
   };
 
-  if (testReviewPageData.isPending) {
-    return <TestReviewSkeleton />;
-  }
-
-  if (testReviewPageData.isError) {
-    return <NotFound />;
-  }
-
-  if (!testReviewPageData.data) {
-    return <NotFound />;
-  }
-
-  const { testReview, permissions } = testReviewPageData.data;
-
   return (
-    <TestReviewPage
-      testReview={testReview}
-      backRoute={`/app/classes/${classId}`}
-      isViewedByOwner={permissions.isViewedByOwner}
-      canTakeTest={permissions.canTakeTest}
-      handleRetakeTest={handleRetakeTest}
-    />
+    <QueryState
+      query={testReviewPageData}
+      pending={<TestReviewSkeleton />}
+      noData={<NotFound />}
+    >
+      {(data) => {
+        const { testReview, permissions } = data;
+        return (
+          <TestReviewPage
+            testReview={testReview}
+            backRoute={`/app/classes/${classId}`}
+            isViewedByOwner={permissions.isViewedByOwner}
+            canTakeTest={permissions.canTakeTest}
+            handleRetakeTest={handleRetakeTest}
+          />
+        );
+      }}
+    </QueryState>
   );
 }

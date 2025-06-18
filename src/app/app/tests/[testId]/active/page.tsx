@@ -17,7 +17,7 @@ import TestFooter from "../components/test-footer";
 import QuestionAnswers from "../components/question-answers";
 import TestSkeleton from "../components/test-skeleton";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
-import NotFound from "@/components/not-found";
+import NotFound from "@/components/data-query/not-found";
 
 import { useTestMutations } from "@/hooks/use-test-mutations";
 import { useLoadingContext } from "@/providers/loading-context";
@@ -30,6 +30,7 @@ import { type Id } from "../../../../../../convex/_generated/dataModel";
 import type * as z from "zod";
 import { Pause, DoorOpen, Wand2 } from "lucide-react";
 import { reviewTest } from "@/server/test-actions";
+import QueryState from "@/components/data-query/query-state";
 
 export type TestQuestion = {
   questionText: string;
@@ -127,87 +128,87 @@ export default function ActiveTestPage() {
     });
   };
 
-  if (test.isPending) {
-    return <TestSkeleton />;
-  }
-
-  if (test.isError) {
-    return <NotFound />;
-  }
-
   return (
-    <ScrollArea className="max-w-screen-xl mx-auto">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="mb-8 text-center flex justify-between items-center">
-            <Button
-              variant="destructive"
-              onClick={() => router.back()}
-              type="button"
-            >
-              <DoorOpen />
-              <span className="hidden md:block md:ml-2">Exit Test</span>
-            </Button>
-            <div className="flex-1">
-              <h1 className="text-xl md:text-3xl font-bold mb-2">
-                {test.data?.title}
-              </h1>
-              <p className="text-sm md:text-base text-muted-foreground hidden md:block">
-                {test.data?.description}
-              </p>
-            </div>
+    <QueryState query={test} pending={<TestSkeleton />} noData={<NotFound />}>
+      {(data) => {
+        return (
+          <ScrollArea className="max-w-screen-xl mx-auto">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <div className="mb-8 text-center flex justify-between items-center">
+                  <Button
+                    variant="destructive"
+                    onClick={() => router.back()}
+                    type="button"
+                  >
+                    <DoorOpen />
+                    <span className="hidden md:block md:ml-2">Exit Test</span>
+                  </Button>
+                  <div className="flex-1">
+                    <h1 className="text-xl md:text-3xl font-bold mb-2">
+                      {data.title}
+                    </h1>
+                    <p className="text-sm md:text-base text-muted-foreground hidden md:block">
+                      {data.description}
+                    </p>
+                  </div>
 
-            <FeatureFlagTooltip>
-              <Button type="button" variant="positive" disabled>
-                <Pause className="w-4 h-4" />
-                <span className="hidden md:block md:ml-2">Pause Test</span>
-              </Button>
-            </FeatureFlagTooltip>
-          </div>
-
-          <div className="space-y-6 ">
-            {currentQuestions?.map((question, index) => (
-              <Card key={startIndex + index} className="p-6">
-                <div className="mb-4">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    Question {startIndex + index + 1}
-                  </span>
-                  <h2 className="text-xl font-semibold mt-1">
-                    {question.questionText}
-                  </h2>
+                  <FeatureFlagTooltip>
+                    <Button type="button" variant="positive" disabled>
+                      <Pause className="w-4 h-4" />
+                      <span className="hidden md:block md:ml-2">
+                        Pause Test
+                      </span>
+                    </Button>
+                  </FeatureFlagTooltip>
                 </div>
 
-                <QuestionAnswers
-                  question={question}
-                  index={index}
-                  startIndex={startIndex}
-                  form={form}
-                />
-              </Card>
-            ))}
-          </div>
-        </form>
-        <TestFooter
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          test={test.data}
-          questionsPerPage={questionsPerPage}
-          handleSubmit={form.handleSubmit(onSubmit)}
-          isLoading={loading || isPending}
-        />
-      </Form>
+                <div className="space-y-6 ">
+                  {currentQuestions?.map((question, index) => (
+                    <Card key={startIndex + index} className="p-6">
+                      <div className="mb-4">
+                        <span className="text-sm font-medium text-muted-foreground">
+                          Question {startIndex + index + 1}
+                        </span>
+                        <h2 className="text-xl font-semibold mt-1">
+                          {question.questionText}
+                        </h2>
+                      </div>
 
-      {process.env.NODE_ENV === "development" && (
-        <Button
-          onClick={autoFillAnswers}
-          className="fixed bottom-4 right-4 z-50"
-          variant="secondary"
-          size="icon"
-          title="Auto-fill answers (Dev only)"
-        >
-          <Wand2 className="h-4 w-4" />
-        </Button>
-      )}
-    </ScrollArea>
+                      <QuestionAnswers
+                        question={question}
+                        index={index}
+                        startIndex={startIndex}
+                        form={form}
+                      />
+                    </Card>
+                  ))}
+                </div>
+              </form>
+              <TestFooter
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                test={data}
+                questionsPerPage={questionsPerPage}
+                handleSubmit={form.handleSubmit(onSubmit)}
+                isLoading={loading || isPending}
+              />
+            </Form>
+
+            {process.env.NODE_ENV === "development" && (
+              <Button
+                onClick={autoFillAnswers}
+                className="fixed bottom-4 right-4 z-50"
+                variant="secondary"
+                size="icon"
+                title="Auto-fill answers (Dev only)"
+              >
+                <Wand2 className="h-4 w-4" />
+              </Button>
+            )}
+          </ScrollArea>
+        );
+      }}
+    </QueryState>
   );
 }

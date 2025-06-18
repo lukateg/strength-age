@@ -30,12 +30,18 @@ export const createLessonMutation = mutation({
 
     const normalizedId = ctx.db.normalizeId("classes", classId);
     if (!normalizedId) {
-      throw createAppError({ message: "Invalid class ID" });
+      throw createAppError({
+        message: "Invalid class ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const class_ = await getClassById(ctx, normalizedId);
     if (!class_) {
-      throw createAppError({ message: "Class not found" });
+      throw createAppError({
+        message: "Class not found",
+        statusCode: "NOT_FOUND",
+      });
     }
 
     const canCreateLesson = await hasPermission(
@@ -48,13 +54,17 @@ export const createLessonMutation = mutation({
       }
     );
     if (!canCreateLesson) {
-      throw createAppError({ message: "Not authorized to create a lesson" });
+      throw createAppError({
+        message: "Not authorized to create a lesson",
+        statusCode: "PERMISSION_DENIED",
+      });
     }
 
     const existingLesson = await getLessonByTitle(ctx, userId, title);
     if (existingLesson) {
       throw createAppError({
         message: "Lesson with same title already exists.",
+        statusCode: "VALIDATION_ERROR",
       });
     }
 
@@ -80,12 +90,18 @@ export const updateLessonMutation = mutation({
 
     const normalizedId = ctx.db.normalizeId("lessons", lessonId);
     if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
+      throw createAppError({
+        message: "Invalid item ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const lesson = await getLessonById(ctx, normalizedId);
     if (!lesson) {
-      throw createAppError({ message: "Lesson not found" });
+      throw createAppError({
+        message: "Lesson not found",
+        statusCode: "NOT_FOUND",
+      });
     }
 
     const canUpdateLesson = await hasPermission(
@@ -98,13 +114,17 @@ export const updateLessonMutation = mutation({
       }
     );
     if (!canUpdateLesson) {
-      throw createAppError({ message: "Not authorized to update this lesson" });
+      throw createAppError({
+        message: "Not authorized to update this lesson",
+        statusCode: "PERMISSION_DENIED",
+      });
     }
 
     const existingLesson = await getLessonByTitle(ctx, userId, title);
     if (existingLesson) {
       throw createAppError({
         message: "Lesson with same title already exists.",
+        statusCode: "VALIDATION_ERROR",
       });
     }
 
@@ -123,12 +143,18 @@ export const deleteLessonMutation = mutation({
 
     const normalizedId = ctx.db.normalizeId("lessons", lessonId);
     if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
+      throw createAppError({
+        message: "Invalid item ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const existingLesson = await getLessonById(ctx, normalizedId);
     if (!existingLesson) {
-      throw createAppError({ message: "Lesson not found" });
+      throw createAppError({
+        message: "Lesson not found",
+        statusCode: "NOT_FOUND",
+      });
     }
 
     const canDeleteLesson = await hasPermission(
@@ -141,7 +167,10 @@ export const deleteLessonMutation = mutation({
       }
     );
     if (!canDeleteLesson) {
-      throw createAppError({ message: "Not authorized to delete this lesson" });
+      throw createAppError({
+        message: "Not authorized to delete this lesson",
+        statusCode: "PERMISSION_DENIED",
+      });
     }
 
     await runDeleteLessonDataBatch(ctx, normalizedId, userId, "pdfs");
@@ -162,17 +191,26 @@ export const addPdfToLessonMutation = mutation({
 
     const normalizedClassId = ctx.db.normalizeId("classes", classId);
     if (!normalizedClassId) {
-      throw createAppError({ message: "Invalid class ID" });
+      throw createAppError({
+        message: "Invalid class ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const normalizedLessonId = ctx.db.normalizeId("lessons", lessonId);
     if (!normalizedLessonId) {
-      throw createAppError({ message: "Invalid lesson ID" });
+      throw createAppError({
+        message: "Invalid lesson ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const lesson = await ctx.db.get(normalizedLessonId);
     if (!lesson) {
-      throw createAppError({ message: "Lesson not found" });
+      throw createAppError({
+        message: "Lesson not found",
+        statusCode: "NOT_FOUND",
+      });
     }
 
     const canAddPdfToLesson = await hasPermission(
@@ -185,12 +223,16 @@ export const addPdfToLessonMutation = mutation({
     if (!canAddPdfToLesson) {
       throw createAppError({
         message: "Not authorized to add PDF to this lesson",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 
     const isInLesson = await getPdfByLessonId(ctx, normalizedLessonId, pdfId);
     if (isInLesson) {
-      throw createAppError({ message: "PDF already added to this lesson" });
+      throw createAppError({
+        message: "PDF already added to this lesson",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     await addPdfToLesson(ctx, {
@@ -212,21 +254,33 @@ export const addManyPdfsToLessonMutation = mutation({
 
     const normalizedClassId = ctx.db.normalizeId("classes", classId);
     if (!normalizedClassId) {
-      throw createAppError({ message: "Invalid item ID" });
+      throw createAppError({
+        message: "Invalid item ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const classResponse = await ctx.db.get(normalizedClassId);
     if (!classResponse) {
-      throw createAppError({ message: "Class not found" });
+      throw createAppError({
+        message: "Class not found",
+        statusCode: "NOT_FOUND",
+      });
     }
     const normalizedLessonId = ctx.db.normalizeId("lessons", lessonId);
     if (!normalizedLessonId) {
-      throw createAppError({ message: "Lesson not found" });
+      throw createAppError({
+        message: "Lesson not found",
+        statusCode: "NOT_FOUND",
+      });
     }
 
     const lesson = await getLessonById(ctx, normalizedLessonId);
     if (!lesson) {
-      throw createAppError({ message: "Lesson not found" });
+      throw createAppError({
+        message: "Lesson not found",
+        statusCode: "NOT_FOUND",
+      });
     }
 
     const canAddPdfsToLesson = await hasPermission(
@@ -239,6 +293,7 @@ export const addManyPdfsToLessonMutation = mutation({
     if (!canAddPdfsToLesson) {
       throw createAppError({
         message: "Not authorized to add PDFs to this lesson",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 

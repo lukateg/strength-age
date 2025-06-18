@@ -13,7 +13,10 @@ import { AuthenticationRequired, createAppError } from "./utils";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   console.error("Missing STRIPE_SECRET_KEY environment variable");
-  throw createAppError({ message: "Missing STRIPE_SECRET_KEY" });
+  throw createAppError({
+    message: "Missing STRIPE_SECRET_KEY",
+    statusCode: "SERVER_ERROR",
+  });
 }
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -70,6 +73,7 @@ export const handleStripeCheckout = action({
         console.log("[STRIPE CHECKOUT] Customer is already on this plan");
         throw createAppError({
           message: "You're already subscribed to this plan",
+          statusCode: "VALIDATION_ERROR",
         });
       }
     }
@@ -93,11 +97,17 @@ export const handleStripeCheckout = action({
       });
     } catch (err) {
       console.error("[STRIPE CHECKOUT] Error creating checkout session", err);
-      throw createAppError({ message: "Failed to create checkout session" });
+      throw createAppError({
+        message: "Failed to create checkout session",
+        statusCode: "SERVER_ERROR",
+      });
     }
     if (!checkoutSession.url) {
       console.error("Failed to create checkout session");
-      throw createAppError({ message: "Failed to create checkout session" });
+      throw createAppError({
+        message: "Failed to create checkout session",
+        statusCode: "SERVER_ERROR",
+      });
     }
 
     console.log("[STRIPE CHECKOUT] Checkout session URL", {
@@ -117,7 +127,10 @@ export const triggerStripeSyncForUser = action({
       { userId }
     );
     if (!stripeCustomer) {
-      throw createAppError({ message: "No stripe customer found" });
+      throw createAppError({
+        message: "No stripe customer found",
+        statusCode: "SERVER_ERROR",
+      });
     }
 
     await ctx.runAction(internal.stripe.syncStripeDataToConvex, {
@@ -506,7 +519,10 @@ export const getSubscriptionStatus = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw createAppError({ message: "Not authenticated" });
+      throw createAppError({
+        message: "Not authenticated",
+        statusCode: "AUTHENTICATION_ERROR",
+      });
     }
 
     const user = await ctx.db
@@ -515,7 +531,10 @@ export const getSubscriptionStatus = query({
       .first();
 
     if (!user) {
-      throw createAppError({ message: "User not found" });
+      throw createAppError({
+        message: "User not found",
+        statusCode: "NOT_FOUND",
+      });
     }
 
     const stripeCustomer = await ctx.db

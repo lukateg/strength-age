@@ -61,6 +61,7 @@ export const deleteTestReviewMutation = mutation({
     if (!testReview) {
       throw createAppError({
         message: "Test review you are trying to delete does not exist",
+        statusCode: "NOT_FOUND",
       });
     }
     const canDeleteTestReview = await hasPermission<"testReviews">(
@@ -75,6 +76,7 @@ export const deleteTestReviewMutation = mutation({
     if (!canDeleteTestReview) {
       throw createAppError({
         message: "You are not allowed to delete this test review",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 
@@ -137,7 +139,10 @@ export const createTestReviewShareLinkMutation = mutation({
     // Check if user has permission to share this test review
     const testReview = await ctx.db.get(testReviewId);
     if (!testReview) {
-      throw createAppError({ message: "Test review not found" });
+      throw createAppError({
+        message: "Test review not found",
+        statusCode: "NOT_FOUND",
+      });
     }
 
     const canShareTestReview = await hasPermission<"testReviews">(
@@ -150,6 +155,7 @@ export const createTestReviewShareLinkMutation = mutation({
     if (!canShareTestReview) {
       throw createAppError({
         message: "You are not allowed to share this test review",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 

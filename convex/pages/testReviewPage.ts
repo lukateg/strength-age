@@ -21,7 +21,10 @@ export const getTestReviewByIdQuery = query({
     if (shareToken) {
       const isValid = await validateTestReviewShareToken(ctx, shareToken);
       if (!isValid) {
-        throw createAppError({ message: "Invalid share token" });
+        throw createAppError({
+          message: "Invalid share token",
+          statusCode: "VALIDATION_ERROR",
+        });
       }
     }
 
@@ -38,6 +41,7 @@ export const getTestReviewByIdQuery = query({
     if (!canViewTestReview) {
       throw createAppError({
         message: "You are not allowed to view this test review",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 

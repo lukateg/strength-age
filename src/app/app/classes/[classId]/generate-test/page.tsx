@@ -1,10 +1,12 @@
 "use client";
+
+import { api } from "../../../../../../convex/_generated/api";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 import GenerateTestForm from "@/components/generate-test-form/generate-test-form";
-import { api } from "../../../../../../convex/_generated/api";
-import NotFound from "@/components/not-found";
+import NotFound from "@/components/data-query/not-found";
 import RedirectBackButton from "@/components/redirect-back-button";
+import QueryState from "@/components/data-query/query-state";
 import { ArrowLeft, BookOpen } from "lucide-react";
 
 export default function GenerateTestPage() {
@@ -12,35 +14,38 @@ export default function GenerateTestPage() {
     api.pages.generateTestPage.getGenerateTestPageData
   );
 
-  if (generatePageData.isPending) {
-    return <div>Loading...</div>;
-  }
-
-  if (generatePageData.isError) {
-    return <NotFound />;
-  }
-
   return (
-    <>
-      <div className="flex items-center gap-4">
-        <RedirectBackButton>
-          <ArrowLeft className="h-6 w-6" />
-        </RedirectBackButton>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold">Generate Test</h1>
-          </div>
-          <p className="text-muted-foreground">
-            Create test from existing classes and materials
-          </p>
-        </div>
-      </div>
+    <QueryState
+      query={generatePageData}
+      pending={<div>Loading...</div>}
+      noData={<NotFound />}
+    >
+      {(data) => {
+        const { classes } = data;
+        return (
+          <>
+            <div className="flex items-center gap-4">
+              <RedirectBackButton>
+                <ArrowLeft className="h-6 w-6" />
+              </RedirectBackButton>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="h-6 w-6 text-primary" />
+                  <h1 className="text-2xl font-bold">Generate Test</h1>
+                </div>
+                <p className="text-muted-foreground">
+                  Create test from existing classes and materials
+                </p>
+              </div>
+            </div>
 
-      <GenerateTestForm
-        classId={generatePageData.data?.classes[0]?._id}
-        generatePageData={generatePageData.data}
-      />
-    </>
+            <GenerateTestForm
+              classId={classes[0]?._id}
+              generatePageData={data}
+            />
+          </>
+        );
+      }}
+    </QueryState>
   );
 }

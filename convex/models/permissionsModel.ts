@@ -20,7 +20,10 @@ export async function hasPermission<Resource extends keyof Permissions>(
     .first();
 
   if (!user) {
-    throw createAppError({ message: "User not found!" });
+    throw createAppError({
+      message: "User not found!",
+      statusCode: "NOT_FOUND",
+    });
   }
 
   const roles = user.roles;

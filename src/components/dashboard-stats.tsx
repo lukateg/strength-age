@@ -1,24 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { type LucideProps } from "lucide-react";
-import { type RefAttributes } from "react";
-import { type ForwardRefExoticComponent } from "react";
+import { generateStats } from "../app/app/tests/utils";
+import { type Doc } from "convex/_generated/dataModel";
 
 type DashboardStatsProps = {
-  stats:
-    | {
-        title: string;
-        icon: ForwardRefExoticComponent<
-          Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
-        >;
-        value: number | string;
-        description: string;
-      }[]
-    | null;
+  testReviews: Doc<"testReviews">[];
+  tests: Doc<"tests">[];
 };
 
-export default function DashboardStats({ stats }: DashboardStatsProps) {
+export default function DashboardStats({
+  testReviews,
+  tests,
+}: DashboardStatsProps) {
+  const stats = generateStats(testReviews, tests);
+
   if (!stats) {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">

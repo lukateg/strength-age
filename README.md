@@ -10,6 +10,7 @@ check before launch:
 // -- check if actions that require modals have them
 // -- check if -- remove all loading... 
 // -- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class (if you want that then you need to store the class name with class ID everywhere since tests and test reviews need to display from which class they are created)
+// -- check if endpoints return null instead of throwing an error if data is not there so the QueryState component works fine (somewhere error is necessery)
 
 DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS):
 -- stats on dashboard should be class 1/1 storage used 12/50 ...
@@ -29,22 +30,14 @@ DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS)
 
 
 PATTERN TASKS:
--- on each page check if data === null and then return NotFound since BE returns null instead of throwing an errors, errors are for permissions so we do not get strange errrors on backend all the time
--- each component add suspense, error boundary with custom permission support and skeleton, then in the component handle only noData scenario
 -- create custom fetch function with convex token
--- instead of generic message permission denied write a custom message for each permission fail
 
 CAN'T REPRODUCE
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
 -- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
 
-BUGS
--- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
-
-
-
 PLAN:
--- fix bugs
+-- -- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
 
 -- Add analytics
 -- implement AI cost monitoring setup

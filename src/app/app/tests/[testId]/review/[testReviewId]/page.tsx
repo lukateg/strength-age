@@ -7,7 +7,7 @@ import { useLoadingContext } from "@/providers/loading-context";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 
 import TestReviewSkeleton from "./components/test-review-skeleton";
-import NotFound from "@/components/not-found";
+import NotFound from "@/components/data-query/not-found";
 import TestReviewPage from "./components/test-review-page";
 
 import { type Id } from "convex/_generated/dataModel";

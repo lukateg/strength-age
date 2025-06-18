@@ -24,14 +24,20 @@ export const addPdfMutation = mutation({
 
     const normalizedClassId = ctx.db.normalizeId("classes", classId);
     if (!normalizedClassId) {
-      throw createAppError({ message: "Invalid item ID" });
+      throw createAppError({
+        message: "Invalid item ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const canAddPdf = await hasPermission(ctx, userId, "materials", "create", {
       newFilesSize: pdf.size,
     });
     if (!canAddPdf) {
-      throw createAppError({ message: "Not authorized to add PDF" });
+      throw createAppError({
+        message: "Not authorized to add PDF",
+        statusCode: "PERMISSION_DENIED",
+      });
     }
 
     const pdfId = await createPdf(ctx, pdf, userId, normalizedClassId);
@@ -55,7 +61,10 @@ export const addManyPdfsMutation = mutation({
 
     const normalizedClassId = ctx.db.normalizeId("classes", classId);
     if (!normalizedClassId) {
-      throw createAppError({ message: "Invalid class ID" });
+      throw createAppError({
+        message: "Invalid class ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const newFilesSize = pdfFiles.reduce((acc, pdf) => acc + pdf.size, 0);
@@ -63,7 +72,10 @@ export const addManyPdfsMutation = mutation({
       newFilesSize,
     });
     if (!canAddPdfs) {
-      throw createAppError({ message: "Not authorized to add PDFs" });
+      throw createAppError({
+        message: "Not authorized to add PDFs",
+        statusCode: "PERMISSION_DENIED",
+      });
     }
 
     await createManyPdfs(ctx, pdfFiles, userId, normalizedClassId);
@@ -77,13 +89,17 @@ export const deletePdfMutation = mutation({
 
     const normalizedPdfId = ctx.db.normalizeId("pdfs", pdfId);
     if (!normalizedPdfId) {
-      throw createAppError({ message: "Invalid item ID" });
+      throw createAppError({
+        message: "Invalid item ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const pdf = await ctx.db.get(normalizedPdfId);
     if (!pdf) {
       throw createAppError({
         message: "PDF you are trying to delete does not exist",
+        statusCode: "NOT_FOUND",
       });
     }
 
@@ -97,6 +113,7 @@ export const deletePdfMutation = mutation({
     if (!hasPermissionToDelete) {
       throw createAppError({
         message: "Not authorized to delete this PDF",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 

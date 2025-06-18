@@ -10,21 +10,22 @@ export const getLessonPageData = query({
   handler: async (ctx, { lessonId }) => {
     const userId = await AuthenticationRequired({ ctx });
 
-    if (!userId) {
-      throw createAppError({ message: "Unauthorized" });
-    }
-
     const normalizedId = ctx.db.normalizeId("lessons", lessonId);
-
     if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
+      throw createAppError({
+        message: "Invalid item ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const materials = await getPdfsByLesson(ctx, normalizedId);
     const lesson = await getLessonById(ctx, normalizedId);
 
     if (!lesson) {
-      throw createAppError({ message: "Lesson not found" });
+      throw createAppError({
+        message: "Lesson not found",
+        statusCode: "NOT_FOUND",
+      });
     }
 
     const canEditLesson = await hasPermission(
@@ -36,6 +37,12 @@ export const getLessonPageData = query({
         lesson: lesson,
       }
     );
+    if (!canEditLesson) {
+      throw createAppError({
+        message: "You are not authorized to edit this lesson",
+        statusCode: "PERMISSION_DENIED",
+      });
+    }
 
     const canDeleteLesson = await hasPermission(
       ctx,

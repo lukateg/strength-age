@@ -23,6 +23,7 @@ export const deleteFileFromUploadThing = internalAction({
     if (!fileKey) {
       throw createAppError({
         message: "File key not found",
+        statusCode: "SERVER_ERROR",
       });
     }
     try {
@@ -33,6 +34,7 @@ export const deleteFileFromUploadThing = internalAction({
       console.error("Error deleting file from UploadThing:", error);
       throw createAppError({
         message: "Error deleting file from UploadThing",
+        statusCode: "SERVER_ERROR",
       });
     }
   },

@@ -20,7 +20,10 @@ export async function deleteLessonPdfsJoinByPdfId(
   const normalizedPdfId = ctx.db.normalizeId("pdfs", pdfId);
 
   if (!normalizedPdfId) {
-    throw createAppError({ message: "Invalid item ID" });
+    throw createAppError({
+      message: "Invalid item ID",
+      statusCode: "VALIDATION_ERROR",
+    });
   }
 
   const lessonPdfs = await ctx.db

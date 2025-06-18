@@ -23,6 +23,7 @@ export const canUploadMaterialsQuery = query({
       throw createAppError({
         message:
           "You don't have enough storage to upload materials, please upgrade subscription.",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 

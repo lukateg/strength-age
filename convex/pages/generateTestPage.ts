@@ -16,6 +16,7 @@ export const getGenerateTestPageData = query({
     if (!canGenerateTest) {
       throw createAppError({
         message: "You are not authorized to generate a test",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 

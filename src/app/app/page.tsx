@@ -14,6 +14,7 @@ import MainPageSkeleton from "@/components/page-components/main-page-skeleton";
 
 import { getSubscriptionTier } from "@/lib/utils";
 import QueryState from "@/components/data-query/query-state";
+import { generateDashboardStats } from "./tests/utils";
 
 export default function Dashboard() {
   const dashboardData = useAuthenticatedQueryWithStatus(
@@ -21,6 +22,7 @@ export default function Dashboard() {
   );
   const { user } = useUserContext();
   const subscriptionTier = getSubscriptionTier(user?.data?.subscriptionTier);
+  const storageUsed = user?.data?.totalStorageUsage;
 
   return (
     <QueryState
@@ -30,6 +32,13 @@ export default function Dashboard() {
     >
       {(data) => {
         const { classes, tests, testReviews, permissions } = data;
+        const stats = generateDashboardStats(
+          tests,
+          classes,
+          testReviews,
+          storageUsed,
+          user?.data?.subscriptionTier
+        );
 
         return (
           <div className="container mx-auto p-6">
@@ -58,7 +67,7 @@ export default function Dashboard() {
               </Button>
             </div>
 
-            <DashboardStats testReviews={testReviews} tests={tests} />
+            <DashboardStats stats={stats} />
 
             <div className="grid gap-6 xl:grid-cols-2">
               <RecentClasses classes={classes} />

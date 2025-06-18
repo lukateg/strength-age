@@ -1,16 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type DashboardStatsProps = {
-  stats: {
-    title: string;
-    icon: React.ElementType;
-    value: string | number;
-    description: string;
-  }[];
+import { generateStats } from "../app/app/tests/utils";
+import { type Doc } from "convex/_generated/dataModel";
+
+type TestStatsProps = {
+  testReviews: Doc<"testReviews">[];
+  tests: Doc<"tests">[];
 };
 
-export default function DashboardStats({ stats }: DashboardStatsProps) {
+export default function TestStats({ testReviews, tests }: TestStatsProps) {
+  const stats = generateStats(testReviews, tests);
+
   if (!stats) {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">

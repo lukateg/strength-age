@@ -1,9 +1,9 @@
-import { auth } from "@clerk/nextjs/server";
 import { api } from "../../../../convex/_generated/api";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { z } from "zod";
 import { ConvexError } from "convex/values";
+import { getConvexToken } from "@/lib/server-utils";
 
 const f = createUploadthing();
 
@@ -28,12 +28,8 @@ export const pdfFileRouter = {
     )
     // Set permissions and file types for this FileRoute
     .middleware(async ({ input, files }) => {
-      const { getToken } = await auth();
-
       // This code runs on your server before upload
-      const token = await getToken({ template: "convex" });
-      if (!token)
-        throw new ConvexError({ message: "No Convex token available" });
+      const token = await getConvexToken();
 
       const canUpload = await fetchQuery(
         api.permissions.canUploadMaterialsQuery,

@@ -5,8 +5,8 @@ import { api } from "../../../../convex/_generated/api";
 import { type NextRequest } from "next/server";
 import { type Id } from "convex/_generated/dataModel";
 
-import { auth } from "@clerk/nextjs/server";
 import { convertPDFToText, generateQuizForLesson } from "@/lib/server-utils";
+import { getConvexToken } from "@/lib/server-utils";
 
 if (!process.env.GEMINI_API_KEY) {
   throw new Error("Missing GEMINI_API_KEY environment variable");
@@ -42,11 +42,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { getToken } = await auth();
-    const token = await getToken({ template: "convex" });
-    if (!token) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const token = await getConvexToken();
 
     const pdfs = await fetchQuery(
       api.tests.getGenerateTestFromLessonsDataQuery,

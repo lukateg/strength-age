@@ -5,7 +5,7 @@ import { useTests } from "@/providers/tests-provider";
 import Link from "next/link";
 import RecentTests from "./components/recent-tests-card";
 import RecentReviews from "./components/recent-reviews-card";
-import DashboardStats from "../../../components/dashboard-stats";
+import TestStats from "@/components/test-stats";
 import AllTestsCard from "./components/all-tests-card";
 import AllTestReviewsCard from "./components/all-test-reviews-card";
 import MainPageSkeleton from "@/components/page-components/main-page-skeleton";
@@ -51,7 +51,7 @@ export default function Tests() {
               </Button>
             </div>
 
-            <DashboardStats testReviews={testReviews} tests={tests} />
+            <TestStats testReviews={testReviews} tests={tests} />
 
             <Tabs defaultValue="recent" className="space-y-6">
               <TabsList>

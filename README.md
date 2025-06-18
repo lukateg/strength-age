@@ -13,7 +13,6 @@ check before launch:
 // -- check if endpoints return null instead of throwing an error if data is not there so the QueryState component works fine (somewhere error is necessery)
 
 DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS):
--- stats on dashboard should be class 1/1 storage used 12/50 ...
 -- redesign test results page
 -- nakon svega ovoga popravljaj loading... i skeletone
 -- edit section buttons should have beautifull purple design maybe
@@ -28,16 +27,12 @@ DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS)
 -- header overlaps the layout on the mobileå
 -- fix test review naming convention by not even adding a name and just using a design you screenshoted
 
-
-PATTERN TASKS:
--- create custom fetch function with convex token
-
 CAN'T REPRODUCE
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
 -- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
 
 PLAN:
--- -- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
+-- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
 
 -- Add analytics
 -- implement AI cost monitoring setup
@@ -45,10 +40,22 @@ PLAN:
 -- restyle the and add colors to the app
 -- check free tier plan and work out permisions and free plan for max classes, lessons, pdfs in mb, tests and ai token calls
 -- in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
--- load tests
+-- load testing
 -- release to prod
 -- wait for the analytics results and think about the compex permisions and test sharing and start sprint 2
 -- if test is deleted retry button on testReview page should be disabled
+
+FUTURE FEATURES AND ENHANCMENTS:
+-- add settings page
+- test sharing between users and groups
+- test preview before starting to work on it
+- audio lessons
+- invite multiple people to the scheduled test at specific tieme and display leaderbord with result at the end
+- pausing or blockin test when changing window while working on a test
+- mobile app and generating summaries from materials and voice lessons from summaries
+- creating app with 1 empty lesson and 1 regular should notify user that one is empty
+- same way as you add authRequired and checkPermission, add checkValidation if needed
+-- check if you can persist test generation on the backend so it continues even if user refreshes the page
 
 SETTINGS PAGE
 -- in settings page add TEST SETTINGs (setting up if user wants all questions on one page, or he wants pagination)
@@ -69,19 +76,6 @@ MAYBE IN FUTURE
 -- add abort test generating when clicking on the X in the loader
 -- maybe add sharing tests between user as a social media app
 -- add "..." for each pdf and implement edit logic "check if edit can edit text in the uploadThing
-
-
-FUTURE FEATURES AND ENHANCMENTS:
--- add settings page
-- test sharing between users and groups
-- test preview before starting to work on it
-- audio lessons
-- invite multiple people to the scheduled test at specific tieme and display leaderbord with result at the end
-- pausing or blockin test when changing window while working on a test
-- mobile app and generating summaries from materials and voice lessons from summaries
-- creating app with 1 empty lesson and 1 regular should notify user that one is empty
-- same way as you add authRequired and checkPermission, add checkValidation if needed
--- check if you can persist test generation on the backend so it continues even if user refreshes the page
 
 
 # MVP Plan for Teach.me

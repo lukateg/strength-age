@@ -7,6 +7,7 @@ import {
   shuffleArray,
 } from "@/lib/utils";
 import { convertPdfsToText, generateQuizForLesson } from "@/lib/server-utils";
+import { getConvexToken } from "@/lib/server-utils";
 
 import { type NextRequest } from "next/server";
 import { type Id } from "convex/_generated/dataModel";
@@ -53,12 +54,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Authenticate request
-    const { getToken } = await auth();
-    const token = await getToken({ template: "convex" });
-
-    if (!token) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const token = await getConvexToken();
 
     const { pdfsByLesson, canGenerateTest } = await fetchQuery(
       api.tests.getGenerateTestFromLessonsDataQuery,

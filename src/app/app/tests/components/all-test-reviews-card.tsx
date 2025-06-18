@@ -16,7 +16,7 @@ export default function AllTestReviewsCard({
 }: {
   testReviews: Doc<"testReviews">[];
 }) {
-  const { deleteTestReview } = useTestMutations();
+  const { deleteTestReview, isPending } = useTestMutations();
 
   return (
     <ListCard
@@ -51,6 +51,7 @@ export default function AllTestReviewsCard({
                   variant="outline"
                   size="sm"
                   className="text-xs md:text-base"
+                  disabled={isPending}
                 >
                   <Trash className="h-4 w-4 text-red-500" />
                 </Button>

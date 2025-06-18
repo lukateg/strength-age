@@ -14,7 +14,7 @@ import { type EditLessonFormData } from "@/types/lesson";
 export default function EditLessonPage() {
   const router = useRouter();
 
-  const { classId, updateLesson, deleteLesson, isLoading } =
+  const { classId, updateLesson, deleteLesson, isPending } =
     useLessonMutations();
   const { lesson } = useLesson();
 
@@ -60,7 +60,7 @@ export default function EditLessonPage() {
         isEditMode={true}
         materials={lesson.data?.materials ?? []}
         defaultValues={lesson.data}
-        isSubmitting={isLoading}
+        isSubmitting={isPending}
       />
 
       {permissions.canDeleteLesson && (
@@ -70,6 +70,7 @@ export default function EditLessonPage() {
               router.push(`/app/classes/${classId}`)
             );
           }}
+          isDeleting={isPending}
         />
       )}
     </div>

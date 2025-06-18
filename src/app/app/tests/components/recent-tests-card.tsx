@@ -11,7 +11,7 @@ import { BookOpen, Eye, Trash } from "lucide-react";
 import { type Doc } from "convex/_generated/dataModel";
 
 export default function RecentTests({ tests }: { tests: Doc<"tests">[] }) {
-  const { deleteTest } = useTestMutations();
+  const { deleteTest, isPending } = useTestMutations();
 
   const recentTests = tests.sort((a, b) => {
     return (
@@ -48,6 +48,7 @@ export default function RecentTests({ tests }: { tests: Doc<"tests">[] }) {
                   variant="outline"
                   size="sm"
                   className="text-xs md:text-base"
+                  disabled={isPending}
                 >
                   <Trash className="h-4 w-4 text-red-500" />
                 </Button>

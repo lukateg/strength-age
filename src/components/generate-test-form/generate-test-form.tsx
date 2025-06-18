@@ -21,6 +21,8 @@ import { type z } from "zod";
 import { type FunctionReturnType } from "convex/server";
 import { type api } from "../../../convex/_generated/api";
 
+import { Loader2 } from "lucide-react";
+
 export type TestFormValues = z.infer<typeof testFormSchema>;
 export type GeneratedTest = z.infer<typeof testSchema>;
 
@@ -34,7 +36,7 @@ export default function GenerateTestForm({
   >;
 }) {
   const router = useRouter();
-  const { generateAndUploadTest } = useTestMutations();
+  const { generateAndUploadTest, isPending } = useTestMutations();
 
   const form = useForm<TestFormValues>({
     defaultValues: {
@@ -86,8 +88,17 @@ export default function GenerateTestForm({
 
           <AdditionalInstructionsView control={control} />
 
-          <Button type="submit" size="lg" className="w-full">
-            Generate Test
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full"
+            disabled={isPending}
+          >
+            {isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              "Generate Test"
+            )}
           </Button>
         </div>
       </form>

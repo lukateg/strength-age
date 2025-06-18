@@ -24,9 +24,10 @@ import UploadFilesButton from "@/components/upload-files-button";
 import UploadedMaterialsList from "@/components/file-upload/uploaded-materials-list";
 import FormSelect from "@/components/form-select";
 import SectionHeader from "@/components/page-components/page-header";
-import NotFound from "@/components/not-found";
+import NotFound from "@/components/data-query/not-found";
 import PageSkeleton from "@/components/page-components/main-page-skeleton";
 import TotalStorageUsedCard from "@/components/file-upload/total-storage-used-card";
+import QueryState from "@/components/data-query/query-state";
 
 import { type Id } from "../../../../../../convex/_generated/dataModel";
 import { useUserContext } from "@/providers/user-provider";
@@ -51,7 +52,8 @@ export default function FileUploadPage() {
     defaultValues: { lessonId: "", materialsToUpload: [] },
   });
   const { watch, setValue } = form;
-  const { uploadNewPdfsToLesson, isUploading } = useLessonMutations();
+  const { uploadNewPdfsToLesson, isUploading, isPending } =
+    useLessonMutations();
 
   const materialsToUpload = watch("materialsToUpload", []);
   const storageLimit =
@@ -74,78 +76,79 @@ export default function FileUploadPage() {
     }
   };
 
-  if (classData.isError) {
-    return <NotFound />;
-  }
-
-  if (classData.isPending) {
-    return <PageSkeleton />;
-  }
-
   return (
-    <div className="space-y-10">
-      <SectionHeader
-        title={classData.data?.class_.title}
-        description={classData.data?.class_.description}
-        backRoute={`/app/classes/${classData.data?.class_._id}`}
-        editButtonText={"Upload Materials"}
-      />
-
-      <TotalStorageUsedCard
-        materialsToUpload={materialsToUpload}
-        storageUsed={user.data?.totalStorageUsage ?? 0}
-        maxStorageLimit={storageLimit}
-      />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Upload Files</CardTitle>
-          <CardDescription>
-            Drag and drop your files here or click to browse
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <Form {...form}>
-            <FormField
-              control={form.control}
-              name="lessonId"
-              render={({ field }) => (
-                <FormSelect
-                  items={classData.data?.lessons}
-                  label="Select Lesson"
-                  placeholder="none"
-                  defaultValue="none"
-                  onChange={field.onChange}
-                  description="You can link material to a specific lesson."
-                />
-              )}
+    <QueryState
+      query={classData}
+      pending={<PageSkeleton />}
+      noData={<NotFound />}
+    >
+      {(data) => {
+        return (
+          <div className="space-y-10">
+            <SectionHeader
+              title={data.class_.title}
+              description={data.class_.description}
+              backRoute={`/app/classes/${data.class_._id}`}
             />
-          </Form>
 
-          <FileUploadComponent
-            onDrop={handleFileChange}
-            existingFiles={materialsToUpload}
-            storageUsed={user.data?.totalStorageUsage ?? 0}
-            storageLimit={storageLimit}
-          />
-
-          {!!materialsToUpload.length && (
-            <UploadedMaterialsList
+            <TotalStorageUsedCard
               materialsToUpload={materialsToUpload}
-              setValue={setValue}
+              storageUsed={user.data?.totalStorageUsage ?? 0}
+              maxStorageLimit={storageLimit}
             />
-          )}
-        </CardContent>
 
-        <CardFooter>
-          <UploadFilesButton
-            startUpload={handleUpload}
-            materialsToUpload={materialsToUpload}
-            isUploading={isUploading}
-            className="w-full"
-          />
-        </CardFooter>
-      </Card>
-    </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Upload Files</CardTitle>
+                <CardDescription>
+                  Drag and drop your files here or click to browse
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <Form {...form}>
+                  <FormField
+                    control={form.control}
+                    name="lessonId"
+                    render={({ field }) => (
+                      <FormSelect
+                        items={data.lessons}
+                        label="Select Lesson"
+                        placeholder="none"
+                        defaultValue="none"
+                        onChange={field.onChange}
+                        description="You can link material to a specific lesson."
+                      />
+                    )}
+                  />
+                </Form>
+
+                <FileUploadComponent
+                  onDrop={handleFileChange}
+                  existingFiles={materialsToUpload}
+                  storageUsed={user.data?.totalStorageUsage ?? 0}
+                  storageLimit={storageLimit}
+                />
+
+                {!!materialsToUpload.length && (
+                  <UploadedMaterialsList
+                    materialsToUpload={materialsToUpload}
+                    setValue={setValue}
+                  />
+                )}
+              </CardContent>
+
+              <CardFooter>
+                <UploadFilesButton
+                  startUpload={handleUpload}
+                  materialsToUpload={materialsToUpload}
+                  isUploading={isUploading || isPending}
+                  className="w-full"
+                />
+              </CardFooter>
+            </Card>
+          </div>
+        );
+      }}
+    </QueryState>
   );
 }

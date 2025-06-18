@@ -9,33 +9,24 @@ export const canUploadMaterialsQuery = query({
   },
   handler: async (ctx, args) => {
     const identity = await AuthenticationRequired({ ctx });
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity))
-      .first();
+    const canUpload = await hasPermission(
+      ctx,
+      identity,
+      "materials",
+      "create",
+      {
+        newFilesSize: args.newFilesSize ?? 0,
+      }
+    );
 
-    if (!user) {
-      throw createAppError({ message: "User not found!" });
+    if (!canUpload) {
+      throw createAppError({
+        message:
+          "You don't have enough storage to upload materials, please upgrade subscription.",
+        statusCode: "PERMISSION_DENIED",
+      });
     }
 
-    return hasPermission(ctx, user._id, "materials", "create", {
-      newFilesSize: args.newFilesSize ?? 0,
-    });
-  },
-});
-
-export const canCreateTestQuery = query({
-  handler: async (ctx) => {
-    const identity = await AuthenticationRequired({ ctx });
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity))
-      .first();
-
-    if (!user) {
-      throw createAppError({ message: "User not found!" });
-    }
-
-    return hasPermission(ctx, user._id, "tests", "create");
+    return canUpload;
   },
 });

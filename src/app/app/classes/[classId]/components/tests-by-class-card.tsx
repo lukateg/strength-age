@@ -1,9 +1,6 @@
 "use client";
 
 import { useTestMutations } from "@/hooks/use-test-mutations";
-import { useClass } from "@/providers/class-context-provider";
-import { useUserContext } from "@/providers/user-provider";
-import { useClasses } from "@/providers/classes-provider";
 
 import {
   Card,
@@ -31,7 +28,7 @@ export default function TestsSection({
   tests: Doc<"tests">[];
   testReviews: Doc<"testReviews">[];
 }) {
-  const { deleteTest, deleteTestReview } = useTestMutations();
+  const { deleteTest, deleteTestReview, isPending } = useTestMutations();
 
   return (
     <Card>
@@ -82,6 +79,7 @@ export default function TestsSection({
                       variant="outline"
                       size="sm"
                       className="text-xs md:text-base"
+                      disabled={isPending}
                     >
                       <Trash className="h-4 w-4 text-red-500" />
                     </Button>
@@ -105,7 +103,7 @@ export default function TestsSection({
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" asChild>
                   <Link
-                    href={`/app/tests/${testReview.testId}/review/${testReview._id}`}
+                    href={`/app/classes/${classId}/review/${testReview._id}`}
                   >
                     <Eye className="h-4 w-4" />
                     <span className="hidden md:block ml-2">Results</span>
@@ -126,6 +124,7 @@ export default function TestsSection({
                       variant="outline"
                       size="sm"
                       className="text-xs md:text-base"
+                      disabled={isPending}
                     >
                       <Trash className="h-4 w-4 text-red-500" />
                     </Button>

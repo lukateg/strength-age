@@ -19,7 +19,7 @@ export default function MaterialsByClassCard({
   canUploadMaterials: boolean;
   materials: Doc<"pdfs">[];
 }) {
-  const { deletePdf } = useMaterialsMutations();
+  const { deletePdf, isPending } = useMaterialsMutations();
 
   return (
     <ListCard
@@ -70,6 +70,7 @@ export default function MaterialsByClassCard({
                   variant="outline"
                   size="sm"
                   className="text-xs md:text-base"
+                  disabled={isPending}
                 >
                   <Trash className="h-4 w-4 text-red-500" />
                 </Button>

@@ -1,20 +1,64 @@
 import axios from "axios";
 import pdfParse from "pdf-parse";
 
-import { fetchQuery } from "convex/nextjs";
-import { api } from "../../convex/_generated/api";
-
 import { createQuizPrompt } from "./utils";
 import { generatedTestSchema } from "./schemas";
 import { ConvexError } from "convex/values";
+import { auth } from "@clerk/nextjs/server";
 
-import { type Id } from "convex/_generated/dataModel";
 import { type GenerativeModel } from "@google/generative-ai";
 
 type LessonPdf = {
   fileUrl: string;
   _id: string;
 };
+
+/**
+ * Helper function to get a Convex token for server-side operations
+ * @returns The Convex token or throws an error if not available
+ *
+ * @example
+ * ```typescript
+ * // Before (repeated boilerplate):
+ * const { getToken } = await auth();
+ * const token = await getToken({ template: "convex" });
+ * if (!token) {
+ *   throw new ConvexError({ message: "No Convex token available" });
+ * }
+ *
+ * // After (clean and simple):
+ * const token = await getConvexToken();
+ * ```
+ */
+export async function getConvexToken(): Promise<string> {
+  const { getToken } = await auth();
+  const token = await getToken({ template: "convex" });
+
+  if (!token) {
+    throw new ConvexError({ message: "No Convex token available" });
+  }
+
+  return token;
+}
+
+/**
+ * Helper function to get a Convex token and return null if not available
+ * Useful for cases where you want to handle the missing token gracefully
+ * @returns The Convex token or null if not available
+ *
+ * @example
+ * ```typescript
+ * // For cases where you want to handle missing token gracefully:
+ * const token = await getConvexTokenOrNull();
+ * if (!token) {
+ *   return Response.json({ error: "Unauthorized" }, { status: 401 });
+ * }
+ * ```
+ */
+export async function getConvexTokenOrNull(): Promise<string | null> {
+  const { getToken } = await auth();
+  return await getToken({ template: "convex" });
+}
 
 // Extract PDF processing logic
 export async function convertPDFToText(pdf: { fileUrl: string; _id: string }) {

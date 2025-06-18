@@ -49,6 +49,7 @@ export const createClassMutation = mutation({
     if (!canCreateClass) {
       throw createAppError({
         message: "You are not authorized to create a class",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 
@@ -56,6 +57,7 @@ export const createClassMutation = mutation({
     if (existingClassName) {
       throw createAppError({
         message: "Class with same title already exists.",
+        statusCode: "VALIDATION_ERROR",
       });
     }
 
@@ -74,13 +76,17 @@ export const updateClassMutation = mutation({
 
     const normalizedId = ctx.db.normalizeId("classes", classId);
     if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
+      throw createAppError({
+        message: "Invalid item ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const classItem = await getClassById(ctx, normalizedId);
     if (!classItem) {
       throw createAppError({
         message: "Class you are trying to update does not exist",
+        statusCode: "NOT_FOUND",
       });
     }
 
@@ -94,6 +100,7 @@ export const updateClassMutation = mutation({
     if (!canUpdateClass) {
       throw createAppError({
         message: "You are not authorized to update this class",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 
@@ -108,13 +115,17 @@ export const deleteClassMutation = mutation({
 
     const normalizedId = ctx.db.normalizeId("classes", classId);
     if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
+      throw createAppError({
+        message: "Invalid item ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const classItem = await getClassById(ctx, normalizedId);
     if (!classItem) {
       throw createAppError({
         message: "Class you are trying to delete does not exist",
+        statusCode: "NOT_FOUND",
       });
     }
 
@@ -128,6 +139,7 @@ export const deleteClassMutation = mutation({
     if (!canDeleteClass) {
       throw createAppError({
         message: "You are not authorized to delete this class",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 
@@ -167,7 +179,10 @@ export const deleteClassDataInternalMutation = internalMutation({
   ) => {
     const normalizedClassId = ctx.db.normalizeId("classes", classId);
     if (!normalizedClassId) {
-      throw createAppError({ message: "Invalid item ID" });
+      throw createAppError({
+        message: "Invalid item ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     try {

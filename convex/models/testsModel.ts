@@ -46,16 +46,18 @@ export const getTestsByClass = async (
   return tests;
 };
 
-export const getTestsByTitle = async (
+export const getTestsWithSameTitleByUser = async (
   ctx: GenericQueryCtx<DataModel>,
-  title: string
+  title: string,
+  userId: string
 ) => {
-  const test = await ctx.db
+  const tests = await ctx.db
     .query("tests")
+    .withIndex("by_user", (q) => q.eq("createdBy", userId))
     .filter((q) => q.eq(q.field("title"), title))
     .collect();
 
-  return test;
+  return tests;
 };
 
 export async function getTestsWithPermissions(

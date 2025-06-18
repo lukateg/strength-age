@@ -10,10 +10,13 @@ export const getTestPageData = query({
   },
   handler: async (ctx, { testId }) => {
     await AuthenticationRequired({ ctx });
-    const normalizedId = ctx.db.normalizeId("tests", testId);
 
+    const normalizedId = ctx.db.normalizeId("tests", testId);
     if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
+      throw createAppError({
+        message: "Invalid item ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const test = await getTestById(ctx, normalizedId);

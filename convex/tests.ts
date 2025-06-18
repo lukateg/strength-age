@@ -3,7 +3,7 @@ import { mutation, query } from "./_generated/server";
 import { AuthenticationRequired, createAppError } from "./utils";
 
 import { hasPermission } from "./models/permissionsModel";
-import { getTestsByTitle } from "./models/testsModel";
+import { getTestsWithSameTitleByUser } from "./models/testsModel";
 import { getLessonPdfJoinsByLessonIds } from "./models/lessonPdfsModel";
 import { getPdfsByIds, sortPdfsByLessonJoins } from "./models/materialsModel";
 import { type Id } from "./_generated/dataModel";
@@ -17,7 +17,10 @@ export const getTestByIdQuery = query({
 
     const normalizedId = ctx.db.normalizeId("tests", args.testId);
     if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
+      throw createAppError({
+        message: "Invalid item ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const test = await ctx.db.get(normalizedId);
@@ -35,6 +38,7 @@ export const getTestByIdQuery = query({
     if (!canViewTest) {
       throw createAppError({
         message: "You are not allowed to view this test",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 
@@ -82,11 +86,18 @@ export const uploadTestMutation = mutation({
       "create"
     );
     if (!canCreateTest) {
-      throw createAppError({ message: "You are not allowed to create tests" });
+      throw createAppError({
+        message: "You are not allowed to create tests",
+        statusCode: "PERMISSION_DENIED",
+      });
     }
 
     let title = args.title;
-    const existingTest = await getTestsByTitle(ctx, args.title);
+    const existingTest = await getTestsWithSameTitleByUser(
+      ctx,
+      args.title,
+      userId
+    );
     if (existingTest.length > 0) {
       title = `${args.title} #${existingTest.length + 1}`;
     }
@@ -116,6 +127,7 @@ export const deleteTestMutation = mutation({
     if (!test) {
       throw createAppError({
         message: "Test not found",
+        statusCode: "NOT_FOUND",
       });
     }
     const canDeleteTest = await hasPermission<"tests">(
@@ -128,6 +140,7 @@ export const deleteTestMutation = mutation({
     if (!canDeleteTest) {
       throw createAppError({
         message: "You are not allowed to delete this test",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 
@@ -142,12 +155,14 @@ export const getGenerateTestFromLessonsDataQuery = query({
   }),
   handler: async (ctx, { lessonIds }) => {
     const userId = await AuthenticationRequired({ ctx });
-
     const normalizedLessonIds = lessonIds
       .map((id) => ctx.db.normalizeId("lessons", id))
       .filter((id): id is Id<"lessons"> => id !== null);
     if (normalizedLessonIds.length === 0) {
-      throw createAppError({ message: "No valid lesson IDs provided" });
+      throw createAppError({
+        message: "No valid lesson IDs provided",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const lessons = await Promise.all(
@@ -161,6 +176,7 @@ export const getGenerateTestFromLessonsDataQuery = query({
       if (!canViewPdfs) {
         throw createAppError({
           message: "Not authorized to access PDFs for one or more lessons",
+          statusCode: "PERMISSION_DENIED",
         });
       }
     }

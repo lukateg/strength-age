@@ -1,7 +1,7 @@
 // Constants
 export const LIMITATIONS = {
   free: {
-    classes: 1,
+    classes: 2,
     lessons: 3,
     tests: 3,
     materials: 10485760, // 10 MB in bytes (10 * 1024 * 1024)

@@ -20,7 +20,10 @@ export async function deleteLessonPdfsJoinByPdfId(
   const normalizedPdfId = ctx.db.normalizeId("pdfs", pdfId);
 
   if (!normalizedPdfId) {
-    throw createAppError({ message: "Invalid item ID" });
+    throw createAppError({
+      message: "Invalid item ID",
+      statusCode: "VALIDATION_ERROR",
+    });
   }
 
   const lessonPdfs = await ctx.db
@@ -58,6 +61,7 @@ export async function deleteLessonPdfsJoinByClassIdBatch(
       continueCursor
     );
   } else {
+    // After deleting all lessonPdfs for this class, safely delete PDFs that are no longer referenced
     await runDeleteClassDataBatch(ctx, classId, "pdfs", userId);
   }
 }

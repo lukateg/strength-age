@@ -5,6 +5,9 @@ import { toast } from "sonner";
 import { isAppError } from "../../convex/utils";
 
 import { type Id } from "convex/_generated/dataModel";
+import { type Doc } from "convex/_generated/dataModel";
+import { type LucideIcon } from "lucide-react";
+import { Sparkles, Star, Crown } from "lucide-react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -155,3 +158,51 @@ export function calculateProportionalQuestionsPerLesson(
   }
   return questionsPerLesson;
 }
+
+export function getPreviousRoute(): string {
+  if (typeof window === "undefined") return "/";
+
+  const currentPath = window.location.pathname;
+  const previousPath = sessionStorage.getItem("previousPath") ?? "/";
+
+  // Don't store the current path if it's the same as the previous path
+  if (currentPath !== previousPath) {
+    sessionStorage.setItem("previousPath", currentPath);
+  }
+
+  return previousPath;
+}
+
+export type SubscriptionTier = Doc<"users">["subscriptionTier"];
+
+type SubscriptionTierInfo = {
+  name: string;
+  icon: LucideIcon;
+};
+
+export const getSubscriptionTier = (
+  subscriptionTier: SubscriptionTier | undefined
+): SubscriptionTierInfo => {
+  if (subscriptionTier === "free") {
+    return {
+      name: "Free",
+      icon: Sparkles,
+    };
+  }
+  if (subscriptionTier === "starter") {
+    return {
+      name: "Starter",
+      icon: Star,
+    };
+  }
+  if (subscriptionTier === "pro") {
+    return {
+      name: "Pro",
+      icon: Crown,
+    };
+  }
+  return {
+    name: "Free",
+    icon: Sparkles,
+  };
+};

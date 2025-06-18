@@ -21,7 +21,7 @@ export default function LessonsItemDropdown({
   lessonId: string;
   classId: string;
 }) {
-  const { deleteLesson } = useLessonMutations();
+  const { deleteLesson, isPending } = useLessonMutations();
 
   return (
     <DropdownMenu>
@@ -53,6 +53,7 @@ export default function LessonsItemDropdown({
               variant="destructive-ghost"
               asChild
               className="justify-start w-full h-fit"
+              disabled={isPending}
             >
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                 <Trash className="h-4 w-4" />

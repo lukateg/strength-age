@@ -26,13 +26,16 @@ export const getTestReviewsByUser = async (
     .collect();
 };
 
-export const getTestReviewsByTitle = async (
+export const getTestReviewsWithSameTitleByUser = async (
   ctx: GenericQueryCtx<DataModel>,
-  title: string
+  title: string,
+  userId: string
 ) => {
   const testReview = await ctx.db
     .query("testReviews")
-    .filter((q) => q.eq(q.field("title"), title))
+    .withIndex("by_title_and_user", (q) =>
+      q.eq("title", title).eq("createdBy", userId)
+    )
     .collect();
   return testReview;
 };

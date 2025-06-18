@@ -11,7 +11,13 @@ import AlertDialogModal from "./alert-dialog";
 
 import { Trash } from "lucide-react";
 
-export default function DangerZone({ onDelete }: { onDelete: () => void }) {
+export default function DangerZone({
+  onDelete,
+  isDeleting,
+}: {
+  onDelete: () => void;
+  isDeleting: boolean;
+}) {
   return (
     <Card>
       <CardHeader className="space-y-2">
@@ -29,7 +35,7 @@ export default function DangerZone({ onDelete }: { onDelete: () => void }) {
           onConfirm={onDelete}
           variant="destructive"
           alertTrigger={
-            <Button variant="destructive">
+            <Button variant="destructive" disabled={isDeleting}>
               <Trash className="h-4 w-4" />
               <span className="ml-2">Delete</span>
             </Button>

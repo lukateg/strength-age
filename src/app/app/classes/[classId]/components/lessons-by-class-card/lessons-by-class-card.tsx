@@ -1,18 +1,11 @@
-// "use client";
-
-// import { useClass } from "@/providers/class-context-provider";
-// import { useUserContext } from "@/providers/user-provider";
-
-import { Button } from "@/components/ui/button";
-
 import Link from "next/link";
 import ListCard, { ListItem } from "@/components/list-card";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 import LessonsItemDropdown from "./lessons-item-dropdown";
 
+import { Button } from "@/components/ui/button";
 import { Eye, FileText, Plus } from "lucide-react";
-import PageSkeleton from "@/components/page-components/main-page-skeleton";
-import NotFound from "@/components/not-found";
+
 import { type Lesson } from "@/components/generate-test-form/components/lesson-select-view/lesson-select-table";
 
 export default function LessonsSectionComponent({

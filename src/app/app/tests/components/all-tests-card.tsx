@@ -1,7 +1,6 @@
 "use client";
 
 import { useTestMutations } from "@/hooks/use-test-mutations";
-import { useTests } from "@/providers/tests-provider";
 
 import ListCard, { ListItem } from "@/components/list-card";
 import AlertDialogModal from "@/components/alert-dialog";
@@ -13,7 +12,7 @@ import Link from "next/link";
 import { type Doc } from "convex/_generated/dataModel";
 
 export default function AllTestsCard({ tests }: { tests: Doc<"tests">[] }) {
-  const { deleteTest } = useTestMutations();
+  const { deleteTest, isPending } = useTestMutations();
 
   return (
     <ListCard
@@ -45,6 +44,7 @@ export default function AllTestsCard({ tests }: { tests: Doc<"tests">[] }) {
                   variant="outline"
                   size="sm"
                   className="text-xs md:text-base"
+                  disabled={isPending}
                 >
                   <Trash className="h-4 w-4 text-red-500" />
                 </Button>

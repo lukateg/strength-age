@@ -1,26 +1,23 @@
 import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
-
-import { ArrowLeft, BookOpen, Pencil } from "lucide-react";
+import { ArrowLeft, BookOpen } from "lucide-react";
+import { type ReactNode } from "react";
 
 export default function SectionHeader({
   title,
   description,
   backRoute,
-  editRoute,
-  editButtonText,
+  actionButton,
 }: {
   title: string;
   description?: string;
   backRoute: string;
-  editRoute?: string;
-  editButtonText?: string;
+  actionButton?: ReactNode;
 }) {
   return (
     <div>
       <div className="flex justify-between items-center">
-        <div className=" flex items-center gap-4">
+        <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="rounded-full" asChild>
             <Link href={backRoute}>
               <ArrowLeft className="h-6 w-6" />
@@ -37,14 +34,7 @@ export default function SectionHeader({
           </div>
         </div>
 
-        {editRoute && editButtonText && (
-          <Button disabled className="text-xs md:text-base" asChild>
-            <Link href={editRoute}>
-              <Pencil className="h-4 w-4 mr-2" />
-              {editButtonText}
-            </Link>
-          </Button>
-        )}
+        {actionButton}
       </div>
     </div>
   );

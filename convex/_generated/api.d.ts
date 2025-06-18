@@ -9,6 +9,7 @@
  */
 
 import type * as classes from "../classes.js";
+import type * as crons from "../crons.js";
 import type * as http from "../http.js";
 import type * as lessons from "../lessons.js";
 import type * as materials from "../materials.js";
@@ -28,7 +29,6 @@ import type * as pages_testPage from "../pages/testPage.js";
 import type * as pages_testReviewPage from "../pages/testReviewPage.js";
 import type * as pages_testsPage from "../pages/testsPage.js";
 import type * as permissions from "../permissions.js";
-import type * as permissionsModel from "../permissionsModel.js";
 import type * as schemas_abacSchema from "../schemas/abacSchema.js";
 import type * as stripe from "../stripe.js";
 import type * as testReviews from "../testReviews.js";
@@ -53,6 +53,7 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   classes: typeof classes;
+  crons: typeof crons;
   http: typeof http;
   lessons: typeof lessons;
   materials: typeof materials;
@@ -72,7 +73,6 @@ declare const fullApi: ApiFromModules<{
   "pages/testReviewPage": typeof pages_testReviewPage;
   "pages/testsPage": typeof pages_testsPage;
   permissions: typeof permissions;
-  permissionsModel: typeof permissionsModel;
   "schemas/abacSchema": typeof schemas_abacSchema;
   stripe: typeof stripe;
   testReviews: typeof testReviews;

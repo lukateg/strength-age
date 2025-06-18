@@ -19,13 +19,19 @@ export const getClassPageData = query({
     const normalizedId = ctx.db.normalizeId("classes", id);
 
     if (!normalizedId) {
-      throw createAppError({ message: "Invalid item ID" });
+      throw createAppError({
+        message: "Invalid item ID",
+        statusCode: "VALIDATION_ERROR",
+      });
     }
 
     const class_ = await ctx.db.get(normalizedId);
 
     if (!class_) {
-      throw createAppError({ message: "Class not found" });
+      throw createAppError({
+        message: "Class not found",
+        statusCode: "NOT_FOUND",
+      });
     }
 
     const lessons = await getLessonsByClass(ctx, normalizedId);
@@ -44,6 +50,7 @@ export const getClassPageData = query({
     if (!canViewClass) {
       throw createAppError({
         message: "You are not authorized to view this class",
+        statusCode: "PERMISSION_DENIED",
       });
     }
 

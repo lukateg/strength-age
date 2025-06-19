@@ -65,7 +65,9 @@ export default function DashboardStats({
           <FileText className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{globalSuccessRate}%</div>
+          <div className="text-2xl font-bold">
+            {Math.round(globalSuccessRate)}%
+          </div>
         </CardContent>
       </Card>
       <Card>

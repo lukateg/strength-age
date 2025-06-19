@@ -138,15 +138,22 @@ export const useTestMutations = () => {
     [deleteTestMutation]
   );
 
-  const createTestReviewShareLink = useCallback(
-    async (testReviewId: Id<"testReviews">) => {
+  const copyTestReviewShareLink = useCallback(
+    async (testReviewId: Id<"testReviews">, testId: Id<"tests">) => {
       try {
         setIsPending(true);
         const shareToken = await createTestReviewShareLinkMutation({
           testReviewId,
           expiresInDays: 7,
         });
-        return shareToken;
+
+        if (!shareToken) {
+          throw new Error("Failed to create share token");
+        }
+
+        const shareUrl = `${window.location.origin}/app/tests/${testId}/review/${testReviewId}?token=${shareToken}`;
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Share link copied to clipboard!");
       } catch (error) {
         toastError(
           error,
@@ -164,7 +171,7 @@ export const useTestMutations = () => {
     createTestReview,
     deleteTestReview,
     deleteTest,
-    createTestReviewShareLink,
+    copyTestReviewShareLink,
     isPending,
   };
 };

@@ -106,18 +106,8 @@ export const createTestReviewMutation = mutation({
   handler: async (ctx, args) => {
     const userId = await AuthenticationRequired({ ctx });
 
-    let title = args.title;
-    const existingTestReview = await getTestReviewsWithSameTitleByUser(
-      ctx,
-      args.title,
-      userId
-    );
-    if (existingTestReview.length > 0) {
-      title = `${args.title} #${existingTestReview.length + 1}`;
-    }
-
     const testId = await ctx.db.insert("testReviews", {
-      title,
+      title: args.title,
       description: args.description,
       questions: args.questions,
       createdBy: userId,

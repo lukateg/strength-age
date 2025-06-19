@@ -32,13 +32,6 @@ export default function Dashboard() {
     >
       {(data) => {
         const { classes, tests, testReviews, permissions } = data;
-        const stats = generateDashboardStats(
-          tests,
-          classes,
-          testReviews,
-          storageUsed,
-          user?.data?.subscriptionTier
-        );
 
         return (
           <div className="container mx-auto p-6">
@@ -67,7 +60,13 @@ export default function Dashboard() {
               </Button>
             </div>
 
-            <DashboardStats stats={stats} />
+            <DashboardStats
+              tests={tests}
+              classes={classes}
+              testReviews={testReviews}
+              storageUsed={storageUsed ?? 0}
+              subscriptionTier={user?.data?.subscriptionTier ?? "free"}
+            />
 
             <div className="grid gap-6 xl:grid-cols-2">
               <RecentClasses classes={classes} />

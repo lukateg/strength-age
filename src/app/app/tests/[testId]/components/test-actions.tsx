@@ -30,19 +30,6 @@ export function TestActions({
               </Button>
             }
           />
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="sm:w-10 h-10">
-                  <Share2 className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Share test</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
         </div>
       </CardContent>
     </Card>

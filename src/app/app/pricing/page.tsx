@@ -23,7 +23,6 @@ export default function PricingSection() {
   const discount = 0.1; // 10% discount for yearly billing
 
   const handleSubscribe = async (priceId: string) => {
-    console.log("handleSubscribe", priceId);
     try {
       const url = await stripePaymentAction({
         priceId,

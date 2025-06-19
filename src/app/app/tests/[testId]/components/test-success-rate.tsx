@@ -45,13 +45,19 @@ export default function TestSuccessRate({
         <Separator />
 
         <div className="space-y-2">
-          <div>
-            <p className="text-sm text-muted-foreground">Total attempts</p>
-            <p className="text-lg font-medium">{totalAttempts}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground">Total attempts: </p>
+            <p className="text-lg font-medium ml-auto w-20 text-center">
+              {totalAttempts}
+            </p>
           </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Best score</p>
-            <p className="text-lg font-medium">{bestSuccessRatePercentages}%</p>
+          <Separator />
+
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground">Best score: </p>
+            <p className="text-lg font-medium ml-auto w-20 text-center">
+              {bestSuccessRatePercentages}%
+            </p>
           </div>
         </div>
       </CardContent>

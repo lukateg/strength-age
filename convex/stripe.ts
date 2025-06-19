@@ -29,8 +29,6 @@ export const handleStripeCheckout = action({
     redirectRootUrl: v.string(),
   },
   handler: async (ctx, { priceId, redirectRootUrl }): Promise<string> => {
-    console.log("[STRIPE CHECKOUT] Creating checkout session", { priceId });
-
     const userId = await AuthenticationRequired({ ctx });
     const identity = await ctx.auth.getUserIdentity();
 
@@ -43,18 +41,11 @@ export const handleStripeCheckout = action({
 
     let existingCustomerId = existingCustomer?.stripeCustomerId;
     if (!existingCustomerId) {
-      console.log(
-        "[STRIPE CHECKOUT] No existing customer ID, creating new one"
-      );
       const customer = await stripe.customers.create({
         email: identity?.email,
         metadata: {
           userId: userId,
         },
-      });
-
-      console.log("[STRIPE CHECKOUT] Created new customer", {
-        customerId: customer.id,
       });
 
       await ctx.runMutation(internal.stripe.createStripeCustomer, {
@@ -63,14 +54,10 @@ export const handleStripeCheckout = action({
       });
       existingCustomerId = customer.id;
     }
-    console.log("[STRIPE CHECKOUT] Existing customer ID", {
-      existingCustomerId,
-    });
 
     if (existingCustomer?.status === "active") {
       // Only allow if trying to change to a different plan
       if (existingCustomer.priceId === priceId) {
-        console.log("[STRIPE CHECKOUT] Customer is already on this plan");
         throw createAppError({
           message: "You're already subscribed to this plan",
           statusCode: "VALIDATION_ERROR",
@@ -92,18 +79,13 @@ export const handleStripeCheckout = action({
         },
         customer: existingCustomerId,
       });
-      console.log("[STRIPE CHECKOUT] Created checkout session", {
-        checkoutSessionId: checkoutSession.id,
-      });
     } catch (err) {
-      console.error("[STRIPE CHECKOUT] Error creating checkout session", err);
       throw createAppError({
         message: "Failed to create checkout session",
         statusCode: "SERVER_ERROR",
       });
     }
     if (!checkoutSession.url) {
-      console.error("Failed to create checkout session");
       throw createAppError({
         message: "Failed to create checkout session",
         statusCode: "SERVER_ERROR",

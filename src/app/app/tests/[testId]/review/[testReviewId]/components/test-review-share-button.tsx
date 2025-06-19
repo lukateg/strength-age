@@ -3,7 +3,7 @@ import { useTestMutations } from "@/hooks/use-test-mutations";
 
 import { Button } from "@/components/ui/button";
 
-import { Send } from "lucide-react";
+import { Send, Share2 } from "lucide-react";
 
 import { type Id } from "convex/_generated/dataModel";
 import { toastError } from "@/lib/utils";
@@ -37,8 +37,7 @@ export default function TestReviewShareButton({
       variant="outline"
       disabled={isPending}
     >
-      <Send className="h-4 w-4 mr-2" />
-      Share Results
+      <Share2 className="h-4 w-4" />
     </Button>
   );
 }

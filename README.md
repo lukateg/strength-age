@@ -14,38 +14,44 @@ check before launch:
 
 DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS):
 -- redesign test results page
--- nakon svega ovoga popravljaj loading... i skeletone
 -- edit section buttons should have beautifull purple design maybe
--- create main page components like main-header and reuse it across the app
 -- add mobile design to the sections again
+-- nakon svega ovoga popravljaj loading... i skeletone
+-- create main page components like main-header and reuse it across the app
 -- write a bit better confirm test modal text
--- fix test review naming convention
+-- fix test review naming convention by not even adding a name and just using a design you screenshoted
 -- fix test review scroll problem
 -- add progress bar from 0.1 do 1.0 version on the landing page and display that as progress from beta to live app
 -- implement subscription page and whole system for unsubscribe
--- change create new class for subscription plan
 -- header overlaps the layout on the mobileå
--- fix test review naming convention by not even adding a name and just using a design you screenshoted
+-- fix white mode
 
+
+BUGS
+- open class from dashboard and redirect back leads you to classes instead of a dashboard
 CAN'T REPRODUCE
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
 -- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
 
 PLAN:
 -- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
+-- handle all design things and make nice looking UI
 
 -- Add analytics
 -- implement AI cost monitoring setup
 -- SEO check
--- restyle the and add colors to the app
+-- create nice landing page
 -- check free tier plan and work out permisions and free plan for max classes, lessons, pdfs in mb, tests and ai token calls
 -- in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
 -- load testing
+-- check if you need terms and conditions
+-- check payment subscription to gemini, will it upgrade automatically and everything needed
 -- release to prod
 -- wait for the analytics results and think about the compex permisions and test sharing and start sprint 2
 -- if test is deleted retry button on testReview page should be disabled
 
 FUTURE FEATURES AND ENHANCMENTS:
+-- add test sharing
 -- add settings page
 - test sharing between users and groups
 - test preview before starting to work on it

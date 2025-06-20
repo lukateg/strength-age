@@ -2,36 +2,43 @@
 
 import { useUserContext } from "@/providers/user-provider";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
+import { getSubscriptionTier } from "@/lib/utils";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 
+import QueryState from "@/components/data-query/query-state";
 import Link from "next/link";
-import RecentClasses from "./components/recent-classes-section";
-import RecentTests from "./tests/components/recent-tests-card";
 import NotFound from "@/components/data-query/not-found";
 import DashboardStats from "@/components/dashboard-stats";
 import MainPageSkeleton from "@/components/page-components/main-page-skeleton";
-
-import { getSubscriptionTier } from "@/lib/utils";
-import QueryState from "@/components/data-query/query-state";
-import { generateDashboardStats } from "./tests/utils";
+import DashboardProgressWidgets from "./components/dashboard-progress-widgets";
+import WeekActivityWidget from "./components/week-activity-widget";
+import ActiveStreakWidget from "./components/active-streak-widget";
+import MostActiveClassWidget from "./components/most-active-class-widget";
 
 export default function Dashboard() {
-  const dashboardData = useAuthenticatedQueryWithStatus(
-    api.pages.dashboardPage.getDashboardPageData
+  const newDashboardData = useAuthenticatedQueryWithStatus(
+    api.pages.dashboardPage.getNewDashboardData
   );
   const { user } = useUserContext();
   const subscriptionTier = getSubscriptionTier(user?.data?.subscriptionTier);
-  const storageUsed = user?.data?.totalStorageUsage;
 
   return (
     <QueryState
-      query={dashboardData}
+      query={newDashboardData}
       pending={<MainPageSkeleton />}
       noData={<NotFound />}
     >
       {(data) => {
-        const { classes, tests, testReviews, permissions } = data;
+        const {
+          totalClasses,
+          totalTests,
+          streak,
+          weeklyActivity,
+          mostActiveClass,
+          globalSuccessRate,
+          totalTestReviews,
+        } = data;
 
         return (
           <div className="container mx-auto p-6">
@@ -44,10 +51,7 @@ export default function Dashboard() {
                   Your AI-powered learning assistant
                 </p>
               </div>
-              <Button
-                className="hidden md:flex"
-                disabled={!permissions.canCreateClass}
-              >
+              <Button className="hidden md:flex">
                 <Link
                   href="/app/classes/create-class"
                   className={"flex items-center justify-center"}
@@ -59,18 +63,28 @@ export default function Dashboard() {
                 </Link>
               </Button>
             </div>
+            <div className="flex flex-col gap-6">
+              <div className="flex gap-6">
+                <div className="grid w-1/2">
+                  <DashboardStats
+                    totalTests={totalTests}
+                    totalClasses={totalClasses}
+                    subscriptionTier={user?.data?.subscriptionTier}
+                  />
+                  <ActiveStreakWidget streak={streak} />
+                </div>
+                <div className="w-1/2 flex flex-row gap-6">
+                  <DashboardProgressWidgets
+                    globalSuccessRate={globalSuccessRate}
+                    totalTestReviews={totalTestReviews}
+                  />
+                </div>
+              </div>
 
-            <DashboardStats
-              tests={tests}
-              classes={classes}
-              testReviews={testReviews}
-              storageUsed={storageUsed ?? 0}
-              subscriptionTier={user?.data?.subscriptionTier ?? "free"}
-            />
-
-            <div className="grid gap-6 xl:grid-cols-2">
-              <RecentClasses classes={classes} />
-              <RecentTests tests={tests} />
+              <div className="grid md:grid-cols-2 gap-6">
+                <WeekActivityWidget weeklyActivity={weeklyActivity} />
+                <MostActiveClassWidget mostActiveClass={mostActiveClass} />
+              </div>
             </div>
           </div>
         );

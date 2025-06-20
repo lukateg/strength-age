@@ -81,3 +81,13 @@ export const getLessonPdfJoinsByLessonIds = async (
     )
   ).flat();
 };
+
+export const getLessonPdfsByClass = async (
+  ctx: GenericQueryCtx<DataModel>,
+  classId: Id<"classes">
+) => {
+  return await ctx.db
+    .query("lessonPdfs")
+    .withIndex("by_classId", (q) => q.eq("classId", classId))
+    .collect();
+};

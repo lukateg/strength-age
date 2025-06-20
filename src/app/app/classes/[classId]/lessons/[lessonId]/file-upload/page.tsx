@@ -31,7 +31,7 @@ import { type Id } from "convex/_generated/dataModel";
 import { useLesson } from "@/providers/lesson-provider";
 import { useUserContext } from "@/providers/user-provider";
 
-import { LIMITATIONS } from "@/shared/constants";
+import { LIMITATIONS } from "@/lib/limitations";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Pencil } from "lucide-react";

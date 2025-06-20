@@ -1,4 +1,4 @@
-import { LIMITATIONS } from "@/shared/constants";
+import { LIMITATIONS } from "@/lib/limitations";
 
 import { type DataModel } from "../_generated/dataModel";
 import { type GenericQueryCtx } from "convex/server";

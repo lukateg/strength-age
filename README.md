@@ -51,6 +51,7 @@ PLAN:
 -- if test is deleted retry button on testReview page should be disabled
 
 FUTURE FEATURES AND ENHANCMENTS:
+- 20 days streak gets discount
 -- add test sharing
 -- add settings page
 - test sharing between users and groups

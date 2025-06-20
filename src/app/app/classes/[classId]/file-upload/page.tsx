@@ -31,7 +31,7 @@ import QueryState from "@/components/data-query/query-state";
 
 import { type Id } from "../../../../../../convex/_generated/dataModel";
 import { useUserContext } from "@/providers/user-provider";
-import { LIMITATIONS } from "@/shared/constants";
+import { LIMITATIONS } from "@/lib/limitations";
 
 const formSchema = z.object({
   lessonId: z.custom<Id<"lessons">>(),

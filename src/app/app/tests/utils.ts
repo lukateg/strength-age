@@ -1,4 +1,4 @@
-import { LIMITATIONS } from "@/shared/constants";
+import { LIMITATIONS } from "@/lib/limitations";
 import { type Doc } from "convex/_generated/dataModel";
 import {
   FileText,

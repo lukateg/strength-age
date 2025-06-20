@@ -5,7 +5,7 @@ import { TestReviewListItem } from "./test-review-list-item";
 import ListCard from "@/components/list-card";
 import { type Doc } from "convex/_generated/dataModel";
 
-export default function RecentReviews({
+export default function RecentTestReviews({
   testReviews,
 }: {
   testReviews: Doc<"testReviews">[];

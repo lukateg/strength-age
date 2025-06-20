@@ -24,4 +24,4 @@ export const LIMITATIONS = {
     testShare: true,
     resultsShare: true,
   },
-} as const;
+};

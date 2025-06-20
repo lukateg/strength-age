@@ -1,12 +1,22 @@
 import { query } from "../_generated/server";
 import { AuthenticationRequired } from "../utils";
 import { hasPermission } from "../models/permissionsModel";
-import { getClassesWithPermissions } from "../models/classesModel";
+import {
+  getClassesByUser,
+  getClassesWithPermissions,
+} from "../models/classesModel";
 import { getPdfsByUser } from "../models/materialsModel";
 import { getTestsByUser } from "../models/testsModel";
-import { getTestReviewsByUser } from "../models/testReviewsModel";
+import {
+  getTestReviewsByUser,
+  getTestReviewsByClass,
+} from "../models/testReviewsModel";
+import { getLessonsByClass, getLessonsByUser } from "../models/lessonsModel";
+import { getLessonPdfsByClass } from "../models/lessonPdfsModel";
+import { type QueryCtx } from "../_generated/server";
 
-import { type Doc } from "../_generated/dataModel";
+import { type Doc, type Id } from "../_generated/dataModel";
+
 export interface ClassWithPermissions extends Doc<"classes"> {
   canDeleteClass: boolean;
   canUpdateClass: boolean;
@@ -22,6 +32,261 @@ export interface DashboardData {
     canCreateClass: boolean;
   };
 }
+
+// Helper to get the start of a week
+const getStartOfWeek = (date: Date) => {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+  return new Date(d.setDate(diff));
+};
+
+// --- Helper Functions ---
+
+function calculateGlobalSuccessRate(testReviews: Doc<"testReviews">[]) {
+  if (testReviews.length === 0) return 0;
+  const totalSuccessRate = testReviews.reduce((acc, review) => {
+    const successRate =
+      review.questions.length > 0
+        ? review.questions.filter((q) => q.isCorrect).length /
+          review.questions.length
+        : 0;
+    return acc + successRate;
+  }, 0);
+  return (totalSuccessRate / testReviews.length) * 100;
+}
+
+function calculateWeeklyActivity(
+  allClasses: Doc<"classes">[],
+  allLessons: Doc<"lessons">[],
+  allTests: Doc<"tests">[],
+  allTestReviews: Doc<"testReviews">[]
+) {
+  const now = new Date();
+  const startOfThisWeek = getStartOfWeek(now);
+  const startOfLastWeek = new Date(
+    startOfThisWeek.getTime() - 7 * 24 * 60 * 60 * 1000
+  );
+
+  const filterByWeek = (
+    items: (
+      | Doc<"classes">
+      | Doc<"tests">
+      | Doc<"testReviews">
+      | Doc<"lessons">
+    )[],
+    start: Date,
+    end: Date
+  ) =>
+    items.filter(
+      (item) =>
+        item._creationTime >= start.getTime() &&
+        item._creationTime < end.getTime()
+    );
+
+  const getTrend = (current: number, previous: number) => {
+    if (current > previous) return "higher";
+    if (current < previous) return "lower";
+    return "same" as const;
+  };
+
+  const classesThisWeek = filterByWeek(allClasses, startOfThisWeek, now).length;
+  const classesLastWeek = filterByWeek(
+    allClasses,
+    startOfLastWeek,
+    startOfThisWeek
+  ).length;
+
+  const lessonsThisWeek = filterByWeek(allLessons, startOfThisWeek, now).length;
+  const lessonsLastWeek = filterByWeek(
+    allLessons,
+    startOfLastWeek,
+    startOfThisWeek
+  ).length;
+
+  const testsThisWeek = filterByWeek(allTests, startOfThisWeek, now).length;
+  const testsLastWeek = filterByWeek(
+    allTests,
+    startOfLastWeek,
+    startOfThisWeek
+  ).length;
+
+  const testReviewsThisWeek = filterByWeek(
+    allTestReviews,
+    startOfThisWeek,
+    now
+  ).length;
+  const testReviewsLastWeek = filterByWeek(
+    allTestReviews,
+    startOfLastWeek,
+    startOfThisWeek
+  ).length;
+
+  return {
+    classes: {
+      count: classesThisWeek,
+      trend: getTrend(classesThisWeek, classesLastWeek),
+    },
+    lessons: {
+      count: lessonsThisWeek,
+      trend: getTrend(lessonsThisWeek, lessonsLastWeek),
+    },
+    tests: {
+      count: testsThisWeek,
+      trend: getTrend(testsThisWeek, testsLastWeek),
+    },
+    testReviews: {
+      count: testReviewsThisWeek,
+      trend: getTrend(testReviewsThisWeek, testReviewsLastWeek),
+    },
+  };
+}
+
+function calculateDayStreak(
+  activities: (
+    | Doc<"classes">
+    | Doc<"lessons">
+    | Doc<"tests">
+    | Doc<"testReviews">
+  )[]
+) {
+  const uniqueDays = [
+    ...new Set(activities.map((a) => new Date(a._creationTime).toDateString())),
+  ].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+
+  if (uniqueDays.length === 0) return 0;
+
+  const now = new Date();
+  const today = new Date(now.toDateString()).getTime();
+  const yesterday = new Date(now.setDate(now.getDate() - 1)).getTime();
+  const mostRecentActivityTime = new Date(uniqueDays[0]!).getTime();
+
+  if (
+    mostRecentActivityTime !== today &&
+    mostRecentActivityTime !== yesterday
+  ) {
+    return 0;
+  }
+
+  let streak = 1;
+  for (let i = 1; i < uniqueDays.length; i++) {
+    const day = new Date(uniqueDays[i - 1]!);
+    const prevDay = new Date(uniqueDays[i]!);
+    if ((day.getTime() - prevDay.getTime()) / (1000 * 3600 * 24) === 1) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+async function getMostActiveClassDetails(
+  ctx: QueryCtx,
+  userId: string,
+  allTestReviews: Doc<"testReviews">[]
+) {
+  if (allTestReviews.length === 0) return null;
+
+  const classIdCounts = allTestReviews.reduce(
+    (acc, review) => {
+      const classIdStr = review.classId.toString();
+      acc[classIdStr] = (acc[classIdStr] ?? 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
+  const classIds = Object.keys(classIdCounts);
+  if (classIds.length === 0) return null;
+
+  const mostActiveIdString = classIds.reduce((a, b) =>
+    classIdCounts[a]! > classIdCounts[b]! ? a : b
+  );
+
+  const mostActiveId = mostActiveIdString as Id<"classes">;
+  const mostActiveClass = await ctx.db.get(mostActiveId);
+
+  if (!mostActiveClass) return null;
+
+  const [lessons, lessonPdfs, reviewsForClass] = await Promise.all([
+    getLessonsByClass(ctx, mostActiveId),
+    getLessonPdfsByClass(ctx, mostActiveId),
+    getTestReviewsByClass(ctx, mostActiveId),
+  ]);
+
+  const highestScore = Math.max(
+    0,
+    ...reviewsForClass.map((r: Doc<"testReviews">) =>
+      r.questions.length > 0
+        ? (r.questions.filter((q) => q.isCorrect).length / r.questions.length) *
+          100
+        : 0
+    )
+  );
+
+  return {
+    title: mostActiveClass.title,
+    lessonsCount: lessons.length,
+    pdfsCount: lessonPdfs.length,
+    testReviewsCount: reviewsForClass.length,
+    highestScore: highestScore,
+  };
+}
+
+export const getNewDashboardData = query({
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+    const canCreateClass = await hasPermission(
+      ctx,
+      userId,
+      "classes",
+      "create"
+    );
+
+    // Fetch all necessary data in parallel
+    const [allClasses, allTests, allTestReviews, allLessons] =
+      await Promise.all([
+        getClassesByUser(ctx, userId),
+        getTestsByUser(ctx, userId),
+        getTestReviewsByUser(ctx, userId),
+        getLessonsByUser(ctx, userId),
+      ]);
+
+    const allActivity = [
+      ...allClasses,
+      ...allLessons,
+      ...allTests,
+      ...allTestReviews,
+    ];
+
+    const [globalSuccessRate, weeklyActivity, streak, mostActiveClass] =
+      await Promise.all([
+        calculateGlobalSuccessRate(allTestReviews),
+        calculateWeeklyActivity(
+          allClasses,
+          allLessons,
+          allTests,
+          allTestReviews
+        ),
+        calculateDayStreak(allActivity),
+        getMostActiveClassDetails(ctx, userId, allTestReviews),
+      ]);
+
+    return {
+      totalClasses: allClasses.length,
+      totalTests: allTests.length,
+      totalTestReviews: allTestReviews.length,
+      streak,
+      weeklyActivity,
+      mostActiveClass,
+      globalSuccessRate,
+      permissions: {
+        canCreateClass,
+      },
+    };
+  },
+});
 
 export const getDashboardPageData = query({
   handler: async (ctx): Promise<DashboardData> => {

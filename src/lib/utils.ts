@@ -173,7 +173,7 @@ export function getPreviousRoute(): string {
   return previousPath;
 }
 
-export type SubscriptionTier = Doc<"users">["subscriptionTier"];
+export type SubscriptionTier = Doc<"users">["subscriptionTier"] | undefined;
 
 type SubscriptionTierInfo = {
   name: string;
@@ -181,7 +181,7 @@ type SubscriptionTierInfo = {
 };
 
 export const getSubscriptionTier = (
-  subscriptionTier: SubscriptionTier | undefined
+  subscriptionTier?: SubscriptionTier
 ): SubscriptionTierInfo => {
   if (subscriptionTier === "free") {
     return {

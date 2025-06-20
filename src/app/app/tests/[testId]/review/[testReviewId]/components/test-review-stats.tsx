@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Clock, Award } from "lucide-react";
 
-import CircularProgress from "./circular-progress";
+import CircularProgress from "../../../../../../../components/progress-components/circular-progress";
 
 import { type Doc } from "convex/_generated/dataModel";
 

@@ -1,4 +1,4 @@
-import CircularProgress from "../review/[testReviewId]/components/circular-progress";
+import CircularProgress from "../../../../../components/progress-components/circular-progress";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";

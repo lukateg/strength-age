@@ -17,7 +17,7 @@ export default function CircularProgress({
     : "text-primary";
 
   return (
-    <div className="relative inline-flex items-center justify-center w-40 h-40">
+    <div className="relative inline-flex items-center justify-center w-full h-40">
       <svg className="transform -rotate-90 w-full h-full" viewBox="0 0 100 100">
         <circle
           className="text-muted stroke-current"

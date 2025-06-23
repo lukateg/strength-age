@@ -96,8 +96,10 @@ export function TestDetails({
           </div>
 
           <div className="flex items-start gap-2">
-            <p className="text-sm text-muted-foreground leading-6">Lessons:</p>
             <div className="flex text-sm flex-wrap gap-2">
+              <p className="text-sm text-muted-foreground leading-6">
+                Lessons:
+              </p>
               {lessons.map((lesson) => (
                 <div
                   key={lesson._id}

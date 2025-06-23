@@ -100,7 +100,7 @@ export default function TestPreviewPage() {
               )} */}
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-4">
               <div className="col-span-2 space-y-4">
                 <TestDetails
                   questionCount={data.questions.length}

@@ -35,8 +35,8 @@ export default function UploadedMaterialsList({
           <div className="flex items-center gap-4">
             <File className="h-6 w-6 text-primary" />
             <div>
-              <p className="font-base">{file.name}</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="font-xs">{file.name}</p>
+              <p className="text-xs text-muted-foreground">
                 {(file.size / 1024 / 1024).toFixed(2)} MB
               </p>
             </div>

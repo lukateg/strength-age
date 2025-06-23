@@ -14,15 +14,17 @@ import Link from "next/link";
 
 import { useParams } from "next/navigation";
 import { useClass } from "@/providers/class-context-provider";
+import { useUserContext } from "@/providers/user-provider";
 
 import { Pencil } from "lucide-react";
 import { type Id } from "convex/_generated/dataModel";
 import QueryState from "@/components/data-query/query-state";
+import ClassStats from "./components/class-stats";
 
 export default function ClassPage() {
   const { classId }: { classId: Id<"classes"> } = useParams();
   const { classData } = useClass();
-
+  const { user } = useUserContext();
   return (
     <QueryState
       query={classData}
@@ -30,8 +32,16 @@ export default function ClassPage() {
       noData={<NotFound />}
     >
       {(data) => {
-        const { class_, lessons, permissions, materials, tests, testReviews } =
-          data;
+        const {
+          class_,
+          lessons,
+          permissions,
+          materials,
+          tests,
+          testReviews,
+          classStorageUsage,
+          classSuccessRate,
+        } = data;
         return (
           <>
             <div className="space-y-10">
@@ -49,6 +59,13 @@ export default function ClassPage() {
                     </Button>
                   )
                 }
+              />
+              <ClassStats
+                totalTests={tests.length}
+                totalLessons={lessons.length}
+                classStorageUsage={classStorageUsage}
+                classSuccessRate={classSuccessRate}
+                user={user?.data}
               />
               <Tabs defaultValue="lessons" className="space-y-6">
                 <TabsList>

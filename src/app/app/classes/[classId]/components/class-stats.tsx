@@ -1,44 +1,39 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { type api } from "../../convex/_generated/api";
-import {
-  ArrowDown,
-  ArrowUp,
-  BookOpen,
-  FileText,
-  GraduationCap,
-} from "lucide-react";
+import { type api } from "../../../../../../convex/_generated/api";
+import { BookOpen, FileText, GraduationCap } from "lucide-react";
 import { type QueryStatus } from "@/hooks/use-authenticated-query";
 import { LIMITATIONS } from "@/lib/limitations";
+import { getPercentageColor } from "@/components/progress-components/get-percentage-color";
+import MiniPieChart from "@/app/app/components/mini-pie-chart";
+import { formatBytesToMB } from "@/lib/utils";
 
-type TestStatsProps = {
+type ClassStatsProps = {
+  totalLessons: number;
   totalTests: number;
-  totalAttempts: number;
-  mostActiveTest: string | null;
-  weeklySuccess: {
-    rate: number;
-    trend: "higher" | "lower" | "same";
-    percentageChange: number;
-  };
-  user: QueryStatus<typeof api.users.getUserData>["data"];
+  classStorageUsage: number;
+  classSuccessRate: number;
+  user: QueryStatus<typeof api.users.getUserData>["data"] | undefined;
 };
 
-export default function TestStats({
+export default function ClassStats({
+  totalLessons,
   totalTests,
-  totalAttempts,
-  mostActiveTest,
-  weeklySuccess,
+  classStorageUsage,
+  classSuccessRate,
   user,
-}: TestStatsProps) {
+}: ClassStatsProps) {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 mb-8">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 ">
-          <CardTitle className="text-base font-medium">Tests Active</CardTitle>
+          <CardTitle className="text-base font-medium">
+            Lessons by Class
+          </CardTitle>
           <GraduationCap className="h-6 w-6 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {totalTests}{" "}
+            {totalLessons}{" "}
             <span className="text-muted-foreground">
               / {LIMITATIONS[user?.subscriptionTier ?? "free"].tests}
             </span>
@@ -49,44 +44,45 @@ export default function TestStats({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 ">
           <CardTitle className="text-base font-medium">
-            Total Attempts
+            Tests by Class
           </CardTitle>
           <FileText className="h-6 w-6 text-muted-foreground" />
         </CardHeader>
         <CardContent className="flex items-start gap-2">
-          <div className="text-2xl font-bold">{totalAttempts}</div>
+          <div className="text-2xl font-bold">{totalTests}</div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 ">
           <CardTitle className="text-base font-medium">
-            Most Active Test
+            Storage by Class
           </CardTitle>
           <BookOpen className="h-6 w-6 text-muted-foreground" />
         </CardHeader>
         <CardContent className="flex items-start gap-2">
-          <div className="text-xl font-bold">{mostActiveTest}</div>
+          <div className="text-xl font-bold">
+            {formatBytesToMB(classStorageUsage)} /{" "}
+            {formatBytesToMB(
+              LIMITATIONS[user?.subscriptionTier ?? "free"].materials
+            )}
+            MB
+          </div>
         </CardContent>
       </Card>
 
       <Card className="relative">
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 ">
           <CardTitle className="text-base font-medium">
-            Weekly Success
+            Class Success Rate
           </CardTitle>
-          <div className="text-sm text-muted-foreground absolute right-6 bottom-6 flex items-center gap-1 flex-col">
-            {weeklySuccess.trend === "higher" && (
-              <ArrowUp className="h-4 w-4 text-green-500" />
-            )}
-            {weeklySuccess.trend === "lower" && (
-              <ArrowDown className="h-4 w-4 text-red-500" />
-            )}
-            <span className="text-xs">{weeklySuccess.percentageChange}%</span>
-          </div>
         </CardHeader>
-        <CardContent className="flex items-start gap-2">
-          <div className="text-2xl font-bold">{weeklySuccess.rate}%</div>
+        <CardContent className="flex items-center justify-between gap-2">
+          <div className="text-2xl font-bold">{classSuccessRate}%</div>
+          <MiniPieChart
+            progressColor={getPercentageColor(classSuccessRate, "ascending")}
+            percentage={classSuccessRate}
+          />
         </CardContent>
       </Card>
     </div>

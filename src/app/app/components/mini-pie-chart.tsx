@@ -1,4 +1,5 @@
 import React from "react";
+import { getTextColorClass } from "@/components/progress-components/get-percentage-color";
 
 const MiniPieChart = ({
   percentage,
@@ -16,14 +17,7 @@ const MiniPieChart = ({
   const offset = circumference - (percentage / 100) * circumference;
   const center = size / 2;
 
-  const colorClassMap: Record<string, string> = {
-    "red-500": "text-red-500",
-    "orange-500": "text-orange-500",
-    "yellow-500": "text-yellow-500",
-    "green-500": "text-green-500",
-  };
-
-  const colorClass = colorClassMap[progressColor] ?? "text-primary";
+  const colorClass = getTextColorClass(percentage, "ascending");
 
   return (
     <svg

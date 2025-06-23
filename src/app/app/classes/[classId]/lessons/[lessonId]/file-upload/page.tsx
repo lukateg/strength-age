@@ -99,7 +99,7 @@ export default function FileUploadPage() {
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
       <SectionHeader
         title={lesson.data?.title}
         description={lesson.data?.description}

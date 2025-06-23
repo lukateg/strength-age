@@ -41,7 +41,11 @@ export default function TestsSection({
             AI-generated tests from your materials
           </CardDescription>
         </div>
-        <Button disabled={!canCreateTest} className="text-xs md:text-base">
+        <Button
+          disabled={!canCreateTest}
+          variant={canCreateTest ? "positive" : "positive-outline"}
+          className="text-xs md:text-base"
+        >
           <Link
             href={`/app/classes/${classId}/generate-test`}
             className="flex items-center justify-center"

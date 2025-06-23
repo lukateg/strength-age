@@ -1,4 +1,5 @@
 import React from "react";
+import { getTextColorClass } from "./get-percentage-color";
 
 export default function CircularProgress({
   value,
@@ -11,16 +12,8 @@ export default function CircularProgress({
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (value / 100) * circumference;
 
-  // This mapping ensures Tailwind generates the necessary classes
-  const colorClassMap: Record<string, string> = {
-    "red-500": "text-red-500",
-    "orange-500": "text-orange-500",
-    "yellow-500": "text-yellow-500",
-    "green-500": "text-green-500",
-  };
-
   const colorClass = progressColor
-    ? (colorClassMap[progressColor] ?? "text-primary")
+    ? getTextColorClass(value, "ascending")
     : "text-primary";
 
   return (

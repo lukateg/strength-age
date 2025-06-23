@@ -27,6 +27,7 @@ DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS)
 -- implement subscription page and whole system for unsubscribe
 -- header overlaps the layout on the mobileå
 -- fix white mode
+-- modify upload files to not have list below it and instead display files to upload in the dropbox itself.
 
 
 BUGS
@@ -79,9 +80,11 @@ MAYBE IN FUTURE
 -- if file upload becomes to slow change uploadThing for convex store
 
 -TEST GENERATION
+-- add limit so user can pass or fail a test
 -- add importing previous tests when generating test so AI knows not to generate same questions
 --  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation to single class page
 -- implement custom question number per lesson
+-- add timer for test
 -- add abort test generating when clicking on the X in the loader
 -- maybe add sharing tests between user as a social media app
 -- add "..." for each pdf and implement edit logic "check if edit can edit text in the uploadThing

@@ -49,7 +49,12 @@ export default function ClassCard({
               View Class
             </Button>
           </Link>
-          <Button disabled={!classItem.canGenerateTest}>
+          <Button
+            disabled={!classItem.canGenerateTest}
+            variant={
+              classItem.canGenerateTest ? "positive" : "positive-outline"
+            }
+          >
             <Link
               href={`/app/classes/${classItem._id}/generate-test`}
               className="flex items-center justify-center"

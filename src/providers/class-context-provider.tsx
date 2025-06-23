@@ -5,9 +5,6 @@ import { api } from "../../convex/_generated/api";
 
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
 import { type QueryStatus } from "@/hooks/use-authenticated-query";
-// TODO:
-// 1. Add correct types for mutations
-// 2. Add correct loading and error state
 
 interface ClassContextType {
   classId: string;

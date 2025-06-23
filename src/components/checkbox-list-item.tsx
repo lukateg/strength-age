@@ -7,14 +7,16 @@ export default function CheckboxListItem({
   onCheckedChange,
   disabled,
   children,
+  className,
 }: {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   disabled?: boolean;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <ListItem variant={disabled ? "default" : "outline"}>
+    <ListItem variant={disabled ? "default" : "outline"} className={className}>
       <div className="flex items-center gap-4">
         <Checkbox
           checked={checked}

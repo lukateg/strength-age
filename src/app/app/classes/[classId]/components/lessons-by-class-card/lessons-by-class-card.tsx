@@ -23,7 +23,10 @@ export default function LessonsSectionComponent({
       description="PDF documents and study materials"
       items={lessons}
       cardAction={
-        <Button disabled={!canCreateLesson}>
+        <Button
+          disabled={!canCreateLesson}
+          variant={canCreateLesson ? "positive" : "positive-outline"}
+        >
           <Link
             href={`/app/classes/${classId}/new-lesson`}
             className={"flex items-center justify-center"}

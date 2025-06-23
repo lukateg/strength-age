@@ -32,7 +32,10 @@ export default function ClassesPage() {
                     Manage your classes and materials
                   </p>
                 </div>
-                <Button disabled={!permissions.canCreateClass}>
+                <Button
+                  disabled={!permissions.canCreateClass}
+                  variant="positive"
+                >
                   <Link
                     href="/app/classes/create-class"
                     className={"flex items-center justify-center"}

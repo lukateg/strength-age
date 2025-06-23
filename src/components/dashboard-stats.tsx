@@ -18,14 +18,14 @@ export default function DashboardStats({
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 mb-8 w-full">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-          <CardTitle className="text-lg font-medium">Classes</CardTitle>
+          <CardTitle className="text-base font-medium">Classes</CardTitle>
           <BookOpen className="h-6 w-6 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold tracking-wide">
-            <span>{totalClasses}</span>
+            <span>{totalClasses} </span>
             <span className="text-muted-foreground tracking-wide">
-              /{LIMITATIONS[subscriptionTier].classes}
+              / {LIMITATIONS[subscriptionTier].classes}
             </span>
           </div>
         </CardContent>
@@ -33,14 +33,14 @@ export default function DashboardStats({
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-          <CardTitle className="text-lg font-medium">Tests</CardTitle>
+          <CardTitle className="text-base font-medium">Tests</CardTitle>
           <GraduationCap className="h-6 w-6 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {totalTests}
+            {totalTests}{" "}
             <span className="text-muted-foreground">
-              /{LIMITATIONS[subscriptionTier].tests}
+              / {LIMITATIONS[subscriptionTier].tests}
             </span>
           </div>
         </CardContent>

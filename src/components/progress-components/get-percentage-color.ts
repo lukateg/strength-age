@@ -8,7 +8,7 @@ export function getPercentageColor(
     return "red-500";
   } else if (p <= 50) {
     return "orange-500";
-  } else if (p <= 75) {
+  } else if (p <= 70) {
     return "yellow-500";
   } else {
     return "green-500";

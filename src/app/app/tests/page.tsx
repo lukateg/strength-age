@@ -16,18 +16,28 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 import { FilePlus2 } from "lucide-react";
 import QueryState from "@/components/data-query/query-state";
+import { useUserContext } from "@/providers/user-provider";
 
 export default function Tests() {
-  const { testsPageData } = useTests();
+  const { newTestsPageData } = useTests();
+  const { user } = useUserContext();
 
   return (
     <QueryState
-      query={testsPageData}
+      query={newTestsPageData}
       pending={<MainPageSkeleton />}
       noData={<NotFound />}
     >
       {(data) => {
-        const { tests, testReviews, permissions } = data;
+        const {
+          tests,
+          testReviews,
+          permissions,
+          weeklySuccess,
+          mostActiveTest,
+          totalTests,
+          totalAttempts,
+        } = data;
         const canGenerateTest = permissions.canGenerateTest;
 
         return (
@@ -51,7 +61,13 @@ export default function Tests() {
               </Button>
             </div>
 
-            <TestStats testReviews={testReviews} tests={tests} />
+            <TestStats
+              totalTests={totalTests}
+              totalAttempts={totalAttempts}
+              mostActiveTest={mostActiveTest}
+              weeklySuccess={weeklySuccess}
+              user={user.data}
+            />
 
             <Tabs defaultValue="recent" className="space-y-6">
               <TabsList>

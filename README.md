@@ -13,6 +13,8 @@ check before launch:
 // -- check if endpoints return null instead of throwing an error if data is not there so the QueryState component works fine (somewhere error is necessery)
 
 DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS):
+- redesign tests page as you intended and then add stats to the class page (lessons 3/10, tests 2, class test success rate, storage used)
+- add new test review components instead of old list items on class page and test page
 -- redesign test results page
 -- edit section buttons should have beautifull purple design maybe
 -- add mobile design to the sections again

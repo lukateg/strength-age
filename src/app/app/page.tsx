@@ -51,16 +51,11 @@ export default function Dashboard() {
                   Your AI-powered learning assistant
                 </p>
               </div>
-              <Button className="hidden md:flex">
-                <Link
-                  href="/app/classes/create-class"
-                  className={"flex items-center justify-center"}
-                >
-                  <div className="flex items-center gap-2">
-                    <subscriptionTier.icon className="h-4 w-4" />
-                    <span>{`${subscriptionTier.name} tier`}</span>
-                  </div>
-                </Link>
+              <Button className="hidden md:flex ">
+                <div className="flex items-center gap-2">
+                  <subscriptionTier.icon className="h-4 w-4" />
+                  <span>{`${subscriptionTier.name} tier`}</span>
+                </div>
               </Button>
             </div>
             <div className="flex flex-col gap-6">

@@ -13,6 +13,7 @@ check before launch:
 // -- check if endpoints return null instead of throwing an error if data is not there so the QueryState component works fine (somewhere error is necessery)
 
 DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS):
+fix white theme
 -- redesign test results page
 -- edit section buttons should have beautifull purple design maybe
 -- add mobile design to the sections again
@@ -33,6 +34,7 @@ BUGS
 CAN'T REPRODUCE
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
 -- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
+-- still have some bad redirects on class and test review
 
 PLAN:
 -- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
@@ -72,6 +74,7 @@ SETTINGS PAGE
 -- in settings page add I DONT KNOW (if user wants to have don't know answer when multiple question)
 
 MAYBE IN FUTURE
+-- add feedback for each test question wrong answered
 -- add modals on all needed actions (when exiting touched forms)
 -- set generating the test to work the same as uploading materials in background and then whene finishes on toaster add link to open the test, then redirect him to test view page and then display green start button and then display global loader that simulates short loading and starts the test
 -- set each form to not be redirectable back to

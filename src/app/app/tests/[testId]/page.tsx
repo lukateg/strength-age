@@ -8,18 +8,15 @@ import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query
 import { api } from "../../../../../convex/_generated/api";
 
 import TestSkeleton from "./components/test-skeleton";
-import Link from "next/link";
 import ListCard from "@/components/list-card";
-import AlertDialogModal from "@/components/alert-dialog";
 import TestSuccessRate from "./components/test-success-rate";
 import QueryState from "@/components/data-query/query-state";
 import NotFound from "@/components/data-query/not-found";
 
 import { useTestMutations } from "@/hooks/use-test-mutations";
-import { ArrowLeft, Brain, Eye, Trash } from "lucide-react";
+import { ArrowLeft, Brain } from "lucide-react";
 import { TestDetails } from "./components/test-details";
 import { TestActions } from "./components/test-actions";
-import { ListItem } from "@/components/list-card";
 import { useLoadingContext } from "@/providers/loading-context";
 import { TestReviewListItem } from "../components/test-review-list-item";
 
@@ -79,25 +76,6 @@ export default function TestPreviewPage() {
                 </div>
                 <p className="text-muted-foreground">{data.description}</p>
               </div>
-
-              {/* {data.canShareTest && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="sm:w-10 h-10"
-                      >
-                        <Share2 className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Share test</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )} */}
             </div>
 
             <div className="grid gap-6 md:grid-cols-4">

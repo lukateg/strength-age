@@ -211,3 +211,13 @@ export const formatBytesToMB = (bytes: number): number => {
   const mb = bytes / (1024 * 1024);
   return Math.round(mb * 10) / 10;
 };
+
+export function getQuestionTypeLabel(id: string): string | undefined {
+  const QUESTION_TYPES = [
+    { id: "multiple_choice", label: "Multiple Choice" },
+    { id: "true_false", label: "True/False" },
+    { id: "short_answer", label: "Short Answer" },
+  ];
+  const questionType = QUESTION_TYPES.find((type) => type.id === id);
+  return questionType ? questionType.label : undefined;
+}

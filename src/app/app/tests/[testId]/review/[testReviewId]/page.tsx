@@ -11,6 +11,7 @@ import NotFound from "@/components/data-query/not-found";
 import TestReviewPage from "./components/test-review-page";
 
 import { type Id } from "convex/_generated/dataModel";
+import QueryState from "@/components/data-query/query-state";
 
 export default function ReviewPage() {
   const {
@@ -39,27 +40,25 @@ export default function ReviewPage() {
     setLoading(false);
   };
 
-  if (testReviewPageData.isPending) {
-    return <TestReviewSkeleton />;
-  }
-
-  if (testReviewPageData.isError) {
-    return <NotFound />;
-  }
-
-  if (!testReviewPageData.data) {
-    return <NotFound />;
-  }
-
-  const { testReview, permissions } = testReviewPageData.data;
-
   return (
-    <TestReviewPage
-      testReview={testReview}
-      backRoute={`/app/tests`}
-      isViewedByOwner={permissions.isViewedByOwner}
-      canTakeTest={permissions.canTakeTest}
-      handleRetakeTest={handleRetakeTest}
-    />
+    <QueryState
+      query={testReviewPageData}
+      pending={<TestReviewSkeleton />}
+      noData={<NotFound />}
+    >
+      {(data) => {
+        const { testReview, permissions, perQuestionTypeAccuracy } = data;
+        return (
+          <TestReviewPage
+            testReview={testReview}
+            backRoute={`/app/tests`}
+            isViewedByOwner={permissions.isViewedByOwner}
+            canTakeTest={permissions.canTakeTest}
+            handleRetakeTest={handleRetakeTest}
+            perQuestionTypeAccuracy={perQuestionTypeAccuracy}
+          />
+        );
+      }}
+    </QueryState>
   );
 }

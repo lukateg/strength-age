@@ -5,19 +5,23 @@ const MiniPieChart = ({
   percentage,
   size = 20,
   strokeWidth = 3,
-  progressColor,
+  isColored = false,
+  order = "ascending",
 }: {
   percentage: number;
   size?: number;
   strokeWidth?: number;
-  progressColor: string;
+  order?: "ascending" | "descending";
+  isColored?: boolean;
 }) => {
   const r = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * r;
   const offset = circumference - (percentage / 100) * circumference;
   const center = size / 2;
 
-  const colorClass = getTextColorClass(percentage, "ascending");
+  const colorClass = isColored
+    ? getTextColorClass(percentage, order)
+    : "text-primary";
 
   return (
     <svg

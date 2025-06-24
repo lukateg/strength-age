@@ -18,6 +18,29 @@ export const getTestReviewByIdQuery = query({
       return null;
     }
 
+    // --- New Calculations ---
+    const correctAnswers = testReview.questions.filter(
+      (q) => q.isCorrect
+    ).length;
+    const totalQuestions = testReview.questions.length;
+    const successRate =
+      totalQuestions > 0
+        ? Math.round((correctAnswers / totalQuestions) * 100)
+        : 0;
+
+    const perQuestionTypeAccuracy = testReview.questions.reduce(
+      (acc, question) => {
+        const type = question.questionType;
+        acc[type] ??= { correct: 0, total: 0 };
+        acc[type].total++;
+        if (question.isCorrect) {
+          acc[type].correct++;
+        }
+        return acc;
+      },
+      {} as Record<string, { correct: number; total: number }>
+    );
+
     if (shareToken) {
       const isValid = await validateTestReviewShareToken(ctx, shareToken);
       if (!isValid) {
@@ -64,6 +87,8 @@ export const getTestReviewByIdQuery = query({
     );
     return {
       testReview,
+      successRate,
+      perQuestionTypeAccuracy,
       permissions: {
         canTakeTest,
         canDeleteTestReview,

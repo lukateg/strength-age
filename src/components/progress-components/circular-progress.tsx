@@ -3,17 +3,19 @@ import { getTextColorClass } from "./get-percentage-color";
 
 export default function CircularProgress({
   value,
-  progressColor,
+  isColored = false,
+  order = "ascending",
 }: {
   value: number;
-  progressColor?: string;
+  isColored?: boolean;
+  order?: "ascending" | "descending";
 }) {
   const radius = 40; // Smaller radius for better fit
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (value / 100) * circumference;
 
-  const colorClass = progressColor
-    ? getTextColorClass(value, "ascending")
+  const colorClass = isColored
+    ? getTextColorClass(value, order)
     : "text-primary";
 
   return (

@@ -3,6 +3,7 @@ import CircularProgress from "../../../../../components/progress-components/circ
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { BookOpen } from "lucide-react";
+import { getPercentageColor } from "@/components/progress-components/get-percentage-color";
 
 import { type Doc } from "convex/_generated/dataModel";
 
@@ -41,7 +42,11 @@ export default function TestSuccessRate({
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <CircularProgress value={totalSuccessRatePercentage} />
+        <CircularProgress
+          value={totalSuccessRatePercentage}
+          isColored={true}
+          order="descending"
+        />
         <Separator />
 
         <div className="space-y-2">

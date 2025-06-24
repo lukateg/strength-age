@@ -1,7 +1,6 @@
 import { useUserContext } from "@/providers/user-provider";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { getPercentageColor } from "@/components/progress-components/get-percentage-color";
 import CircularProgress from "@/components/progress-components/circular-progress";
 
 import { LIMITATIONS } from "../../../lib/limitations";
@@ -38,10 +37,8 @@ export default function DashboardProgress({
             <div className="flex flex-col items-center justify-center w-full">
               <CircularProgress
                 value={percentageStorageUsed}
-                progressColor={getPercentageColor(
-                  percentageStorageUsed,
-                  "descending"
-                )}
+                isColored={true}
+                order="descending"
               />
             </div>
             <div className="flex flex-col items-start justify-center w-full">
@@ -70,10 +67,8 @@ export default function DashboardProgress({
             <div className="flex flex-col items-center justify-center w-full">
               <CircularProgress
                 value={globalSuccessRate}
-                progressColor={getPercentageColor(
-                  globalSuccessRate,
-                  "ascending"
-                )}
+                isColored={true}
+                order="ascending"
               />
             </div>
             <div className="flex flex-col items-start justify-center w-full">

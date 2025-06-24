@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, FileText, Target } from "lucide-react";
 import MiniPieChart from "./mini-pie-chart";
-import { getPercentageColor } from "@/components/progress-components/get-percentage-color";
 
 type MostActiveClass = {
   title: string;
@@ -46,10 +45,8 @@ export default function MostActiveClass({
         </div>
         <div className="flex items-center space-x-2">
           <MiniPieChart
-            progressColor={getPercentageColor(
-              mostActiveClass?.highestScore ?? 0,
-              "ascending"
-            )}
+            isColored={true}
+            order="ascending"
             percentage={mostActiveClass?.highestScore ?? 0}
           />
           <span className="font-bold">{mostActiveClass?.highestScore}%</span>{" "}

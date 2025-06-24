@@ -78,7 +78,9 @@ export default function ClassStats({
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between gap-2">
-          <div className="text-2xl font-bold">{classSuccessRate}%</div>
+          <div className="text-2xl font-bold">
+            {Math.round(classSuccessRate)}%
+          </div>
           <MiniPieChart
             progressColor={getPercentageColor(classSuccessRate, "ascending")}
             percentage={classSuccessRate}

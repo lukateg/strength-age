@@ -11,6 +11,11 @@ export default defineSchema({
       v.literal("pro")
     ),
     roles: v.array(v.union(v.literal("admin"), v.literal("user"))),
+    userPreferences: v.optional(
+      v.object({
+        shouldTestReviewLinksExpire: v.optional(v.boolean()),
+      })
+    ),
   }).index("by_clerkId", ["clerkId"]),
 
   stripeCustomers: defineTable({

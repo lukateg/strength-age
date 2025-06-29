@@ -1,0 +1,62 @@
+ {/* <Card>
+        <CardHeader>
+          <CardTitle>Display Settings</CardTitle>
+          <CardDescription>
+            Control how tests are displayed to students
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="pagination" className="text-base font-medium">
+                Enable Pagination
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Show tests with pagination instead of all questions on one page
+              </p>
+            </div>
+            <Switch
+              id="pagination"
+              checked={paginationEnabled}
+              onCheckedChange={handlePaginationChange}
+            />
+          </div>
+
+          <Separator />
+
+          <div className="space-y-4">
+            <h4 className="text-sm font-medium">Pagination Preview</h4>
+            <div className="bg-muted/30 p-4 rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                {paginationEnabled
+                  ? "Students will see one question at a time with navigation buttons"
+                  : "Students will see all questions on a single scrollable page"}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card> */}
+
+      {/* <Card>
+        <CardHeader>
+          <CardTitle>Test Analytics</CardTitle>
+          <CardDescription>
+            Configure how test performance data is collected
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="bg-muted/30 p-4 rounded-lg">
+              <h4 className="text-sm font-medium mb-2">
+                Current Configuration
+              </h4>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Student responses are anonymized</li>
+                <li>• Performance metrics are aggregated</li>
+                <li>• Individual student data is protected</li>
+                <li>• Results are available for 90 days</li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card> */}

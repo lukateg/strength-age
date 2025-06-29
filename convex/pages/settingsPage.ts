@@ -40,3 +40,20 @@ export const getSubscriptionPageData = query({
     };
   },
 });
+
+export const getTestSettingsPageData = query({
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const user = await userByClerkId(ctx, userId);
+
+    if (!user) {
+      throw createAppError({
+        message: "User not found",
+        statusCode: "NOT_FOUND",
+      });
+    }
+
+    return { userPreferences: user.userPreferences };
+  },
+});

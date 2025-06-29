@@ -144,7 +144,6 @@ export const useTestMutations = () => {
         setIsPending(true);
         const shareToken = await createTestReviewShareLinkMutation({
           testReviewId,
-          expiresInDays: 7,
         });
 
         if (!shareToken) {

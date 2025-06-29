@@ -23,7 +23,7 @@ export default function MostActiveClass({
           {mostActiveClass?.title}
         </p>
       </CardHeader>
-      <CardContent className="grid grid-cols-2 gap-6">
+      <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div className="flex items-center space-x-2">
           <BookOpen className="h-5 w-5 text-muted-foreground" />
           <span className="font-bold">

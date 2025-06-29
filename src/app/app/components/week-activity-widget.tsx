@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import { type api } from "../../../../convex/_generated/api";
 
 export default function DashboardActivity({
   weeklyActivity,
@@ -18,7 +17,7 @@ export default function DashboardActivity({
         <CardTitle>This Week&apos;s Activity</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-8 gap-y-4">
           <div className="flex items-baseline space-x-2">
             <span className="text-2xl font-bold">
               {weeklyActivity.classes.count}

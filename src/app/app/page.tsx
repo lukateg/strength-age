@@ -7,7 +7,6 @@ import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 
 import QueryState from "@/components/data-query/query-state";
-import Link from "next/link";
 import NotFound from "@/components/data-query/not-found";
 import DashboardStats from "@/components/dashboard-stats";
 import MainPageSkeleton from "@/components/page-components/main-page-skeleton";
@@ -58,9 +57,10 @@ export default function Dashboard() {
                 </div>
               </Button>
             </div>
+
             <div className="flex flex-col gap-6">
-              <div className="flex gap-6">
-                <div className="grid w-1/2">
+              <div className="flex flex-col lg:flex-row gap-6">
+                <div className="grid w-full lg:w-1/2">
                   <DashboardStats
                     totalTests={totalTests}
                     totalClasses={totalClasses}
@@ -68,7 +68,7 @@ export default function Dashboard() {
                   />
                   <ActiveStreakWidget streak={streak} />
                 </div>
-                <div className="w-1/2 flex flex-row gap-6">
+                <div className="w-full lg:w-1/2 flex flex-row gap-6">
                   <DashboardProgressWidgets
                     globalSuccessRate={globalSuccessRate}
                     totalTestReviews={totalTestReviews}

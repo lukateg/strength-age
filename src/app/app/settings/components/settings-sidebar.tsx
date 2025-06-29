@@ -19,7 +19,7 @@ export function SettingsSidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="bg-card border-r border-border h-full w-44">
+    <div className="bg-background border-r border-border h-full w-44">
       <div className="">
         <div className="text-muted-foreground flex items-center gap-2 p-6">
           <Settings className="w-6 h-6" />

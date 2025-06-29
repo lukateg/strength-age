@@ -13,17 +13,11 @@ check before launch:
 // -- check if endpoints return null instead of throwing an error if data is not there so the QueryState component works fine (somewhere error is necessery)
 
 DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS):
-fix white theme
--- redesign test results page
--- edit section buttons should have beautifull purple design maybe
 -- add mobile design to the sections again
 -- nakon svega ovoga popravljaj loading... i skeletone
 -- create main page components like main-header and reuse it across the app
 -- write a bit better confirm test modal text
--- fix test review naming convention by not even adding a name and just using a design you screenshoted
--- fix test review scroll problem
 -- add progress bar from 0.1 do 1.0 version on the landing page and display that as progress from beta to live app
--- implement subscription page and whole system for unsubscribe
 -- header overlaps the layout on the mobileå
 -- fix white mode
 -- modify upload files to not have list below it and instead display files to upload in the dropbox itself.

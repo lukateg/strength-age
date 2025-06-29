@@ -15,7 +15,7 @@ export default function DashboardStats({
   subscriptionTier = "free",
 }: DashboardStatsProps) {
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 mb-8 w-full">
+    <div className="grid gap-6 md:grid-cols-2 mb-8 w-full">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
           <CardTitle className="text-base font-medium">Classes</CardTitle>

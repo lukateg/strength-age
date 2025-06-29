@@ -1,9 +1,10 @@
-import { internalMutation, query, type QueryCtx } from "./_generated/server";
+import { internalMutation, query } from "./_generated/server";
 import { type UserJSON } from "@clerk/backend";
 import { v, type Validator } from "convex/values";
 import { internalQuery } from "./_generated/server";
 import { AuthenticationRequired } from "./utils";
 import { getTotalStorageUsage } from "./models/materialsModel";
+import { userByClerkId } from "./models/userModel";
 
 export const getUserData = query({
   handler: async (ctx) => {
@@ -74,13 +75,6 @@ export const getUserByClerkId = internalQuery({
     return userByClerkId(ctx, clerkId);
   },
 });
-
-async function userByClerkId(ctx: QueryCtx, clerkId: string) {
-  return await ctx.db
-    .query("users")
-    .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
-    .unique();
-}
 
 export const updateUser = internalMutation({
   args: {

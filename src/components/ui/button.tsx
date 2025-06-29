@@ -23,6 +23,11 @@ const buttonVariants = cva(
         "positive-outline":
           "border border-green-500  text-green-500  dark:text-green-400 p-1 dark:hover:bg-green-800/60 hover:bg-green-300/40",
 
+        caution:
+          "border border-yellow-500 bg-yellow-100/90 text-yellow-500 dark:bg-yellow-900/50 dark:text-yellow-400 p-1 dark:hover:bg-yellow-800/60 hover:bg-yellow-300/40",
+        "caution-outline":
+          "border border-yellow-500  text-yellow-500  dark:text-yellow-400 p-1 dark:hover:bg-yellow-800/60 hover:bg-yellow-300/40",
+
         outline:
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:

@@ -45,8 +45,6 @@ http.route({
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     console.log("[STRIPE WEBHOOK ROUTE] Received webhook request");
-    await AuthenticationRequired({ ctx });
-    console.log("Authentication successful");
 
     const signature = request.headers.get("stripe-signature");
     const payload = await request.text();

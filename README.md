@@ -28,6 +28,9 @@ fix white theme
 -- fix white mode
 -- modify upload files to not have list below it and instead display files to upload in the dropbox itself.
 
+TODO:
+ -- check everywhere if status is "active" || "canceled" since subscription stays in the database for all permission checks
+ 
 
 BUGS
 - open class from dashboard and redirect back leads you to classes instead of a dashboard
@@ -73,10 +76,10 @@ SETTINGS PAGE
 -- in settings page add ANSWER REQUIRED (if user wants to be able to submit test with answers that are not answered)
 -- in settings page add I DONT KNOW (if user wants to have don't know answer when multiple question)
 
+
 MAYBE IN FUTURE
 -- add feedback for each test question wrong answered
 -- add modals on all needed actions (when exiting touched forms)
--- set generating the test to work the same as uploading materials in background and then whene finishes on toaster add link to open the test, then redirect him to test view page and then display green start button and then display global loader that simulates short loading and starts the test
 -- set each form to not be redirectable back to
 -- if file upload becomes to slow change uploadThing for convex store
 

@@ -50,6 +50,10 @@ export type TestReviewActionParams = {
   retake: { testReview: Doc<"testReviews"> };
 };
 
+export type StripeCustomerActionParams = {
+  view: Doc<"stripeCustomers">;
+};
+
 // Map resource types to their action parameters
 export type ResourceActionParams = {
   lessons: LessonActionParams;
@@ -57,6 +61,7 @@ export type ResourceActionParams = {
   tests: TestActionParams;
   materials: MaterialActionParams;
   testReviews: TestReviewActionParams;
+  stripeCustomers: StripeCustomerActionParams;
 };
 
 export type Permissions = {
@@ -82,6 +87,10 @@ export type Permissions = {
       shareToken?: string;
     };
     action: keyof TestReviewActionParams;
+  };
+  stripeCustomers: {
+    dataType: Doc<"stripeCustomers">;
+    action: keyof StripeCustomerActionParams;
   };
 };
 
@@ -136,6 +145,9 @@ export const ROLES: RolesWithPermissions = {
       delete: true,
       share: true,
       retake: true,
+    },
+    stripeCustomers: {
+      view: true,
     },
   },
   user: {
@@ -239,6 +251,11 @@ export const ROLES: RolesWithPermissions = {
       },
       share: () => {
         return true;
+      },
+    },
+    stripeCustomers: {
+      view: (data, user) => {
+        return data.userId === user.clerkId;
       },
     },
   },

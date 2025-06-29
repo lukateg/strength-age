@@ -46,6 +46,11 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
+        pro: {
+          DEFAULT: "var(--pro-gradient)",
+          from: "var(--pro-from)",
+          to: "var(--pro-to)",
+        },
         chart: {
           "1": "hsl(var(--chart-1))",
           "2": "hsl(var(--chart-2))",

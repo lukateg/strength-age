@@ -10,6 +10,7 @@ import {
 import { type Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
 import { AuthenticationRequired, createAppError } from "./utils";
+import { hasPermission } from "./models/permissionsModel";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   console.error("Missing STRIPE_SECRET_KEY environment variable");
@@ -141,6 +142,7 @@ export const handleStripeWebhook = internalAction({
         "customer.subscription.created",
         "customer.subscription.updated",
         "customer.subscription.deleted",
+        "customer.subscription.canceled",
         "customer.subscription.paused",
         "customer.subscription.resumed",
         "customer.subscription.pending_update_applied",
@@ -164,10 +166,47 @@ export const handleStripeWebhook = internalAction({
         return { success: true, message: "Event type not tracked" };
       }
 
-      // All the events we track have a customerId
-      const { customer: customerId } = event.data.object as {
-        customer: string;
-      };
+      // Extract customer ID from different event types
+      let customerId: string;
+
+      if (event.type.startsWith("customer.subscription.")) {
+        // For subscription events, customer ID is in the subscription object
+        const subscription = event.data.object as Stripe.Subscription;
+        customerId = subscription.customer as string;
+      } else if (event.type.startsWith("invoice.")) {
+        // For invoice events, customer ID is in the invoice object
+        const invoice = event.data.object as Stripe.Invoice;
+        customerId = invoice.customer as string;
+      } else if (event.type.startsWith("payment_intent.")) {
+        // For payment intent events, customer ID might be in metadata or we need to skip
+        console.log(
+          "[STRIPE WEBHOOK] Payment intent event, skipping customer sync",
+          {
+            type: event.type,
+          }
+        );
+        return { success: true, message: "Payment intent event skipped" };
+      } else if (event.type === "checkout.session.completed") {
+        // For checkout events, customer ID is in the session object
+        const session = event.data.object;
+        customerId = session.customer as string;
+        if (!customerId) {
+          console.log(
+            "[STRIPE WEBHOOK] No customer ID in checkout session, skipping",
+            {
+              type: event.type,
+            }
+          );
+          return {
+            success: true,
+            message: "No customer ID in checkout session",
+          };
+        }
+      } else {
+        // Fallback for other events
+        const { customer } = event.data.object as { customer: string };
+        customerId = customer;
+      }
 
       if (typeof customerId !== "string") {
         console.error("[STRIPE WEBHOOK] Invalid customer ID", {
@@ -185,9 +224,26 @@ export const handleStripeWebhook = internalAction({
       });
 
       // Sync the customer's data to Convex using the internal action
-      await ctx.runAction(internal.stripe.syncStripeDataToConvex, {
-        customerId,
-      });
+      const syncResult = await ctx.runAction(
+        internal.stripe.syncStripeDataToConvex,
+        {
+          customerId,
+        }
+      );
+
+      if (syncResult === undefined) {
+        console.log(
+          "[STRIPE WEBHOOK] Customer not found in database, skipping sync",
+          {
+            customerId,
+            type: event.type,
+          }
+        );
+        return {
+          success: true,
+          message: "Customer not found in database, sync skipped",
+        };
+      }
 
       console.log("[STRIPE WEBHOOK] Successfully processed event", {
         type: event.type,
@@ -225,6 +281,24 @@ export const syncStripeDataToConvex = internalAction({
     | undefined
   > => {
     console.log("[STRIPE SYNC] Starting sync for customer", { customerId });
+
+    // Check if customer exists in our database first
+    const existingCustomer = await ctx.runQuery(
+      internal.stripe.getStripeCustomer,
+      {
+        customerId,
+      }
+    );
+
+    if (!existingCustomer) {
+      console.log(
+        "[STRIPE SYNC] Customer not found in database, skipping sync",
+        {
+          customerId,
+        }
+      );
+      return;
+    }
 
     // Fetch latest subscription data from Stripe
     const subscriptions = await ctx.runAction(
@@ -531,13 +605,16 @@ export const getSubscriptionStatus = query({
         priceId: null,
         currentPeriodEnd: null,
         cancelAtPeriodEnd: false,
+        isPaused: false,
       };
     }
 
     // Map price IDs to tiers
     const tierMap: Record<string, "starter" | "pro"> = {
-      [process.env.STRIPE_STARTER_PRICE_ID!]: "starter",
-      [process.env.STRIPE_PRO_PRICE_ID!]: "pro",
+      [process.env.STRIPE_STARTER_MONTHLY_PRICE_ID!]: "starter",
+      [process.env.STRIPE_STARTER_YEARLY_PRICE_ID!]: "starter",
+      [process.env.STRIPE_PRO_MONTHLY_PRICE_ID!]: "pro",
+      [process.env.STRIPE_PRO_YEARLY_PRICE_ID!]: "pro",
     };
 
     return {
@@ -549,6 +626,200 @@ export const getSubscriptionStatus = query({
       currentPeriodEnd: stripeCustomer.currentPeriodEnd,
       cancelAtPeriodEnd: stripeCustomer.cancelAtPeriodEnd,
       paymentMethod: stripeCustomer.paymentMethod,
+      isPaused: stripeCustomer.status === "paused",
     };
+  },
+});
+
+export const pauseSubscription = action({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    // Get the user's stripe customer
+    const stripeCustomer = await ctx.runQuery(
+      internal.stripe.getStripeCustomerByUserId,
+      { userId }
+    );
+
+    if (!stripeCustomer?.subscriptionId) {
+      throw createAppError({
+        message: "No active subscription found",
+        statusCode: "NOT_FOUND",
+      });
+    }
+
+    try {
+      // Pause the subscription
+      await stripe.subscriptions.update(stripeCustomer.subscriptionId, {
+        pause_collection: {
+          behavior: "keep_as_draft",
+        },
+      });
+
+      console.log("[STRIPE PAUSE] Subscription paused", {
+        subscriptionId: stripeCustomer.subscriptionId,
+        userId,
+      });
+
+      // Sync the updated data to Convex
+      await ctx.runAction(internal.stripe.syncStripeDataToConvex, {
+        customerId: stripeCustomer.stripeCustomerId,
+      });
+
+      return { success: true, message: "Subscription paused successfully" };
+    } catch (err) {
+      console.error("[STRIPE PAUSE] Error pausing subscription", err);
+      throw createAppError({
+        message: "Failed to pause subscription",
+        statusCode: "SERVER_ERROR",
+      });
+    }
+  },
+});
+
+export const resumeSubscription = action({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    // Get the user's stripe customer
+    const stripeCustomer = await ctx.runQuery(
+      internal.stripe.getStripeCustomerByUserId,
+      { userId }
+    );
+
+    if (!stripeCustomer?.subscriptionId) {
+      throw createAppError({
+        message: "No active subscription found",
+        statusCode: "NOT_FOUND",
+      });
+    }
+
+    try {
+      // Resume the subscription
+      await stripe.subscriptions.update(stripeCustomer.subscriptionId, {
+        pause_collection: null,
+      });
+
+      console.log("[STRIPE RESUME] Subscription resumed", {
+        subscriptionId: stripeCustomer.subscriptionId,
+        userId,
+      });
+
+      // Sync the updated data to Convex
+      await ctx.runAction(internal.stripe.syncStripeDataToConvex, {
+        customerId: stripeCustomer.stripeCustomerId,
+      });
+
+      return { success: true, message: "Subscription resumed successfully" };
+    } catch (err) {
+      console.error("[STRIPE RESUME] Error resuming subscription", err);
+      throw createAppError({
+        message: "Failed to resume subscription",
+        statusCode: "SERVER_ERROR",
+      });
+    }
+  },
+});
+
+export const cancelSubscription = action({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const stripeCustomer = await ctx.runQuery(
+      internal.stripe.getStripeCustomerByUserId,
+      { userId }
+    );
+
+    if (!stripeCustomer?.subscriptionId) {
+      throw createAppError({
+        message: "No active subscription found",
+        statusCode: "NOT_FOUND",
+      });
+    }
+
+    try {
+      // Cancel the subscription at period end
+      await stripe.subscriptions.update(stripeCustomer.subscriptionId, {
+        cancel_at_period_end: true,
+      });
+
+      console.log("[STRIPE CANCEL] Subscription cancelled at period end", {
+        subscriptionId: stripeCustomer.subscriptionId,
+        userId,
+      });
+
+      // Sync the updated data to Convex
+      await ctx.runAction(internal.stripe.syncStripeDataToConvex, {
+        customerId: stripeCustomer.stripeCustomerId,
+      });
+
+      return { success: true, message: "Subscription cancelled successfully" };
+    } catch (err) {
+      console.error("[STRIPE CANCEL] Error cancelling subscription", err);
+      throw createAppError({
+        message: "Failed to cancel subscription",
+        statusCode: "SERVER_ERROR",
+      });
+    }
+  },
+});
+
+export const undoSubscriptionCancellation = action({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const stripeCustomer = await ctx.runQuery(
+      internal.stripe.getStripeCustomerByUserId,
+      { userId }
+    );
+
+    if (!stripeCustomer?.subscriptionId) {
+      throw createAppError({
+        message: "No active subscription found",
+        statusCode: "NOT_FOUND",
+      });
+    }
+
+    if (!stripeCustomer.cancelAtPeriodEnd) {
+      throw createAppError({
+        message: "Subscription is not scheduled for cancellation",
+        statusCode: "VALIDATION_ERROR",
+      });
+    }
+
+    try {
+      // Undo the subscription cancellation
+      await stripe.subscriptions.update(stripeCustomer.subscriptionId, {
+        cancel_at_period_end: false,
+      });
+
+      console.log("[STRIPE UNDO CANCEL] Subscription cancellation undone", {
+        subscriptionId: stripeCustomer.subscriptionId,
+        userId,
+      });
+
+      // Sync the updated data to Convex
+      await ctx.runAction(internal.stripe.syncStripeDataToConvex, {
+        customerId: stripeCustomer.stripeCustomerId,
+      });
+
+      return {
+        success: true,
+        message: "Subscription cancellation undone successfully",
+      };
+    } catch (err) {
+      console.error(
+        "[STRIPE UNDO CANCEL] Error undoing subscription cancellation",
+        err
+      );
+      throw createAppError({
+        message: "Failed to undo subscription cancellation",
+        statusCode: "SERVER_ERROR",
+      });
+    }
   },
 });

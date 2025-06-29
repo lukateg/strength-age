@@ -1,13 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { PricingCard } from "./components/pricing-card";
+import { PricingCard, type PricingCardProps } from "./components/pricing-card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, CreditCard } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useAction } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useUserContext } from "@/providers/user-provider";
+import {
+  SUBSCRIPTION_PLANS,
+  YEARLY_DISCOUNT,
+  FREE_PRICE_ID,
+} from "@/lib/constants";
 
 export default function PricingSection() {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">(
@@ -20,23 +25,46 @@ export default function PricingSection() {
     setBillingPeriod(billingPeriod === "monthly" ? "yearly" : "monthly");
   };
 
-  const discount = 0.1; // 10% discount for yearly billing
-
   const handleSubscribe = async (priceId: string) => {
     try {
       const url = await stripePaymentAction({
         priceId,
         redirectRootUrl: window.location.origin,
-        // cancelUrl: `${window.location.origin}/app/pricing`,
       });
 
       if (url) {
         window.location.href = url;
       }
     } catch (error) {
-      console.error("Error creating checkout session:", error);
+      console.error("Error processing subscription change:", error);
     }
   };
+
+  const pricingPlans: PricingCardProps[] = SUBSCRIPTION_PLANS.map((plan) => ({
+    name: plan.name,
+    description: plan.description,
+    price: plan.price,
+    billingPeriod,
+    features: plan.features,
+    buttonText:
+      user.data?.subscriptionTier === plan.id
+        ? "Current Plan"
+        : plan.id === "free" && user.data?.subscriptionTier !== "free"
+          ? "Unsubscribe"
+          : plan.id === "free"
+            ? "Get Started"
+            : plan.id === "starter"
+              ? "Upgrade Now"
+              : "Go Pro",
+    buttonVariant: plan.id === "free" ? "outline" : "default",
+    popular: plan.popular,
+    isActive: user.data?.subscriptionTier === plan.id,
+    disabled: user.data?.subscriptionTier === plan.id,
+    onClick: async () =>
+      await handleSubscribe(
+        billingPeriod === "monthly" ? plan.priceId : plan.priceId
+      ),
+  }));
 
   return (
     <div className="mx-auto container p-6 space-y-14">
@@ -80,96 +108,9 @@ export default function PricingSection() {
         </div>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          <PricingCard
-            name="Free"
-            description="Perfect for individuals just getting started"
-            price={billingPeriod === "monthly" ? 0 : 0}
-            billingPeriod={billingPeriod}
-            features={[
-              "1 class with up to 3 lessons per class",
-              "Up to 50 MB of study materials",
-              "Generate up to 3 tests total",
-              "Maximum of 3 active tests",
-              "Each test can use up to 30 pages of input",
-              "Share test results through read-only links",
-            ]}
-            buttonText={
-              user.data?.subscriptionTier === "free"
-                ? "Current Plan"
-                : "Get Started"
-            }
-            buttonVariant="outline"
-            isActive={user.data?.subscriptionTier === "free"}
-            disabled={user.data?.subscriptionTier === "free"}
-          />
-
-          <PricingCard
-            name="Starter"
-            description="For educators with growing needs"
-            price={
-              billingPeriod === "monthly"
-                ? 7
-                : Math.round(7 * 12 * (1 - discount))
-            }
-            billingPeriod={billingPeriod}
-            features={[
-              "Up to 3 classes with 10 lessons each",
-              "Up to 250 MB of study materials",
-              "Generate up to 20 tests per month",
-              "Up to 10 active tests at any time",
-              "Each test can use up to 50 pages of input",
-              "Test results can be shared and taken by others",
-            ]}
-            buttonText={
-              user.data?.subscriptionTier === "starter"
-                ? "Current Plan"
-                : "Upgrade Now"
-            }
-            buttonVariant="default"
-            popular={true}
-            isActive={user.data?.subscriptionTier === "starter"}
-            disabled={user.data?.subscriptionTier === "starter"}
-            onClick={() =>
-              handleSubscribe(
-                billingPeriod === "monthly"
-                  ? process.env.NEXT_PUBLIC_STRIPE_STARTER_MONTHLY_PRICE_ID!
-                  : process.env.NEXT_PUBLIC_STRIPE_STARTER_YEARLY_PRICE_ID!
-              )
-            }
-          />
-
-          <PricingCard
-            name="Pro"
-            description="For advanced educational needs"
-            price={
-              billingPeriod === "monthly"
-                ? 15
-                : Math.round(15 * 12 * (1 - discount))
-            }
-            billingPeriod={billingPeriod}
-            features={[
-              "5 or more classes with up to 20 lessons each",
-              "500 MB or more of study materials",
-              "Generate unlimited tests",
-              "Up to 30 active tests at a time",
-              "Each test can use up to 100 pages of input",
-              "Collaborative classes with shared materials",
-              "Collaborative editing of test results",
-            ]}
-            buttonText={
-              user.data?.subscriptionTier === "pro" ? "Current Plan" : "Go Pro"
-            }
-            buttonVariant="default"
-            isActive={user.data?.subscriptionTier === "pro"}
-            disabled={user.data?.subscriptionTier === "pro"}
-            onClick={() =>
-              handleSubscribe(
-                billingPeriod === "monthly"
-                  ? process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID!
-                  : process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID!
-              )
-            }
-          />
+          {pricingPlans.map((plan) => (
+            <PricingCard key={plan.name} {...plan} />
+          ))}
         </div>
       </div>
 

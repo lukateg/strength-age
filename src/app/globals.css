@@ -43,6 +43,9 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --pro-from: #f97316;
+    --pro-to: #a855f7;
+    --pro-gradient: linear-gradient(to right, var(--pro-from), var(--pro-to));
   }
   .dark {
     --background: 224 71.4% 4.1%;
@@ -69,6 +72,9 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --pro-from: #f97316;
+    --pro-to: #a855f7;
+    --pro-gradient: linear-gradient(to right, var(--pro-from), var(--pro-to));
   }
 }
 
@@ -78,5 +84,22 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .bg-pro {
+    background: var(--pro-gradient);
+  }
+  
+  .bg-pro-gradient {
+    background: var(--pro-gradient);
+  }
+  
+  .text-pro {
+    background: var(--pro-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }

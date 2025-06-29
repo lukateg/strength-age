@@ -13,16 +13,16 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
-interface PricingCardProps {
+export interface PricingCardProps {
   name: string;
   description: string;
-  price: number;
+  price: string;
   billingPeriod: "monthly" | "yearly";
   features: string[];
   buttonText: string;
   buttonVariant?: "default" | "outline" | "secondary";
   popular?: boolean;
-  onClick?: () => void;
+  onClick?: () => Promise<void>;
   isActive?: boolean;
   disabled?: boolean;
 }
@@ -68,8 +68,8 @@ export function PricingCard({
       </CardHeader>
       <CardContent className="flex-1">
         <div className="mb-6">
-          <span className="text-4xl font-bold">${price}</span>
-          {price > 0 && (
+          <span className="text-4xl font-bold">{price}</span>
+          {price !== "Free" && (
             <span className="text-muted-foreground ml-2">
               /{billingPeriod === "monthly" ? "month" : "year"}
             </span>

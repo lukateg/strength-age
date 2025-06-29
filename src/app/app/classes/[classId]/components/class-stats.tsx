@@ -81,10 +81,7 @@ export default function ClassStats({
           <div className="text-2xl font-bold">
             {Math.round(classSuccessRate)}%
           </div>
-          <MiniPieChart
-            progressColor={getPercentageColor(classSuccessRate, "ascending")}
-            percentage={classSuccessRate}
-          />
+          <MiniPieChart isColored={true} percentage={classSuccessRate} />
         </CardContent>
       </Card>
     </div>

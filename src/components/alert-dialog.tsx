@@ -22,7 +22,7 @@ export default function AlertDialogModal({
   title: string;
   description: string;
   alertTrigger: React.ReactNode;
-  variant?: "destructive" | "default" | "positive";
+  variant?: "destructive" | "default" | "positive" | "caution";
 }) {
   return (
     <AlertDialog>

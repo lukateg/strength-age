@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center gap-1 justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center text-xs md:text-base gap-1 justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -23,6 +23,16 @@ const buttonVariants = cva(
         "positive-outline":
           "border border-green-500  text-green-500  dark:text-green-400 p-1 dark:hover:bg-green-800/60 hover:bg-green-300/40",
 
+        orange:
+          "border border-orange-500 bg-orange-100/90 text-orange-500 dark:bg-orange-900/50 dark:text-orange-400 p-1 dark:hover:bg-orange-800/60 hover:bg-orange-300/40",
+        "orange-outline":
+          "border border-orange-500  text-orange-500  dark:text-orange-400 p-1 dark:hover:bg-orange-800/60 hover:bg-orange-300/40",
+
+        purple:
+          "border border-purple-500 bg-purple-100/90 text-purple-500 dark:bg-purple-900/50 dark:text-purple-400 p-1 dark:hover:bg-purple-800/60 hover:bg-purple-300/40",
+        "purple-outline":
+          "border border-purple-500  text-purple-500  dark:text-purple-400 p-1 dark:hover:bg-purple-800/60 hover:bg-purple-300/40",
+
         caution:
           "border border-yellow-500 bg-yellow-100/90 text-yellow-500 dark:bg-yellow-900/50 dark:text-yellow-400 p-1 dark:hover:bg-yellow-800/60 hover:bg-yellow-300/40",
         "caution-outline":
@@ -36,10 +46,10 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        default: "p-2 md:px-4 md:py-2 h-fit",
+        sm: "p-2 md:px-3 h-9 rounded-md",
+        lg: "p-2 md:px-8 h-11 rounded-md",
+        icon: "h-10 w-10 p-2",
       },
     },
     defaultVariants: {

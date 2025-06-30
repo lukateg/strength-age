@@ -3,7 +3,6 @@ import CircularProgress from "../../../../../components/progress-components/circ
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { BookOpen } from "lucide-react";
-import { getPercentageColor } from "@/components/progress-components/get-percentage-color";
 
 import { type Doc } from "convex/_generated/dataModel";
 

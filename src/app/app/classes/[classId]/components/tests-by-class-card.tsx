@@ -33,9 +33,9 @@ export default function TestsSection({
     useTestMutations();
 
   return (
-    <Card>
+    <div>
       <CardHeader className="flex flex-col gap-2 md:flex-row justify-between">
-        <div className="space-y-2">
+        <div>
           <CardTitle className="text-xl md:text-2xl">Course Tests</CardTitle>
           <CardDescription className="text-sm md:text-base">
             AI-generated tests from your materials
@@ -43,7 +43,7 @@ export default function TestsSection({
         </div>
         <Button
           disabled={!canCreateTest}
-          variant={canCreateTest ? "positive" : "positive-outline"}
+          variant="purple"
           className="text-xs md:text-base"
         >
           <Link
@@ -56,7 +56,7 @@ export default function TestsSection({
         </Button>
       </CardHeader>
 
-      <div className="grid xl:grid-cols-2 gap-6 px-6">
+      <div className="grid xl:grid-cols-2 gap-6">
         <ListCard
           title="Recent Tests"
           description="Latest AI-generated tests for you"
@@ -116,6 +116,6 @@ export default function TestsSection({
           )}
         />
       </div>
-    </Card>
+    </div>
   );
 }

@@ -10,6 +10,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { type LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ListCardProps<T> {
   title: string;
@@ -38,15 +39,15 @@ export default function ListCard<T>({
 
   return (
     <Card>
-      <CardHeader className="flex flex-row justify-between">
+      <CardHeader className="flex flex-col md:flex-row justify-between gap-2">
         <div className="space-y-2">
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </div>
-        {cardAction && <div>{cardAction}</div>}
+        {cardAction && <div className="self-end">{cardAction}</div>}
       </CardHeader>
       <CardContent>
-        <ItemsScrollArea className={height}>
+        <ItemsScrollArea className={cn(height, "overflow-y-auto")}>
           {items && items.length > 0 ? (
             items.map((item) => renderItem(item))
           ) : (
@@ -68,10 +69,10 @@ interface ListItemProps {
 
 export function ListItem({ icon: Icon, title, children }: ListItemProps) {
   return (
-    <div className="flex items-center justify-between p-4 border rounded-lg">
+    <div className="flex items-center justify-between p-4 border-b ">
       <div className="flex items-center">
         <Icon className="h-4 w-4 mr-2 text-muted-foreground" />
-        <span className="text-sm md:text-base w-[14ch] md:w-full text-ellipsis overflow-hidden whitespace-nowrap">
+        <span className="text-sm md:text-base max-w-[14ch] lg:max-w-[20ch] w-[14ch] md:w-full text-ellipsis overflow-hidden whitespace-nowrap">
           {title}
         </span>
       </div>

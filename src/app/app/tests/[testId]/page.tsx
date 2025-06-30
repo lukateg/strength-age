@@ -94,7 +94,7 @@ export default function TestPreviewPage() {
                 <TestActions handleRetakeTest={handleRetakeTest} />
               </div>
 
-              <div className="col-span-1">
+              <div className="col-span-2 xl:col-span-1">
                 <TestSuccessRate testReviews={data.testReviews} />
               </div>
             </div>

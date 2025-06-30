@@ -1,10 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Progress } from "@/components/ui/progress";
-import { BookOpen, CheckCircle } from "lucide-react";
-import { getQuestionTypeLabel } from "@/lib/utils";
-import { getPercentageColor } from "@/components/progress-components/get-percentage-color";
+import { BookOpen } from "lucide-react";
 import CircularProgress from "@/components/progress-components/circular-progress";
 
 export default function TestReviewProgress({
@@ -17,7 +14,7 @@ export default function TestReviewProgress({
   total: number;
 }) {
   return (
-    <Card className="w-1/2">
+    <Card className="w-full md:w-1/2">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <BookOpen className="h-5 w-5 text-primary" />

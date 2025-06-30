@@ -48,9 +48,10 @@
     --pro-gradient: linear-gradient(to right, var(--pro-from), var(--pro-to));
   }
   .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
+    --background: 170 30% 9.1%;
+    /* --foreground: 210 20% 98%; */
+    --foreground: 150 20% 98%;
+    --card: 200 51.4% 5.1%;
     --card-foreground: 210 20% 98%;
     --popover: 224 71.4% 4.1%;
     --popover-foreground: 210 20% 98%;

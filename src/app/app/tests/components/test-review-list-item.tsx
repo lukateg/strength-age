@@ -54,7 +54,7 @@ export function TestReviewListItem({
   return (
     <div>
       <Link href={`/app/tests/${testReview.testId}/review/${testReview._id}`}>
-        <div className="flex flex-col gap-2 rounded-lg hover:bg-accent p-4 border transition duration-200">
+        <div className="flex flex-col gap-2 rounded-lg hover:bg-accent p-4 transition duration-200">
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <h3 className="font-medium text-sm">{testReview.title}</h3>

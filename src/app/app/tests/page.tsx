@@ -51,10 +51,7 @@ export default function Tests() {
                   Let AI generate tests from your materials
                 </p>
               </div>
-              <Button
-                disabled={!canGenerateTest}
-                variant={canGenerateTest ? "positive" : "positive-outline"}
-              >
+              <Button disabled={!canGenerateTest} variant="purple">
                 <Link href={`/app/tests/generate-test`}>
                   <span className="flex items-center gap-2">
                     <FilePlus2 size={16} />

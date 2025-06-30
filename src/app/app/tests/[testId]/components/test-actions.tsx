@@ -17,7 +17,7 @@ export function TestActions({
         alertTrigger={
           <Button className="w-full" variant="positive">
             <Play className="h-4 w-4" />
-            <span className="hidden md:block">Start Test!</span>
+            <span className="block">Start Test!</span>
           </Button>
         }
       />

@@ -10,9 +10,12 @@ export default function ItemsScrollArea({
 }) {
   return (
     <ScrollArea
-      className={cn("h-[340px] w-full rounded-md border p-4", className)}
+      className={cn(
+        "h-[340px] w-full rounded-md border overflow-y-auto",
+        className
+      )}
     >
-      <div className="space-y-4 h-full">{children}</div>
+      <div className="h-full">{children}</div>
     </ScrollArea>
   );
 }

@@ -5,6 +5,7 @@ import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query
 
 import SharingSettingsCard from "./components/sharing-settings-card";
 import QueryState from "@/components/data-query/query-state";
+import SettingsPageSkeleton from "../components/settings-page-skeleton";
 
 export default function TestsPage() {
   const testSettingsData = useAuthenticatedQueryWithStatus(
@@ -12,7 +13,7 @@ export default function TestsPage() {
   );
 
   return (
-    <QueryState query={testSettingsData} pending={<div>Loading...</div>}>
+    <QueryState query={testSettingsData} pending={<SettingsPageSkeleton />}>
       {(data) => {
         const { userPreferences } = data;
 

@@ -6,10 +6,11 @@ import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query
 import GenerateTestForm from "@/components/generate-test-form/generate-test-form";
 import RedirectBackButton from "@/components/redirect-back-button";
 import NotFound from "@/components/data-query/not-found";
+import QueryState from "@/components/data-query/query-state";
+import GenerateTestPageSkeleton from "../../classes/[classId]/generate-test/components/generate-test-page-skeleton";
 
 import { ArrowLeft } from "lucide-react";
 import { BookOpen } from "lucide-react";
-import QueryState from "@/components/data-query/query-state";
 
 export default function GenerateTestPage() {
   const generateTestPageData = useAuthenticatedQueryWithStatus(
@@ -19,7 +20,7 @@ export default function GenerateTestPage() {
   return (
     <QueryState
       query={generateTestPageData}
-      pending={<div>Loading...</div>}
+      pending={<GenerateTestPageSkeleton />}
       noData={<NotFound />}
     >
       {(data) => {

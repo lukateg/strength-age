@@ -13,11 +13,11 @@ check before launch:
 // -- check if endpoints return null instead of throwing an error if data is not there so the QueryState component works fine (somewhere error is necessery)
 
 DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS):
--- add mobile design to the sections again
--- nakon svega ovoga popravljaj loading... i skeletone
+make widgets increase progress on page load
 -- create main page components like main-header and reuse it across the app
 -- write a bit better confirm test modal text
 -- add progress bar from 0.1 do 1.0 version on the landing page and display that as progress from beta to live app
+-- add pricing to the landing page
 -- header overlaps the layout on the mobileå
 -- fix white mode
 -- modify upload files to not have list below it and instead display files to upload in the dropbox itself.
@@ -36,6 +36,7 @@ CAN'T REPRODUCE
 PLAN:
 -- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
 -- handle all design things and make nice looking UI
+-- pitaj cgpt za kolacice i podatke koje treba da prikupljas
 
 -- Add analytics
 -- implement AI cost monitoring setup

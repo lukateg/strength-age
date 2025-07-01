@@ -8,7 +8,7 @@ import RecentReviews from "./components/recent-reviews-card";
 import TestStats from "@/components/test-stats";
 import AllTestsCard from "./components/all-tests-card";
 import AllTestReviewsCard from "./components/all-test-reviews-card";
-import MainPageSkeleton from "@/components/page-components/main-page-skeleton";
+import TestsPageSkeleton from "./components/tests-page-skeleton";
 import NotFound from "@/components/data-query/not-found";
 
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ export default function Tests() {
   return (
     <QueryState
       query={newTestsPageData}
-      pending={<MainPageSkeleton />}
+      pending={<TestsPageSkeleton />}
       noData={<NotFound />}
     >
       {(data) => {

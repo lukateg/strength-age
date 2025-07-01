@@ -5,7 +5,7 @@ import { useLesson } from "@/providers/lesson-provider";
 import AllMaterialsByLessonCard from "./components/all-materials-by-lesson-card";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
 import SectionHeader from "@/components/page-components/page-header";
-import PageSkeleton from "@/components/page-components/main-page-skeleton";
+import LessonPageSkeleton from "./components/lesson-page-skeleton";
 import NotFound from "@/components/data-query/not-found";
 import Link from "next/link";
 import QueryState from "@/components/data-query/query-state";
@@ -18,7 +18,11 @@ export default function LessonPage() {
   const { lesson } = useLesson();
 
   return (
-    <QueryState query={lesson} pending={<PageSkeleton />} noData={<NotFound />}>
+    <QueryState
+      query={lesson}
+      pending={<LessonPageSkeleton />}
+      noData={<NotFound />}
+    >
       {(data) => {
         const {
           materials,

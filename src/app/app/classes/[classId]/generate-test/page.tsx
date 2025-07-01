@@ -7,6 +7,8 @@ import GenerateTestForm from "@/components/generate-test-form/generate-test-form
 import NotFound from "@/components/data-query/not-found";
 import RedirectBackButton from "@/components/redirect-back-button";
 import QueryState from "@/components/data-query/query-state";
+import GenerateTestPageSkeleton from "./components/generate-test-page-skeleton";
+
 import { ArrowLeft, BookOpen } from "lucide-react";
 
 export default function GenerateTestPage() {
@@ -17,7 +19,7 @@ export default function GenerateTestPage() {
   return (
     <QueryState
       query={generatePageData}
-      pending={<div>Loading...</div>}
+      pending={<GenerateTestPageSkeleton />}
       noData={<NotFound />}
     >
       {(data) => {

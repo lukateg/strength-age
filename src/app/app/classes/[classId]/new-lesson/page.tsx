@@ -6,11 +6,15 @@ import { useLessonMutations } from "@/hooks/use-lesson-mutations";
 
 import LessonForm from "../lessons/[lessonId]/components/lesson-form/lesson-form";
 import SectionHeader from "@/components/page-components/page-header";
+import QueryState from "@/components/data-query/query-state";
+import NewLessonPageSkeleton from "./components/new-lesson-page-skeleton";
 
 import { type createLessonSchema } from "@/lib/schemas";
 import { useClass } from "@/providers/class-context-provider";
 
 type LessonFormData = z.infer<typeof createLessonSchema>;
+
+// TODO: implement suspense
 
 export default function NewLessonPage() {
   const router = useRouter();
@@ -49,22 +53,25 @@ export default function NewLessonPage() {
     router.push(`/app/classes/${classId}`);
   };
 
-  if (!classData.data) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div className="space-y-10">
-      <SectionHeader
-        title="New Lesson"
-        description="Create a new lesson for your class"
-        backRoute={`/app/classes/${classId}`}
-      />
-      <LessonForm
-        onSubmit={onSubmit}
-        materials={classData.data?.materials}
-        isSubmitting={isUploading || isPending}
-      />
-    </div>
+    <QueryState query={classData} pending={<NewLessonPageSkeleton />}>
+      {(data) => {
+        const { materials } = data;
+        return (
+          <div className="space-y-6">
+            <SectionHeader
+              title="New Lesson"
+              description="Create a new lesson for your class"
+              backRoute={`/app/classes/${classId}`}
+            />
+            <LessonForm
+              onSubmit={onSubmit}
+              materials={materials}
+              isSubmitting={isUploading || isPending}
+            />
+          </div>
+        );
+      }}
+    </QueryState>
   );
 }

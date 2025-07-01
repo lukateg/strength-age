@@ -9,11 +9,11 @@ import { Button } from "@/components/ui/button";
 import QueryState from "@/components/data-query/query-state";
 import NotFound from "@/components/data-query/not-found";
 import DashboardStats from "@/components/dashboard-stats";
-import MainPageSkeleton from "@/components/page-components/main-page-skeleton";
 import DashboardProgressWidgets from "./components/dashboard-progress-widgets";
 import WeekActivityWidget from "./components/week-activity-widget";
 import ActiveStreakWidget from "./components/active-streak-widget";
 import MostActiveClassWidget from "./components/most-active-class-widget";
+import DashboardSkeleton from "./components/dashboard-skeleton";
 
 export default function Dashboard() {
   const newDashboardData = useAuthenticatedQueryWithStatus(
@@ -25,7 +25,7 @@ export default function Dashboard() {
   return (
     <QueryState
       query={newDashboardData}
-      pending={<MainPageSkeleton />}
+      pending={<DashboardSkeleton />}
       noData={<NotFound />}
     >
       {(data) => {

@@ -29,6 +29,9 @@ export default function TestStats({
   weeklySuccess,
   user,
 }: TestStatsProps) {
+  const subscriptionTier = user?.subscriptionTier ?? "free";
+  const maxTests = LIMITATIONS[subscriptionTier].tests;
+
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 mb-8">
       <Card>
@@ -39,9 +42,7 @@ export default function TestStats({
         <CardContent>
           <div className="text-2xl font-bold">
             {totalTests}{" "}
-            <span className="text-muted-foreground">
-              / {LIMITATIONS[user?.subscriptionTier ?? "free"].tests}
-            </span>
+            <span className="text-muted-foreground">/ {maxTests}</span>
           </div>
         </CardContent>
       </Card>
@@ -66,7 +67,9 @@ export default function TestStats({
           <BookOpen className="h-6 w-6 text-muted-foreground" />
         </CardHeader>
         <CardContent className="flex items-start gap-2">
-          <div className="text-xl font-bold">{mostActiveTest}</div>
+          <div className="text-xl font-bold">
+            {mostActiveTest ?? "No tests yet"}
+          </div>
         </CardContent>
       </Card>
 

@@ -1,12 +1,14 @@
 "use client";
 
+import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
+import { api } from "../../../../../convex/_generated/api";
+
 import CancelSubscriptionCard from "./components/cancel-subscription-card";
 import BillingInformationCard from "./components/billing-information-card";
 import CurrentPlanCard from "./components/current-plan-card";
-import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import { api } from "../../../../../convex/_generated/api";
 import QueryState from "@/components/data-query/query-state";
 import UndoCancelingCard from "./components/undo-canceling-card";
+import SettingsPageSkeleton from "../components/settings-page-skeleton";
 
 export default function SubscriptionsPage() {
   const data = useAuthenticatedQueryWithStatus(
@@ -14,7 +16,7 @@ export default function SubscriptionsPage() {
   );
 
   return (
-    <QueryState query={data} pending={<div>Loading...</div>}>
+    <QueryState query={data} pending={<SettingsPageSkeleton />}>
       {(data) => {
         const { stripeCustomer } = data;
         const isActive = stripeCustomer?.status === "active";

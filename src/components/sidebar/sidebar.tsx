@@ -15,9 +15,7 @@ const Sidebar = () => {
   // const { setLoading } = useLoadingContext();
 
   return (
-    <aside
-      className={cn("h-screen border-r bg-background pt-16 overflow-hidden")}
-    >
+    <aside className={cn("h-screen border-r  pt-16 overflow-hidden")}>
       <div className="p-4 flex items-center justify-between border-b">
         <Button
           variant="ghost"

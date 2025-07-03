@@ -33,7 +33,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
       "Each test can use up to 30 pages of input",
       "Share test results through read-only links",
     ],
-    popular: true,
+    popular: false,
     isPopular: true,
     priceId: "free",
     // stripePriceIds: {

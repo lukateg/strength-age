@@ -37,6 +37,7 @@ PLAN:
 -- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
 -- handle all design things and make nice looking UI
 -- pitaj cgpt za kolacice i podatke koje treba da prikupljas
+-- write down terms and conditions, privacy policy and documentation(mintlify)
 
 -- Add analytics
 -- implement AI cost monitoring setup
@@ -52,6 +53,7 @@ PLAN:
 -- if test is deleted retry button on testReview page should be disabled
 
 FUTURE FEATURES AND ENHANCMENTS:
+- export test to json and print it
 - 20 days streak gets discount
 -- add test sharing
 -- add settings page

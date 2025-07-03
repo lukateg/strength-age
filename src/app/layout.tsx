@@ -32,7 +32,7 @@ export default function RootLayout({
     <ClerkProvider>
       <TooltipProvider>
         <html lang="en" suppressHydrationWarning>
-          <body className={inter.className}>
+          <body className={`${inter.className} gradient-bg`}>
             <ThemeProvider
               attribute="class"
               defaultTheme="system"

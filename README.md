@@ -23,6 +23,7 @@ PLAN:
 -- write down terms and conditions, privacy policy and documentation(mintlify)
 -- add feedback logic
 -- check payment of the ai, do you need to upgrade and everything
+-- add feedback received, working on it email message
 -- Add analytics
 -- implement AI cost monitoring setup
 -- SEO check

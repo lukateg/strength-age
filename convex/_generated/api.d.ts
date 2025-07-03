@@ -10,6 +10,7 @@
 
 import type * as classes from "../classes.js";
 import type * as crons from "../crons.js";
+import type * as feedbacks from "../feedbacks.js";
 import type * as http from "../http.js";
 import type * as lessons from "../lessons.js";
 import type * as materials from "../materials.js";
@@ -58,6 +59,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   classes: typeof classes;
   crons: typeof crons;
+  feedbacks: typeof feedbacks;
   http: typeof http;
   lessons: typeof lessons;
   materials: typeof materials;

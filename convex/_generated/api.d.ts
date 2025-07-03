@@ -26,6 +26,7 @@ import type * as pages_classPage from "../pages/classPage.js";
 import type * as pages_classesPage from "../pages/classesPage.js";
 import type * as pages_dashboardPage from "../pages/dashboardPage.js";
 import type * as pages_generateTestPage from "../pages/generateTestPage.js";
+import type * as pages_landingPage from "../pages/landingPage.js";
 import type * as pages_lessonPage from "../pages/lessonPage.js";
 import type * as pages_settingsPage from "../pages/settingsPage.js";
 import type * as pages_testPage from "../pages/testPage.js";
@@ -73,6 +74,7 @@ declare const fullApi: ApiFromModules<{
   "pages/classesPage": typeof pages_classesPage;
   "pages/dashboardPage": typeof pages_dashboardPage;
   "pages/generateTestPage": typeof pages_generateTestPage;
+  "pages/landingPage": typeof pages_landingPage;
   "pages/lessonPage": typeof pages_lessonPage;
   "pages/settingsPage": typeof pages_settingsPage;
   "pages/testPage": typeof pages_testPage;

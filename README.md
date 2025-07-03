@@ -39,6 +39,7 @@ PLAN:
 -- pitaj cgpt za kolacice i podatke koje treba da prikupljas
 -- write down terms and conditions, privacy policy and documentation(mintlify)
 
+-- check payment of the ai, do you need to upgrade and everything
 -- Add analytics
 -- implement AI cost monitoring setup
 -- SEO check

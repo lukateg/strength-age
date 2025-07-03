@@ -20,7 +20,7 @@ export default function PricingSection() {
     if (priceId === "free") {
       router.push("/app/app");
     } else {
-      router.push(`/checkout?priceId=${priceId}`);
+      router.push(`/app/settings/subscriptions`);
     }
   };
   return (

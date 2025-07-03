@@ -19,9 +19,7 @@ CAN'T REPRODUCE
 
 PLAN:
 -- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
--- pitaj cgpt za kolacice i podatke koje treba da prikupljas
 -- write down terms and conditions, privacy policy and documentation(mintlify)
--- add feedback logic
 -- check payment of the ai, do you need to upgrade and everything
 -- add feedback received, working on it email message
 -- Add analytics
@@ -37,6 +35,7 @@ PLAN:
 -- if test is deleted retry button on testReview page should be disabled
 
 FUTURE FEATURES AND ENHANCMENTS:
+-- add feedback review page
 -- write a bit better confirm test modal text
 -- modify upload files to not have list below it and instead display files to upload in the dropbox itself.
 - export test to json and print it

@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { auth } from "@clerk/nextjs/server";
 import { api } from "../../../../convex/_generated/api";
 
@@ -19,7 +19,9 @@ if (!process.env.GEMINI_API_KEY) {
   throw new Error("Missing GEMINI_API_KEY environment variable");
 }
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const googleAI = createGoogleGenerativeAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 interface RequestBody {
   lessonIds?: Id<"lessons">[];
@@ -101,12 +103,7 @@ export async function POST(req: NextRequest) {
       questionDistribution
     );
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-lite",
-      generationConfig: {
-        responseMimeType: "application/json",
-      },
-    });
+    const model = googleAI.chat("gemini-2.0-flash-lite");
 
     // Generate quizzes for each lesson
     const aiResponses = await Promise.all(

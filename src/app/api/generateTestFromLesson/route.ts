@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "../../../../convex/_generated/api";
 
@@ -12,8 +12,10 @@ if (!process.env.GEMINI_API_KEY) {
   throw new Error("Missing GEMINI_API_KEY environment variable");
 }
 
-// Initialize with API version
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// Initialize AI SDK Google provider
+const googleAI = createGoogleGenerativeAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -82,14 +84,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-lite",
-      generationConfig: {
-        responseMimeType: "application/json",
-        // TODO: add schema type
-        // responseSchema: testSchema,
-      },
-    });
+    const model = googleAI.chat("gemini-2.0-flash-lite");
 
     const quiz = await generateQuizForLesson(
       model,

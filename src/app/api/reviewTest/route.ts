@@ -1,12 +1,16 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { generateObject } from "ai";
 
 import { type NextRequest } from "next/server";
 import { type Test } from "@/lib/schemas";
+
 if (!process.env.GEMINI_API_KEY) {
   throw new Error("Missing GEMINI_API_KEY environment variable");
 }
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const googleAI = createGoogleGenerativeAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,33 +45,25 @@ export async function POST(req: NextRequest) {
     ${JSON.stringify(answers, null, 2)}
     `;
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-lite",
-      generationConfig: {
-        responseMimeType: "application/json",
-      },
+    const model = googleAI.chat("gemini-2.0-flash-lite");
+
+    const { object: reviewedQuestions } = await generateObject({
+      model,
+      prompt,
+      output: "no-schema",
+      mode: "json",
     });
 
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
-
-    try {
-      const reviewedTest = JSON.parse(responseText) as Record<string, unknown>;
-      // TODO: add schema validation
-      return Response.json({
-        response: { ...test, questions: reviewedTest },
-      });
-    } catch (parseError) {
-      console.error("Error parsing review results:", parseError);
+    if (!reviewedQuestions) {
       return Response.json(
-        {
-          error: "Failed to parse the review results",
-          details:
-            parseError instanceof Error ? parseError.message : "Unknown error",
-        },
+        { error: "Model did not return a valid review" },
         { status: 500 }
       );
     }
+
+    return Response.json({
+      response: { ...test, questions: reviewedQuestions },
+    });
   } catch (error) {
     console.error("Error reviewing test:", error);
     return Response.json(

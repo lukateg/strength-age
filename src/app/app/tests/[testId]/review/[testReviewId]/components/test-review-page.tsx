@@ -54,9 +54,9 @@ export default function TestReviewPage({
                   onConfirm={handleRetakeTest}
                   title="Retake Test"
                   description="After you press confirm you will be redirected to the test. Good luck!"
-                  variant="positive"
+                  variant="default"
                   alertTrigger={
-                    <Button className="text-xs md:text-base" variant="positive">
+                    <Button className="text-xs md:text-base" variant="default">
                       <RefreshCcw className="h-4 w-4 mr-2" />
                       Retake Test
                     </Button>

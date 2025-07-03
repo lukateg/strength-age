@@ -16,7 +16,7 @@ export default function AddFilesButton({
       className="w-full"
       onClick={() => startAdding()}
       disabled={isDisabled}
-      variant={isDisabled ? "positive-outline" : "positive"}
+      variant="default"
     >
       {false ? (
         <>

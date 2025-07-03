@@ -27,7 +27,7 @@ export default function MaterialsByClassCard({
       description="PDF documents and study materials"
       items={materials}
       cardAction={
-        <Button disabled={!canUploadMaterials} variant="purple">
+        <Button disabled={!canUploadMaterials} variant="default">
           <Link
             href={`/app/classes/${classId}/file-upload`}
             className="flex items-center justify-center"

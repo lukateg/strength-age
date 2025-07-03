@@ -43,7 +43,7 @@ export default function TestsSection({
         </div>
         <Button
           disabled={!canCreateTest}
-          variant="purple"
+          variant="default"
           className="text-xs md:text-base"
         >
           <Link

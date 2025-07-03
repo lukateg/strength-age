@@ -24,7 +24,7 @@ export default function UploadFilesButton({
       })}
       onClick={startUpload}
       disabled={isDisabled}
-      variant={isDisabled ? "positive-outline" : "positive"}
+      variant="default"
     >
       {isUploading ? (
         <>

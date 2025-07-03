@@ -31,7 +31,7 @@ export function SubscriptionCard({
   buttonText,
 }: SubscriptionCardProps) {
   const getButtonVariant = (title: string) => {
-    if (isCurrent) return "positive";
+    if (isCurrent) return "ghost";
     if (title === "Free") return "outline";
     return "default";
   };

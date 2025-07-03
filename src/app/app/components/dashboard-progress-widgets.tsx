@@ -13,6 +13,7 @@ export default function DashboardProgress({
   totalTestReviews: number;
 }) {
   const { user } = useUserContext();
+
   const storageUsed = user?.data?.totalStorageUsage;
   const storageLimit =
     LIMITATIONS[user?.data?.subscriptionTier ?? "free"].materials;

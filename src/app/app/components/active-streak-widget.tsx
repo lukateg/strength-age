@@ -9,14 +9,7 @@ export default function DashboardStreak({ streak }: { streak: number }) {
       </CardHeader>
       <CardContent>
         <div className="flex items-center space-x-4">
-          <Flame
-            className="h-12 w-12"
-            style={{
-              fill: "#14532d80",
-              stroke: "#4ade80",
-              strokeWidth: 1,
-            }}
-          />
+          <Flame className="h-12 w-12 fill-transparent stroke-primary stroke-1" />
           <div>
             <p className="text-2xl font-bold">{streak} days</p>
             <p className="text-sm text-muted-foreground">

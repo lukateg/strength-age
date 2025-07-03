@@ -13,11 +13,11 @@ export function TestActions({
         onConfirm={handleRetakeTest}
         title="Retake Test"
         description="After you press confirm you will be redirected to the test. Good luck!"
-        variant="positive"
+        variant="default"
         alertTrigger={
-          <Button className="w-full" variant="positive">
+          <Button className="w-full" variant="default">
             <Play className="h-4 w-4" />
-            <span className="block">Start Test!</span>
+            <span className="block">Start Test</span>
           </Button>
         }
       />

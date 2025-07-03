@@ -8,23 +8,7 @@ check before launch:
 // -- check if there is better way to add chunking text prompt
 // -- check if all routes are covered with the fallback and if URL security is enough
 // -- check if actions that require modals have them
-// -- check if -- remove all loading... 
 // -- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class (if you want that then you need to store the class name with class ID everywhere since tests and test reviews need to display from which class they are created)
-// -- check if endpoints return null instead of throwing an error if data is not there so the QueryState component works fine (somewhere error is necessery)
-
-DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS):
-make widgets increase progress on page load
--- create main page components like main-header and reuse it across the app
--- write a bit better confirm test modal text
--- add progress bar from 0.1 do 1.0 version on the landing page and display that as progress from beta to live app
--- add pricing to the landing page
--- header overlaps the layout on the mobileå
--- fix white mode
--- modify upload files to not have list below it and instead display files to upload in the dropbox itself.
-
-TODO:
- -- check everywhere if status is "active" || "canceled" since subscription stays in the database for all permission checks
- 
 
 BUGS
 - open class from dashboard and redirect back leads you to classes instead of a dashboard
@@ -35,15 +19,13 @@ CAN'T REPRODUCE
 
 PLAN:
 -- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
--- handle all design things and make nice looking UI
 -- pitaj cgpt za kolacice i podatke koje treba da prikupljas
 -- write down terms and conditions, privacy policy and documentation(mintlify)
-
+-- add feedback logic
 -- check payment of the ai, do you need to upgrade and everything
 -- Add analytics
 -- implement AI cost monitoring setup
 -- SEO check
--- create nice landing page
 -- check free tier plan and work out permisions and free plan for max classes, lessons, pdfs in mb, tests and ai token calls
 -- in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
 -- load testing
@@ -54,6 +36,8 @@ PLAN:
 -- if test is deleted retry button on testReview page should be disabled
 
 FUTURE FEATURES AND ENHANCMENTS:
+-- write a bit better confirm test modal text
+-- modify upload files to not have list below it and instead display files to upload in the dropbox itself.
 - export test to json and print it
 - 20 days streak gets discount
 -- add test sharing

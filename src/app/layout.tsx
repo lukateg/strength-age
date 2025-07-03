@@ -35,7 +35,7 @@ export default function RootLayout({
           <body className={`${inter.className} gradient-bg`}>
             <ThemeProvider
               attribute="class"
-              defaultTheme="system"
+              defaultTheme="dark"
               enableSystem
               disableTransitionOnChange
             >

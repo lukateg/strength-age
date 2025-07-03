@@ -15,7 +15,9 @@ export default function GeneratingLoader({ message }: { message?: string }) {
         </div>
       </div>
       <div className="h-16">
-        <div className={`${styles.text} text-primary mt-8`}>
+        <div
+          className={`${styles.text} text-card-foreground dark:text-card mt-8`}
+        >
           {message ?? "Loading..."}
         </div>
       </div>

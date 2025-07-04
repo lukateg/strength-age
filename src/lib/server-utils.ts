@@ -1,13 +1,10 @@
 import axios from "axios";
 import pdfParse from "pdf-parse";
-import { generateObject } from "ai";
-import { type LanguageModelV1 } from "@ai-sdk/provider";
-import { createOpenAI } from "@ai-sdk/openai";
 
 import { createQuizPrompt } from "./utils";
-import { generatedTestSchema } from "./schemas";
 import { ConvexError } from "convex/values";
 import { auth } from "@clerk/nextjs/server";
+import { generateTestWithLLM } from "./ai-layer";
 
 type LessonPdf = {
   fileUrl: string;
@@ -101,7 +98,6 @@ export async function convertPdfsToText(lessonPdfs: LessonPdf[][]) {
 }
 
 export async function generateQuizForLesson(
-  model: LanguageModelV1,
   lessonTexts: string[],
   questionTypes: string[],
   difficulty: number,
@@ -121,40 +117,5 @@ export async function generateQuizForLesson(
     additionalInstructions
   );
 
-  const tryGenerate = async (lm: LanguageModelV1) => {
-    const { object: parsedData } = await generateObject({
-      model: lm,
-      prompt,
-      schema: generatedTestSchema,
-    });
-
-    if (!parsedData) {
-      throw new Error("Model did not return a valid quiz");
-    }
-    return parsedData;
-  };
-
-  try {
-    // Attempt with the primary model (Gemini).
-    return await tryGenerate(model);
-  } catch (primaryError) {
-    console.error("Primary model failed, attempting fallback:", primaryError);
-
-    // Fallback to OpenAI GPT-3.5-turbo if API key is set.
-    if (!process.env.OPENAI_API_KEY) {
-      throw primaryError;
-    }
-
-    try {
-      const openaiProvider = createOpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-      });
-      const fallbackModel = openaiProvider.chat("gpt-3.5-turbo");
-      return await tryGenerate(fallbackModel);
-    } catch (fallbackError) {
-      console.error("Fallback model also failed:", fallbackError);
-      // Throw the original error to preserve context.
-      throw primaryError;
-    }
-  }
+  return await generateTestWithLLM(prompt);
 }

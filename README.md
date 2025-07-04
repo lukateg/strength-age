@@ -16,11 +16,15 @@ CAN'T REPRODUCE
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
 -- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
 -- still have some bad redirects on class and test review
+-- sign out displays some weird loader
+-- implement permission check fix
 
 PLAN:
--- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
 -- write down terms and conditions, privacy policy and documentation(mintlify)
 -- check payment of the ai, do you need to upgrade and everything
+// set a rate limit for total money spent on the model
+// set a token input limit per user
+// set error handling when token limit is out
 -- add feedback received, working on it email message
 -- Add analytics
 -- implement AI cost monitoring setup

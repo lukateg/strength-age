@@ -12,11 +12,6 @@ if (!process.env.GEMINI_API_KEY) {
   throw new Error("Missing GEMINI_API_KEY environment variable");
 }
 
-// Initialize AI SDK Google provider
-const googleAI = createGoogleGenerativeAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
-
 export async function POST(req: NextRequest) {
   try {
     const {
@@ -84,10 +79,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const model = googleAI.chat("gemini-2.0-flash-lite");
-
     const quiz = await generateQuizForLesson(
-      model,
       successfulTexts,
       questionTypes,
       difficulty,

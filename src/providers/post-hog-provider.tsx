@@ -1,6 +1,6 @@
 // app/providers.tsx
 "use client";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
@@ -103,7 +103,9 @@ function PostHogPageTracker() {
 export function PHProvider({ children }: { children: React.ReactNode }) {
   return (
     <PostHogProvider client={posthog}>
-      <PostHogPageTracker />
+      <Suspense fallback={null}>
+        <PostHogPageTracker />
+      </Suspense>
       {children}
     </PostHogProvider>
   );

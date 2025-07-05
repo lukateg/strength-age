@@ -10,6 +10,9 @@ check before launch:
 // -- check if actions that require modals have them
 // -- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class (if you want that then you need to store the class name with class ID everywhere since tests and test reviews need to display from which class they are created)
 
+TESTING:
+-- test prompt splitting and large loads
+
 BUGS
 - open class from dashboard and redirect back leads you to classes instead of a dashboard
 CAN'T REPRODUCE
@@ -18,12 +21,12 @@ CAN'T REPRODUCE
 -- still have some bad redirects on class and test review
 -- sign out displays some weird loader
 -- implement permission check fix
+-- add delete test from test preview
 
 PLAN:
 -- write down terms and conditions, privacy policy and documentation(mintlify)
 -- check payment of the ai, do you need to upgrade and everything
 // add ai usage to the dashboard of posthog
-// implement prompt splitting if prompt over 200k tokens
 // set a rate limit for total money spent on the model
 // set error handling when token teach-me subscription for all limit is out
 -- add feedback received, working on it email message

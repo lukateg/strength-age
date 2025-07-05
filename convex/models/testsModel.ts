@@ -60,6 +60,27 @@ export const getTestsWithSameTitleByUser = async (
   return tests;
 };
 
+export const optionalIncrementTitle = async (
+  ctx: GenericQueryCtx<DataModel>,
+  title: string,
+  userId: string
+) => {
+  let newTitle = title;
+  const existingTest = await getTestsWithSameTitleByUser(ctx, title, userId);
+
+  const exactTitleExists = existingTest.some((test) => test.title === title);
+
+  if (exactTitleExists || existingTest.length > 0) {
+    const numbers = existingTest.map((test) => {
+      const match = /#(\d+)$/.exec(test.title);
+      return match ? parseInt(match[1] ?? "0", 10) : 0;
+    });
+    const maxNumber = Math.max(...numbers);
+    newTitle = `${title} #${maxNumber + 1}`;
+  }
+  return newTitle;
+};
+
 export async function getTestsWithPermissions(
   ctx: GenericQueryCtx<DataModel>,
   userId: string

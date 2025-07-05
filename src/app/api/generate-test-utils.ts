@@ -2,13 +2,13 @@ import { type Id } from "convex/_generated/dataModel";
 import axios from "axios";
 import pdfParse from "pdf-parse";
 import { ConvexError } from "convex/values";
-import { generateTestWithLLM } from "@/lib/ai-layer";
+import { generateTestWithLLM } from "@/lib/ai/ai-layer";
+// import { countTokens } from "@anthropic-ai/tokenizer";
 
-// Rough token estimation utility – splits text by whitespace
-function estimateTokens(text: string): number {
-  if (!text) return 0;
-  return text.trim().split(/\s+/).length;
-}
+const TOKEN_CHAR_RATIO = 4; // rough estimate ~4 chars per token
+
+const approxTokenCount = (text: string) =>
+  Math.ceil(text.length / TOKEN_CHAR_RATIO);
 
 export async function generateQuizForLesson(
   lessonTexts: string[],
@@ -33,7 +33,7 @@ export async function generateQuizForLesson(
   const quiz = await generateTestWithLLM(prompt);
 
   // Estimate token usage from prompt and model output
-  const tokensUsed = estimateTokens(prompt);
+  const tokensUsed = approxTokenCount(prompt);
 
   // Return quiz data along with token usage
   return { ...quiz, tokensUsed } as typeof quiz & { tokensUsed: number };

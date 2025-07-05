@@ -2,14 +2,12 @@ import { v } from "convex/values";
 import { hasPermission } from "./models/permissionsModel";
 import { AuthenticationRequired, createAppError } from "./utils";
 import { mutation, query } from "./_generated/server";
-import {
-  getTestReviewsWithSameTitleByUser,
-  validateTestReviewShareToken,
-} from "./models/testReviewsModel";
+import { validateTestReviewShareToken } from "./models/testReviewsModel";
 import { nanoid } from "nanoid";
 
 import { internalMutation, internalAction } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { userByClerkId } from "./models/userModel";
 
 export const deleteExpiredShareLinks = internalMutation({
   args: {
@@ -106,18 +104,8 @@ export const createTestReviewMutation = mutation({
   handler: async (ctx, args) => {
     const userId = await AuthenticationRequired({ ctx });
 
-    let title = args.title;
-    const existingTestReview = await getTestReviewsWithSameTitleByUser(
-      ctx,
-      args.title,
-      userId
-    );
-    if (existingTestReview.length > 0) {
-      title = `${args.title} #${existingTestReview.length + 1}`;
-    }
-
     const testId = await ctx.db.insert("testReviews", {
-      title,
+      title: args.title,
       description: args.description,
       questions: args.questions,
       createdBy: userId,
@@ -131,12 +119,18 @@ export const createTestReviewMutation = mutation({
 export const createTestReviewShareLinkMutation = mutation({
   args: {
     testReviewId: v.id("testReviews"),
-    expiresInDays: v.optional(v.number()),
   },
-  handler: async (ctx, { testReviewId, expiresInDays }) => {
+  handler: async (ctx, { testReviewId }) => {
     const userId = await AuthenticationRequired({ ctx });
 
-    // Check if user has permission to share this test review
+    const userPreferences = await userByClerkId(ctx, userId);
+    if (!userPreferences) {
+      throw createAppError({
+        message: "User preferences not found",
+        statusCode: "NOT_FOUND",
+      });
+    }
+
     const testReview = await ctx.db.get(testReviewId);
     if (!testReview) {
       throw createAppError({
@@ -160,11 +154,11 @@ export const createTestReviewShareLinkMutation = mutation({
     }
 
     const shareToken = nanoid(16);
-    const expiresAt = expiresInDays
-      ? Date.now() + expiresInDays * 24 * 60 * 60 * 1000
+    const expiresAt = userPreferences.userPreferences
+      ?.shouldTestReviewLinksExpire
+      ? Date.now() + 7 * 24 * 60 * 60 * 1000
       : undefined;
 
-    // Create share link record
     await ctx.db.insert("testReviewShares", {
       testReviewId,
       createdBy: userId,

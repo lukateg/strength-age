@@ -11,6 +11,11 @@ export default defineSchema({
       v.literal("pro")
     ),
     roles: v.array(v.union(v.literal("admin"), v.literal("user"))),
+    userPreferences: v.optional(
+      v.object({
+        shouldTestReviewLinksExpire: v.optional(v.boolean()),
+      })
+    ),
   }).index("by_clerkId", ["clerkId"]),
 
   stripeCustomers: defineTable({
@@ -136,4 +141,31 @@ export default defineSchema({
     .index("by_shareToken", ["shareToken"])
     .index("by_testReview", ["testReviewId"])
     .index("expiresAt", ["expiresAt"]),
+
+  feedbacks: defineTable({
+    createdBy: v.string(),
+    type: v.union(
+      v.literal("bug"),
+      v.literal("feature"),
+      v.literal("complaint"),
+      v.literal("compliment"),
+      v.literal("general")
+    ),
+    rating: v.number(),
+    title: v.string(),
+    description: v.string(),
+    email: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["createdBy"])
+    .index("by_type", ["type"])
+    .index("by_created_at", ["createdAt"]),
+
+  userTokenUsage: defineTable({
+    userId: v.string(),
+    monthlyTokensUsed: v.number(),
+    month: v.string(), // Format "YYYY-MM"
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_month", ["userId", "month"]),
 });

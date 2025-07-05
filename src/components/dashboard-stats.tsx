@@ -1,40 +1,50 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { GraduationCap, BookOpen } from "lucide-react";
+import { LIMITATIONS } from "@/lib/limitations";
+import { type Doc } from "convex/_generated/dataModel";
 
 type DashboardStatsProps = {
-  stats: {
-    title: string;
-    icon: React.ElementType;
-    value: string | number;
-    description: string;
-  }[];
+  totalTests: number;
+  totalClasses: number;
+  subscriptionTier?: Doc<"users">["subscriptionTier"];
 };
 
-export default function DashboardStats({ stats }: DashboardStatsProps) {
-  if (!stats) {
-    return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <Skeleton className="w-full h-[110px]" />
-        <Skeleton className="w-full h-[110px]" />
-        <Skeleton className="w-full h-[110px]" />
-        <Skeleton className="w-full h-[110px]" />
-      </div>
-    );
-  }
-
+export default function DashboardStats({
+  totalTests,
+  totalClasses,
+  subscriptionTier = "free",
+}: DashboardStatsProps) {
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-      {stats.map((stat) => (
-        <Card key={stat.title}>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-            <stat.icon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stat.value}</div>
-          </CardContent>
-        </Card>
-      ))}
+    <div className="grid gap-6 md:grid-cols-2 mb-8 w-full">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+          <CardTitle className="text-base font-medium">Classes</CardTitle>
+          <BookOpen className="h-6 w-6 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold tracking-wide">
+            <span>{totalClasses} </span>
+            <span className="text-muted-foreground tracking-wide">
+              / {LIMITATIONS[subscriptionTier].classes}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+          <CardTitle className="text-base font-medium">Tests</CardTitle>
+          <GraduationCap className="h-6 w-6 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">
+            {totalTests}{" "}
+            <span className="text-muted-foreground">
+              / {LIMITATIONS[subscriptionTier].tests}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

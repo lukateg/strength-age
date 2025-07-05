@@ -14,8 +14,9 @@ import ListCard, { ListItem } from "@/components/list-card";
 import AlertDialogModal from "@/components/alert-dialog";
 import Link from "next/link";
 
-import { BookOpen, Brain, Eye, Trash, Upload } from "lucide-react";
+import { BookOpen, Eye, Trash, Upload } from "lucide-react";
 import { type Doc } from "convex/_generated/dataModel";
+import { TestReviewListItem } from "@/app/app/tests/components/test-review-list-item";
 
 export default function TestsSection({
   classId,
@@ -28,29 +29,34 @@ export default function TestsSection({
   tests: Doc<"tests">[];
   testReviews: Doc<"testReviews">[];
 }) {
-  const { deleteTest, deleteTestReview, isPending } = useTestMutations();
+  const { deleteTest, deleteTestReview, isPending, copyTestReviewShareLink } =
+    useTestMutations();
 
   return (
-    <Card>
+    <div>
       <CardHeader className="flex flex-col gap-2 md:flex-row justify-between">
-        <div className="space-y-2">
+        <div>
           <CardTitle className="text-xl md:text-2xl">Course Tests</CardTitle>
           <CardDescription className="text-sm md:text-base">
             AI-generated tests from your materials
           </CardDescription>
         </div>
-        <Button disabled={!canCreateTest} className="text-xs md:text-base">
+        <Button
+          disabled={!canCreateTest}
+          variant="default"
+          className="text-xs md:text-base"
+        >
           <Link
             href={`/app/classes/${classId}/generate-test`}
             className="flex items-center justify-center"
           >
             <Upload className="h-4 w-4 mr-2" />
-            {canCreateTest ? "Generate Test" : "Upgrade to generate"}
+            {canCreateTest ? "Generate Test" : "Limit Reached"}
           </Link>
         </Button>
       </CardHeader>
 
-      <div className="grid xl:grid-cols-2 gap-6 px-6">
+      <div className="grid xl:grid-cols-2 gap-6">
         <ListCard
           title="Recent Tests"
           description="Latest AI-generated tests for you"
@@ -95,46 +101,21 @@ export default function TestsSection({
           description="Latest AI test test reviews"
           items={testReviews}
           renderItem={(testReview) => (
-            <ListItem
+            <TestReviewListItem
               key={testReview._id}
-              icon={Brain}
-              title={testReview.title}
-            >
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" asChild>
-                  <Link
-                    href={`/app/classes/${classId}/review/${testReview._id}`}
-                  >
-                    <Eye className="h-4 w-4" />
-                    <span className="hidden md:block ml-2">Results</span>
-                  </Link>
-                </Button>
-
-                <AlertDialogModal
-                  onConfirm={async () => {
-                    if (testReview?._id) {
-                      await deleteTestReview(testReview._id);
-                    }
-                  }}
-                  title="Delete Test Review"
-                  description="Are you sure you want to delete this test review?"
-                  variant="destructive"
-                  alertTrigger={
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-xs md:text-base"
-                      disabled={isPending}
-                    >
-                      <Trash className="h-4 w-4 text-red-500" />
-                    </Button>
-                  }
-                />
-              </div>
-            </ListItem>
+              testReview={testReview}
+              onDelete={async () => {
+                if (testReview?._id) {
+                  await deleteTestReview(testReview._id);
+                }
+              }}
+              onShare={async (testReviewId, testId) => {
+                await copyTestReviewShareLink(testReviewId, testId);
+              }}
+            />
           )}
         />
       </div>
-    </Card>
+    </div>
   );
 }

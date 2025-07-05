@@ -40,6 +40,26 @@ export const getClassPageData = query({
     const testReviews = await getTestReviewsByClass(ctx, normalizedId);
     const totalStorageUsage = await getTotalStorageUsage(ctx, userId);
 
+    // --- New Calculations ---
+    const classStorageUsage = materials.reduce(
+      (total, material) => total + (material.size || 0),
+      0
+    );
+
+    const classSuccessRate =
+      testReviews.length > 0
+        ? (testReviews.reduce((acc, review) => {
+            const rate =
+              review.questions.length > 0
+                ? review.questions.filter((q) => q.isCorrect).length /
+                  review.questions.length
+                : 0;
+            return acc + rate;
+          }, 0) /
+            testReviews.length) *
+          100
+        : 0;
+
     const canViewClass = await hasPermission(
       ctx,
       userId,
@@ -100,6 +120,8 @@ export const getClassPageData = query({
       tests,
       testReviews,
       totalStorageUsage,
+      classStorageUsage,
+      classSuccessRate,
       permissions: {
         canEditClass,
         canDeleteClass,

@@ -10,11 +10,13 @@ export default function AddFilesButton({
   materialsToAdd: string[];
   startAdding: () => void;
 }) {
+  const isDisabled = materialsToAdd.length === 0;
   return (
     <Button
       className="w-full"
       onClick={() => startAdding()}
-      disabled={materialsToAdd.length === 0}
+      disabled={isDisabled}
+      variant="default"
     >
       {false ? (
         <>

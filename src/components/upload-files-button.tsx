@@ -16,13 +16,15 @@ export default function UploadFilesButton({
   isUploading: boolean;
   className?: string;
 }) {
+  const isDisabled = materialsToUpload.length === 0 || isUploading;
   return (
     <Button
       className={cn(className, {
         "opacity-50": materialsToUpload.length === 0 || isUploading,
       })}
       onClick={startUpload}
-      disabled={materialsToUpload.length === 0 || isUploading}
+      disabled={isDisabled}
+      variant="default"
     >
       {isUploading ? (
         <>

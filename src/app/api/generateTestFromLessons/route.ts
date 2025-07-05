@@ -1,25 +1,18 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { auth } from "@clerk/nextjs/server";
 import { api } from "../../../../convex/_generated/api";
+import { getConvexToken } from "@/lib/server-utils";
 
+import { fetchQuery } from "convex/nextjs";
 import {
   calculateProportionalQuestionsPerLesson,
   shuffleArray,
-} from "@/lib/utils";
-import { convertPdfsToText, generateQuizForLesson } from "@/lib/server-utils";
-import { getConvexToken } from "@/lib/server-utils";
+  generateQuizForLesson,
+  convertManyPdfsToText,
+} from "../generate-test-utils";
 
 import { type NextRequest } from "next/server";
 import { type Id } from "convex/_generated/dataModel";
-import { fetchQuery } from "convex/nextjs";
 
 export const runtime = "nodejs";
-
-if (!process.env.GEMINI_API_KEY) {
-  throw new Error("Missing GEMINI_API_KEY environment variable");
-}
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 interface RequestBody {
   lessonIds?: Id<"lessons">[];
@@ -69,7 +62,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const extractedTexts = await convertPdfsToText(pdfsByLesson);
+    const extractedTexts = await convertManyPdfsToText(pdfsByLesson);
     if (!extractedTexts.length) {
       return Response.json(
         { error: "Failed to extract text from PDFs" },
@@ -101,13 +94,6 @@ export async function POST(req: NextRequest) {
       questionDistribution
     );
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-lite",
-      generationConfig: {
-        responseMimeType: "application/json",
-      },
-    });
-
     // Generate quizzes for each lesson
     const aiResponses = await Promise.all(
       filteredTexts.map((lessonTexts, index) => {
@@ -115,7 +101,6 @@ export async function POST(req: NextRequest) {
         if (!questionCount) return null;
 
         return generateQuizForLesson(
-          model,
           lessonTexts,
           questionTypes,
           difficulty,
@@ -130,6 +115,11 @@ export async function POST(req: NextRequest) {
     const successfulResponses = aiResponses.filter(
       (response): response is NonNullable<typeof response> => response !== null
     );
+
+    // Sum token usage from all successful responses
+    const totalTokensUsed = successfulResponses.reduce((sum, resp) => {
+      return sum + ((resp as { tokensUsed?: number }).tokensUsed ?? 0);
+    }, 0);
 
     if (!successfulResponses.length) {
       return Response.json(
@@ -147,6 +137,7 @@ export async function POST(req: NextRequest) {
       title: testName,
       description: description,
       questions: shuffleArray(allQuestions),
+      tokensUsed: totalTokensUsed,
     };
 
     return Response.json({ response: combinedTest });

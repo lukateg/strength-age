@@ -10,6 +10,7 @@ import {
 
 interface TestsContextType {
   testsPageData: QueryStatus<typeof api.pages.testsPage.getTestsPageDataQuery>;
+  newTestsPageData: QueryStatus<typeof api.pages.testsPage.getNewTestsPageData>;
 }
 
 const TestsContext = createContext<TestsContextType | null>(null);
@@ -18,11 +19,15 @@ export function TestsProvider({ children }: { children: React.ReactNode }) {
   const testsPageData = useAuthenticatedQueryWithStatus(
     api.pages.testsPage.getTestsPageDataQuery
   );
+  const newTestsPageData = useAuthenticatedQueryWithStatus(
+    api.pages.testsPage.getNewTestsPageData
+  );
 
   return (
     <TestsContext.Provider
       value={{
         testsPageData,
+        newTestsPageData,
       }}
     >
       {children}

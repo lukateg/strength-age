@@ -31,6 +31,7 @@ import type * as z from "zod";
 import { Pause, DoorOpen, Wand2 } from "lucide-react";
 import { reviewTest } from "@/server/test-actions";
 import QueryState from "@/components/data-query/query-state";
+import AlertDialogModal from "@/components/alert-dialog";
 
 export type TestQuestion = {
   questionText: string;
@@ -136,14 +137,21 @@ export default function ActiveTestPage() {
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="mb-8 text-center flex justify-between items-center">
-                  <Button
+                  <AlertDialogModal
+                    onConfirm={() => router.push(`/app/tests`)}
+                    title="Exit Test"
+                    description="Current state of the test will be lost. Are you sure you want to exit?"
                     variant="destructive"
-                    onClick={() => router.back()}
-                    type="button"
-                  >
-                    <DoorOpen />
-                    <span className="hidden md:block md:ml-2">Exit Test</span>
-                  </Button>
+                    alertTrigger={
+                      <Button variant="destructive" type="button">
+                        <DoorOpen />
+                        <span className="hidden md:block md:ml-2">
+                          Exit Test
+                        </span>
+                      </Button>
+                    }
+                  />
+
                   <div className="flex-1">
                     <h1 className="text-xl md:text-3xl font-bold mb-2">
                       {data.title}
@@ -154,7 +162,7 @@ export default function ActiveTestPage() {
                   </div>
 
                   <FeatureFlagTooltip>
-                    <Button type="button" variant="positive" disabled>
+                    <Button type="button" variant="default" disabled>
                       <Pause className="w-4 h-4" />
                       <span className="hidden md:block md:ml-2">
                         Pause Test

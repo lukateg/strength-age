@@ -61,7 +61,7 @@ export default function ReviewPage() {
       noData={<NotFound />}
     >
       {(data) => {
-        const { testReview, permissions } = data;
+        const { testReview, permissions, perQuestionTypeAccuracy } = data;
         return (
           <TestReviewPage
             testReview={testReview}
@@ -69,6 +69,7 @@ export default function ReviewPage() {
             isViewedByOwner={permissions.isViewedByOwner}
             canTakeTest={permissions.canTakeTest}
             handleRetakeTest={handleRetakeTest}
+            perQuestionTypeAccuracy={perQuestionTypeAccuracy}
           />
         );
       }}

@@ -49,14 +49,12 @@ export default function ClassCard({
               View Class
             </Button>
           </Link>
-          <Button disabled={!classItem.canGenerateTest}>
+          <Button disabled={!classItem.canGenerateTest} variant={"default"}>
             <Link
               href={`/app/classes/${classItem._id}/generate-test`}
               className="flex items-center justify-center"
             >
-              {classItem.canGenerateTest
-                ? "Generate Test"
-                : "Upgrade to generate"}
+              {classItem.canGenerateTest ? "Generate Test" : "Limit Reached"}
             </Link>
           </Button>
         </div>

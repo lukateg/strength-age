@@ -33,8 +33,8 @@ export default function MaterialsCheckboxList({
           disabled={shouldDisableItem?.(pdf)}
         >
           <div>
-            <p className="font-base">{pdf.name}</p>
-            <p className="text-sm text-muted-foreground">
+            <p className="font-xs">{pdf.name}</p>
+            <p className="text-xs text-muted-foreground">
               {(pdf.size / 1024 / 1024).toFixed(2)} MB
             </p>
           </div>

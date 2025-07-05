@@ -1,8 +1,16 @@
-import { LIMITATIONS } from "@/shared/constants";
+import { LIMITATIONS } from "@/lib/limitations";
 
 import { type DataModel } from "../_generated/dataModel";
 import { type GenericQueryCtx } from "convex/server";
 import { type Doc } from "../_generated/dataModel";
+import { userByClerkId } from "convex/models/userModel";
+import { getSubscriptionTierByStripeRecord } from "@/lib/utils";
+import { stripeCustomerByUserId } from "convex/models/stripeModel";
+import { getMonthlyUsageRecord } from "convex/models/tokensModel";
+import { getPdfsByUser } from "convex/models/materialsModel";
+import { getLessonsByClass } from "convex/models/lessonsModel";
+import { getClassesByUser } from "convex/models/classesModel";
+import { validateTestReviewShareToken } from "convex/models/testReviewsModel";
 
 // Types
 export type Role = "admin" | "user";
@@ -50,6 +58,10 @@ export type TestReviewActionParams = {
   retake: { testReview: Doc<"testReviews"> };
 };
 
+export type StripeCustomerActionParams = {
+  view: Doc<"stripeCustomers">;
+};
+
 // Map resource types to their action parameters
 export type ResourceActionParams = {
   lessons: LessonActionParams;
@@ -57,6 +69,7 @@ export type ResourceActionParams = {
   tests: TestActionParams;
   materials: MaterialActionParams;
   testReviews: TestReviewActionParams;
+  stripeCustomers: StripeCustomerActionParams;
 };
 
 export type Permissions = {
@@ -82,6 +95,10 @@ export type Permissions = {
       shareToken?: string;
     };
     action: keyof TestReviewActionParams;
+  };
+  stripeCustomers: {
+    dataType: Doc<"stripeCustomers">;
+    action: keyof StripeCustomerActionParams;
   };
 };
 
@@ -137,6 +154,9 @@ export const ROLES: RolesWithPermissions = {
       share: true,
       retake: true,
     },
+    stripeCustomers: {
+      view: true,
+    },
   },
   user: {
     classes: {
@@ -144,14 +164,18 @@ export const ROLES: RolesWithPermissions = {
         return data.createdBy === user.clerkId;
       },
       create: async (data, user, ctx) => {
-        const existingClasses = await ctx!.db
-          .query("classes")
-          .withIndex("by_user", (q) => q.eq("createdBy", user.clerkId))
-          .collect();
+        const existingClasses = await getClassesByUser(ctx!, user.clerkId);
 
-        return (
-          LIMITATIONS[user.subscriptionTier].classes > existingClasses.length
+        const userSubscriptionRecord = await stripeCustomerByUserId(
+          ctx!,
+          user.clerkId
         );
+
+        const subscriptionTier = getSubscriptionTierByStripeRecord(
+          userSubscriptionRecord
+        );
+
+        return LIMITATIONS[subscriptionTier].classes > existingClasses.length;
       },
       update: (data, user) => {
         return data.createdBy === user.clerkId;
@@ -165,14 +189,16 @@ export const ROLES: RolesWithPermissions = {
         return data.lesson.createdBy === user.clerkId;
       },
       create: async (data, user, ctx) => {
-        const existingLessons = await ctx!.db
-          .query("lessons")
-          .withIndex("by_class", (q) => q.eq("classId", data.class._id))
-          .collect();
-
-        return (
-          LIMITATIONS[user.subscriptionTier].lessons > existingLessons.length
+        const existingLessons = await getLessonsByClass(ctx!, data.class._id);
+        const userSubscriptionRecord = await stripeCustomerByUserId(
+          ctx!,
+          user.clerkId
         );
+
+        const subscriptionTier = getSubscriptionTierByStripeRecord(
+          userSubscriptionRecord
+        );
+        return LIMITATIONS[subscriptionTier].lessons > existingLessons.length;
       },
       update: (data, user) => {
         return data.lesson.createdBy === user.clerkId;
@@ -186,15 +212,20 @@ export const ROLES: RolesWithPermissions = {
         return data.createdBy === user.clerkId;
       },
       create: async (data, user, ctx) => {
-        const uploadedFiles = await ctx!.db
-          .query("pdfs")
-          .withIndex("by_user", (q) => q.eq("createdBy", user.clerkId))
-          .collect();
+        const userSubscriptionRecord = await stripeCustomerByUserId(
+          ctx!,
+          user.clerkId
+        );
+
+        const subscriptionTier = getSubscriptionTierByStripeRecord(
+          userSubscriptionRecord
+        );
+        const uploadedFiles = await getPdfsByUser(ctx!, user.clerkId);
         const totalSize =
           uploadedFiles.reduce((acc, file) => acc + file.size, 0) +
           data.newFilesSize;
 
-        return LIMITATIONS[user.subscriptionTier].materials > totalSize;
+        return LIMITATIONS[subscriptionTier].materials > totalSize;
       },
       delete: (data, user) => {
         return data.createdBy === user.clerkId;
@@ -204,13 +235,21 @@ export const ROLES: RolesWithPermissions = {
       view: (data, user) => {
         return data?.createdBy === user.clerkId;
       },
-      create: async (data, user, ctx) => {
-        const existingTests = await ctx!.db
-          .query("tests")
-          .withIndex("by_user", (q) => q.eq("createdBy", user.clerkId))
-          .collect();
+      create: async (_data, user, ctx) => {
+        const userSubscriptionRecord = await stripeCustomerByUserId(
+          ctx!,
+          user.clerkId
+        );
 
-        return LIMITATIONS[user.subscriptionTier].tests > existingTests.length;
+        const subscriptionTier = getSubscriptionTierByStripeRecord(
+          userSubscriptionRecord
+        );
+
+        const usageRecord = await getMonthlyUsageRecord(ctx!, user.clerkId);
+
+        const tokensUsedThisMonth = usageRecord?.monthlyTokensUsed ?? 0;
+
+        return tokensUsedThisMonth < LIMITATIONS[subscriptionTier].tokens;
       },
       delete: (data, user) => {
         return data?.createdBy === user.clerkId;
@@ -222,15 +261,11 @@ export const ROLES: RolesWithPermissions = {
     testReviews: {
       view: async (data, user, ctx) => {
         if (data.shareToken) {
-          const shareToken = data.shareToken;
-          const share = await ctx!.db
-            .query("testReviewShares")
-            .withIndex("by_shareToken", (q) => q.eq("shareToken", shareToken))
-            .first();
-
-          return Boolean(
-            share && (!share.expiresAt || share.expiresAt > Date.now())
+          const shareToken = await validateTestReviewShareToken(
+            ctx!,
+            data.shareToken
           );
+          return Boolean(shareToken);
         }
         return data.testReview.createdBy === user.clerkId;
       },
@@ -239,6 +274,11 @@ export const ROLES: RolesWithPermissions = {
       },
       share: () => {
         return true;
+      },
+    },
+    stripeCustomers: {
+      view: (data, user) => {
+        return data.userId === user.clerkId;
       },
     },
   },

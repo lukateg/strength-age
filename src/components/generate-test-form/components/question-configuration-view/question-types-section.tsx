@@ -15,9 +15,7 @@ type QuestionType = {
 const QUESTION_TYPES: QuestionType[] = [
   { id: "multiple_choice", label: "Multiple Choice" },
   { id: "true_false", label: "True/False" },
-  // { id: "fill-blanks", label: "Fill in the Blanks" },
   { id: "short_answer", label: "Short Answer" },
-  // { id: "mixed", label: "Mixed (AI-generated)" },
 ];
 
 export default function QuestionTypesSection({

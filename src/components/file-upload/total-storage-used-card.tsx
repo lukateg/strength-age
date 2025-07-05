@@ -7,6 +7,8 @@ import {
 } from "../ui/card";
 import { Progress } from "../ui/progress";
 
+import { getBackgroundColorClass } from "@/components/progress-components/get-percentage-color";
+
 export default function TotalStorageUsedCard({
   materialsToUpload,
   storageUsed,
@@ -20,6 +22,10 @@ export default function TotalStorageUsedCard({
     (storageUsed ?? 0) +
     materialsToUpload.reduce((acc, file) => acc + file.size, 0);
 
+  const percentage =
+    (uploadedFilesAndFilesToUploadSize / maxStorageLimit) * 100;
+  const bgColorClass = getBackgroundColorClass(percentage, "descending");
+
   return (
     <Card>
       <CardHeader>
@@ -31,9 +37,7 @@ export default function TotalStorageUsedCard({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Progress
-          value={(uploadedFilesAndFilesToUploadSize / maxStorageLimit) * 100}
-        />
+        <Progress value={percentage} className={bgColorClass} />
       </CardContent>
     </Card>
   );

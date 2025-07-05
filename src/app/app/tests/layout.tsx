@@ -7,7 +7,7 @@ export default function TestsLayout({
 }) {
   return (
     <TestsProvider>
-      <div className="mx-auto container p-6 space-y-10">{children}</div>
+      <div className="mx-auto container p-6 space-y-6">{children}</div>
     </TestsProvider>
   );
 }

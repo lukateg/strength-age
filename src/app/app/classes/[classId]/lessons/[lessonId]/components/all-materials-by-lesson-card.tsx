@@ -28,7 +28,7 @@ export default function AllMaterialsByLessonCard({
       description="All materials for this lesson"
       items={materials}
       cardAction={
-        <Button asChild>
+        <Button asChild variant="default">
           <Link
             href={`/app/classes/${classId}/lessons/${lessonId}/file-upload`}
           >

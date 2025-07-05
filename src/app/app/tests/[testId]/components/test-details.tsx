@@ -89,15 +89,17 @@ export function TestDetails({
 
         <Separator />
 
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <p className="text-sm text-muted-foreground">Class:</p>
-            <p className="text-sm font-medium">{classTitle}</p>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-start gap-2">
+            <p className="text-sm text-muted-foreground leading-6">Class:</p>
+            <p className="text-sm font-medium leading-6">{classTitle}</p>
           </div>
 
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Lessons</p>
+          <div className="flex items-start gap-2">
             <div className="flex text-sm flex-wrap gap-2">
+              <p className="text-sm text-muted-foreground leading-6">
+                Lessons:
+              </p>
               {lessons.map((lesson) => (
                 <div
                   key={lesson._id}

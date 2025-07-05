@@ -1,43 +1,53 @@
 "use client";
 
-import { useUserContext } from "@/providers/user-provider";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
+import {
+  getSubscriptionTierButton,
+  getSubscriptionTierByStripeRecord,
+} from "@/lib/utils";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 
-import Link from "next/link";
-import RecentClasses from "./components/recent-classes-section";
-import RecentTests from "./tests/components/recent-tests-card";
+import QueryState from "@/components/data-query/query-state";
 import NotFound from "@/components/data-query/not-found";
 import DashboardStats from "@/components/dashboard-stats";
-import MainPageSkeleton from "@/components/page-components/main-page-skeleton";
-
-import { getSubscriptionTier } from "@/lib/utils";
-import QueryState from "@/components/data-query/query-state";
-import { generateDashboardStats } from "./tests/utils";
+import DashboardProgressWidgets from "./components/dashboard-progress-widgets";
+import WeekActivityWidget from "./components/week-activity-widget";
+import ActiveStreakWidget from "./components/active-streak-widget";
+import MostActiveClassWidget from "./components/most-active-class-widget";
+import DashboardSkeleton from "./components/dashboard-skeleton";
 
 export default function Dashboard() {
-  const dashboardData = useAuthenticatedQueryWithStatus(
-    api.pages.dashboardPage.getDashboardPageData
+  const newDashboardData = useAuthenticatedQueryWithStatus(
+    api.pages.dashboardPage.getNewDashboardData
   );
-  const { user } = useUserContext();
-  const subscriptionTier = getSubscriptionTier(user?.data?.subscriptionTier);
-  const storageUsed = user?.data?.totalStorageUsage;
 
   return (
     <QueryState
-      query={dashboardData}
-      pending={<MainPageSkeleton />}
+      query={newDashboardData}
+      pending={<DashboardSkeleton />}
       noData={<NotFound />}
     >
       {(data) => {
-        const { classes, tests, testReviews, permissions } = data;
-        const stats = generateDashboardStats(
-          tests,
-          classes,
-          testReviews,
-          storageUsed,
-          user?.data?.subscriptionTier
+        const {
+          totalClasses,
+          totalTests,
+          streak,
+          weeklyActivity,
+          mostActiveClass,
+          tokensUsedThisMonth,
+          totalStorageUsage,
+          stripeCustomer,
+        } = data;
+
+        const subscriptionTierButton = getSubscriptionTierButton(
+          stripeCustomer?.priceId
+        );
+
+        console.log(stripeCustomer, ">>> stripeCustomer");
+        console.log(
+          getSubscriptionTierByStripeRecord(stripeCustomer),
+          ">>> subscriptionTier"
         );
 
         return (
@@ -51,27 +61,41 @@ export default function Dashboard() {
                   Your AI-powered learning assistant
                 </p>
               </div>
-              <Button
-                className="hidden md:flex"
-                disabled={!permissions.canCreateClass}
-              >
-                <Link
-                  href="/app/classes/create-class"
-                  className={"flex items-center justify-center"}
-                >
-                  <div className="flex items-center gap-2">
-                    <subscriptionTier.icon className="h-4 w-4" />
-                    <span>{`${subscriptionTier.name} tier`}</span>
-                  </div>
-                </Link>
+              <Button className="hidden md:flex ">
+                <div className="flex items-center gap-2">
+                  <subscriptionTierButton.icon className="h-4 w-4" />
+                  <span>{`${subscriptionTierButton.name} tier`}</span>
+                </div>
               </Button>
             </div>
 
-            <DashboardStats stats={stats} />
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col lg:flex-row gap-6">
+                <div className="grid w-full lg:w-1/2">
+                  <DashboardStats
+                    totalTests={totalTests}
+                    totalClasses={totalClasses}
+                    subscriptionTier={getSubscriptionTierByStripeRecord(
+                      stripeCustomer
+                    )}
+                  />
+                  <ActiveStreakWidget streak={streak} />
+                </div>
+                <div className="w-full lg:w-1/2 flex flex-row gap-6">
+                  <DashboardProgressWidgets
+                    totalStorageUsage={totalStorageUsage}
+                    tokensUsedThisMonth={tokensUsedThisMonth}
+                    subscriptionTier={getSubscriptionTierByStripeRecord(
+                      stripeCustomer
+                    )}
+                  />
+                </div>
+              </div>
 
-            <div className="grid gap-6 xl:grid-cols-2">
-              <RecentClasses classes={classes} />
-              <RecentTests tests={tests} />
+              <div className="grid md:grid-cols-2 gap-6">
+                <WeekActivityWidget weeklyActivity={weeklyActivity} />
+                <MostActiveClassWidget mostActiveClass={mostActiveClass} />
+              </div>
             </div>
           </div>
         );

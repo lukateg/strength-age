@@ -4,22 +4,20 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 
 import AlertDialogModal from "@/components/alert-dialog";
-import TestReviewStats from "./test-review-stats";
 
 import {
-  CheckCircle,
   CheckCircle2,
   XCircle,
   AlertCircle,
   RefreshCcw,
   Target,
-  ArrowLeft,
-  BookOpen,
 } from "lucide-react";
 
 import { type Doc } from "convex/_generated/dataModel";
 import TestReviewShareButton from "./test-review-share-button";
 import SectionHeader from "@/components/page-components/page-header";
+import TestReviewProgress from "./test-review-progress";
+import TestReviewDetails from "./test-review-details";
 
 export default function TestReviewPage({
   testReview,
@@ -27,63 +25,74 @@ export default function TestReviewPage({
   isViewedByOwner,
   canTakeTest,
   handleRetakeTest,
+  perQuestionTypeAccuracy,
 }: {
   testReview: Doc<"testReviews">;
   isViewedByOwner: boolean;
   canTakeTest: boolean;
   backRoute: string;
   handleRetakeTest: () => void;
+  perQuestionTypeAccuracy: Record<string, { correct: number; total: number }>;
 }) {
+  const score = testReview.questions.filter(
+    (question) => question.isCorrect
+  ).length;
+  const total = testReview.questions.length;
+  const percentage = (score / total) * 100;
+
   return (
     <>
       <SectionHeader
-        title={testReview.title}
-        description={testReview.description}
+        title={"Test Review"}
+        description={"Review your test results"}
         backRoute={backRoute}
         actionButton={
           isViewedByOwner && (
-            <TestReviewShareButton
-              testReviewId={testReview._id}
-              testId={testReview.testId}
-            />
+            <div className="flex items-center gap-2">
+              {canTakeTest && (
+                <AlertDialogModal
+                  onConfirm={handleRetakeTest}
+                  title="Retake Test"
+                  description="After you press confirm you will be redirected to the test. Good luck!"
+                  variant="default"
+                  alertTrigger={
+                    <Button className="text-xs md:text-base" variant="default">
+                      <RefreshCcw className="h-4 w-4 mr-2" />
+                      Retake Test
+                    </Button>
+                  }
+                />
+              )}
+              <TestReviewShareButton
+                testReviewId={testReview._id}
+                testId={testReview.testId}
+              />
+            </div>
           )
         }
       />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <TestReviewDetails perQuestionTypeAccuracy={perQuestionTypeAccuracy} />
+
+        <TestReviewProgress
+          percentage={percentage}
+          score={score}
+          total={total}
+        />
+      </div>
 
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Target className="h-6 w-6 text-primary" />
-              <CardTitle className="text-lg md:text-2xl">
-                Test Results
-              </CardTitle>
+              <CardTitle className="text-lg">Detailed Review</CardTitle>
             </div>
-
-            {canTakeTest && (
-              <AlertDialogModal
-                onConfirm={handleRetakeTest}
-                title="Retake Test"
-                description="After you press confirm you will be redirected to the test. Good luck!"
-                variant="positive"
-                alertTrigger={
-                  <Button className="text-xs md:text-base" variant="positive">
-                    <RefreshCcw className="h-4 w-4 mr-2" />
-                    Retake Test
-                  </Button>
-                }
-              />
-            )}
           </div>
         </CardHeader>
+
         <CardContent>
-          <TestReviewStats testReview={testReview} />
-
-          <div className="flex items-center gap-2 mb-4">
-            <CheckCircle className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold">Detailed Review</h3>
-          </div>
-
           <ScrollArea className="h-[400px] pr-4">
             <div className="space-y-6">
               {testReview.questions.map((question, index) => (
@@ -107,7 +116,7 @@ export default function TestReviewPage({
                           <XCircle className="text-destructive h-5 w-5 md:h-6 md:w-6 flex-shrink-0" />
                         )}
                       </div>
-                      <h2 className="text-base md:text-xl font-semibold mt-1">
+                      <h2 className="text-base md:text-lg  mt-1">
                         {question.questionText}
                       </h2>
                     </div>

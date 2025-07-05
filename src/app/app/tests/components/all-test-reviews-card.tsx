@@ -2,13 +2,9 @@
 
 import { useTestMutations } from "@/hooks/use-test-mutations";
 
-import Link from "next/link";
-import ListCard, { ListItem } from "@/components/list-card";
-import AlertDialogModal from "@/components/alert-dialog";
+import ListCard from "@/components/list-card";
+import { TestReviewListItem } from "./test-review-list-item";
 
-import { Button } from "@/components/ui/button";
-
-import { Brain, Eye, Trash } from "lucide-react";
 import { type Doc } from "convex/_generated/dataModel";
 
 export default function AllTestReviewsCard({
@@ -16,7 +12,7 @@ export default function AllTestReviewsCard({
 }: {
   testReviews: Doc<"testReviews">[];
 }) {
-  const { deleteTestReview, isPending } = useTestMutations();
+  const { deleteTestReview, copyTestReviewShareLink } = useTestMutations();
 
   return (
     <ListCard
@@ -25,40 +21,18 @@ export default function AllTestReviewsCard({
       height="h-[400px] md:h-[650px]"
       items={testReviews}
       renderItem={(testReview) => (
-        <ListItem key={testReview._id} icon={Brain} title={testReview.title}>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Link
-                href={`/app/tests/${testReview.testId}/review/${testReview._id}`}
-                className="flex items-center"
-              >
-                <Eye className="h-4 w-4" />
-                <span className="hidden md:block ml-2">Results</span>
-              </Link>
-            </Button>
-
-            <AlertDialogModal
-              onConfirm={async () => {
-                if (testReview?._id) {
-                  await deleteTestReview(testReview._id);
-                }
-              }}
-              title="Delete Test Review"
-              description="Are you sure you want to delete this test review?"
-              variant="destructive"
-              alertTrigger={
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-xs md:text-base"
-                  disabled={isPending}
-                >
-                  <Trash className="h-4 w-4 text-red-500" />
-                </Button>
-              }
-            />
-          </div>
-        </ListItem>
+        <TestReviewListItem
+          key={testReview._id}
+          testReview={testReview}
+          onDelete={async () => {
+            if (testReview?._id) {
+              await deleteTestReview(testReview._id);
+            }
+          }}
+          onShare={async (testReviewId, testId) => {
+            await copyTestReviewShareLink(testReviewId, testId);
+          }}
+        />
       )}
     />
   );

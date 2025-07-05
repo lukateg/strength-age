@@ -7,7 +7,7 @@ import { type testSchema, type TestReview } from "@/lib/schemas";
 import { type z } from "zod";
 import { type Doc } from "convex/_generated/dataModel";
 
-export type GeneratedTest = z.infer<typeof testSchema>;
+export type GeneratedTest = z.infer<typeof testSchema> & { tokensUsed: number };
 
 export async function generateTest(
   formData: TestFormValues
@@ -69,6 +69,7 @@ export async function generateTest(
         lessonTitle: lesson.lessonTitle,
       })),
       additionalInstructions: formData.additionalInstructions,
+      tokensUsed: generatedTest.tokensUsed,
     };
   } catch (error) {
     console.error("Error generating test:", error);

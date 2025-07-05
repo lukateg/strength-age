@@ -8,7 +8,7 @@ import RecentReviews from "./components/recent-reviews-card";
 import TestStats from "@/components/test-stats";
 import AllTestsCard from "./components/all-tests-card";
 import AllTestReviewsCard from "./components/all-test-reviews-card";
-import MainPageSkeleton from "@/components/page-components/main-page-skeleton";
+import TestsPageSkeleton from "./components/tests-page-skeleton";
 import NotFound from "@/components/data-query/not-found";
 
 import { Button } from "@/components/ui/button";
@@ -16,18 +16,28 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 import { FilePlus2 } from "lucide-react";
 import QueryState from "@/components/data-query/query-state";
+import { useUserContext } from "@/providers/user-provider";
 
 export default function Tests() {
-  const { testsPageData } = useTests();
+  const { newTestsPageData } = useTests();
+  const { user } = useUserContext();
 
   return (
     <QueryState
-      query={testsPageData}
-      pending={<MainPageSkeleton />}
+      query={newTestsPageData}
+      pending={<TestsPageSkeleton />}
       noData={<NotFound />}
     >
       {(data) => {
-        const { tests, testReviews, permissions } = data;
+        const {
+          tests,
+          testReviews,
+          permissions,
+          weeklySuccess,
+          tokensUsedThisMonth,
+          totalTests,
+          totalAttempts,
+        } = data;
         const canGenerateTest = permissions.canGenerateTest;
 
         return (
@@ -41,17 +51,23 @@ export default function Tests() {
                   Let AI generate tests from your materials
                 </p>
               </div>
-              <Button disabled={!canGenerateTest}>
+              <Button disabled={!canGenerateTest} variant="default">
                 <Link href={`/app/tests/generate-test`}>
                   <span className="flex items-center gap-2">
                     <FilePlus2 size={16} />
-                    {canGenerateTest ? "Generate Test" : "Upgrade to generate"}
+                    {canGenerateTest ? "Generate Test" : "Limit Reached"}
                   </span>
                 </Link>
               </Button>
             </div>
 
-            <TestStats testReviews={testReviews} tests={tests} />
+            <TestStats
+              totalTests={totalTests}
+              totalAttempts={totalAttempts}
+              tokensUsedThisMonth={tokensUsedThisMonth}
+              weeklySuccess={weeklySuccess}
+              user={user.data}
+            />
 
             <Tabs defaultValue="recent" className="space-y-6">
               <TabsList>

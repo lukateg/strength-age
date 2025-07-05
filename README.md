@@ -8,44 +8,48 @@ check before launch:
 // -- check if there is better way to add chunking text prompt
 // -- check if all routes are covered with the fallback and if URL security is enough
 // -- check if actions that require modals have them
-// -- check if -- remove all loading... 
 // -- check if we want to delete all tests and reviews when deleting the class since user could create those within the generate tests page thinking they are not associated with class (if you want that then you need to store the class name with class ID everywhere since tests and test reviews need to display from which class they are created)
-// -- check if endpoints return null instead of throwing an error if data is not there so the QueryState component works fine (somewhere error is necessery)
 
-DESIGN TASKS IN ORDER FROM MOST IMPORTANTD (FIRST FIX DESIGN THEN ADD SKELETONS):
--- redesign test results page
--- nakon svega ovoga popravljaj loading... i skeletone
--- edit section buttons should have beautifull purple design maybe
--- create main page components like main-header and reuse it across the app
--- add mobile design to the sections again
--- write a bit better confirm test modal text
--- fix test review naming convention
--- fix test review scroll problem
--- add progress bar from 0.1 do 1.0 version on the landing page and display that as progress from beta to live app
--- implement subscription page and whole system for unsubscribe
--- change create new class for subscription plan
--- header overlaps the layout on the mobileå
--- fix test review naming convention by not even adding a name and just using a design you screenshoted
+TESTING:
+-- test prompt splitting and large loads
 
+BUGS
+- open class from dashboard and redirect back leads you to classes instead of a dashboard
 CAN'T REPRODUCE
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
 -- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
+-- still have some bad redirects on class and test review
+-- sign out displays some weird loader
+-- implement permission check fix
+-- add delete test from test preview
 
 PLAN:
--- handle case when LLM is not working handle case when statusText: 'Service Unavailable' 
-
+-- write down terms and conditions, privacy policy and documentation(mintlify)
+-- check payment of the ai, do you need to upgrade and everything
+// add ai usage to the dashboard of posthog
+// set a rate limit for total money spent on the model
+// set error handling when token teach-me subscription for all limit is out
+-- add feedback received, working on it email message
 -- Add analytics
 -- implement AI cost monitoring setup
 -- SEO check
--- restyle the and add colors to the app
 -- check free tier plan and work out permisions and free plan for max classes, lessons, pdfs in mb, tests and ai token calls
 -- in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
 -- load testing
+-- check if you need terms and conditions
+-- check payment subscription to gemini, will it upgrade automatically and everything needed
 -- release to prod
 -- wait for the analytics results and think about the compex permisions and test sharing and start sprint 2
 -- if test is deleted retry button on testReview page should be disabled
 
 FUTURE FEATURES AND ENHANCMENTS:
+-- remove all async logic from abacSchema so you fetch it only once in the page and pass it to the schema
+-- add feedback review page
+-- write a bit better confirm test modal text
+-- modify upload files to not have list below it and instead display files to upload in the dropbox itself.
+- export test to json and print it
+- 20 days streak gets discount
+-- add test sharing
 -- add settings page
 - test sharing between users and groups
 - test preview before starting to work on it
@@ -63,16 +67,19 @@ SETTINGS PAGE
 -- in settings page add ANSWER REQUIRED (if user wants to be able to submit test with answers that are not answered)
 -- in settings page add I DONT KNOW (if user wants to have don't know answer when multiple question)
 
+
 MAYBE IN FUTURE
+-- add feedback for each test question wrong answered
 -- add modals on all needed actions (when exiting touched forms)
--- set generating the test to work the same as uploading materials in background and then whene finishes on toaster add link to open the test, then redirect him to test view page and then display green start button and then display global loader that simulates short loading and starts the test
 -- set each form to not be redirectable back to
 -- if file upload becomes to slow change uploadThing for convex store
 
 -TEST GENERATION
+-- add limit so user can pass or fail a test
 -- add importing previous tests when generating test so AI knows not to generate same questions
 --  add dashboard for number of lessons, pass rate, total tests, test review in one of the navigation to single class page
 -- implement custom question number per lesson
+-- add timer for test
 -- add abort test generating when clicking on the X in the loader
 -- maybe add sharing tests between user as a social media app
 -- add "..." for each pdf and implement edit logic "check if edit can edit text in the uploadThing

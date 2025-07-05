@@ -26,7 +26,7 @@ import { type LessonFormData } from "@/types/lesson";
 import { type Doc } from "convex/_generated/dataModel";
 import { useClass } from "@/providers/class-context-provider";
 import TotalStorageUsedCard from "@/components/file-upload/total-storage-used-card";
-import { LIMITATIONS } from "@/shared/constants";
+import { LIMITATIONS } from "@/lib/limitations";
 import { useUserContext } from "@/providers/user-provider";
 
 export default function LessonForm({

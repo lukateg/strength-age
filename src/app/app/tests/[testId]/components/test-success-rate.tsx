@@ -1,4 +1,4 @@
-import CircularProgress from "../review/[testReviewId]/components/circular-progress";
+import CircularProgress from "../../../../../components/progress-components/circular-progress";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -41,17 +41,27 @@ export default function TestSuccessRate({
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <CircularProgress value={totalSuccessRatePercentage} />
+        <CircularProgress
+          value={totalSuccessRatePercentage}
+          isColored={true}
+          order="descending"
+        />
         <Separator />
 
         <div className="space-y-2">
-          <div>
-            <p className="text-sm text-muted-foreground">Total attempts</p>
-            <p className="text-lg font-medium">{totalAttempts}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground">Total attempts: </p>
+            <p className="text-lg font-medium ml-auto w-20 text-center">
+              {totalAttempts}
+            </p>
           </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Best score</p>
-            <p className="text-lg font-medium">{bestSuccessRatePercentages}%</p>
+          <Separator />
+
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground">Best score: </p>
+            <p className="text-lg font-medium ml-auto w-20 text-center">
+              {bestSuccessRatePercentages}%
+            </p>
           </div>
         </div>
       </CardContent>

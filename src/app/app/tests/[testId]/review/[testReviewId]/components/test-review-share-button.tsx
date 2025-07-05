@@ -1,12 +1,8 @@
-import { toast } from "sonner";
 import { useTestMutations } from "@/hooks/use-test-mutations";
-
 import { Button } from "@/components/ui/button";
-
-import { Send } from "lucide-react";
-
+import { Share2 } from "lucide-react";
 import { type Id } from "convex/_generated/dataModel";
-import { toastError } from "@/lib/utils";
+
 interface TestReviewShareButtonProps {
   testReviewId: Id<"testReviews">;
   testId: Id<"tests">;
@@ -16,18 +12,10 @@ export default function TestReviewShareButton({
   testReviewId,
   testId,
 }: TestReviewShareButtonProps) {
-  const { createTestReviewShareLink, isPending } = useTestMutations();
+  const { copyTestReviewShareLink, isPending } = useTestMutations();
 
   const handleShare = async () => {
-    try {
-      const shareToken = await createTestReviewShareLink(testReviewId);
-
-      const shareUrl = `${window.location.origin}/app/tests/${testId}/review/${testReviewId}?token=${shareToken}`;
-      await navigator.clipboard.writeText(shareUrl);
-      toast.success("Share link copied to clipboard!");
-    } catch (error) {
-      toastError(error, "Failed to create share link");
-    }
+    await copyTestReviewShareLink(testReviewId, testId);
   };
 
   return (
@@ -37,8 +25,7 @@ export default function TestReviewShareButton({
       variant="outline"
       disabled={isPending}
     >
-      <Send className="h-4 w-4 mr-2" />
-      Share Results
+      <Share2 className="h-4 w-4" />
     </Button>
   );
 }

@@ -3,35 +3,45 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 
+import Link from "next/link";
 import LessonsSectionComponent from "./components/lessons-by-class-card/lessons-by-class-card";
 import TestsSection from "./components/tests-by-class-card";
 import FeatureFlagTooltip from "@/components/feature-flag-tooltip";
-import PageSkeleton from "@/components/page-components/main-page-skeleton";
 import NotFound from "@/components/data-query/not-found";
 import SectionHeader from "@/components/page-components/page-header";
 import MaterialsByClassCard from "./components/materials-by-class-card";
-import Link from "next/link";
+import QueryState from "@/components/data-query/query-state";
+import ClassStats from "./components/class-stats";
+import ClassPageSkeleton from "./components/class-page-skeleton";
 
 import { useParams } from "next/navigation";
 import { useClass } from "@/providers/class-context-provider";
+import { useUserContext } from "@/providers/user-provider";
 
 import { Pencil } from "lucide-react";
 import { type Id } from "convex/_generated/dataModel";
-import QueryState from "@/components/data-query/query-state";
 
 export default function ClassPage() {
   const { classId }: { classId: Id<"classes"> } = useParams();
   const { classData } = useClass();
-
+  const { user } = useUserContext();
   return (
     <QueryState
       query={classData}
-      pending={<PageSkeleton />}
+      pending={<ClassPageSkeleton />}
       noData={<NotFound />}
     >
       {(data) => {
-        const { class_, lessons, permissions, materials, tests, testReviews } =
-          data;
+        const {
+          class_,
+          lessons,
+          permissions,
+          materials,
+          tests,
+          testReviews,
+          classStorageUsage,
+          classSuccessRate,
+        } = data;
         return (
           <>
             <div className="space-y-10">
@@ -49,6 +59,13 @@ export default function ClassPage() {
                     </Button>
                   )
                 }
+              />
+              <ClassStats
+                totalTests={tests.length}
+                totalLessons={lessons.length}
+                classStorageUsage={classStorageUsage}
+                classSuccessRate={classSuccessRate}
+                user={user?.data}
               />
               <Tabs defaultValue="lessons" className="space-y-6">
                 <TabsList>

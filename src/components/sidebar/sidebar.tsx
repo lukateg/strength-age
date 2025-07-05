@@ -5,8 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Layout } from "lucide-react";
+import { Layout, MessageCircle } from "lucide-react";
 import { NAVIGATION } from "./constants";
+import FeedbackModal from "@/components/feedback-modal";
 // import { useLoadingContext } from "@/providers/loading-context";
 
 const Sidebar = () => {
@@ -16,7 +17,7 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={cn("h-screen border-r bg-background pt-16 overflow-hidden")}
+      className={cn("h-screen border-r pt-16 overflow-hidden flex flex-col")}
     >
       <div className="p-4 flex items-center justify-between border-b">
         <Button
@@ -63,18 +64,20 @@ const Sidebar = () => {
         </ul>
       </nav>
 
-      {/* <div className="p-4">
-        <Button
-          className="w-full"
-          size={isCollapsed ? "icon" : "default"}
-          onClick={() => {
-            setLoading(true, "Generating test...");
-          }}
-        >
-          <Plus className={cn("h-4 w-4")} />
-          {!isCollapsed && "Simulate Loader"}
-        </Button>
-      </div> */}
+      <div className="p-4 mt-auto">
+        <FeedbackModal
+          trigger={
+            <Button
+              className="w-full"
+              size={isCollapsed ? "icon" : "default"}
+              variant="outline"
+            >
+              <MessageCircle className="h-4 w-4" />
+              {!isCollapsed && "Leave feedback"}
+            </Button>
+          }
+        />
+      </div>
     </aside>
   );
 };

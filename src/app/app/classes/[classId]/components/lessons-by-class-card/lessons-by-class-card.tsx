@@ -23,13 +23,13 @@ export default function LessonsSectionComponent({
       description="PDF documents and study materials"
       items={lessons}
       cardAction={
-        <Button disabled={!canCreateLesson}>
+        <Button disabled={!canCreateLesson} variant="default">
           <Link
             href={`/app/classes/${classId}/new-lesson`}
             className={"flex items-center justify-center"}
           >
             <Plus className="h-4 w-4 mr-2" />
-            {canCreateLesson ? "Add new lesson" : "Upgrade to add lesson"}
+            {canCreateLesson ? "Add new lesson" : "Limit Reached"}
           </Link>
         </Button>
       }

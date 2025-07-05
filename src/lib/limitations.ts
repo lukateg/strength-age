@@ -7,6 +7,7 @@ export const LIMITATIONS = {
     materials: 10485760, // 10 MB in bytes (10 * 1024 * 1024)
     testShare: false,
     resultsShare: true,
+    tokens: 300000,
   },
   starter: {
     classes: 3,
@@ -15,6 +16,7 @@ export const LIMITATIONS = {
     materials: 262144000, // 250 MB in bytes (250 * 1024 * 1024)
     testShare: true,
     resultsShare: true,
+    tokens: 5000000,
   },
   pro: {
     classes: 100,
@@ -23,5 +25,6 @@ export const LIMITATIONS = {
     materials: 524288000, // 500 MB in bytes (500 * 1024 * 1024)
     testShare: true,
     resultsShare: true,
+    tokens: 10000000,
   },
-} as const;
+};

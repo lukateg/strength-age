@@ -1,12 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Play, Share2 } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Play } from "lucide-react";
 import AlertDialogModal from "@/components/alert-dialog";
 
 export function TestActions({
@@ -15,36 +8,19 @@ export function TestActions({
   handleRetakeTest: () => void;
 }) {
   return (
-    <Card>
-      <CardContent className="p-4">
-        <div className="flex flex-col sm:flex-row gap-2">
-          <AlertDialogModal
-            onConfirm={handleRetakeTest}
-            title="Retake Test"
-            description="After you press confirm you will be redirected to the test. Good luck!"
-            variant="positive"
-            alertTrigger={
-              <Button className="w-full" variant="positive">
-                <Play className="h-4 w-4" />
-                <span className="hidden md:block">Start Test!</span>
-              </Button>
-            }
-          />
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="sm:w-10 h-10">
-                  <Share2 className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Share test</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex flex-col sm:flex-row gap-2">
+      <AlertDialogModal
+        onConfirm={handleRetakeTest}
+        title="Retake Test"
+        description="After you press confirm you will be redirected to the test. Good luck!"
+        variant="default"
+        alertTrigger={
+          <Button className="w-full" variant="default">
+            <Play className="h-4 w-4" />
+            <span className="block">Start Test</span>
+          </Button>
+        }
+      />
+    </div>
   );
 }

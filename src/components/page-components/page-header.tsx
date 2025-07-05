@@ -16,7 +16,7 @@ export default function SectionHeader({
 }) {
   return (
     <div>
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="rounded-full" asChild>
             <Link href={backRoute}>
@@ -34,7 +34,7 @@ export default function SectionHeader({
           </div>
         </div>
 
-        {actionButton}
+        <div className="self-end">{actionButton}</div>
       </div>
     </div>
   );

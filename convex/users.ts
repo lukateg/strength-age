@@ -1,9 +1,12 @@
-import { internalMutation, query, type QueryCtx } from "./_generated/server";
+import { internalMutation, query } from "./_generated/server";
 import { type UserJSON } from "@clerk/backend";
 import { v, type Validator } from "convex/values";
 import { internalQuery } from "./_generated/server";
 import { AuthenticationRequired } from "./utils";
 import { getTotalStorageUsage } from "./models/materialsModel";
+import { userByClerkId } from "./models/userModel";
+import { mutation } from "./_generated/server";
+import { createAppError } from "./utils";
 
 export const getUserData = query({
   handler: async (ctx) => {
@@ -75,13 +78,6 @@ export const getUserByClerkId = internalQuery({
   },
 });
 
-async function userByClerkId(ctx: QueryCtx, clerkId: string) {
-  return await ctx.db
-    .query("users")
-    .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
-    .unique();
-}
-
 export const updateUser = internalMutation({
   args: {
     userId: v.id("users"),
@@ -93,5 +89,37 @@ export const updateUser = internalMutation({
   },
   handler: async (ctx, { userId, data }) => {
     await ctx.db.patch(userId, data);
+  },
+});
+
+export const updateUserPreferences = mutation({
+  args: {
+    preferences: v.object({
+      shouldTestReviewLinksExpire: v.optional(v.boolean()),
+    }),
+  },
+  handler: async (ctx, { preferences }) => {
+    const userId = await AuthenticationRequired({ ctx });
+
+    const user = await userByClerkId(ctx, userId);
+    if (!user) {
+      throw createAppError({
+        message: "User not found",
+        statusCode: "NOT_FOUND",
+      });
+    }
+
+    // Merge with existing preferences
+    const currentPreferences = user.userPreferences ?? {};
+    const updatedPreferences = {
+      ...currentPreferences,
+      ...preferences,
+    };
+
+    await ctx.db.patch(user._id, {
+      userPreferences: updatedPreferences,
+    });
+
+    return { success: true };
   },
 });

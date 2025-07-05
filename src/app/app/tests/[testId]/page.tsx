@@ -8,19 +8,17 @@ import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query
 import { api } from "../../../../../convex/_generated/api";
 
 import TestSkeleton from "./components/test-skeleton";
-import Link from "next/link";
 import ListCard from "@/components/list-card";
-import AlertDialogModal from "@/components/alert-dialog";
 import TestSuccessRate from "./components/test-success-rate";
 import QueryState from "@/components/data-query/query-state";
 import NotFound from "@/components/data-query/not-found";
 
 import { useTestMutations } from "@/hooks/use-test-mutations";
-import { ArrowLeft, Brain, Eye, Trash, Play } from "lucide-react";
+import { ArrowLeft, Brain } from "lucide-react";
 import { TestDetails } from "./components/test-details";
 import { TestActions } from "./components/test-actions";
-import { ListItem } from "@/components/list-card";
 import { useLoadingContext } from "@/providers/loading-context";
+import { TestReviewListItem } from "../components/test-review-list-item";
 
 export type TestQuestion = {
   questionText: string;
@@ -31,7 +29,8 @@ export type TestQuestion = {
 
 export default function TestPreviewPage() {
   const { testId }: { testId: string } = useParams();
-  const { deleteTestReview, isPending } = useTestMutations();
+  const { deleteTestReview, isPending, copyTestReviewShareLink } =
+    useTestMutations();
   const { setLoading } = useLoadingContext();
 
   const router = useRouter();
@@ -77,22 +76,9 @@ export default function TestPreviewPage() {
                 </div>
                 <p className="text-muted-foreground">{data.description}</p>
               </div>
-
-              <AlertDialogModal
-                onConfirm={handleRetakeTest}
-                title="Retake Test"
-                description="After you press confirm you will be redirected to the test. Good luck!"
-                variant="positive"
-                alertTrigger={
-                  <Button className="text-xs md:text-base" variant="positive">
-                    <Play className="h-4 w-4 mr-2" />
-                    Start Test!
-                  </Button>
-                }
-              />
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-4">
               <div className="col-span-2 space-y-4">
                 <TestDetails
                   questionCount={data.questions.length}
@@ -108,7 +94,7 @@ export default function TestPreviewPage() {
                 <TestActions handleRetakeTest={handleRetakeTest} />
               </div>
 
-              <div className="col-span-1">
+              <div className="col-span-2 xl:col-span-1">
                 <TestSuccessRate testReviews={data.testReviews} />
               </div>
             </div>
@@ -120,44 +106,18 @@ export default function TestPreviewPage() {
               items={data.testReviews}
               isLoading={isPending}
               renderItem={(testReview) => (
-                <ListItem
+                <TestReviewListItem
                   key={testReview._id}
-                  icon={Brain}
-                  title={testReview.title}
-                >
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      <Link
-                        href={`/app/tests/${testReview.testId}/review/${testReview._id}`}
-                        className="flex items-center"
-                      >
-                        <Eye className="h-4 w-4" />
-                        <span className="hidden md:block ml-2">Results</span>
-                      </Link>
-                    </Button>
-
-                    <AlertDialogModal
-                      onConfirm={async () => {
-                        if (testReview?._id) {
-                          await deleteTestReview(testReview._id);
-                        }
-                      }}
-                      title="Delete Test Review"
-                      description="Are you sure you want to delete this test review?"
-                      variant="destructive"
-                      alertTrigger={
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-xs md:text-base"
-                          disabled={isPending}
-                        >
-                          <Trash className="h-4 w-4 text-red-500" />
-                        </Button>
-                      }
-                    />
-                  </div>
-                </ListItem>
+                  testReview={testReview}
+                  onDelete={async () => {
+                    if (testReview?._id) {
+                      await deleteTestReview(testReview._id);
+                    }
+                  }}
+                  onShare={async (testReviewId, testId) => {
+                    await copyTestReviewShareLink(testReviewId, testId);
+                  }}
+                />
               )}
             />
           </div>

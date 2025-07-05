@@ -1,0 +1,302 @@
+{
+  "designSystem": {
+    "name": "Teach.me Design System",
+    "version": "1.0.0",
+    "description": "A modern, sophisticated design system for AI-powered learning applications with dual theme support",
+
+    "colorPalette": {
+      "description": "Professional color system with teal/blue/purple accents, replacing the original brown color scheme",
+
+      "primary": {
+        "name": "Teal",
+        "hex": "#00d4aa",
+        "usage": "Primary actions, links, focus states",
+        "contrast": "Excellent on both light and dark backgrounds"
+      },
+
+      "secondary": {
+        "name": "Blue",
+        "hex": "#4a9eff",
+        "usage": "Secondary actions, informational elements"
+      },
+
+      "tertiary": {
+        "name": "Purple",
+        "hex": "#7c3aed",
+        "usage": "Accent elements, gradients, special highlights"
+      },
+
+      "gradients": {
+        "primary": "from-primary via-accent to-purple-600",
+        "hero": "from-primary via-secondary to-tertiary",
+        "logo": "from-teal-400 via-emerald-400 to-purple-600",
+        "usage": "Logos, hero sections, premium elements"
+      },
+
+      "status": {
+        "success": "#10b981",
+        "warning": "#f59e0b",
+        "error": "#ef4444",
+        "info": "#3b82f6"
+      },
+
+      "themes": {
+        "dark": {
+          "background": "#0f172a",
+          "surface": "#1e293b",
+          "surfaceElevated": "#334155",
+          "text": "#f1f5f9",
+          "textSecondary": "#cbd5e1",
+          "textMuted": "#94a3b8",
+          "border": "#334155",
+          "hover": "#3d4852",
+          "description": "Very dark slate theme with elevated card surfaces"
+        },
+        "light": {
+          "background": "#fafafa",
+          "surface": "#ffffff",
+          "surfaceElevated": "#f8fafc",
+          "text": "#1e293b",
+          "textSecondary": "#475569",
+          "textMuted": "#64748b",
+          "border": "#e2e8f0",
+          "hover": "#e8e9ea",
+          "description": "Clean white cards on light gray background"
+        }
+      }
+    },
+
+    "typography": {
+      "philosophy": "Clear hierarchy with modern sans-serif fonts",
+      "headings": {
+        "h1": "text-3xl font-bold",
+        "h2": "text-2xl font-semibold",
+        "h3": "text-xl font-medium",
+        "h4": "text-lg font-medium"
+      },
+      "body": {
+        "large": "text-lg",
+        "default": "text-base",
+        "small": "text-sm",
+        "xs": "text-xs"
+      },
+      "specialEffects": {
+        "heroGradient": "Adaptive gradient text - dark on light theme, light on dark theme",
+        "implementation": ".hero-text-gradient class with theme-specific gradients"
+      }
+    },
+
+    "spacing": {
+      "philosophy": "Consistent spacing scale using Tailwind's spacing system",
+      "scale": "1, 2, 3, 4, 6, 8, 12, 16, 20, 24, 32",
+      "containers": {
+        "pageMargin": "p-6",
+        "cardPadding": "p-6",
+        "sectionSpacing": "space-y-6"
+      }
+    },
+
+    "components": {
+      "cards": {
+        "style": "rounded-lg border bg-card text-card-foreground shadow-sm",
+        "hover": "hover:shadow-md transition-shadow",
+        "description": "Elevated surfaces with subtle shadows and hover effects"
+      },
+
+      "buttons": {
+        "primary": {
+          "style": "bg-primary hover:bg-primary/90 text-primary-foreground",
+          "description": "Teal background with hover opacity"
+        },
+        "secondary": {
+          "style": "bg-secondary hover:bg-secondary/80 text-secondary-foreground",
+          "description": "Blue background with hover opacity"
+        },
+        "outline": {
+          "style": "border border-input hover:bg-accent hover:text-accent-foreground",
+          "description": "Transparent with border, subtle hover"
+        },
+        "ghost": {
+          "style": "hover:bg-accent hover:text-accent-foreground",
+          "description": "Minimal style with hover background"
+        }
+      },
+
+      "inputs": {
+        "style": "border border-input bg-background focus:ring-2 focus:ring-primary/20",
+        "description": "Clean inputs with primary color focus rings"
+      },
+
+      "modals": {
+        "style": "rounded-lg border bg-background shadow-lg",
+        "header": "Space-y-4 with icon and title",
+        "description": "Elevated dialogs with proper spacing and shadows"
+      }
+    },
+
+    "interactions": {
+      "hover": {
+        "cards": "hover:shadow-md transition-shadow duration-200",
+        "buttons": "hover:scale-[1.02] transition-transform duration-200",
+        "interactive": "hover:bg-hover transition-colors duration-200",
+        "description": "Subtle hover effects with smooth transitions"
+      },
+
+      "focus": {
+        "style": "focus:ring-2 focus:ring-primary/20 focus:outline-none",
+        "description": "Primary color focus rings for accessibility"
+      },
+
+      "animations": {
+        "duration": "200ms",
+        "easing": "ease-in-out",
+        "transforms": "scale-[1.02] for buttons, scale-110 for small elements"
+      }
+    },
+
+    "branding": {
+      "logo": {
+        "concept": "Sophisticated multi-layered design with gradient elements",
+        "structure": {
+          "icon": "Multi-layered brain icon with gradient border",
+          "gradientBorder": "from-teal-400 via-emerald-400 to-purple-600",
+          "accentElements": "Sparkles (AI) and book (learning) icons",
+          "animations": "Hover scaling and glow effects"
+        },
+        "text": {
+          "primary": "Teach with gradient treatment",
+          "secondary": ".me in solid teal",
+          "tagline": "AI Learning (appears on hover)"
+        },
+        "interactions": {
+          "hover": "Progressive disclosure of tagline",
+          "transitions": "Smooth scaling and glow effects"
+        }
+      },
+
+      "iconography": {
+        "style": "Lucide React icons for consistency",
+        "usage": "Contextual icons for categories, actions, and states",
+        "feedback": {
+          "bug": "Bug icon with red accent",
+          "feature": "Lightbulb with yellow accent",
+          "complaint": "AlertTriangle with orange accent",
+          "compliment": "Heart with green accent",
+          "general": "MessageCircle with blue accent"
+        }
+      }
+    },
+
+    "patterns": {
+      "navigation": {
+        "sidebar": "Collapsible sidebar with icon + text layout",
+        "style": "Consistent spacing and hover states",
+        "activeState": "Primary color indicators"
+      },
+
+      "feedback": {
+        "modal": "Comprehensive feedback collection system",
+        "categories": "Visual categorization with icons and colors",
+        "rating": "5-star interactive rating system",
+        "validation": "Zod schema validation with proper error messages",
+        "form": "React Hook Form with proper accessibility"
+      },
+
+      "dataDisplay": {
+        "cards": "Information cards with consistent spacing",
+        "lists": "Organized lists with proper hierarchy",
+        "badges": "Status indicators with semantic colors"
+      }
+    },
+
+    "accessibility": {
+      "principles": [
+        "Proper color contrast ratios",
+        "Keyboard navigation support",
+        "Screen reader compatibility",
+        "Focus indicators on all interactive elements",
+        "Semantic HTML structure"
+      ],
+      "implementation": {
+        "focusRings": "focus:ring-2 focus:ring-primary/20",
+        "ariaLabels": "Proper aria-labels for complex interactions",
+        "keyboardNav": "Tab order and keyboard shortcuts"
+      }
+    },
+
+    "responsive": {
+      "breakpoints": "Tailwind default breakpoints (sm, md, lg, xl, 2xl)",
+      "strategy": "Mobile-first responsive design",
+      "patterns": {
+        "grids": "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+        "spacing": "Responsive padding and margins",
+        "typography": "Responsive text sizes"
+      }
+    },
+
+    "bestPractices": {
+      "consistency": [
+        "Use established color palette consistently",
+        "Maintain consistent spacing scale",
+        "Apply hover states uniformly",
+        "Use consistent border radius (rounded-lg)"
+      ],
+
+      "performance": [
+        "Optimize transitions and animations",
+        "Use CSS-in-JS efficiently",
+        "Implement proper loading states"
+      ],
+
+      "usability": [
+        "Provide clear feedback for user actions",
+        "Use appropriate visual hierarchy",
+        "Ensure touch targets are adequate",
+        "Implement proper error handling"
+      ]
+    },
+
+    "futureFeatures": {
+      "guidelines": [
+        "Follow established color system",
+        "Use consistent component patterns",
+        "Implement proper form validation",
+        "Add appropriate loading and error states",
+        "Ensure responsive design",
+        "Follow accessibility guidelines"
+      ],
+
+      "componentLibrary": [
+        "Build on existing shadcn/ui components",
+        "Extend with custom styling as needed",
+        "Maintain consistent API patterns",
+        "Document component usage"
+      ]
+    }
+  },
+
+  "technicalImplementation": {
+    "framework": "Next.js with TypeScript",
+    "styling": "Tailwind CSS with custom theme extensions",
+    "components": "shadcn/ui component library",
+    "forms": "React Hook Form with Zod validation",
+    "state": "React state management with custom hooks",
+    "database": "Convex backend integration",
+    "icons": "Lucide React icon library"
+  },
+
+  "changelog": {
+    "v1.0.0": {
+      "date": "2024",
+      "changes": [
+        "Replaced brown color scheme with teal/blue/purple system",
+        "Implemented dual theme support (dark/light)",
+        "Created sophisticated logo with gradient effects",
+        "Built comprehensive feedback modal system",
+        "Established consistent hover and interaction patterns",
+        "Implemented proper accessibility features",
+        "Created responsive design patterns"
+      ]
+    }
+  }
+}

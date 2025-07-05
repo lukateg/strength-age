@@ -1,19 +1,18 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "../../../../convex/_generated/api";
 
 import { type NextRequest } from "next/server";
 import { type Id } from "convex/_generated/dataModel";
 
-import { convertPDFToText, generateQuizForLesson } from "@/lib/server-utils";
 import { getConvexToken } from "@/lib/server-utils";
+import {
+  convertPdfToText,
+  generateQuizForLesson,
+} from "../generate-test-utils";
 
 if (!process.env.GEMINI_API_KEY) {
   throw new Error("Missing GEMINI_API_KEY environment variable");
 }
-
-// Initialize with API version
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
@@ -67,7 +66,7 @@ export async function POST(req: NextRequest) {
     }
 
     const extractionPromises = pdfs.pdfsByLesson[0].map((pdf) =>
-      convertPDFToText({ fileUrl: pdf.fileUrl, _id: pdf._id })
+      convertPdfToText({ fileUrl: pdf.fileUrl, _id: pdf._id })
     );
     const extractedTexts = await Promise.all(extractionPromises);
 
@@ -82,17 +81,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-lite",
-      generationConfig: {
-        responseMimeType: "application/json",
-        // TODO: add schema type
-        // responseSchema: testSchema,
-      },
-    });
-
     const quiz = await generateQuizForLesson(
-      model,
       successfulTexts,
       questionTypes,
       difficulty,
@@ -101,6 +90,7 @@ export async function POST(req: NextRequest) {
       description,
       additionalInstructions
     );
+
     return Response.json({ response: quiz });
   } catch (error) {
     console.error("Error generating test:", error);

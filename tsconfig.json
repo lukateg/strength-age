@@ -38,6 +38,6 @@
     "**/*.js",
     ".next/types/**/*.ts",
     "convex/**/*"
-, "src/shared"  ],
+, "src/constants"  ],
   "exclude": ["node_modules"]
 }

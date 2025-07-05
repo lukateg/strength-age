@@ -13,7 +13,7 @@ import Link from "next/link";
 
 import { EllipsisVertical, Pencil, Trash } from "lucide-react";
 
-import { type api } from "convex/_generated/api";
+import { type api } from "../../../../../../convex/_generated/api";
 import { type FunctionReturnType } from "convex/server";
 
 export default function ClassCardDropdown({

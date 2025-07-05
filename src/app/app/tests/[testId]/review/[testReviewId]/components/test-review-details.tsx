@@ -3,8 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle } from "lucide-react";
-import { getQuestionTypeLabel } from "@/lib/utils";
 import { getPercentageColor } from "@/components/progress-components/get-percentage-color";
+
+export function getQuestionTypeLabel(id: string): string | undefined {
+  const QUESTION_TYPES = [
+    { id: "multiple_choice", label: "Multiple Choice" },
+    { id: "true_false", label: "True/False" },
+    { id: "short_answer", label: "Short Answer" },
+  ];
+  const questionType = QUESTION_TYPES.find((type) => type.id === id);
+  return questionType ? questionType.label : undefined;
+}
 
 export default function TestReviewDetails({
   perQuestionTypeAccuracy,

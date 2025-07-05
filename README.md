@@ -22,9 +22,10 @@ CAN'T REPRODUCE
 PLAN:
 -- write down terms and conditions, privacy policy and documentation(mintlify)
 -- check payment of the ai, do you need to upgrade and everything
+// add ai usage to the dashboard of posthog
+// implement prompt splitting if prompt over 200k tokens
 // set a rate limit for total money spent on the model
-// set a token input limit per user
-// set error handling when token limit is out
+// set error handling when token teach-me subscription for all limit is out
 -- add feedback received, working on it email message
 -- Add analytics
 -- implement AI cost monitoring setup
@@ -39,6 +40,7 @@ PLAN:
 -- if test is deleted retry button on testReview page should be disabled
 
 FUTURE FEATURES AND ENHANCMENTS:
+-- remove all async logic from abacSchema so you fetch it only once in the page and pass it to the schema
 -- add feedback review page
 -- write a bit better confirm test modal text
 -- modify upload files to not have list below it and instead display files to upload in the dropbox itself.

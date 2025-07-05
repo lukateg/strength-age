@@ -1,12 +1,14 @@
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "../../../../convex/_generated/api";
 
 import { type NextRequest } from "next/server";
 import { type Id } from "convex/_generated/dataModel";
 
-import { convertPDFToText, generateQuizForLesson } from "@/lib/server-utils";
 import { getConvexToken } from "@/lib/server-utils";
+import {
+  convertPdfToText,
+  generateQuizForLesson,
+} from "../generate-test-utils";
 
 if (!process.env.GEMINI_API_KEY) {
   throw new Error("Missing GEMINI_API_KEY environment variable");
@@ -64,7 +66,7 @@ export async function POST(req: NextRequest) {
     }
 
     const extractionPromises = pdfs.pdfsByLesson[0].map((pdf) =>
-      convertPDFToText({ fileUrl: pdf.fileUrl, _id: pdf._id })
+      convertPdfToText({ fileUrl: pdf.fileUrl, _id: pdf._id })
     );
     const extractedTexts = await Promise.all(extractionPromises);
 
@@ -88,6 +90,7 @@ export async function POST(req: NextRequest) {
       description,
       additionalInstructions
     );
+
     return Response.json({ response: quiz });
   } catch (error) {
     console.error("Error generating test:", error);

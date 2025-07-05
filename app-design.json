@@ -1,463 +1,302 @@
 {
   "designSystem": {
-    "name": "Modern Dashboard UI Kit",
-    "version": "1.0",
-    "description": "Dark-themed dashboard design system with emphasis on data visualization and clean layouts"
-  },
-  "themes": {
-    "dark": {
+    "name": "Teach.me Design System",
+    "version": "1.0.0",
+    "description": "A modern, sophisticated design system for AI-powered learning applications with dual theme support",
+
+    "colorPalette": {
+      "description": "Professional color system with teal/blue/purple accents, replacing the original brown color scheme",
+
       "primary": {
-        "background": "#1a1f2e",
-        "surface": "#242b3d",
-        "surfaceElevated": "#2a3441"
+        "name": "Teal",
+        "hex": "#00d4aa",
+        "usage": "Primary actions, links, focus states",
+        "contrast": "Excellent on both light and dark backgrounds"
       },
-      "accent": {
-        "primary": "#00d4aa",
-        "secondary": "#4a9eff",
-        "tertiary": "#7c3aed"
+
+      "secondary": {
+        "name": "Blue",
+        "hex": "#4a9eff",
+        "usage": "Secondary actions, informational elements"
       },
-      "text": {
-        "primary": "#ffffff",
-        "secondary": "#a0a9ba",
-        "muted": "#6b7280"
+
+      "tertiary": {
+        "name": "Purple",
+        "hex": "#7c3aed",
+        "usage": "Accent elements, gradients, special highlights"
       },
-      "borders": {
-        "default": "#374151",
-        "focus": "#4a9eff",
-        "error": "#ef4444"
-      }
-    },
-    "light": {
-      "primary": {
-        "background": "#f8fafc",
-        "surface": "#ffffff",
-        "surfaceElevated": "#f1f5f9"
+
+      "gradients": {
+        "primary": "from-primary via-accent to-purple-600",
+        "hero": "from-primary via-secondary to-tertiary",
+        "logo": "from-teal-400 via-emerald-400 to-purple-600",
+        "usage": "Logos, hero sections, premium elements"
       },
-      "accent": {
-        "primary": "#00d4aa",
-        "secondary": "#4a9eff",
-        "tertiary": "#7c3aed"
+
+      "status": {
+        "success": "#10b981",
+        "warning": "#f59e0b",
+        "error": "#ef4444",
+        "info": "#3b82f6"
       },
-      "text": {
-        "primary": "#1e293b",
-        "secondary": "#64748b",
-        "muted": "#94a3b8"
-      },
-      "borders": {
-        "default": "#e2e8f0",
-        "focus": "#4a9eff",
-        "error": "#ef4444"
-      }
-    }
-  },
-  "colorPalette": {
-    "status": {
-      "success": "#10b981",
-      "warning": "#f59e0b",
-      "error": "#ef4444",
-      "info": "#3b82f6"
-    }
-  },
-  "typography": {
-    "fontFamily": {
-      "primary": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
-      "monospace": "JetBrains Mono, Consolas, monospace"
-    },
-    "fontSizes": {
-      "xs": "0.75rem",
-      "sm": "0.875rem",
-      "base": "1rem",
-      "lg": "1.125rem",
-      "xl": "1.25rem",
-      "2xl": "1.5rem",
-      "3xl": "1.875rem",
-      "4xl": "2.25rem"
-    },
-    "fontWeights": {
-      "normal": 400,
-      "medium": 500,
-      "semibold": 600,
-      "bold": 700
-    },
-    "hierarchy": {
-      "cardTitle": {
-        "fontSize": "1.125rem",
-        "fontWeight": 600,
-        "color": "#ffffff"
-      },
-      "metricValue": {
-        "fontSize": "1.875rem",
-        "fontWeight": 700,
-        "color": "#ffffff"
-      },
-      "metricLabel": {
-        "fontSize": "0.875rem",
-        "fontWeight": 500,
-        "color": "#a0a9ba"
-      },
-      "bodyText": {
-        "fontSize": "0.875rem",
-        "fontWeight": 400,
-        "color": "#a0a9ba"
-      }
-    }
-  },
-  "spacing": {
-    "scale": "0.25rem",
-    "sizes": {
-      "xs": "0.25rem",
-      "sm": "0.5rem",
-      "md": "1rem",
-      "lg": "1.5rem",
-      "xl": "2rem",
-      "2xl": "3rem",
-      "3xl": "4rem"
-    }
-  },
-  "borderRadius": {
-    "none": "0",
-    "sm": "0.25rem",
-    "md": "0.5rem",
-    "lg": "0.75rem",
-    "xl": "1rem",
-    "full": "9999px"
-  },
-  "shadows": {
-    "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.3)",
-    "md": "0 4px 6px -1px rgba(0, 0, 0, 0.4)",
-    "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.5)",
-    "xl": "0 20px 25px -5px rgba(0, 0, 0, 0.6)"
-  },
-  "components": {
-    "card": {
-      "structure": {
-        "container": {
-          "backgroundColor": "theme.primary.surface",
-          "borderRadius": "0.75rem",
-          "padding": "1.5rem",
-          "boxShadow": {
-            "dark": "0 4px 6px -1px rgba(0, 0, 0, 0.4)",
-            "light": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
-          },
-          "border": {
-            "dark": "none",
-            "light": "1px solid theme.borders.default"
-          }
+
+      "themes": {
+        "dark": {
+          "background": "#0f172a",
+          "surface": "#1e293b",
+          "surfaceElevated": "#334155",
+          "text": "#f1f5f9",
+          "textSecondary": "#cbd5e1",
+          "textMuted": "#94a3b8",
+          "border": "#334155",
+          "hover": "#3d4852",
+          "description": "Very dark slate theme with elevated card surfaces"
         },
-        "header": {
-          "marginBottom": "1rem"
-        },
-        "content": {
-          "display": "flex",
-          "flexDirection": "column",
-          "gap": "1rem"
-        }
-      },
-      "variants": {
-        "metric": {
-          "description": "Cards displaying key metrics with large numbers and trend indicators",
-          "elements": ["title", "value", "changeIndicator", "chart"]
-        },
-        "form": {
-          "description": "Cards containing form elements and user inputs",
-          "elements": ["title", "formFields", "buttons"]
-        },
-        "chart": {
-          "description": "Cards primarily displaying data visualizations",
-          "elements": ["title", "description", "chartArea"]
-        },
-        "widget": {
-          "description": "Interactive widgets with controls and displays",
-          "elements": ["title", "controls", "display", "actions"]
+        "light": {
+          "background": "#fafafa",
+          "surface": "#ffffff",
+          "surfaceElevated": "#f8fafc",
+          "text": "#1e293b",
+          "textSecondary": "#475569",
+          "textMuted": "#64748b",
+          "border": "#e2e8f0",
+          "hover": "#e8e9ea",
+          "description": "Clean white cards on light gray background"
         }
       }
     },
-    "navigation": {
-      "topBar": {
-        "height": "4rem",
-        "backgroundColor": "theme.primary.background",
-        "padding": "0 1.5rem",
-        "display": "flex",
-        "alignItems": "center",
-        "justifyContent": "space-between",
-        "borderBottom": {
-          "dark": "none",
-          "light": "1px solid theme.borders.default"
-        }
+
+    "typography": {
+      "philosophy": "Clear hierarchy with modern sans-serif fonts",
+      "headings": {
+        "h1": "text-3xl font-bold",
+        "h2": "text-2xl font-semibold",
+        "h3": "text-xl font-medium",
+        "h4": "text-lg font-medium"
       },
-      "tabNavigation": {
-        "backgroundColor": "transparent",
-        "borderRadius": "0.5rem",
-        "padding": "0.25rem",
-        "display": "flex",
-        "gap": "0.25rem"
+      "body": {
+        "large": "text-lg",
+        "default": "text-base",
+        "small": "text-sm",
+        "xs": "text-xs"
       },
-      "tab": {
-        "padding": "0.5rem 1rem",
-        "borderRadius": "0.375rem",
-        "fontSize": "0.875rem",
-        "fontWeight": 500,
-        "states": {
-          "default": {
-            "backgroundColor": "transparent",
-            "color": "theme.text.secondary"
-          },
-          "active": {
-            "backgroundColor": "theme.accent.secondary",
-            "color": "#ffffff"
-          },
-          "hover": {
-            "backgroundColor": {
-              "dark": "#2a3441",
-              "light": "theme.primary.surfaceElevated"
-            },
-            "color": "theme.text.primary"
-          }
-        }
+      "specialEffects": {
+        "heroGradient": "Adaptive gradient text - dark on light theme, light on dark theme",
+        "implementation": ".hero-text-gradient class with theme-specific gradients"
       }
     },
-    "forms": {
-      "input": {
-        "backgroundColor": {
-          "dark": "#1a1f2e",
-          "light": "#ffffff"
+
+    "spacing": {
+      "philosophy": "Consistent spacing scale using Tailwind's spacing system",
+      "scale": "1, 2, 3, 4, 6, 8, 12, 16, 20, 24, 32",
+      "containers": {
+        "pageMargin": "p-6",
+        "cardPadding": "p-6",
+        "sectionSpacing": "space-y-6"
+      }
+    },
+
+    "components": {
+      "cards": {
+        "style": "rounded-lg border bg-card text-card-foreground shadow-sm",
+        "hover": "hover:shadow-md transition-shadow",
+        "description": "Elevated surfaces with subtle shadows and hover effects"
+      },
+
+      "buttons": {
+        "primary": {
+          "style": "bg-primary hover:bg-primary/90 text-primary-foreground",
+          "description": "Teal background with hover opacity"
         },
-        "border": "1px solid theme.borders.default",
-        "borderRadius": "0.5rem",
-        "padding": "0.75rem 1rem",
-        "fontSize": "0.875rem",
-        "color": "theme.text.primary",
-        "states": {
-          "focus": {
-            "borderColor": "theme.borders.focus",
-            "outline": "2px solid rgba(74, 158, 255, 0.2)"
-          },
-          "error": {
-            "borderColor": "theme.borders.error"
-          }
-        }
-      },
-      "button": {
-        "borderRadius": "0.5rem",
-        "padding": "0.75rem 1.5rem",
-        "fontSize": "0.875rem",
-        "fontWeight": 600,
-        "variants": {
-          "primary": {
-            "backgroundColor": "theme.accent.primary",
-            "color": "#ffffff"
-          },
-          "secondary": {
-            "backgroundColor": {
-              "dark": "#374151",
-              "light": "theme.primary.surfaceElevated"
-            },
-            "color": "theme.text.primary"
-          },
-          "ghost": {
-            "backgroundColor": "transparent",
-            "color": "theme.text.secondary",
-            "border": "1px solid theme.borders.default"
-          }
-        }
-      }
-    },
-    "dataVisualization": {
-      "chart": {
-        "colors": {
-          "primary": "#00d4aa",
-          "secondary": "#4a9eff",
-          "tertiary": "#7c3aed",
-          "quaternary": "#f59e0b"
+        "secondary": {
+          "style": "bg-secondary hover:bg-secondary/80 text-secondary-foreground",
+          "description": "Blue background with hover opacity"
         },
-        "grid": {
-          "color": {
-            "dark": "#374151",
-            "light": "#e2e8f0"
-          },
-          "strokeWidth": 1
+        "outline": {
+          "style": "border border-input hover:bg-accent hover:text-accent-foreground",
+          "description": "Transparent with border, subtle hover"
         },
-        "axes": {
-          "color": "theme.text.muted",
-          "fontSize": "0.75rem"
+        "ghost": {
+          "style": "hover:bg-accent hover:text-accent-foreground",
+          "description": "Minimal style with hover background"
         }
       },
-      "progressBar": {
-        "height": "0.5rem",
-        "backgroundColor": {
-          "dark": "#374151",
-          "light": "#e2e8f0"
+
+      "inputs": {
+        "style": "border border-input bg-background focus:ring-2 focus:ring-primary/20",
+        "description": "Clean inputs with primary color focus rings"
+      },
+
+      "modals": {
+        "style": "rounded-lg border bg-background shadow-lg",
+        "header": "Space-y-4 with icon and title",
+        "description": "Elevated dialogs with proper spacing and shadows"
+      }
+    },
+
+    "interactions": {
+      "hover": {
+        "cards": "hover:shadow-md transition-shadow duration-200",
+        "buttons": "hover:scale-[1.02] transition-transform duration-200",
+        "interactive": "hover:bg-hover transition-colors duration-200",
+        "description": "Subtle hover effects with smooth transitions"
+      },
+
+      "focus": {
+        "style": "focus:ring-2 focus:ring-primary/20 focus:outline-none",
+        "description": "Primary color focus rings for accessibility"
+      },
+
+      "animations": {
+        "duration": "200ms",
+        "easing": "ease-in-out",
+        "transforms": "scale-[1.02] for buttons, scale-110 for small elements"
+      }
+    },
+
+    "branding": {
+      "logo": {
+        "concept": "Sophisticated multi-layered design with gradient elements",
+        "structure": {
+          "icon": "Multi-layered brain icon with gradient border",
+          "gradientBorder": "from-teal-400 via-emerald-400 to-purple-600",
+          "accentElements": "Sparkles (AI) and book (learning) icons",
+          "animations": "Hover scaling and glow effects"
         },
-        "borderRadius": "0.25rem",
-        "fill": {
-          "backgroundColor": "theme.accent.primary",
-          "borderRadius": "0.25rem"
+        "text": {
+          "primary": "Teach with gradient treatment",
+          "secondary": ".me in solid teal",
+          "tagline": "AI Learning (appears on hover)"
+        },
+        "interactions": {
+          "hover": "Progressive disclosure of tagline",
+          "transitions": "Smooth scaling and glow effects"
+        }
+      },
+
+      "iconography": {
+        "style": "Lucide React icons for consistency",
+        "usage": "Contextual icons for categories, actions, and states",
+        "feedback": {
+          "bug": "Bug icon with red accent",
+          "feature": "Lightbulb with yellow accent",
+          "complaint": "AlertTriangle with orange accent",
+          "compliment": "Heart with green accent",
+          "general": "MessageCircle with blue accent"
         }
       }
     },
-    "calendar": {
-      "container": {
-        "backgroundColor": "theme.primary.surface",
-        "borderRadius": "0.75rem",
-        "padding": "1.5rem",
-        "border": {
-          "dark": "none",
-          "light": "1px solid theme.borders.default"
-        }
+
+    "patterns": {
+      "navigation": {
+        "sidebar": "Collapsible sidebar with icon + text layout",
+        "style": "Consistent spacing and hover states",
+        "activeState": "Primary color indicators"
       },
-      "header": {
-        "display": "flex",
-        "justifyContent": "space-between",
-        "alignItems": "center",
-        "marginBottom": "1rem"
+
+      "feedback": {
+        "modal": "Comprehensive feedback collection system",
+        "categories": "Visual categorization with icons and colors",
+        "rating": "5-star interactive rating system",
+        "validation": "Zod schema validation with proper error messages",
+        "form": "React Hook Form with proper accessibility"
       },
-      "grid": {
-        "display": "grid",
-        "gridTemplateColumns": "repeat(7, 1fr)",
-        "gap": "0.25rem"
-      },
-      "day": {
-        "width": "2.5rem",
-        "height": "2.5rem",
-        "borderRadius": "0.375rem",
-        "display": "flex",
-        "alignItems": "center",
-        "justifyContent": "center",
-        "fontSize": "0.875rem",
-        "states": {
-          "default": {
-            "color": "theme.text.secondary"
-          },
-          "today": {
-            "backgroundColor": "theme.accent.primary",
-            "color": "#ffffff"
-          },
-          "selected": {
-            "backgroundColor": "theme.accent.secondary",
-            "color": "#ffffff"
-          },
-          "otherMonth": {
-            "color": "theme.text.muted"
-          }
-        }
-      }
-    }
-  },
-  "layout": {
-    "container": {
-      "maxWidth": "1440px",
-      "margin": "0 auto",
-      "padding": "0 1.5rem"
-    },
-    "grid": {
-      "columns": 12,
-      "gap": "1.5rem",
-      "breakpoints": {
-        "sm": "640px",
-        "md": "768px",
-        "lg": "1024px",
-        "xl": "1280px",
-        "2xl": "1536px"
+
+      "dataDisplay": {
+        "cards": "Information cards with consistent spacing",
+        "lists": "Organized lists with proper hierarchy",
+        "badges": "Status indicators with semantic colors"
       }
     },
-    "dashboardLayout": {
-      "display": "grid",
-      "gridTemplateColumns": "repeat(auto-fit, minmax(300px, 1fr))",
-      "gap": "1.5rem",
-      "padding": "1.5rem"
-    }
-  },
-  "animations": {
-    "transitions": {
-      "fast": "150ms ease-in-out",
-      "medium": "250ms ease-in-out",
-      "slow": "350ms ease-in-out"
-    },
-    "hover": {
-      "scale": "1.02",
-      "transition": "transform 150ms ease-in-out"
-    },
-    "chartAnimations": {
-      "duration": "800ms",
-      "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
-    }
-  },
-  "patterns": {
-    "metricDisplay": {
-      "structure": [
-        "metric title (small, muted text)",
-        "metric value (large, bold number)",
-        "change indicator (percentage with trend)",
-        "optional mini chart or sparkline"
+
+    "accessibility": {
+      "principles": [
+        "Proper color contrast ratios",
+        "Keyboard navigation support",
+        "Screen reader compatibility",
+        "Focus indicators on all interactive elements",
+        "Semantic HTML structure"
       ],
-      "layout": "vertical stack with consistent spacing"
+      "implementation": {
+        "focusRings": "focus:ring-2 focus:ring-primary/20",
+        "ariaLabels": "Proper aria-labels for complex interactions",
+        "keyboardNav": "Tab order and keyboard shortcuts"
+      }
     },
-    "formCard": {
-      "structure": [
-        "card title",
-        "form fields with labels",
-        "action buttons at bottom"
-      ],
-      "spacing": "consistent 1rem gaps between sections"
+
+    "responsive": {
+      "breakpoints": "Tailwind default breakpoints (sm, md, lg, xl, 2xl)",
+      "strategy": "Mobile-first responsive design",
+      "patterns": {
+        "grids": "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+        "spacing": "Responsive padding and margins",
+        "typography": "Responsive text sizes"
+      }
     },
-    "chartCard": {
-      "structure": [
-        "chart title and description",
-        "chart area with proper margins",
-        "optional legend or controls"
+
+    "bestPractices": {
+      "consistency": [
+        "Use established color palette consistently",
+        "Maintain consistent spacing scale",
+        "Apply hover states uniformly",
+        "Use consistent border radius (rounded-lg)"
       ],
-      "chartPadding": "adequate space for labels and axes"
+
+      "performance": [
+        "Optimize transitions and animations",
+        "Use CSS-in-JS efficiently",
+        "Implement proper loading states"
+      ],
+
+      "usability": [
+        "Provide clear feedback for user actions",
+        "Use appropriate visual hierarchy",
+        "Ensure touch targets are adequate",
+        "Implement proper error handling"
+      ]
     },
-    "widgetCard": {
-      "structure": [
-        "widget title",
-        "main content/display area",
-        "controls or settings",
-        "action buttons if needed"
+
+    "futureFeatures": {
+      "guidelines": [
+        "Follow established color system",
+        "Use consistent component patterns",
+        "Implement proper form validation",
+        "Add appropriate loading and error states",
+        "Ensure responsive design",
+        "Follow accessibility guidelines"
       ],
-      "interactivity": "hover states and smooth transitions"
+
+      "componentLibrary": [
+        "Build on existing shadcn/ui components",
+        "Extend with custom styling as needed",
+        "Maintain consistent API patterns",
+        "Document component usage"
+      ]
     }
   },
-  "accessibility": {
-    "contrast": {
-      "minimum": "4.5:1 for normal text",
-      "enhanced": "7:1 for important content"
-    },
-    "focusStates": {
-      "outline": "2px solid theme.borders.focus",
-      "offset": "2px"
-    },
-    "semanticColors": {
-      "success": "#10b981",
-      "warning": "#f59e0b",
-      "error": "#ef4444",
-      "info": "#3b82f6"
-    }
+
+  "technicalImplementation": {
+    "framework": "Next.js with TypeScript",
+    "styling": "Tailwind CSS with custom theme extensions",
+    "components": "shadcn/ui component library",
+    "forms": "React Hook Form with Zod validation",
+    "state": "React state management with custom hooks",
+    "database": "Convex backend integration",
+    "icons": "Lucide React icon library"
   },
-  "responsiveDesign": {
-    "mobile": {
-      "cardPadding": "1rem",
-      "fontSize": "scale down by 0.125rem",
-      "gridColumns": "1 column layout"
-    },
-    "tablet": {
-      "cardPadding": "1.25rem",
-      "gridColumns": "2 column layout"
-    },
-    "desktop": {
-      "cardPadding": "1.5rem",
-      "gridColumns": "3-4 column layout"
+
+  "changelog": {
+    "v1.0.0": {
+      "date": "2024",
+      "changes": [
+        "Replaced brown color scheme with teal/blue/purple system",
+        "Implemented dual theme support (dark/light)",
+        "Created sophisticated logo with gradient effects",
+        "Built comprehensive feedback modal system",
+        "Established consistent hover and interaction patterns",
+        "Implemented proper accessibility features",
+        "Created responsive design patterns"
+      ]
     }
-  },
-  "usage": {
-    "themeImplementation": "Use 'theme.property.subproperty' syntax to reference theme values dynamically. Components should adapt colors and styles based on the active theme.",
-    "cardStructure": "Always use consistent padding, border radius, and background colors for cards. Light theme adds subtle borders for definition.",
-    "colorApplication": "Use accent colors sparingly for highlights and primary actions. These remain consistent across themes.",
-    "typography": "Maintain clear hierarchy with consistent font sizes and weights. Text colors automatically adapt to theme.",
-    "spacing": "Use the spacing scale consistently throughout all components regardless of theme.",
-    "dataVisualization": "Apply consistent color schemes and styling across all charts. Grid colors adapt to theme for better visibility.",
-    "interactions": "Include hover states and smooth transitions for better UX. Hover colors adapt to provide proper contrast in each theme.",
-    "shadows": "Use deeper shadows in dark theme, lighter shadows in light theme to maintain proper depth perception.",
-    "borders": "Light theme relies more on borders for component definition, dark theme uses elevation and contrast."
   }
 }

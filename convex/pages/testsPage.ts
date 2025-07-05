@@ -5,6 +5,7 @@ import { hasPermission } from "convex/models/permissionsModel";
 import { getTestsWithPermissions } from "convex/models/testsModel";
 import { getTestReviewsWithPermissions } from "convex/models/testReviewsModel";
 import { type Doc, type Id } from "convex/_generated/dataModel";
+import { getMonthlyUsageRecord } from "convex/models/tokensModel";
 
 export interface TestWithPermissions extends Doc<"tests"> {
   canDelete: boolean;
@@ -34,13 +35,14 @@ export interface WeeklySuccess {
 export interface NewTestsPageData {
   totalTests: number;
   totalAttempts: number;
-  mostActiveTest: string | null;
+  // mostActiveTest: string | null;
   weeklySuccess: WeeklySuccess;
   tests: TestWithPermissions[];
   testReviews: TestReviewWithPermissions[];
   permissions: {
     canGenerateTest: boolean;
   };
+  tokensUsedThisMonth: number;
 }
 
 const getStartOfWeek = (date: Date) => {
@@ -67,33 +69,35 @@ export const getNewTestsPageData = query({
   handler: async (ctx): Promise<NewTestsPageData> => {
     const userId = await AuthenticationRequired({ ctx });
 
-    const [tests, testReviews, canGenerateTest] = await Promise.all([
-      getTestsWithPermissions(ctx, userId),
-      getTestReviewsWithPermissions(ctx, userId),
-      hasPermission<"tests">(ctx, userId, "tests", "create"),
-    ]);
+    const [tests, monthlyRecord, testReviews, canGenerateTest] =
+      await Promise.all([
+        getTestsWithPermissions(ctx, userId),
+        getMonthlyUsageRecord(ctx, userId),
+        getTestReviewsWithPermissions(ctx, userId),
+        hasPermission<"tests">(ctx, userId, "tests", "create"),
+      ]);
 
     // Most Active Test
-    let mostActiveTest = null;
-    if (testReviews.length > 0) {
-      const testCounts = testReviews.reduce(
-        (acc, review) => {
-          const testIdStr = review.testId.toString();
-          acc[testIdStr] = (acc[testIdStr] ?? 0) + 1;
-          return acc;
-        },
-        {} as Record<string, number>
-      );
+    // let mostActiveTest = null;
+    // if (testReviews.length > 0) {
+    //   const testCounts = testReviews.reduce(
+    //     (acc, review) => {
+    //       const testIdStr = review.testId.toString();
+    //       acc[testIdStr] = (acc[testIdStr] ?? 0) + 1;
+    //       return acc;
+    //     },
+    //     {} as Record<string, number>
+    //   );
 
-      const mostActiveId = Object.keys(testCounts).reduce((a, b) =>
-        testCounts[a]! > testCounts[b]! ? a : b
-      );
+    //   const mostActiveId = Object.keys(testCounts).reduce((a, b) =>
+    //     testCounts[a]! > testCounts[b]! ? a : b
+    //   );
 
-      const activeTest = tests.find((t) => t._id === mostActiveId);
-      if (activeTest) {
-        mostActiveTest = activeTest.title;
-      }
-    }
+    //   const activeTest = tests.find((t) => t._id === mostActiveId);
+    //   if (activeTest) {
+    //     mostActiveTest = activeTest.title;
+    //   }
+    // }
 
     // Weekly Success Rate
     const now = new Date();
@@ -127,11 +131,11 @@ export const getNewTestsPageData = query({
         : thisWeekRate > 0
           ? 100
           : 0;
-
     return {
       totalTests: tests.length,
+      tokensUsedThisMonth: monthlyRecord?.monthlyTokensUsed ?? 0,
       totalAttempts: testReviews.length,
-      mostActiveTest,
+      // mostActiveTest,
       weeklySuccess: {
         rate: thisWeekRate,
         trend,
@@ -146,6 +150,7 @@ export const getNewTestsPageData = query({
   },
 });
 
+// TODO: Remove this query
 export const getTestsPageDataQuery = query({
   handler: async (ctx): Promise<TestsPageData> => {
     const userId = await AuthenticationRequired({ ctx });

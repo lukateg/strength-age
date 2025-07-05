@@ -13,7 +13,7 @@ import { LIMITATIONS } from "@/lib/limitations";
 type TestStatsProps = {
   totalTests: number;
   totalAttempts: number;
-  mostActiveTest: string | null;
+  tokensUsedThisMonth: number;
   weeklySuccess: {
     rate: number;
     trend: "higher" | "lower" | "same";
@@ -25,7 +25,7 @@ type TestStatsProps = {
 export default function TestStats({
   totalTests,
   totalAttempts,
-  mostActiveTest,
+  tokensUsedThisMonth,
   weeklySuccess,
   user,
 }: TestStatsProps) {
@@ -62,13 +62,13 @@ export default function TestStats({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 ">
           <CardTitle className="text-base font-medium">
-            Most Active Test
+            Monthly Tokens Used
           </CardTitle>
           <BookOpen className="h-6 w-6 text-muted-foreground" />
         </CardHeader>
         <CardContent className="flex items-start gap-2">
           <div className="text-xl font-bold">
-            {mostActiveTest ?? "No tests yet"}
+            {tokensUsedThisMonth ?? "No tests yet"}
           </div>
         </CardContent>
       </Card>

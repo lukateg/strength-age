@@ -5,7 +5,7 @@ import {
   getClassesByUser,
   getClassesWithPermissions,
 } from "../models/classesModel";
-import { getPdfsByUser } from "../models/materialsModel";
+import { getPdfsByUser, getTotalStorageUsage } from "../models/materialsModel";
 import { getTestsByUser } from "../models/testsModel";
 import {
   getTestReviewsByUser,
@@ -16,6 +16,8 @@ import { getLessonPdfsByClass } from "../models/lessonPdfsModel";
 import { type QueryCtx } from "../_generated/server";
 
 import { type Doc, type Id } from "../_generated/dataModel";
+import { getMonthlyUsageRecord } from "../models/tokensModel";
+import { stripeCustomerByUserId } from "convex/models/stripeModel";
 
 export interface ClassWithPermissions extends Doc<"classes"> {
   canDeleteClass: boolean;
@@ -43,18 +45,18 @@ const getStartOfWeek = (date: Date) => {
 
 // --- Helper Functions ---
 
-function calculateGlobalSuccessRate(testReviews: Doc<"testReviews">[]) {
-  if (testReviews.length === 0) return 0;
-  const totalSuccessRate = testReviews.reduce((acc, review) => {
-    const successRate =
-      review.questions.length > 0
-        ? review.questions.filter((q) => q.isCorrect).length /
-          review.questions.length
-        : 0;
-    return acc + successRate;
-  }, 0);
-  return (totalSuccessRate / testReviews.length) * 100;
-}
+// function calculateGlobalSuccessRate(testReviews: Doc<"testReviews">[]) {
+//   if (testReviews.length === 0) return 0;
+//   const totalSuccessRate = testReviews.reduce((acc, review) => {
+//     const successRate =
+//       review.questions.length > 0
+//         ? review.questions.filter((q) => q.isCorrect).length /
+//           review.questions.length
+//         : 0;
+//     return acc + successRate;
+//   }, 0);
+//   return (totalSuccessRate / testReviews.length) * 100;
+// }
 
 function calculateWeeklyActivity(
   allClasses: Doc<"classes">[],
@@ -237,21 +239,32 @@ async function getMostActiveClassDetails(
 export const getNewDashboardData = query({
   handler: async (ctx) => {
     const userId = await AuthenticationRequired({ ctx });
-    const canCreateClass = await hasPermission(
-      ctx,
-      userId,
-      "classes",
-      "create"
-    );
+
+    // const canCreateClass = await hasPermission(
+    //   ctx,
+    //   userId,
+    //   "classes",
+    //   "create"
+    // );
 
     // Fetch all necessary data in parallel
-    const [allClasses, allTests, allTestReviews, allLessons] =
-      await Promise.all([
-        getClassesByUser(ctx, userId),
-        getTestsByUser(ctx, userId),
-        getTestReviewsByUser(ctx, userId),
-        getLessonsByUser(ctx, userId),
-      ]);
+    const [
+      allClasses,
+      allTests,
+      allTestReviews,
+      allLessons,
+      monthlyRecord,
+      totalStorageUsage,
+      stripeCustomer,
+    ] = await Promise.all([
+      getClassesByUser(ctx, userId),
+      getTestsByUser(ctx, userId),
+      getTestReviewsByUser(ctx, userId),
+      getLessonsByUser(ctx, userId),
+      getMonthlyUsageRecord(ctx, userId),
+      getTotalStorageUsage(ctx, userId),
+      stripeCustomerByUserId(ctx, userId),
+    ]);
 
     const allActivity = [
       ...allClasses,
@@ -260,34 +273,31 @@ export const getNewDashboardData = query({
       ...allTestReviews,
     ];
 
-    const [globalSuccessRate, weeklyActivity, streak, mostActiveClass] =
-      await Promise.all([
-        calculateGlobalSuccessRate(allTestReviews),
-        calculateWeeklyActivity(
-          allClasses,
-          allLessons,
-          allTests,
-          allTestReviews
-        ),
-        calculateDayStreak(allActivity),
-        getMostActiveClassDetails(ctx, userId, allTestReviews),
-      ]);
-
+    const [weeklyActivity, streak, mostActiveClass] = await Promise.all([
+      calculateWeeklyActivity(allClasses, allLessons, allTests, allTestReviews),
+      calculateDayStreak(allActivity),
+      getMostActiveClassDetails(ctx, userId, allTestReviews),
+      getTotalStorageUsage(ctx, userId),
+    ]);
+    console.log(stripeCustomer, ">>> stripeCustomer");
     return {
+      stripeCustomer,
       totalClasses: allClasses.length,
       totalTests: allTests.length,
       totalTestReviews: allTestReviews.length,
       streak,
       weeklyActivity,
       mostActiveClass,
-      globalSuccessRate,
-      permissions: {
-        canCreateClass,
-      },
+      tokensUsedThisMonth: monthlyRecord?.monthlyTokensUsed ?? 0,
+      totalStorageUsage,
+      // permissions: {
+      //   canCreateClass,
+      // },
     };
   },
 });
 
+// TODO: Remove this query
 export const getDashboardPageData = query({
   handler: async (ctx): Promise<DashboardData> => {
     const userId = await AuthenticationRequired({ ctx });

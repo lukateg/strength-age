@@ -45,7 +45,7 @@ export default function ClassesPage() {
                     <Plus className="h-4 w-4 mr-2" />
                     {permissions.canCreateClass
                       ? "Create New Class"
-                      : "Upgrade to create classes"}
+                      : "Limit Reached"}
                   </Link>
                 </Button>
               </div>

@@ -6,6 +6,7 @@ import { hasPermission } from "./models/permissionsModel";
 import { getTestsWithSameTitleByUser } from "./models/testsModel";
 import { getLessonPdfJoinsByLessonIds } from "./models/lessonPdfsModel";
 import { getPdfsByIds, sortPdfsByLessonJoins } from "./models/materialsModel";
+import { handleLLMTokenUsageUpdating } from "./models/tokensModel";
 import { type Id } from "./_generated/dataModel";
 
 export const getTestByIdQuery = query({
@@ -75,6 +76,7 @@ export const uploadTestMutation = mutation({
         correctAnswer: v.array(v.string()),
       })
     ),
+    tokensUsed: v.number(),
   },
   handler: async (ctx, args) => {
     const userId = await AuthenticationRequired({ ctx });
@@ -91,6 +93,7 @@ export const uploadTestMutation = mutation({
         statusCode: "PERMISSION_DENIED",
       });
     }
+    await handleLLMTokenUsageUpdating(ctx, args.tokensUsed, userId);
 
     let title = args.title;
     const existingTest = await getTestsWithSameTitleByUser(
@@ -155,9 +158,11 @@ export const getGenerateTestFromLessonsDataQuery = query({
   }),
   handler: async (ctx, { lessonIds }) => {
     const userId = await AuthenticationRequired({ ctx });
+
     const normalizedLessonIds = lessonIds
       .map((id) => ctx.db.normalizeId("lessons", id))
       .filter((id): id is Id<"lessons"> => id !== null);
+
     if (normalizedLessonIds.length === 0) {
       throw createAppError({
         message: "No valid lesson IDs provided",

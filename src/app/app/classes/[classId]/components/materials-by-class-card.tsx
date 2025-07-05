@@ -33,9 +33,7 @@ export default function MaterialsByClassCard({
             className="flex items-center justify-center"
           >
             <Upload className="h-4 w-4 mr-2" />
-            {canUploadMaterials
-              ? "Upload Materials"
-              : "Upgrade to upload materials"}
+            {canUploadMaterials ? "Upload Materials" : "Limit Reached"}
           </Link>
         </Button>
       }

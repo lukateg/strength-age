@@ -1,4 +1,4 @@
-LLM Usage calculations per subscription tier
+LLM Token usafe per subscription tier
 
 | Tier        | Max LLM Tokens | Est. # of Tests | Max input per test |
 | ----------- | -------------- | --------------- | ------------------ |

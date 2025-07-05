@@ -51,7 +51,7 @@ export default function TestsSection({
             className="flex items-center justify-center"
           >
             <Upload className="h-4 w-4 mr-2" />
-            {canCreateTest ? "Generate Test" : "Upgrade to generate"}
+            {canCreateTest ? "Generate Test" : "Limit Reached"}
           </Link>
         </Button>
       </CardHeader>

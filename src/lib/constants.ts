@@ -59,11 +59,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     ],
     popular: true,
     isPopular: true,
-    priceId: process.env.NEXT_PUBLIC_STRIPE_STARTER_MONTHLY_PRICE_ID!,
-    // stripePriceIds: {
-    //   monthly: process.env.NEXT_PUBLIC_STRIPE_STARTER_MONTHLY_PRICE_ID!,
-    //   yearly: process.env.NEXT_PUBLIC_STRIPE_STARTER_YEARLY_PRICE_ID!,
-    // },
+    priceId: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID!,
   },
   {
     id: "pro",
@@ -84,11 +80,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     ],
     popular: false,
     isPopular: false,
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID!,
-    // stripePriceIds: {
-    //   monthly: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID!,
-    //   yearly: process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID!,
-    // },
+    priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID!,
   },
 ];
 

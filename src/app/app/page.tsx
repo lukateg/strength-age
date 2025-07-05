@@ -1,8 +1,10 @@
 "use client";
 
-import { useUserContext } from "@/providers/user-provider";
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import { getSubscriptionTier } from "@/lib/utils";
+import {
+  getSubscriptionTierButton,
+  getSubscriptionTierByStripeRecord,
+} from "@/lib/utils";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 
@@ -19,8 +21,6 @@ export default function Dashboard() {
   const newDashboardData = useAuthenticatedQueryWithStatus(
     api.pages.dashboardPage.getNewDashboardData
   );
-  const { user } = useUserContext();
-  const subscriptionTier = getSubscriptionTier(user?.data?.subscriptionTier);
 
   return (
     <QueryState
@@ -35,9 +35,20 @@ export default function Dashboard() {
           streak,
           weeklyActivity,
           mostActiveClass,
-          globalSuccessRate,
-          totalTestReviews,
+          tokensUsedThisMonth,
+          totalStorageUsage,
+          stripeCustomer,
         } = data;
+
+        const subscriptionTierButton = getSubscriptionTierButton(
+          stripeCustomer?.priceId
+        );
+
+        console.log(stripeCustomer, ">>> stripeCustomer");
+        console.log(
+          getSubscriptionTierByStripeRecord(stripeCustomer),
+          ">>> subscriptionTier"
+        );
 
         return (
           <div className="container mx-auto p-6">
@@ -52,8 +63,8 @@ export default function Dashboard() {
               </div>
               <Button className="hidden md:flex ">
                 <div className="flex items-center gap-2">
-                  <subscriptionTier.icon className="h-4 w-4" />
-                  <span>{`${subscriptionTier.name} tier`}</span>
+                  <subscriptionTierButton.icon className="h-4 w-4" />
+                  <span>{`${subscriptionTierButton.name} tier`}</span>
                 </div>
               </Button>
             </div>
@@ -64,14 +75,19 @@ export default function Dashboard() {
                   <DashboardStats
                     totalTests={totalTests}
                     totalClasses={totalClasses}
-                    subscriptionTier={user?.data?.subscriptionTier}
+                    subscriptionTier={getSubscriptionTierByStripeRecord(
+                      stripeCustomer
+                    )}
                   />
                   <ActiveStreakWidget streak={streak} />
                 </div>
                 <div className="w-full lg:w-1/2 flex flex-row gap-6">
                   <DashboardProgressWidgets
-                    globalSuccessRate={globalSuccessRate}
-                    totalTestReviews={totalTestReviews}
+                    totalStorageUsage={totalStorageUsage}
+                    tokensUsedThisMonth={tokensUsedThisMonth}
+                    subscriptionTier={getSubscriptionTierByStripeRecord(
+                      stripeCustomer
+                    )}
                   />
                 </div>
               </div>

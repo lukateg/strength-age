@@ -34,7 +34,7 @@ export default function Tests() {
           testReviews,
           permissions,
           weeklySuccess,
-          mostActiveTest,
+          tokensUsedThisMonth,
           totalTests,
           totalAttempts,
         } = data;
@@ -55,7 +55,7 @@ export default function Tests() {
                 <Link href={`/app/tests/generate-test`}>
                   <span className="flex items-center gap-2">
                     <FilePlus2 size={16} />
-                    {canGenerateTest ? "Generate Test" : "Upgrade to generate"}
+                    {canGenerateTest ? "Generate Test" : "Limit Reached"}
                   </span>
                 </Link>
               </Button>
@@ -64,7 +64,7 @@ export default function Tests() {
             <TestStats
               totalTests={totalTests}
               totalAttempts={totalAttempts}
-              mostActiveTest={mostActiveTest}
+              tokensUsedThisMonth={tokensUsedThisMonth}
               weeklySuccess={weeklySuccess}
               user={user.data}
             />

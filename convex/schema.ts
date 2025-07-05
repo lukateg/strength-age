@@ -160,4 +160,12 @@ export default defineSchema({
     .index("by_user", ["createdBy"])
     .index("by_type", ["type"])
     .index("by_created_at", ["createdAt"]),
+
+  userTokenUsage: defineTable({
+    userId: v.string(),
+    monthlyTokensUsed: v.number(),
+    month: v.string(), // Format "YYYY-MM"
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_month", ["userId", "month"]),
 });

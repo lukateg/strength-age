@@ -1,16 +1,16 @@
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { api } from "../../../../convex/_generated/api";
+import { getConvexToken } from "@/lib/server-utils";
 
+import { fetchQuery } from "convex/nextjs";
 import {
   calculateProportionalQuestionsPerLesson,
   shuffleArray,
-} from "@/lib/utils";
-import { convertPdfsToText, generateQuizForLesson } from "@/lib/server-utils";
-import { getConvexToken } from "@/lib/server-utils";
+  generateQuizForLesson,
+  convertManyPdfsToText,
+} from "../generate-test-utils";
 
 import { type NextRequest } from "next/server";
 import { type Id } from "convex/_generated/dataModel";
-import { fetchQuery } from "convex/nextjs";
 
 export const runtime = "nodejs";
 
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const extractedTexts = await convertPdfsToText(pdfsByLesson);
+    const extractedTexts = await convertManyPdfsToText(pdfsByLesson);
     if (!extractedTexts.length) {
       return Response.json(
         { error: "Failed to extract text from PDFs" },
@@ -116,6 +116,11 @@ export async function POST(req: NextRequest) {
       (response): response is NonNullable<typeof response> => response !== null
     );
 
+    // Sum token usage from all successful responses
+    const totalTokensUsed = successfulResponses.reduce((sum, resp) => {
+      return sum + ((resp as { tokensUsed?: number }).tokensUsed ?? 0);
+    }, 0);
+
     if (!successfulResponses.length) {
       return Response.json(
         { error: "Failed to generate any valid quizzes" },
@@ -132,6 +137,7 @@ export async function POST(req: NextRequest) {
       title: testName,
       description: description,
       questions: shuffleArray(allQuestions),
+      tokensUsed: totalTokensUsed,
     };
 
     return Response.json({ response: combinedTest });

@@ -204,6 +204,53 @@ export async function convertPdfToText(pdf: { fileUrl: string; _id: string }) {
   }
 }
 
+// Utility to fetch text from a TXT file URL
+async function fetchTxtFile(url: string): Promise<string> {
+  try {
+    const response = await axios.get(url, {
+      responseType: "arraybuffer",
+      headers: {
+        Accept: "text/plain",
+      },
+    });
+
+    // Convert ArrayBuffer to UTF-8 string
+    return Buffer.from(response.data).toString("utf8");
+  } catch (error) {
+    console.error(`Error fetching TXT file ${url}:`, error);
+    return "";
+  }
+}
+
+export type MaterialWithMeta = {
+  _id: string;
+  fileUrl: string;
+  fileType: "pdf" | "txt";
+};
+
+// Refactor: generic converter that understands the material type
+export async function convertMaterialToText(material: MaterialWithMeta) {
+  if (material.fileType === "txt") {
+    return fetchTxtFile(material.fileUrl);
+  }
+  // Default / pdf case
+  return convertPdfToText({ fileUrl: material.fileUrl, _id: material._id });
+}
+
+// Batch converter preserving original lesson grouping
+export async function convertManyMaterialsToText(
+  lessonMaterials: MaterialWithMeta[][]
+) {
+  return Promise.all(
+    lessonMaterials.map(async (materialsForLesson) => {
+      const texts = await Promise.all(
+        materialsForLesson.map((m) => convertMaterialToText(m))
+      );
+      return texts;
+    })
+  );
+}
+
 // Extracted function to process PDFs
 export async function convertManyPdfsToText(
   lessonPdfs: {
@@ -211,12 +258,12 @@ export async function convertManyPdfsToText(
     _id: string;
   }[][]
 ) {
-  return Promise.all(
-    lessonPdfs.map(async (lessonPdfArray) => {
-      const lessonTexts = await Promise.all(
-        lessonPdfArray.map(async (pdf) => convertPdfToText(pdf))
-      );
-      return lessonTexts;
-    })
+  // Preserve backwards compatibility by delegating to the new generic implementation
+  const mapped: MaterialWithMeta[][] = lessonPdfs.map((lessonPdfArray) =>
+    lessonPdfArray.map((pdf) => ({
+      ...pdf,
+      fileType: "pdf",
+    }))
   );
+  return convertManyMaterialsToText(mapped);
 }

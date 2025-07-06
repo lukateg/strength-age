@@ -10,13 +10,13 @@ import { useUploadThing } from "./use-upload-thing";
 import {
   type LessonFormData,
   type CreateBasicLessonParams,
-  type AddPDFToLessonParams,
+  type AddMaterialToLessonParams,
   type EditLessonFormData,
 } from "@/types/lesson";
 
 export const useLessonMutations = () => {
   const { classId } = useClass();
-  const { startUpload, isUploading } = useUploadThing("pdfUploader", {
+  const { startUpload, isUploading } = useUploadThing("materialUploader", {
     onUploadError: (error: Error) => {
       throw error;
     },
@@ -25,8 +25,8 @@ export const useLessonMutations = () => {
 
   // Mutations
   const createLessonMutation = useMutation(api.lessons.createLessonMutation);
-  const addManyPdfsToLessonMutation = useMutation(
-    api.lessons.addManyPdfsToLessonMutation
+  const addManyMaterialsToLessonMutation = useMutation(
+    api.lessons.addManyMaterialsToLessonMutation
   );
   const updateLessonMutation = useMutation(api.lessons.updateLessonMutation);
   const deleteLessonMutation = useMutation(api.lessons.deleteLessonMutation);
@@ -55,7 +55,7 @@ export const useLessonMutations = () => {
     [classId, createLessonMutation]
   );
 
-  const uploadNewPdfsToLesson = useCallback(
+  const uploadNewMaterialsToLesson = useCallback(
     async ({
       materialsToUpload,
       lessonId,
@@ -72,10 +72,13 @@ export const useLessonMutations = () => {
         await startUpload(materialsToUpload, { lessonId, classId });
 
         toast.dismiss(toastId);
-        toast.success("PDFs uploaded to lesson successfully");
+        toast.success("Materials uploaded to lesson successfully");
       } catch (error) {
         toast.dismiss(toastId);
-        toastError(error, "Failed to upload PDFs to lesson. Please try again");
+        toastError(
+          error,
+          "Failed to upload materials to lesson. Please try again"
+        );
       } finally {
         setIsPending(false);
       }
@@ -83,24 +86,27 @@ export const useLessonMutations = () => {
     [startUpload, classId]
   );
 
-  const addExistingPdfsToLesson = useCallback(
-    async (params: AddPDFToLessonParams) => {
+  const addExistingMaterialsToLesson = useCallback(
+    async (params: AddMaterialToLessonParams) => {
       try {
         setIsPending(true);
-        await addManyPdfsToLessonMutation({
+        await addManyMaterialsToLessonMutation({
           lessonId: params.lessonId,
-          pdfIds: params.pdfIds,
+          materialIds: params.materialIds,
           classId,
         });
 
-        toast.success("PDFs added to lesson successfully");
+        toast.success("Materials added to lesson successfully");
       } catch (error) {
-        toastError(error, "Failed to add PDFs to lesson. Please try again");
+        toastError(
+          error,
+          "Failed to add materials to lesson. Please try again"
+        );
       } finally {
         setIsPending(false);
       }
     },
-    [addManyPdfsToLessonMutation, classId]
+    [addManyMaterialsToLessonMutation, classId]
   );
 
   const updateLesson = useCallback(
@@ -143,8 +149,8 @@ export const useLessonMutations = () => {
     isPending,
     isUploading,
     createLesson,
-    addExistingPdfsToLesson,
-    uploadNewPdfsToLesson,
+    addExistingMaterialsToLesson,
+    uploadNewMaterialsToLesson,
     updateLesson,
     deleteLesson,
     classId,

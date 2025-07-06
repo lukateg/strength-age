@@ -43,8 +43,8 @@ export default function FileUploadPage() {
   const [showExistingMaterials, setShowExistingMaterials] = useState(false);
   const router = useRouter();
   const {
-    addExistingPdfsToLesson,
-    uploadNewPdfsToLesson,
+    addExistingMaterialsToLesson,
+    uploadNewMaterialsToLesson,
     isUploading,
     isPending,
   } = useLessonMutations();
@@ -59,7 +59,7 @@ export default function FileUploadPage() {
     resolver: zodResolver(addLessonMaterialsSchema(showExistingMaterials)),
     defaultValues: {
       lessonId: lesson.data?.lessonId,
-      materialsToAdd: [] as Id<"pdfs">[],
+      materialsToAdd: [] as Id<"materials">[],
       materialsToUpload: [] as File[],
     },
   });
@@ -70,19 +70,19 @@ export default function FileUploadPage() {
   const materialsToUpload = watch("materialsToUpload", []);
   const materialsToAdd = watch("materialsToAdd", []);
 
-  const handleAddPDFToLesson = async (lessonId: Id<"lessons">) => {
+  const handleAddMaterialsToLesson = async (lessonId: Id<"lessons">) => {
     const materialsToAdd = getValues("materialsToAdd");
-    void addExistingPdfsToLesson({
-      pdfIds: materialsToAdd,
+    void addExistingMaterialsToLesson({
+      materialIds: materialsToAdd,
       lessonId,
     });
 
     router.push(`/app/classes/${lesson.data?.classId}/lessons/${lessonId}`);
   };
 
-  const handleUploadNewPdfsToLesson = async () => {
+  const handleUploadNewMaterialsToLesson = async () => {
     const materialsToUpload = getValues("materialsToUpload");
-    void uploadNewPdfsToLesson({
+    void uploadNewMaterialsToLesson({
       lessonId: lesson.data?.lessonId,
       materialsToUpload,
     });
@@ -152,7 +152,7 @@ export default function FileUploadPage() {
                   control={control}
                   setValue={setValue}
                   clearErrors={clearErrors}
-                  uploadedPdfs={data.materials}
+                  uploadedMaterials={data.materials}
                   storageLimit={storageLimit}
                   storageUsed={user.data?.totalStorageUsage ?? 0}
                 />
@@ -162,13 +162,13 @@ export default function FileUploadPage() {
                     <AddFilesButton
                       materialsToAdd={materialsToAdd}
                       startAdding={handleSubmit((data) =>
-                        handleAddPDFToLesson(data.lessonId)
+                        handleAddMaterialsToLesson(data.lessonId)
                       )}
                     />
                   ) : (
                     <UploadFilesButton
                       className="w-full"
-                      startUpload={handleUploadNewPdfsToLesson}
+                      startUpload={handleUploadNewMaterialsToLesson}
                       materialsToUpload={materialsToUpload}
                       isUploading={isUploading || isPending}
                     />

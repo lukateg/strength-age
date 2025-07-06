@@ -2,16 +2,15 @@ import { v } from "convex/values";
 import { AuthenticationRequired, createAppError } from "./utils";
 import { internalMutation, mutation, query } from "./_generated/server";
 
-import { deleteLessonPdfsJoinByClassIdBatch } from "./models/lessonPdfsModel";
+import { deleteLessonMaterialsJoinByClassIdBatch } from "./models/lessonPdfsModel";
 
-import { deletePdfsByClassIdBatch } from "./models/materialsModel";
+import { deleteMaterialsByClassIdBatch } from "./models/materialsModel";
 import { hasPermission } from "./models/permissionsModel";
 import {
   createClass,
   deleteClass,
   findClassByTitle,
   getClassById,
-  getClassesByUser,
   runDeleteClassDataBatch,
   updateClass,
 } from "./models/classesModel";
@@ -143,7 +142,7 @@ export const deleteClassMutation = mutation({
       });
     }
 
-    await runDeleteClassDataBatch(ctx, normalizedId, "lessonPdfs", userId);
+    await runDeleteClassDataBatch(ctx, normalizedId, "lessonMaterials", userId);
     await deleteClass(ctx, normalizedId);
 
     return { success: true };
@@ -156,8 +155,8 @@ export const deleteClassDataInternalMutation = internalMutation({
     userId: v.string(),
     phase: v.union(
       v.literal("lessons"),
-      v.literal("pdfs"),
-      v.literal("lessonPdfs"),
+      v.literal("materials"),
+      v.literal("lessonMaterials"),
       v.literal("tests"),
       v.literal("testReviews")
     ),
@@ -173,7 +172,12 @@ export const deleteClassDataInternalMutation = internalMutation({
     }: {
       classId: Id<"classes">;
       userId: string;
-      phase: "lessons" | "pdfs" | "lessonPdfs" | "tests" | "testReviews";
+      phase:
+        | "lessons"
+        | "materials"
+        | "lessonMaterials"
+        | "tests"
+        | "testReviews";
       cursor?: string;
     }
   ) => {
@@ -187,8 +191,8 @@ export const deleteClassDataInternalMutation = internalMutation({
 
     try {
       switch (phase) {
-        case "lessonPdfs":
-          await deleteLessonPdfsJoinByClassIdBatch(
+        case "lessonMaterials":
+          await deleteLessonMaterialsJoinByClassIdBatch(
             ctx,
             normalizedClassId,
             userId,
@@ -203,8 +207,8 @@ export const deleteClassDataInternalMutation = internalMutation({
             cursor
           );
           break;
-        case "pdfs":
-          await deletePdfsByClassIdBatch(
+        case "materials":
+          await deleteMaterialsByClassIdBatch(
             ctx,
             normalizedClassId,
             userId,

@@ -1,19 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, FileText, Target } from "lucide-react";
 import MiniPieChart from "./mini-pie-chart";
-
-type MostActiveClass = {
-  title: string;
-  lessonsCount: number;
-  pdfsCount: number;
-  testReviewsCount: number;
-  highestScore: number;
-} | null;
+import { type FunctionReturnType } from "convex/server";
+import { type api } from "convex/_generated/api";
 
 export default function MostActiveClass({
   mostActiveClass,
 }: {
-  mostActiveClass: MostActiveClass;
+  mostActiveClass: FunctionReturnType<
+    typeof api.pages.dashboardPage.getNewDashboardData
+  >["mostActiveClass"];
 }) {
   return (
     <Card>
@@ -33,8 +29,8 @@ export default function MostActiveClass({
         </div>
         <div className="flex items-center space-x-2">
           <FileText className="h-5 w-5 text-muted-foreground" />
-          <span className="font-bold">{mostActiveClass?.pdfsCount}</span>
-          <p className="text-muted-foreground"> PDFs Uploaded</p>
+          <span className="font-bold">{mostActiveClass?.materialsCount}</span>
+          <p className="text-muted-foreground"> Materials Uploaded</p>
         </div>
         <div className="flex items-center space-x-2">
           <Target className="h-5 w-5 text-muted-foreground" />

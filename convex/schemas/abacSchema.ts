@@ -7,7 +7,7 @@ import { userByClerkId } from "convex/models/userModel";
 import { getSubscriptionTierByStripeRecord } from "@/lib/utils";
 import { stripeCustomerByUserId } from "convex/models/stripeModel";
 import { getMonthlyUsageRecord } from "convex/models/tokensModel";
-import { getPdfsByUser } from "convex/models/materialsModel";
+import { getMaterialsByUser } from "convex/models/materialsModel";
 import { getLessonsByClass } from "convex/models/lessonsModel";
 import { getClassesByUser } from "convex/models/classesModel";
 import { validateTestReviewShareToken } from "convex/models/testReviewsModel";
@@ -44,11 +44,11 @@ export type TestActionParams = {
 };
 
 export type MaterialActionParams = {
-  view: Doc<"pdfs">;
+  view: Doc<"materials">;
   create: {
     newFilesSize: number;
   };
-  delete: Doc<"pdfs">;
+  delete: Doc<"materials">;
 };
 
 export type TestReviewActionParams = {
@@ -86,7 +86,7 @@ export type Permissions = {
     action: keyof TestActionParams;
   };
   materials: {
-    dataType: Doc<"pdfs">;
+    dataType: Doc<"materials">;
     action: keyof MaterialActionParams;
   };
   testReviews: {
@@ -220,7 +220,7 @@ export const ROLES: RolesWithPermissions = {
         const subscriptionTier = getSubscriptionTierByStripeRecord(
           userSubscriptionRecord
         );
-        const uploadedFiles = await getPdfsByUser(ctx!, user.clerkId);
+        const uploadedFiles = await getMaterialsByUser(ctx!, user.clerkId);
         const totalSize =
           uploadedFiles.reduce((acc, file) => acc + file.size, 0) +
           data.newFilesSize;

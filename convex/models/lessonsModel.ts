@@ -84,15 +84,15 @@ export const deleteLesson = async (
   await ctx.db.delete(lessonId);
 };
 
-export const addPdfToLesson = async (
+export const addMaterialToLesson = async (
   ctx: GenericMutationCtx<DataModel>,
   params: {
     lessonId: Id<"lessons">;
-    pdfId: Id<"pdfs">;
+    materialId: Id<"materials">;
     classId: Id<"classes">;
   }
 ) => {
-  await ctx.db.insert("lessonPdfs", {
+  await ctx.db.insert("lessonMaterials", {
     ...params,
   });
 };
@@ -101,7 +101,7 @@ export const runDeleteLessonDataBatch = async (
   ctx: GenericMutationCtx<DataModel>,
   lessonId: Id<"lessons">,
   userId: string,
-  phase: "pdfs",
+  phase: "materials",
   cursor?: string
 ) => {
   await ctx.scheduler.runAfter(
@@ -141,7 +141,7 @@ export async function deleteLessonsByClassIdBatch(
       continueCursor
     );
   } else {
-    // Move to deleting lessonPdfs join table first, then handle PDFs safely
-    await runDeleteClassDataBatch(ctx, classId, "lessonPdfs", userId);
+    // Move to deleting lessonMaterials join table first, then handle materials safely
+    await runDeleteClassDataBatch(ctx, classId, "lessonMaterials", userId);
   }
 }

@@ -48,10 +48,10 @@ export default function FileUploadComponent({
     onDrop: handleDrop,
     accept: {
       "application/pdf": [".pdf"],
+      "text/plain": [".txt"],
       // "application/msword": [".doc"],
       // "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
       //   [".docx"],
-      // "text/plain": [".txt"],
     },
     maxSize: maxRoundUploadSize,
     maxFiles,
@@ -137,7 +137,7 @@ export default function FileUploadComponent({
             </p>
           )}
           <p className="text-sm text-muted-foreground">
-            Supported files: PDF (Max 20MB)
+            Supported files: PDF, TXT (Max 20MB)
             {/* Supported files: PDF, DOC, DOCX, TXT (Max 20MB) */}
           </p>
         </div>

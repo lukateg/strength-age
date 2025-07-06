@@ -44,12 +44,6 @@ export default function Dashboard() {
           stripeCustomer?.priceId
         );
 
-        console.log(stripeCustomer, ">>> stripeCustomer");
-        console.log(
-          getSubscriptionTierByStripeRecord(stripeCustomer),
-          ">>> subscriptionTier"
-        );
-
         return (
           <div className="container mx-auto p-6">
             <div className="flex justify-between items-center mb-8">

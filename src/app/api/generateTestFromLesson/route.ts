@@ -6,8 +6,9 @@ import { type Id } from "convex/_generated/dataModel";
 
 import { getConvexToken } from "@/lib/server-utils";
 import {
-  convertPdfToText,
+  convertMaterialToText,
   generateQuizForLesson,
+  type MaterialWithMeta,
 } from "../generate-test-utils";
 
 if (!process.env.GEMINI_API_KEY) {
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     const token = await getConvexToken();
 
-    const pdfs = await fetchQuery(
+    const data = await fetchQuery(
       api.tests.getGenerateTestFromLessonsDataQuery,
       {
         lessonIds: [lessonIds[0]!],
@@ -51,22 +52,22 @@ export async function POST(req: NextRequest) {
       { token }
     );
 
-    if (!pdfs.canGenerateTest) {
+    if (!data.canGenerateTest) {
       return Response.json(
         { error: "Not authorized to generate test" },
         { status: 403 }
       );
     }
 
-    if (!pdfs.pdfsByLesson[0]?.length) {
+    if (!data.materialsByLesson[0]?.length) {
       return Response.json(
-        { error: "No PDFs found for this lesson" },
+        { error: "No materials found for this lesson" },
         { status: 404 }
       );
     }
 
-    const extractionPromises = pdfs.pdfsByLesson[0].map((pdf) =>
-      convertPdfToText({ fileUrl: pdf.fileUrl, _id: pdf._id })
+    const extractionPromises = data.materialsByLesson[0].map((material) =>
+      convertMaterialToText(material as MaterialWithMeta)
     );
     const extractedTexts = await Promise.all(extractionPromises);
 
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest) {
 
     if (!successfulTexts) {
       return Response.json(
-        { error: "Failed to extract text from PDFs" },
+        { error: "Failed to extract text from materials" },
         { status: 500 }
       );
     }

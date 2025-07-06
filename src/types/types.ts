@@ -46,7 +46,7 @@ export type CreateLessonWithExistingMaterialsMutation = ReactMutation<
       classId: string;
       title: string;
       userId: string;
-      pdfIds: Id<"pdfs">[];
+      materialIds: Id<"materials">[];
     },
     string & {
       __tableName: "lessons";

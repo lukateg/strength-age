@@ -52,7 +52,7 @@ export default function FileUploadPage() {
     defaultValues: { lessonId: "", materialsToUpload: [] },
   });
   const { watch, setValue } = form;
-  const { uploadNewPdfsToLesson, isUploading, isPending } =
+  const { uploadNewMaterialsToLesson, isUploading, isPending } =
     useLessonMutations();
 
   const materialsToUpload = watch("materialsToUpload", []);
@@ -60,7 +60,7 @@ export default function FileUploadPage() {
     LIMITATIONS[user.data?.subscriptionTier ?? "free"].materials;
 
   const handleUpload = async () => {
-    void uploadNewPdfsToLesson({
+    void uploadNewMaterialsToLesson({
       lessonId: form.getValues("lessonId"),
       materialsToUpload,
     });

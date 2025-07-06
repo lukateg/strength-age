@@ -22,27 +22,25 @@ CAN'T REPRODUCE
 -- sign out displays some weird loader
 -- implement permission check fix
 -- add delete test from test preview
+-- fix prompting and short answer ai review, maybe add instructions why is answer wrong
+--fix table scroll and responsivnes
 
 PLAN:
--- write down terms and conditions, privacy policy and documentation(mintlify)
--- check payment of the ai, do you need to upgrade and everything
-// add ai usage to the dashboard of posthog
-// set a rate limit for total money spent on the model
-// set error handling when token teach-me subscription for all limit is out
--- add feedback received, working on it email message
--- Add analytics
--- implement AI cost monitoring setup
+-- check if tiers are fine
 -- SEO check
--- check free tier plan and work out permisions and free plan for max classes, lessons, pdfs in mb, tests and ai token calls
+-- add ai pricing per model by input and output to the dashboard of posthog
 -- in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
 -- load testing
--- check if you need terms and conditions
--- check payment subscription to gemini, will it upgrade automatically and everything needed
 -- release to prod
--- wait for the analytics results and think about the compex permisions and test sharing and start sprint 2
--- if test is deleted retry button on testReview page should be disabled
+-- remove tests3/3 and so on
+-- fix structure of the test generating functions
+
 
 FUTURE FEATURES AND ENHANCMENTS:
+-- set error handling when token teach-me subscription for all limit is out
+-- write down terms and conditions, privacy policy and documentation(mintlify)
+-- add feedback received, working on it email message
+-- add "..." on the test page and then delete, export to JSON, export to whatever
 -- remove all async logic from abacSchema so you fetch it only once in the page and pass it to the schema
 -- add feedback review page
 -- write a bit better confirm test modal text

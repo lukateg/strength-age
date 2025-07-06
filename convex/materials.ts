@@ -4,22 +4,25 @@ import { AuthenticationRequired, createAppError } from "./utils";
 import { hasPermission } from "./models/permissionsModel";
 
 import {
-  createManyPdfs,
-  createPdf,
-  runDeletePdfFromUploadThing,
+  createManyMaterials,
+  createMaterial,
+  runDeleteMaterialFromUploadThing,
 } from "./models/materialsModel";
-import { deleteLessonPdfsJoinByPdfId } from "./models/lessonPdfsModel";
+import { deleteLessonMaterialsJoinByMaterialId } from "./models/lessonPdfsModel";
 
-export const addPdfMutation = mutation({
+const determineFileType = (name: string): "pdf" | "txt" =>
+  name.toLowerCase().endsWith(".txt") ? "txt" : "pdf";
+
+export const addMaterialMutation = mutation({
   args: {
     classId: v.string(),
-    pdf: v.object({
+    material: v.object({
       fileUrl: v.string(),
       name: v.string(),
       size: v.number(),
     }),
   },
-  handler: async (ctx, { classId, pdf }) => {
+  handler: async (ctx, { classId, material }) => {
     const userId = await AuthenticationRequired({ ctx });
 
     const normalizedClassId = ctx.db.normalizeId("classes", classId);
@@ -30,25 +33,37 @@ export const addPdfMutation = mutation({
       });
     }
 
-    const canAddPdf = await hasPermission(ctx, userId, "materials", "create", {
-      newFilesSize: pdf.size,
-    });
-    if (!canAddPdf) {
+    const canAddMaterial = await hasPermission(
+      ctx,
+      userId,
+      "materials",
+      "create",
+      {
+        newFilesSize: material.size,
+      }
+    );
+    if (!canAddMaterial) {
       throw createAppError({
         message: "Not authorized to add PDF",
         statusCode: "PERMISSION_DENIED",
       });
     }
 
-    const pdfId = await createPdf(ctx, pdf, userId, normalizedClassId);
-    return pdfId;
+    const fileType = determineFileType(material.name);
+    const materialId = await createMaterial(
+      ctx,
+      { ...material, fileType },
+      userId,
+      normalizedClassId
+    );
+    return materialId;
   },
 });
 
-export const addManyPdfsMutation = mutation({
+export const addManyMaterialsMutation = mutation({
   args: {
     classId: v.string(),
-    pdfFiles: v.array(
+    materialFiles: v.array(
       v.object({
         fileUrl: v.string(),
         name: v.string(),
@@ -56,7 +71,7 @@ export const addManyPdfsMutation = mutation({
       })
     ),
   },
-  handler: async (ctx, { classId, pdfFiles }) => {
+  handler: async (ctx, { classId, materialFiles }) => {
     const userId = await AuthenticationRequired({ ctx });
 
     const normalizedClassId = ctx.db.normalizeId("classes", classId);
@@ -67,36 +82,52 @@ export const addManyPdfsMutation = mutation({
       });
     }
 
-    const newFilesSize = pdfFiles.reduce((acc, pdf) => acc + pdf.size, 0);
-    const canAddPdfs = await hasPermission(ctx, userId, "materials", "create", {
-      newFilesSize,
-    });
-    if (!canAddPdfs) {
+    const newFilesSize = materialFiles.reduce((acc, m) => acc + m.size, 0);
+    const canAddMaterials = await hasPermission(
+      ctx,
+      userId,
+      "materials",
+      "create",
+      {
+        newFilesSize,
+      }
+    );
+    if (!canAddMaterials) {
       throw createAppError({
         message: "Not authorized to add PDFs",
         statusCode: "PERMISSION_DENIED",
       });
     }
 
-    await createManyPdfs(ctx, pdfFiles, userId, normalizedClassId);
+    const materialsWithType = materialFiles.map((m) => ({
+      ...m,
+      fileType: determineFileType(m.name),
+    }));
+
+    await createManyMaterials(
+      ctx,
+      materialsWithType,
+      userId,
+      normalizedClassId
+    );
   },
 });
 
-export const deletePdfMutation = mutation({
-  args: { pdfId: v.string() },
-  handler: async (ctx, { pdfId }) => {
+export const deleteMaterialMutation = mutation({
+  args: { materialId: v.string() },
+  handler: async (ctx, { materialId }) => {
     const userId = await AuthenticationRequired({ ctx });
 
-    const normalizedPdfId = ctx.db.normalizeId("pdfs", pdfId);
-    if (!normalizedPdfId) {
+    const normalizedMaterialId = ctx.db.normalizeId("materials", materialId);
+    if (!normalizedMaterialId) {
       throw createAppError({
         message: "Invalid item ID",
         statusCode: "VALIDATION_ERROR",
       });
     }
 
-    const pdf = await ctx.db.get(normalizedPdfId);
-    if (!pdf) {
+    const material = await ctx.db.get(normalizedMaterialId);
+    if (!material) {
       throw createAppError({
         message: "PDF you are trying to delete does not exist",
         statusCode: "NOT_FOUND",
@@ -108,7 +139,7 @@ export const deletePdfMutation = mutation({
       userId,
       "materials",
       "delete",
-      pdf
+      material
     );
     if (!hasPermissionToDelete) {
       throw createAppError({
@@ -117,10 +148,10 @@ export const deletePdfMutation = mutation({
       });
     }
 
-    await deleteLessonPdfsJoinByPdfId(ctx, normalizedPdfId);
-    await runDeletePdfFromUploadThing(ctx, pdf);
+    await deleteLessonMaterialsJoinByMaterialId(ctx, normalizedMaterialId);
+    await runDeleteMaterialFromUploadThing(ctx, material);
 
-    await ctx.db.delete(normalizedPdfId);
+    await ctx.db.delete(normalizedMaterialId);
 
     return { success: true };
   },

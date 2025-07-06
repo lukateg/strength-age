@@ -5,14 +5,17 @@ import {
   getClassesByUser,
   getClassesWithPermissions,
 } from "../models/classesModel";
-import { getPdfsByUser, getTotalStorageUsage } from "../models/materialsModel";
+import {
+  getMaterialsByUser,
+  getTotalStorageUsage,
+} from "../models/materialsModel";
 import { getTestsByUser } from "../models/testsModel";
 import {
   getTestReviewsByUser,
   getTestReviewsByClass,
 } from "../models/testReviewsModel";
 import { getLessonsByClass, getLessonsByUser } from "../models/lessonsModel";
-import { getLessonPdfsByClass } from "../models/lessonPdfsModel";
+import { getLessonMaterialsByClass } from "../models/lessonPdfsModel";
 import { type QueryCtx } from "../_generated/server";
 
 import { type Doc, type Id } from "../_generated/dataModel";
@@ -27,7 +30,7 @@ export interface ClassWithPermissions extends Doc<"classes"> {
 
 export interface DashboardData {
   classes: ClassWithPermissions[];
-  materials: Doc<"pdfs">[];
+  materials: Doc<"materials">[];
   tests: Doc<"tests">[];
   testReviews: Doc<"testReviews">[];
   permissions: {
@@ -211,9 +214,9 @@ async function getMostActiveClassDetails(
 
   if (!mostActiveClass) return null;
 
-  const [lessons, lessonPdfs, reviewsForClass] = await Promise.all([
+  const [lessons, lessonMaterials, reviewsForClass] = await Promise.all([
     getLessonsByClass(ctx, mostActiveId),
-    getLessonPdfsByClass(ctx, mostActiveId),
+    getLessonMaterialsByClass(ctx, mostActiveId),
     getTestReviewsByClass(ctx, mostActiveId),
   ]);
 
@@ -230,7 +233,7 @@ async function getMostActiveClassDetails(
   return {
     title: mostActiveClass.title,
     lessonsCount: lessons.length,
-    pdfsCount: lessonPdfs.length,
+    materialsCount: lessonMaterials.length,
     testReviewsCount: reviewsForClass.length,
     highestScore: highestScore,
   };
@@ -279,7 +282,7 @@ export const getNewDashboardData = query({
       getMostActiveClassDetails(ctx, userId, allTestReviews),
       getTotalStorageUsage(ctx, userId),
     ]);
-    console.log(stripeCustomer, ">>> stripeCustomer");
+
     return {
       stripeCustomer,
       totalClasses: allClasses.length,
@@ -312,7 +315,7 @@ export const getDashboardPageData = query({
     // Fetch all data in parallel using helper functions
     const [classes, materials, tests, testReviews] = await Promise.all([
       getClassesWithPermissions(ctx, userId),
-      getPdfsByUser(ctx, userId),
+      getMaterialsByUser(ctx, userId),
       getTestsByUser(ctx, userId),
       getTestReviewsByUser(ctx, userId),
     ]);

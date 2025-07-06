@@ -55,24 +55,25 @@ export default defineSchema({
     .index("by_user", ["createdBy"])
     .index("by_lesson_name", ["title"]),
 
-  pdfs: defineTable({
+  materials: defineTable({
     createdBy: v.string(),
     classId: v.id("classes"),
     fileUrl: v.string(),
     name: v.string(),
     size: v.number(),
+    fileType: v.union(v.literal("pdf"), v.literal("txt")),
   })
     .index("by_class_user", ["classId", "createdBy"])
     .index("by_user", ["createdBy"]),
 
-  lessonPdfs: defineTable({
+  lessonMaterials: defineTable({
     lessonId: v.id("lessons"),
-    pdfId: v.id("pdfs"),
+    materialId: v.id("materials"),
     classId: v.id("classes"),
     order: v.optional(v.number()),
   })
     .index("by_lessonId", ["lessonId"])
-    .index("by_pdfId", ["pdfId"])
+    .index("by_materialId", ["materialId"])
     .index("by_classId", ["classId"]),
 
   tests: defineTable({

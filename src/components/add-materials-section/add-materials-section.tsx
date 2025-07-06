@@ -11,22 +11,22 @@ import {
 import { type Doc, type Id } from "convex/_generated/dataModel";
 
 interface MaterialSelectionProps<
-  T extends { materialsToUpload: File[]; materialsToAdd: Id<"pdfs">[] },
+  T extends { materialsToUpload: File[]; materialsToAdd: Id<"materials">[] },
 > {
   showExistingMaterials: boolean;
   onShowExistingMaterialsChange: (checked: boolean) => void;
   materialsToUpload: File[];
-  allMaterials: Doc<"pdfs">[] | undefined;
+  allMaterials: Doc<"materials">[] | undefined;
   control: Control<T>;
   setValue: UseFormSetValue<T>;
   clearErrors: UseFormClearErrors<T>;
-  uploadedPdfs?: Doc<"pdfs">[];
+  uploadedMaterials?: Doc<"materials">[];
   storageUsed: number;
   storageLimit: number;
 }
 
 export function AddMaterialsView<
-  T extends { materialsToUpload: File[]; materialsToAdd: Id<"pdfs">[] },
+  T extends { materialsToUpload: File[]; materialsToAdd: Id<"materials">[] },
 >({
   showExistingMaterials,
   onShowExistingMaterialsChange,
@@ -35,7 +35,7 @@ export function AddMaterialsView<
   control,
   setValue,
   clearErrors,
-  uploadedPdfs,
+  uploadedMaterials,
   storageUsed,
   storageLimit,
 }: MaterialSelectionProps<T>) {
@@ -62,7 +62,7 @@ export function AddMaterialsView<
         <SelectMaterialsView
           control={control}
           allMaterials={allMaterials}
-          uploadedPdfs={uploadedPdfs}
+          uploadedMaterials={uploadedMaterials}
         />
       )}
     </>

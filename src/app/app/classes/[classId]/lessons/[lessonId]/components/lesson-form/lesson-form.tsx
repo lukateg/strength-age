@@ -39,7 +39,7 @@ export default function LessonForm({
   isEditMode?: boolean;
   onSubmit: (data: LessonFormData) => void;
   defaultValues?: Doc<"lessons">;
-  materials: Doc<"pdfs">[];
+  materials: Doc<"materials">[];
   isSubmitting: boolean;
 }) {
   const form = useForm<LessonFormData>({

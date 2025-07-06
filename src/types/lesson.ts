@@ -22,7 +22,7 @@ export interface CreateLessonWithMaterialsParams {
   classId: string;
   title: string;
   description?: string;
-  pdfIds: Id<"pdfs">[];
+  materialIds: Id<"materials">[];
 }
 
 export interface CreateLessonWithNewMaterialsParams {
@@ -30,14 +30,14 @@ export interface CreateLessonWithNewMaterialsParams {
   classId: string;
   title: string;
   description?: string;
-  pdfFiles: {
+  materials: {
     fileUrl: string;
     name: string;
     size: number;
   }[];
 }
 
-export interface AddPDFToLessonParams {
-  pdfIds: Id<"pdfs">[];
+export interface AddMaterialToLessonParams {
+  materialIds: Id<"materials">[];
   lessonId: string;
 }

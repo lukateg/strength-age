@@ -7,7 +7,7 @@ import { Users } from "lucide-react";
 
 export const generateStats = (
   classes?: Doc<"classes">[] | null,
-  materials?: Doc<"pdfs">[] | null,
+  materials?: Doc<"materials">[] | null,
   allTests?: Doc<"tests">[] | null,
   testReviews?: Doc<"testReviews">[] | null
 ) => {

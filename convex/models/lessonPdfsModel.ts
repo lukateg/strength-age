@@ -13,13 +13,13 @@ import { createAppError } from "convex/utils";
 //     .collect();
 // };
 
-export async function deleteLessonPdfsJoinByPdfId(
+export async function deleteLessonMaterialsJoinByMaterialId(
   ctx: GenericMutationCtx<DataModel>,
-  pdfId: string
+  materialId: string
 ) {
-  const normalizedPdfId = ctx.db.normalizeId("pdfs", pdfId);
+  const normalizedMaterialId = ctx.db.normalizeId("materials", materialId);
 
-  if (!normalizedPdfId) {
+  if (!normalizedMaterialId) {
     throw createAppError({
       message: "Invalid item ID",
       statusCode: "VALIDATION_ERROR",
@@ -27,16 +27,16 @@ export async function deleteLessonPdfsJoinByPdfId(
   }
 
   const lessonPdfs = await ctx.db
-    .query("lessonPdfs")
-    .withIndex("by_pdfId", (q) => q.eq("pdfId", normalizedPdfId))
+    .query("lessonMaterials")
+    .withIndex("by_materialId", (q) => q.eq("materialId", normalizedMaterialId))
     .collect();
 
-  for (const lessonPdf of lessonPdfs) {
-    await ctx.db.delete(lessonPdf._id);
+  for (const lessonMaterial of lessonPdfs) {
+    await ctx.db.delete(lessonMaterial._id);
   }
 }
 
-export async function deleteLessonPdfsJoinByClassIdBatch(
+export async function deleteLessonMaterialsJoinByClassIdBatch(
   ctx: GenericMutationCtx<DataModel>,
   classId: Id<"classes">,
   userId: string,
@@ -44,29 +44,29 @@ export async function deleteLessonPdfsJoinByClassIdBatch(
 ) {
   const BATCH_SIZE = 100;
   const { page, isDone, continueCursor } = await ctx.db
-    .query("lessonPdfs")
+    .query("lessonMaterials")
     .withIndex("by_classId", (q) => q.eq("classId", classId))
     .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
 
-  for (const lessonPdf of page) {
-    await ctx.db.delete(lessonPdf._id);
+  for (const lessonMaterial of page) {
+    await ctx.db.delete(lessonMaterial._id);
   }
 
   if (!isDone) {
     await runDeleteClassDataBatch(
       ctx,
       classId,
-      "lessonPdfs",
+      "lessonMaterials",
       userId,
       continueCursor
     );
   } else {
-    // After deleting all lessonPdfs for this class, safely delete PDFs that are no longer referenced
-    await runDeleteClassDataBatch(ctx, classId, "pdfs", userId);
+    // After deleting all lessonMaterials for this class, safely delete Materials that are no longer referenced
+    await runDeleteClassDataBatch(ctx, classId, "materials", userId);
   }
 }
 
-export const getLessonPdfJoinsByLessonIds = async (
+export const getLessonMaterialsJoinsByLessonIds = async (
   ctx: GenericQueryCtx<DataModel>,
   lessonIds: Id<"lessons">[]
 ) => {
@@ -74,7 +74,7 @@ export const getLessonPdfJoinsByLessonIds = async (
     await Promise.all(
       lessonIds.map((lessonId) =>
         ctx.db
-          .query("lessonPdfs")
+          .query("lessonMaterials")
           .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
           .collect()
       )
@@ -82,12 +82,12 @@ export const getLessonPdfJoinsByLessonIds = async (
   ).flat();
 };
 
-export const getLessonPdfsByClass = async (
+export const getLessonMaterialsByClass = async (
   ctx: GenericQueryCtx<DataModel>,
   classId: Id<"classes">
 ) => {
   return await ctx.db
-    .query("lessonPdfs")
+    .query("lessonMaterials")
     .withIndex("by_classId", (q) => q.eq("classId", classId))
     .collect();
 };

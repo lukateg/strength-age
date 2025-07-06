@@ -23,8 +23,8 @@ export default function NewLessonPage() {
   const {
     classId,
     createLesson,
-    uploadNewPdfsToLesson,
-    addExistingPdfsToLesson,
+    uploadNewMaterialsToLesson,
+    addExistingMaterialsToLesson,
     isUploading,
     isPending,
   } = useLessonMutations();
@@ -39,14 +39,14 @@ export default function NewLessonPage() {
       data.materialsToAdd.length && data.showExistingMaterials;
 
     if (shouldCreateLessonWithNewMaterials) {
-      void uploadNewPdfsToLesson({
+      void uploadNewMaterialsToLesson({
         lessonId,
         materialsToUpload: data.materialsToUpload,
       });
     } else if (shouldCreateLessonWithExistingMaterials) {
-      await addExistingPdfsToLesson({
+      await addExistingMaterialsToLesson({
         lessonId,
-        pdfIds: data.materialsToAdd,
+        materialIds: data.materialsToAdd,
       });
     }
 

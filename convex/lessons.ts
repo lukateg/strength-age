@@ -7,16 +7,16 @@ import { hasPermission } from "./models/permissionsModel";
 import {
   getLessonByTitle,
   createLesson,
-  addPdfToLesson,
+  addMaterialToLesson,
   getLessonById,
   updateLesson,
   runDeleteLessonDataBatch,
   deleteLesson,
 } from "./models/lessonsModel";
 import {
-  getPdfByLessonId,
-  isPdfReferencedByLessons,
-  runDeletePdfFromUploadThing,
+  getMaterialByLessonId,
+  isMaterialReferencedByLessons,
+  runDeleteMaterialFromUploadThing,
 } from "./models/materialsModel";
 
 export const createLessonMutation = mutation({
@@ -173,20 +173,20 @@ export const deleteLessonMutation = mutation({
       });
     }
 
-    await runDeleteLessonDataBatch(ctx, normalizedId, userId, "pdfs");
+    await runDeleteLessonDataBatch(ctx, normalizedId, userId, "materials");
     await deleteLesson(ctx, normalizedId);
 
     return true;
   },
 });
 
-export const addPdfToLessonMutation = mutation({
+export const addMaterialToLessonMutation = mutation({
   args: v.object({
     lessonId: v.string(),
-    pdfId: v.id("pdfs"),
+    materialId: v.id("materials"),
     classId: v.string(),
   }),
-  handler: async (ctx, { lessonId, pdfId, classId }) => {
+  handler: async (ctx, { lessonId, materialId, classId }) => {
     const userId = await AuthenticationRequired({ ctx });
 
     const normalizedClassId = ctx.db.normalizeId("classes", classId);
@@ -227,7 +227,11 @@ export const addPdfToLessonMutation = mutation({
       });
     }
 
-    const isInLesson = await getPdfByLessonId(ctx, normalizedLessonId, pdfId);
+    const isInLesson = await getMaterialByLessonId(
+      ctx,
+      normalizedLessonId,
+      materialId
+    );
     if (isInLesson) {
       throw createAppError({
         message: "PDF already added to this lesson",
@@ -235,21 +239,21 @@ export const addPdfToLessonMutation = mutation({
       });
     }
 
-    await addPdfToLesson(ctx, {
+    await addMaterialToLesson(ctx, {
       lessonId: normalizedLessonId,
-      pdfId,
+      materialId,
       classId: normalizedClassId,
     });
   },
 });
 
-export const addManyPdfsToLessonMutation = mutation({
+export const addManyMaterialsToLessonMutation = mutation({
   args: v.object({
     lessonId: v.string(),
-    pdfIds: v.array(v.id("pdfs")),
+    materialIds: v.array(v.id("materials")),
     classId: v.string(),
   }),
-  handler: async (ctx, { lessonId, pdfIds, classId }) => {
+  handler: async (ctx, { lessonId, materialIds, classId }) => {
     const userId = await AuthenticationRequired({ ctx });
 
     const normalizedClassId = ctx.db.normalizeId("classes", classId);
@@ -283,27 +287,31 @@ export const addManyPdfsToLessonMutation = mutation({
       });
     }
 
-    const canAddPdfsToLesson = await hasPermission(
+    const canAddMaterialsToLesson = await hasPermission(
       ctx,
       userId,
       "lessons",
       "update",
       { lesson }
     );
-    if (!canAddPdfsToLesson) {
+    if (!canAddMaterialsToLesson) {
       throw createAppError({
-        message: "Not authorized to add PDFs to this lesson",
+        message: "Not authorized to add materials to this lesson",
         statusCode: "PERMISSION_DENIED",
       });
     }
 
-    for (const pdfId of pdfIds) {
-      const isInLesson = await getPdfByLessonId(ctx, normalizedLessonId, pdfId);
+    for (const materialId of materialIds) {
+      const isInLesson = await getMaterialByLessonId(
+        ctx,
+        normalizedLessonId,
+        materialId
+      );
 
       if (!isInLesson) {
-        await addPdfToLesson(ctx, {
+        await addMaterialToLesson(ctx, {
           lessonId: normalizedLessonId,
-          pdfId,
+          materialId,
           classId: normalizedClassId,
         });
       }
@@ -315,48 +323,48 @@ export const deleteLessonDataInternalMutation = internalMutation({
   args: {
     lessonId: v.id("lessons"),
     userId: v.string(),
-    phase: v.union(v.literal("lessonPdfs"), v.literal("pdfs")),
+    phase: v.union(v.literal("lessonMaterials"), v.literal("materials")),
     cursor: v.optional(v.string()),
   },
   handler: async (ctx, { lessonId, userId, phase, cursor }) => {
     try {
       const BATCH_SIZE = 100;
 
-      // Get a batch of lessonPdfs instead of all at once
-      const lessonPdfsBatch = await ctx.db
-        .query("lessonPdfs")
+      // Get a batch of lessonMaterials instead of all at once
+      const lessonMaterialsBatch = await ctx.db
+        .query("lessonMaterials")
         .withIndex("by_lessonId", (q) => q.eq("lessonId", lessonId))
         .paginate({ numItems: BATCH_SIZE, cursor: cursor ?? null });
 
-      // Delete each lessonPdf entry and check if PDF should be deleted
-      for (const lessonPdf of lessonPdfsBatch.page) {
-        // Delete the lessonPdf entry first
-        await ctx.db.delete(lessonPdf._id);
+      // Delete each lessonMaterial entry and check if material should be deleted
+      for (const lessonMaterial of lessonMaterialsBatch.page) {
+        // Delete the lessonMaterial entry first
+        await ctx.db.delete(lessonMaterial._id);
 
         // Check if this PDF is still referenced by any other lessons before deleting
-        const isReferenced = await isPdfReferencedByLessons(
+        const isReferenced = await isMaterialReferencedByLessons(
           ctx,
-          lessonPdf.pdfId
+          lessonMaterial.materialId
         );
 
         // Only delete the PDF if it's not referenced by any other lessons
         if (!isReferenced) {
-          const pdf = await ctx.db.get(lessonPdf.pdfId);
-          if (pdf) {
-            await runDeletePdfFromUploadThing(ctx, pdf);
-            await ctx.db.delete(lessonPdf.pdfId);
+          const material = await ctx.db.get(lessonMaterial.materialId);
+          if (material) {
+            await runDeleteMaterialFromUploadThing(ctx, material);
+            await ctx.db.delete(lessonMaterial.materialId);
           }
         }
       }
 
       // Continue with next batch if needed
-      if (!lessonPdfsBatch.isDone) {
+      if (!lessonMaterialsBatch.isDone) {
         await runDeleteLessonDataBatch(
           ctx,
           lessonId,
           userId,
-          "pdfs",
-          lessonPdfsBatch.continueCursor
+          "materials",
+          lessonMaterialsBatch.continueCursor
         );
       }
     } catch (error) {

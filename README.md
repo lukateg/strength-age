@@ -29,9 +29,10 @@ CAN'T REPRODUCE
 -- make all things beta
 
 PLAN:
--- check if tiers are fine
+-- fix bugs
 -- SEO check
 -- add ai pricing per model by input and output to the dashboard of posthog
+-- test with new user
 -- load testing
 -- release to prod
 -- remove tests3/3 and so on

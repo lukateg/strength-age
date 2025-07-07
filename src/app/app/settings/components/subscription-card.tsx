@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SubscriptionCardProps {
@@ -17,6 +17,7 @@ interface SubscriptionCardProps {
   description: string;
   features: string[];
   isCurrent?: boolean;
+  isDisabled?: boolean;
   onSelect: () => void;
   buttonText: string;
 }
@@ -27,6 +28,7 @@ export function SubscriptionCard({
   description,
   features,
   isCurrent = false,
+  isDisabled = false,
   onSelect,
   buttonText,
 }: SubscriptionCardProps) {
@@ -36,13 +38,33 @@ export function SubscriptionCard({
     return "default";
   };
 
+  const handleSelect = () => {
+    if (!isDisabled) {
+      onSelect();
+    }
+  };
+
   return (
     <Card
       className={cn(
         "relative transition-all duration-200 hover:shadow-lg flex flex-col h-full",
-        isCurrent && "ring-2 ring-primary"
+        isCurrent && "ring-2 ring-primary",
+        isDisabled && "opacity-75"
       )}
     >
+      {/* Coming Soon Overlay */}
+      {isDisabled && (
+        <div className="absolute inset-0 bg-background/50 backdrop-blur-sm rounded-lg z-10 flex items-center justify-center">
+          <div className="text-center p-4">
+            <Clock className="w-8 h-8 mx-auto mb-2 text-primary" />
+            <p className="text-sm font-medium text-primary">Coming Soon</p>
+            <p className="text-xs text-primary mt-1">
+              This plan will be available soon
+            </p>
+          </div>
+        </div>
+      )}
+
       <CardHeader className="text-center pb-2 flex-shrink-0">
         <CardTitle className="text-xl">{title}</CardTitle>
         <div className="text-3xl font-bold text-primary">
@@ -72,8 +94,8 @@ export function SubscriptionCard({
             price === "Free" && "pointer-events-none"
           )}
           variant={getButtonVariant(title)}
-          onClick={onSelect}
-          disabled={isCurrent}
+          onClick={handleSelect}
+          disabled={isCurrent || isDisabled}
         >
           {isCurrent ? "Currently using" : buttonText}
         </Button>

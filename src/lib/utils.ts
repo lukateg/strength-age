@@ -29,13 +29,13 @@ type SubscriptionTierInfo = {
 
 export const formatTokenUsageNumber = (num: number): string => {
   if (num >= 1000000) {
-    // For millions, round to nearest hundred thousand
-    const rounded = Math.round(num / 100000) * 100000;
-    return `${(rounded / 1000000).toFixed(1)}M`;
+    // For millions, show as XM or X.XM
+    const millions = num / 1000000;
+    return millions % 1 === 0 ? `${millions}M` : `${millions.toFixed(1)}M`;
   } else if (num >= 1000) {
-    // For thousands, round to nearest hundred
-    const rounded = Math.round(num / 100) * 100;
-    return `${(rounded / 1000).toFixed(1)}K`;
+    // For thousands, show as XK or X.XK
+    const thousands = num / 1000;
+    return thousands % 1 === 0 ? `${thousands}K` : `${thousands.toFixed(1)}K`;
   } else {
     return num.toString();
   }

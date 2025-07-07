@@ -189,16 +189,16 @@ export const ROLES: RolesWithPermissions = {
         return data.lesson.createdBy === user.clerkId;
       },
       create: async (data, user, ctx) => {
-        const existingLessons = await getLessonsByClass(ctx!, data.class._id);
-        const userSubscriptionRecord = await stripeCustomerByUserId(
-          ctx!,
-          user.clerkId
-        );
+        // const existingLessons = await getLessonsByClass(ctx!, data.class._id);
+        // const userSubscriptionRecord = await stripeCustomerByUserId(
+        //   ctx!,
+        //   user.clerkId
+        // );
 
-        const subscriptionTier = getSubscriptionTierByStripeRecord(
-          userSubscriptionRecord
-        );
-        return LIMITATIONS[subscriptionTier].lessons > existingLessons.length;
+        // const subscriptionTier = getSubscriptionTierByStripeRecord(
+        //   userSubscriptionRecord
+        // );
+        return true;
       },
       update: (data, user) => {
         return data.lesson.createdBy === user.clerkId;

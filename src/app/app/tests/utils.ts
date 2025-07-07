@@ -120,7 +120,7 @@ export const generateDashboardStats = (
     {
       title: "Tests",
       icon: BookOpen,
-      value: `${testsByUser.length}/${LIMITATIONS[subscriptionTier ?? "free"].tests}`,
+      value: `${testsByUser.length}`,
       description: "Total number of tests created",
     },
     {

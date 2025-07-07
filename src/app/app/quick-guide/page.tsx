@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
+import { LIMITATIONS } from "@/lib/limitations";
 import {
   BookOpen,
   FileText,
@@ -18,35 +19,39 @@ import {
   Star,
   HardDrive,
 } from "lucide-react";
+import { formatTokenUsageNumber } from "@/lib/utils";
 
 export default function QuickGuidePage() {
   const subscriptionTiers = [
     {
       name: "Free",
       icon: Sparkles,
-      classes: 2,
-      lessons: 3,
-      tests: 3,
-      storage: "10 MB",
+      classes: LIMITATIONS.free.classes,
+      tokens: formatTokenUsageNumber(LIMITATIONS.free.tokens), // From features: "Generate up to 3 tests total"
+      storage: `${Math.round(LIMITATIONS.free.materials / (1024 * 1024))} MB`,
+      testShare: LIMITATIONS.free.testShare,
+      resultsShare: LIMITATIONS.free.resultsShare,
       color: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
     },
     {
       name: "Starter",
       icon: Star,
-      classes: 3,
-      lessons: 10,
-      tests: 10,
-      storage: "250 MB",
+      classes: LIMITATIONS.starter.classes,
+      tokens: formatTokenUsageNumber(LIMITATIONS.starter.tokens), // From features: "Generate up to 20 tests per month"
+      storage: `${Math.round(LIMITATIONS.starter.materials / (1024 * 1024))} MB`,
+      testShare: LIMITATIONS.starter.testShare,
+      resultsShare: LIMITATIONS.starter.resultsShare,
       color:
         "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
     },
     {
       name: "Pro",
       icon: Crown,
-      classes: 100,
-      lessons: 100,
-      tests: 100,
-      storage: "500 MB",
+      classes: LIMITATIONS.pro.classes,
+      tokens: formatTokenUsageNumber(LIMITATIONS.pro.tokens), // From features: "Generate unlimited tests"
+      storage: `${Math.round(LIMITATIONS.pro.materials / (1024 * 1024))} MB`,
+      testShare: LIMITATIONS.pro.testShare,
+      resultsShare: LIMITATIONS.pro.resultsShare,
       color:
         "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400",
     },
@@ -126,8 +131,7 @@ export default function QuickGuidePage() {
     },
     {
       title: "Storage Limits",
-      description:
-        "Each subscription tier has different storage limits. Free: 10MB, Starter: 250MB, Pro: 500MB.",
+      description: `Each subscription tier has different storage limits. Free: ${Math.round(LIMITATIONS.free.materials / (1024 * 1024))}MB, Starter: ${Math.round(LIMITATIONS.starter.materials / (1024 * 1024))}MB, Pro: ${Math.round(LIMITATIONS.pro.materials / (1024 * 1024))}MB.`,
       type: "info",
     },
     {
@@ -137,9 +141,8 @@ export default function QuickGuidePage() {
       type: "warning",
     },
     {
-      title: "Lesson Limits",
-      description:
-        "Free tier is limited to 3 lessons per class. Upgrade for more lessons.",
+      title: "Class Limits",
+      description: `Free tier allows ${LIMITATIONS.free.classes} classes, Starter allows ${LIMITATIONS.starter.classes} classes, Pro allows ${LIMITATIONS.pro.classes} classes.`,
       type: "info",
     },
   ];
@@ -203,16 +206,34 @@ export default function QuickGuidePage() {
                     <span>{tier.classes}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Lessons:</span>
-                    <span>{tier.lessons}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tests:</span>
-                    <span>{tier.tests}</span>
+                    <span className="text-muted-foreground">Tokens:</span>
+                    <span>{tier.tokens}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Storage:</span>
                     <span>{tier.storage}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Test Sharing:</span>
+                    <span
+                      className={
+                        tier.testShare ? "text-green-600" : "text-red-600"
+                      }
+                    >
+                      {tier.testShare ? "Yes" : "No"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">
+                      Test Results Sharing:
+                    </span>
+                    <span
+                      className={
+                        tier.resultsShare ? "text-green-600" : "text-red-600"
+                      }
+                    >
+                      {tier.resultsShare ? "Yes" : "No"}
+                    </span>
                   </div>
                 </div>
               </div>

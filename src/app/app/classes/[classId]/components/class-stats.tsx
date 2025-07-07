@@ -32,12 +32,7 @@ export default function ClassStats({
           <GraduationCap className="h-6 w-6 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">
-            {totalLessons}{" "}
-            <span className="text-muted-foreground">
-              / {LIMITATIONS[user?.subscriptionTier ?? "free"].tests}
-            </span>
-          </div>
+          <div className="text-2xl font-bold">{totalLessons} </div>
         </CardContent>
       </Card>
 

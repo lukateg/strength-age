@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { type api } from "../../convex/_generated/api";
 import {
   ArrowDown,
   ArrowUp,
@@ -7,8 +6,6 @@ import {
   FileText,
   GraduationCap,
 } from "lucide-react";
-import { type QueryStatus } from "@/hooks/use-authenticated-query";
-import { LIMITATIONS } from "@/lib/limitations";
 
 type TestStatsProps = {
   totalTests: number;
@@ -19,7 +16,6 @@ type TestStatsProps = {
     trend: "higher" | "lower" | "same";
     percentageChange: number;
   };
-  user: QueryStatus<typeof api.users.getUserData>["data"];
 };
 
 export default function TestStats({
@@ -27,11 +23,7 @@ export default function TestStats({
   totalAttempts,
   tokensUsedThisMonth,
   weeklySuccess,
-  user,
 }: TestStatsProps) {
-  const subscriptionTier = user?.subscriptionTier ?? "free";
-  const maxTests = LIMITATIONS[subscriptionTier].tests;
-
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 mb-8">
       <Card>
@@ -40,10 +32,7 @@ export default function TestStats({
           <GraduationCap className="h-6 w-6 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">
-            {totalTests}{" "}
-            <span className="text-muted-foreground">/ {maxTests}</span>
-          </div>
+          <div className="text-2xl font-bold">{totalTests}</div>
         </CardContent>
       </Card>
 

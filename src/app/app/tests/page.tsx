@@ -16,11 +16,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 import { FilePlus2 } from "lucide-react";
 import QueryState from "@/components/data-query/query-state";
-import { useUserContext } from "@/providers/user-provider";
 
 export default function Tests() {
   const { newTestsPageData } = useTests();
-  const { user } = useUserContext();
 
   return (
     <QueryState
@@ -66,7 +64,6 @@ export default function Tests() {
               totalAttempts={totalAttempts}
               tokensUsedThisMonth={tokensUsedThisMonth}
               weeklySuccess={weeklySuccess}
-              user={user.data}
             />
 
             <Tabs defaultValue="recent" className="space-y-6">

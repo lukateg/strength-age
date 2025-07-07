@@ -24,12 +24,14 @@ CAN'T REPRODUCE
 -- add delete test from test preview
 -- fix prompting and short answer ai review, maybe add instructions why is answer wrong
 --fix table scroll and responsivnes
+-- fix classes dummy data 7 tests and etc
+-- add beta to the logo
+-- make all things beta
 
 PLAN:
 -- check if tiers are fine
 -- SEO check
 -- add ai pricing per model by input and output to the dashboard of posthog
--- in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
 -- load testing
 -- release to prod
 -- remove tests3/3 and so on

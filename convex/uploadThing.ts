@@ -16,6 +16,7 @@ export const deleteFileFromUploadThing = internalAction({
       fileUrl: v.string(),
       name: v.string(),
       size: v.number(),
+      fileType: v.union(v.literal("pdf"), v.literal("txt")),
       _creationTime: v.number(),
       _id: v.string(),
     }),

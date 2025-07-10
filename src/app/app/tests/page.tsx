@@ -35,6 +35,7 @@ export default function Tests() {
           tokensUsedThisMonth,
           totalTests,
           totalAttempts,
+          stripeCustomer,
         } = data;
         const canGenerateTest = permissions.canGenerateTest;
 
@@ -64,6 +65,7 @@ export default function Tests() {
               totalAttempts={totalAttempts}
               tokensUsedThisMonth={tokensUsedThisMonth}
               weeklySuccess={weeklySuccess}
+              stripeCustomer={stripeCustomer}
             />
 
             <Tabs defaultValue="recent" className="space-y-6">

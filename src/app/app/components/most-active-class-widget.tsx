@@ -23,19 +23,21 @@ export default function MostActiveClass({
         <div className="flex items-center space-x-2">
           <BookOpen className="h-5 w-5 text-muted-foreground" />
           <span className="font-bold">
-            {mostActiveClass?.lessonsCount}
+            {mostActiveClass?.lessonsCount ?? 0}
           </span>{" "}
           <p className="text-muted-foreground">Lessons Created</p>
         </div>
         <div className="flex items-center space-x-2">
           <FileText className="h-5 w-5 text-muted-foreground" />
-          <span className="font-bold">{mostActiveClass?.materialsCount}</span>
+          <span className="font-bold">
+            {mostActiveClass?.materialsCount ?? 0}
+          </span>
           <p className="text-muted-foreground"> Materials Uploaded</p>
         </div>
         <div className="flex items-center space-x-2">
           <Target className="h-5 w-5 text-muted-foreground" />
           <span className="font-bold">
-            {mostActiveClass?.testReviewsCount}
+            {mostActiveClass?.testReviewsCount ?? 0}
           </span>{" "}
           <p className="text-muted-foreground">Total Attempts</p>
         </div>
@@ -45,7 +47,9 @@ export default function MostActiveClass({
             order="ascending"
             percentage={mostActiveClass?.highestScore ?? 0}
           />
-          <span className="font-bold">{mostActiveClass?.highestScore}%</span>{" "}
+          <span className="font-bold">
+            {mostActiveClass?.highestScore ?? 0}%
+          </span>{" "}
           <p className="text-muted-foreground">Highest Score</p>
         </div>
       </CardContent>

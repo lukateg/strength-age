@@ -1,4 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LIMITATIONS } from "@/lib/limitations";
+import {
+  formatTokenUsageNumber,
+  getSubscriptionTierByStripeRecord,
+} from "@/lib/utils";
+import { type Doc } from "convex/_generated/dataModel";
 import {
   ArrowDown,
   ArrowUp,
@@ -16,6 +22,7 @@ type TestStatsProps = {
     trend: "higher" | "lower" | "same";
     percentageChange: number;
   };
+  stripeCustomer: Doc<"stripeCustomers"> | null;
 };
 
 export default function TestStats({
@@ -23,7 +30,10 @@ export default function TestStats({
   totalAttempts,
   tokensUsedThisMonth,
   weeklySuccess,
+  stripeCustomer,
 }: TestStatsProps) {
+  const subscriptionTier = getSubscriptionTierByStripeRecord(stripeCustomer);
+  const tokensLimit = LIMITATIONS[subscriptionTier].tokens;
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 mb-8">
       <Card>
@@ -51,13 +61,15 @@ export default function TestStats({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 ">
           <CardTitle className="text-base font-medium">
-            Monthly Tokens Used
+            Tokens Used{" "}
+            <span className="text-xs text-muted-foreground">(Monthly)</span>
           </CardTitle>
           <BookOpen className="h-6 w-6 text-muted-foreground" />
         </CardHeader>
         <CardContent className="flex items-start gap-2">
           <div className="text-xl font-bold">
-            {tokensUsedThisMonth ?? "No tests yet"}
+            {formatTokenUsageNumber(tokensUsedThisMonth)}/{" "}
+            {formatTokenUsageNumber(tokensLimit)}
           </div>
         </CardContent>
       </Card>

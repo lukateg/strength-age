@@ -13,20 +13,16 @@ check before launch:
 TESTING:
 -- test prompt splitting and large loads
 
-BUGS
-- open class from dashboard and redirect back leads you to classes instead of a dashboard
-CAN'T REPRODUCE
+FUTURE BUGS:
+-- remove async from permissions to make them faster
+-- make table responsive
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
--- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
--- still have some bad redirects on class and test review
--- sign out displays some weird loader
--- implement permission check fix
--- add delete test from test preview
+-- still have some bad redirects on class and test review(open class from dashboard and redirect back leads you to classes instead of a dashboard)
+BUGS
+-- check all skeletons on mobile
 -- fix prompting and short answer ai review, maybe add instructions why is answer wrong
---fix table scroll and responsivnes
--- fix classes dummy data 7 tests and etc
--- add beta to the logo
--- make all things beta
+-- fix loader
+-- fix monthly tokens used on tests page
 
 PLAN:
 -- fix bugs
@@ -40,6 +36,7 @@ PLAN:
 
 
 FUTURE FEATURES AND ENHANCMENTS:
+-- add delete test from test preview
 -- set error handling when token teach-me subscription for all limit is out
 -- write down terms and conditions, privacy policy and documentation(mintlify)
 -- add feedback received, working on it email message

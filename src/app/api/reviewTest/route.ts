@@ -33,10 +33,9 @@ export async function POST(req: NextRequest) {
     Return the exact same test object structure but add a "isCorrect" boolean property to each question indicating if it was answered correctly.
     If the answer is incorrect, add a "feedback" property to the question object with a short explanation of why it is incorrect.
     Add the answer property to the question object with the student's answer.
-
     For multiple choice questions: All correct answers must be selected and no incorrect answers should be selected.
     For true/false questions: The selected answer must match the correct answer exactly.
-    For short answer questions: The answer should contain the key concepts from the correct answer, but doesn't need to match exactly.
+    For short answer questions: The answer should contain the key concepts from the correct answer, but doesn't need to match exactly. If student got the main idea right that is a correct answer.
 
     Test Questions and Correct Answers:
     ${JSON.stringify(test.questions, null, 2)}

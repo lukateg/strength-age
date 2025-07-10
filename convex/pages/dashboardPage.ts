@@ -191,27 +191,50 @@ async function getMostActiveClassDetails(
   userId: string,
   allTestReviews: Doc<"testReviews">[]
 ) {
-  if (allTestReviews.length === 0) return null;
+  let mostActiveId: Id<"classes"> | null = null;
 
-  const classIdCounts = allTestReviews.reduce(
-    (acc, review) => {
-      const classIdStr = review.classId.toString();
-      acc[classIdStr] = (acc[classIdStr] ?? 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>
-  );
+  if (allTestReviews.length > 0) {
+    // Find most active class based on test reviews
+    const classIdCounts = allTestReviews.reduce(
+      (acc, review) => {
+        const classIdStr = review.classId.toString();
+        acc[classIdStr] = (acc[classIdStr] ?? 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
-  const classIds = Object.keys(classIdCounts);
-  if (classIds.length === 0) return null;
+    const classIds = Object.keys(classIdCounts);
+    if (classIds.length > 0) {
+      const mostActiveIdString = classIds.reduce((a, b) =>
+        classIdCounts[a]! > classIdCounts[b]! ? a : b
+      );
+      mostActiveId = mostActiveIdString as Id<"classes">;
+    }
+  }
 
-  const mostActiveIdString = classIds.reduce((a, b) =>
-    classIdCounts[a]! > classIdCounts[b]! ? a : b
-  );
+  // If no test reviews or no class found, fall back to class with most lessons
+  if (!mostActiveId) {
+    const allClasses = await getClassesByUser(ctx, userId);
+    if (allClasses.length === 0) return null;
 
-  const mostActiveId = mostActiveIdString as Id<"classes">;
+    // Get lesson counts for each class
+    const classLessonCounts = await Promise.all(
+      allClasses.map(async (classItem) => {
+        const lessons = await getLessonsByClass(ctx, classItem._id);
+        return { classId: classItem._id, lessonCount: lessons.length };
+      })
+    );
+
+    // Find class with most lessons, or most recent class if all have 0 lessons
+    const classWithMostLessons = classLessonCounts.reduce((max, current) =>
+      current.lessonCount > max.lessonCount ? current : max
+    );
+
+    mostActiveId = classWithMostLessons.classId;
+  }
+
   const mostActiveClass = await ctx.db.get(mostActiveId);
-
   if (!mostActiveClass) return null;
 
   const [lessons, lessonMaterials, reviewsForClass] = await Promise.all([
@@ -242,13 +265,6 @@ async function getMostActiveClassDetails(
 export const getNewDashboardData = query({
   handler: async (ctx) => {
     const userId = await AuthenticationRequired({ ctx });
-
-    // const canCreateClass = await hasPermission(
-    //   ctx,
-    //   userId,
-    //   "classes",
-    //   "create"
-    // );
 
     // Fetch all necessary data in parallel
     const [
@@ -293,9 +309,6 @@ export const getNewDashboardData = query({
       mostActiveClass,
       tokensUsedThisMonth: monthlyRecord?.monthlyTokensUsed ?? 0,
       totalStorageUsage,
-      // permissions: {
-      //   canCreateClass,
-      // },
     };
   },
 });

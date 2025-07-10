@@ -15,7 +15,51 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Teach-me - AI-Powered Learning Platform",
   description:
-    "An intelligent platform for creating and managing educational content",
+    "An intelligent platform for creating and managing educational content with AI-generated tests, quizzes, and personalized learning experiences.",
+  keywords: [
+    "AI learning",
+    "educational platform",
+    "online education",
+    "AI-powered tests",
+    "study platform",
+    "learning management",
+    "AI education",
+    "smart learning",
+  ],
+  authors: [{ name: "Teach-me Team" }],
+  creator: "Teach-me",
+  publisher: "Teach-me",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    title: "Teach-me - AI-Powered Learning Platform",
+    description:
+      "An intelligent platform for creating and managing educational content with AI-generated tests, quizzes, and personalized learning experiences.",
+    siteName: "Teach-me",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Teach-me - AI-Powered Learning Platform",
+    description:
+      "An intelligent platform for creating and managing educational content with AI-generated tests, quizzes, and personalized learning experiences.",
+  },
+  verification: {
+    // Add your verification codes here when you get them
+    // google: 'your-google-verification-code',
+    // yandex: 'your-yandex-verification-code',
+    // bing: 'your-bing-verification-code',
+  },
 };
 
 const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;

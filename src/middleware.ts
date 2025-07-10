@@ -18,7 +18,15 @@ export default clerkMiddleware(async (auth, req) => {
     return redirectToSignIn();
   }
 
-  // if (protectedRoute(req)) await auth.protect();
+  // Add X-Robots-Tag header for protected routes to prevent indexing
+  if (protectedRoute(req)) {
+    const response = NextResponse.next();
+    response.headers.set(
+      "X-Robots-Tag",
+      "noindex, nofollow, noarchive, nosnippet"
+    );
+    return response;
+  }
 });
 
 export const config = {

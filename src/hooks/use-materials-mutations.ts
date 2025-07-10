@@ -11,16 +11,18 @@ import { type Id } from "../../convex/_generated/dataModel";
 export const useMaterialsMutations = () => {
   const [isPending, setIsPending] = useState(false);
   const { classId } = useClass();
-  const { startUpload, isUploading } = useUploadThing("pdfUploader", {
+  const { startUpload, isUploading } = useUploadThing("materialUploader", {
     onUploadError: (error: Error) => {
       throw error;
     },
   });
 
-  const deletePdfMutation = useMutation(api.materials.deletePdfMutation);
+  const deleteMaterialMutation = useMutation(
+    api.materials.deleteMaterialMutation
+  );
 
-  const deletePdf = useCallback(
-    async (pdfId: Id<"pdfs">) => {
+  const deleteMaterial = useCallback(
+    async (materialId: Id<"materials">) => {
       const toastId = toast.loading("Deleting...", {
         description: "Please wait while we delete the file.",
         duration: Infinity,
@@ -28,7 +30,7 @@ export const useMaterialsMutations = () => {
 
       try {
         setIsPending(true);
-        await deletePdfMutation({ pdfId });
+        await deleteMaterialMutation({ materialId });
         toast.dismiss(toastId);
         toast.success("File deleted successfully.");
       } catch (error) {
@@ -37,14 +39,14 @@ export const useMaterialsMutations = () => {
         setIsPending(false);
       }
     },
-    [deletePdfMutation]
+    [deleteMaterialMutation]
   );
 
   return {
     isPending,
     isUploading,
     startUpload,
-    deletePdf,
+    deleteMaterial,
     classId,
   };
 };

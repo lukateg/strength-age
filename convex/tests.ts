@@ -4,8 +4,11 @@ import { AuthenticationRequired, createAppError } from "./utils";
 
 import { hasPermission } from "./models/permissionsModel";
 import { optionalIncrementTitle } from "./models/testsModel";
-import { getLessonPdfJoinsByLessonIds } from "./models/lessonPdfsModel";
-import { getPdfsByIds, sortPdfsByLessonJoins } from "./models/materialsModel";
+import { getLessonMaterialsJoinsByLessonIds } from "./models/lessonPdfsModel";
+import {
+  getMaterialsByIds,
+  sortMaterialsByLessonJoins,
+} from "./models/materialsModel";
 import { handleLLMTokenUsageUpdating } from "./models/tokensModel";
 import { type Id } from "./_generated/dataModel";
 
@@ -177,23 +180,25 @@ export const getGenerateTestFromLessonsDataQuery = query({
         });
       }
     }
-    const lessonPdfJoins = await getLessonPdfJoinsByLessonIds(
+    const lessonMaterialsJoins = await getLessonMaterialsJoinsByLessonIds(
       ctx,
       normalizedLessonIds
     );
 
-    const pdfIds = [...new Set(lessonPdfJoins.map((lp) => lp.pdfId))];
+    const materialIds = [
+      ...new Set(lessonMaterialsJoins.map((lm) => lm.materialId)),
+    ];
 
-    const pdfs = await getPdfsByIds(ctx, pdfIds);
+    const materials = await getMaterialsByIds(ctx, materialIds);
 
-    const pdfsByLesson = sortPdfsByLessonJoins(
-      pdfs,
-      lessonPdfJoins,
+    const materialsByLesson = sortMaterialsByLessonJoins(
+      materials,
+      lessonMaterialsJoins,
       normalizedLessonIds
     );
 
     const canGenerateTest = await hasPermission(ctx, userId, "tests", "create");
 
-    return { pdfsByLesson, canGenerateTest };
+    return { materialsByLesson, canGenerateTest };
   },
 });

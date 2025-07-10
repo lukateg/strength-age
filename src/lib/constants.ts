@@ -1,3 +1,6 @@
+import { LIMITATIONS } from "./limitations";
+import { formatTokenUsageNumber } from "./utils";
+
 export interface SubscriptionPlan {
   id: string;
   name: string;
@@ -23,23 +26,16 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     title: "Free",
     description: "Perfect for individuals just getting started",
     price: "Free",
-    // yearlyPrice: 0,
     buttonText: "Use for Free",
     features: [
-      "1 class with up to 3 lessons per class",
-      "Up to 50 MB of study materials",
-      "Generate up to 3 tests total",
-      "Maximum of 3 active tests",
-      "Each test can use up to 30 pages of input",
+      `Create up to ${LIMITATIONS.free.classes} classes`,
+      `Up to ${Math.round(LIMITATIONS.free.materials / (1024 * 1024))} MB of study materials`,
+      `${formatTokenUsageNumber(LIMITATIONS.free.tokens)} tokens for test generation monthly`,
       "Share test results through read-only links",
     ],
     popular: false,
     isPopular: true,
     priceId: "free",
-    // stripePriceIds: {
-    //   monthly: "free",
-    //   yearly: "free",
-    // },
   },
   {
     id: "starter",
@@ -50,12 +46,11 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     // yearlyPrice: 76, // 7 * 12 * 0.9 (10% discount)
     buttonText: "Switch to Starter",
     features: [
-      "Up to 3 classes with 10 lessons each",
-      "Up to 250 MB of study materials",
-      "Generate up to 20 tests per month",
-      "Up to 10 active tests at any time",
-      "Each test can use up to 50 pages of input",
-      "Test results can be shared and taken by others",
+      `Create up to ${LIMITATIONS.starter.classes} classes`,
+      `Up to ${Math.round(LIMITATIONS.starter.materials / (1024 * 1024))} MB of study materials`,
+      `${formatTokenUsageNumber(LIMITATIONS.starter.tokens)} tokens for test generation monthly`,
+      "Share test results through read-only links",
+      "Let other people take your tests",
     ],
     popular: true,
     isPopular: true,
@@ -70,13 +65,12 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     // yearlyPrice: 162, // 15 * 12 * 0.9 (10% discount)
     buttonText: "Switch to Pro",
     features: [
-      "5 or more classes with up to 20 lessons each",
-      "500 MB or more of study materials",
-      "Generate unlimited tests",
-      "Up to 30 active tests at a time",
-      "Each test can use up to 100 pages of input",
-      "Collaborative classes with shared materials",
-      "Collaborative editing of test results",
+      `Create up to ${LIMITATIONS.pro.classes} classes`,
+      `Up to ${Math.round(LIMITATIONS.pro.materials / (1024 * 1024))} MB of study materials`,
+      `${formatTokenUsageNumber(LIMITATIONS.pro.tokens)} tokens for test generation monthly`,
+      "Share test results through read-only links",
+      "Let other people take your tests",
+      // "Collaborative classes with shared materials",
     ],
     popular: false,
     isPopular: false,

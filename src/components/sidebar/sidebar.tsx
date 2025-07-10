@@ -8,12 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Layout, MessageCircle } from "lucide-react";
 import { NAVIGATION } from "./constants";
 import FeedbackModal from "@/components/feedback-modal";
-// import { useLoadingContext } from "@/providers/loading-context";
 
 const Sidebar = () => {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  // const { setLoading } = useLoadingContext();
 
   return (
     <aside
@@ -64,7 +62,7 @@ const Sidebar = () => {
         </ul>
       </nav>
 
-      <div className="p-4 mt-auto">
+      <div className="p-4 mt-auto space-y-2">
         <FeedbackModal
           trigger={
             <Button

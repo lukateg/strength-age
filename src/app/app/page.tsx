@@ -16,6 +16,7 @@ import WeekActivityWidget from "./components/week-activity-widget";
 import ActiveStreakWidget from "./components/active-streak-widget";
 import MostActiveClassWidget from "./components/most-active-class-widget";
 import DashboardSkeleton from "./components/dashboard-skeleton";
+import { Sparkles } from "lucide-react";
 
 export default function Dashboard() {
   const newDashboardData = useAuthenticatedQueryWithStatus(
@@ -40,15 +41,8 @@ export default function Dashboard() {
           stripeCustomer,
         } = data;
 
-        const subscriptionTierButton = getSubscriptionTierButton(
-          stripeCustomer?.priceId
-        );
-
-        console.log(stripeCustomer, ">>> stripeCustomer");
-        console.log(
-          getSubscriptionTierByStripeRecord(stripeCustomer),
-          ">>> subscriptionTier"
-        );
+        const subscriptionTier =
+          getSubscriptionTierByStripeRecord(stripeCustomer);
 
         return (
           <div className="container mx-auto p-6">
@@ -63,8 +57,8 @@ export default function Dashboard() {
               </div>
               <Button className="hidden md:flex ">
                 <div className="flex items-center gap-2">
-                  <subscriptionTierButton.icon className="h-4 w-4" />
-                  <span>{`${subscriptionTierButton.name} tier`}</span>
+                  <Sparkles className="h-4 w-4" />
+                  <span>{`${subscriptionTier.charAt(0).toUpperCase() + subscriptionTier.slice(1)} tier`}</span>
                 </div>
               </Button>
             </div>

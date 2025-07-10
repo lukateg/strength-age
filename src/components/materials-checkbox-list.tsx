@@ -5,10 +5,10 @@ import { type Id, type Doc } from "convex/_generated/dataModel";
 import { type CheckedState } from "@radix-ui/react-checkbox";
 
 interface MaterialsCheckboxListProps {
-  allMaterials?: Doc<"pdfs">[] | null;
-  selectedMaterials: Id<"pdfs">[];
-  onChange: (value: Id<"pdfs">[]) => void;
-  shouldDisableItem?: (pdf: Doc<"pdfs">) => boolean;
+  allMaterials?: Doc<"materials">[] | null;
+  selectedMaterials: Id<"materials">[];
+  onChange: (value: Id<"materials">[]) => void;
+  shouldDisableItem?: (material: Doc<"materials">) => boolean;
 }
 
 export default function MaterialsCheckboxList({
@@ -17,25 +17,30 @@ export default function MaterialsCheckboxList({
   onChange,
   shouldDisableItem,
 }: MaterialsCheckboxListProps) {
-  const toggleCheckedMaterial = (checked: CheckedState, pdfId: Id<"pdfs">) => {
+  const toggleCheckedMaterial = (
+    checked: CheckedState,
+    materialId: Id<"materials">
+  ) => {
     return checked
-      ? onChange([...selectedMaterials, pdfId])
-      : onChange(selectedMaterials?.filter((value) => value !== pdfId));
+      ? onChange([...selectedMaterials, materialId])
+      : onChange(selectedMaterials?.filter((value) => value !== materialId));
   };
 
   return (
     <ItemsScrollArea>
-      {allMaterials?.map((pdf) => (
+      {allMaterials?.map((material) => (
         <CheckboxListItem
-          key={pdf._id}
-          checked={selectedMaterials?.includes(pdf._id)}
-          onCheckedChange={(checked) => toggleCheckedMaterial(checked, pdf._id)}
-          disabled={shouldDisableItem?.(pdf)}
+          key={material._id}
+          checked={selectedMaterials?.includes(material._id)}
+          onCheckedChange={(checked) =>
+            toggleCheckedMaterial(checked, material._id)
+          }
+          disabled={shouldDisableItem?.(material)}
         >
           <div>
-            <p className="font-xs">{pdf.name}</p>
+            <p className="font-xs">{material.name}</p>
             <p className="text-xs text-muted-foreground">
-              {(pdf.size / 1024 / 1024).toFixed(2)} MB
+              {(material.size / 1024 / 1024).toFixed(2)} MB
             </p>
           </div>
         </CheckboxListItem>

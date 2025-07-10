@@ -6,7 +6,8 @@ import {
   calculateProportionalQuestionsPerLesson,
   shuffleArray,
   generateQuizForLesson,
-  convertManyPdfsToText,
+  convertManyMaterialsToText,
+  type MaterialWithMeta,
 } from "../generate-test-utils";
 
 import { type NextRequest } from "next/server";
@@ -49,7 +50,7 @@ export async function POST(req: NextRequest) {
     // Authenticate request
     const token = await getConvexToken();
 
-    const { pdfsByLesson, canGenerateTest } = await fetchQuery(
+    const { materialsByLesson, canGenerateTest } = await fetchQuery(
       api.tests.getGenerateTestFromLessonsDataQuery,
       { lessonIds },
       { token }
@@ -62,10 +63,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const extractedTexts = await convertManyPdfsToText(pdfsByLesson);
+    const extractedTexts = await convertManyMaterialsToText(
+      materialsByLesson as MaterialWithMeta[][]
+    );
     if (!extractedTexts.length) {
       return Response.json(
-        { error: "Failed to extract text from PDFs" },
+        { error: "Failed to extract text from materials" },
         { status: 500 }
       );
     }
@@ -81,7 +84,7 @@ export async function POST(req: NextRequest) {
 
     if (!filteredTexts.length) {
       return Response.json(
-        { error: "No valid text content found in PDFs" },
+        { error: "No valid text content found in materials" },
         { status: 500 }
       );
     }

@@ -6,7 +6,10 @@ import { createAppError } from "convex/utils";
 import { v } from "convex/values";
 
 import { getLessonsByClass } from "../models/lessonsModel";
-import { getPdfsByClass, getTotalStorageUsage } from "../models/materialsModel";
+import {
+  getMaterialsByClass,
+  getTotalStorageUsage,
+} from "../models/materialsModel";
 import { getTestsByClass } from "../models/testsModel";
 import { getTestReviewsByClass } from "../models/testReviewsModel";
 
@@ -35,7 +38,7 @@ export const getClassPageData = query({
     }
 
     const lessons = await getLessonsByClass(ctx, normalizedId);
-    const materials = await getPdfsByClass(ctx, normalizedId);
+    const materials = await getMaterialsByClass(ctx, normalizedId);
     const tests = await getTestsByClass(ctx, normalizedId);
     const testReviews = await getTestReviewsByClass(ctx, normalizedId);
     const totalStorageUsage = await getTotalStorageUsage(ctx, userId);

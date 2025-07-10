@@ -96,7 +96,7 @@ export const deleteClass = async (
 export const runDeleteClassDataBatch = async (
   ctx: GenericMutationCtx<DataModel>,
   classId: Id<"classes">,
-  phase: "lessons" | "pdfs" | "lessonPdfs" | "tests" | "testReviews",
+  phase: "lessons" | "materials" | "lessonMaterials" | "tests" | "testReviews",
   userId: string,
   cursor?: string
 ) => {

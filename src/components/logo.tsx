@@ -7,8 +7,13 @@ export default function Logo() {
       href="/app"
       className="flex items-center justify-start space-x-3 md:flex-none flex-1 group"
     >
+      {/* Beta Label */}
+
       {/* Logo Icon Container */}
       <div className="relative">
+        <div className="absolute top-0 -right-[155px] bg-gradient-to-r from-accent to-primary text-white text-xs px-1.5 py-0.5 rounded-full font-medium shadow-sm opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+          beta
+        </div>
         {/* Main Logo Circle with Gradient */}
         <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-accent to-purple-600 p-0.5 shadow-lg shadow-primary/25 group-hover:shadow-primary/40 transition-all duration-300">
           <div className="w-full h-full rounded-xl bg-card flex items-center justify-center group-hover:bg-card/90 transition-all duration-300">

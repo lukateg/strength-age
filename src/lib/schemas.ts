@@ -58,9 +58,9 @@ export const addLessonMaterialsSchema = (showExistingMaterials: boolean) =>
     lessonId: z.custom<Id<"lessons">>(),
     materialsToAdd: showExistingMaterials
       ? z
-          .array(z.custom<Id<"pdfs">>())
+          .array(z.custom<Id<"materials">>())
           .min(1, "Please select at least one material")
-      : z.array(z.custom<Id<"pdfs">>()),
+      : z.array(z.custom<Id<"materials">>()),
     materialsToUpload: !showExistingMaterials
       ? z.array(z.instanceof(File)).min(1, "Please upload at least one file")
       : z.array(z.instanceof(File)),
@@ -76,7 +76,7 @@ export const createLessonSchema = z.object({
     .max(200, "Lesson description cannot be longer than 200 characters")
     .optional(),
   materialsToUpload: z.array(z.instanceof(File)),
-  materialsToAdd: z.array(z.custom<Id<"pdfs">>()),
+  materialsToAdd: z.array(z.custom<Id<"materials">>()),
   showExistingMaterials: z.boolean(),
 });
 

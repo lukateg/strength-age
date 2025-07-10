@@ -3,7 +3,7 @@ import { query } from "../_generated/server";
 import { AuthenticationRequired, createAppError } from "convex/utils";
 import { hasPermission } from "convex/models/permissionsModel";
 import { getLessonById } from "../models/lessonsModel";
-import { getPdfsByLesson } from "../models/materialsModel";
+import { getMaterialsByLesson } from "../models/materialsModel";
 
 export const getLessonPageData = query({
   args: { lessonId: v.string() },
@@ -18,7 +18,7 @@ export const getLessonPageData = query({
       });
     }
 
-    const materials = await getPdfsByLesson(ctx, normalizedId);
+    const materials = await getMaterialsByLesson(ctx, normalizedId);
     const lesson = await getLessonById(ctx, normalizedId);
 
     if (!lesson) {

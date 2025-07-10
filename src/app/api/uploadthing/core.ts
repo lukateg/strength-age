@@ -10,12 +10,16 @@ const f = createUploadthing();
 // FileRouter for your app, can contain multiple FileRoutes
 export const pdfFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
-  pdfUploader: f({
+  materialUploader: f({
     pdf: {
       /**
        * For full list of options and defaults, see the File Route API reference
        * @see https://docs.uploadthing.com/file-routes#route-config
        */
+      maxFileSize: "16MB",
+      maxFileCount: 10,
+    },
+    text: {
       maxFileSize: "16MB",
       maxFileCount: 10,
     },
@@ -55,29 +59,33 @@ export const pdfFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       try {
-        const pdfId = await fetchMutation(
-          api.materials.addPdfMutation,
+        const materialId = await fetchMutation(
+          api.materials.addMaterialMutation,
           {
             classId: metadata.classId,
-            pdf: { fileUrl: file.ufsUrl, name: file.name, size: file.size },
+            material: {
+              fileUrl: file.ufsUrl,
+              name: file.name,
+              size: file.size,
+            },
           },
           { token: metadata.token }
         );
 
         if (metadata.lessonId) {
           await fetchMutation(
-            api.lessons.addPdfToLessonMutation,
+            api.lessons.addMaterialToLessonMutation,
             {
               lessonId: metadata.lessonId,
-              pdfId,
+              materialId,
               classId: metadata.classId,
             },
             { token: metadata.token }
           );
         }
       } catch (error) {
-        console.error("Error adding PDF", error);
-        throw new ConvexError({ message: "Error when adding PDF." });
+        console.error("Error adding material", error);
+        throw new ConvexError({ message: "Error when adding material." });
       }
     }),
 } satisfies FileRouter;

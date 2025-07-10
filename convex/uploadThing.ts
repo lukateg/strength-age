@@ -11,9 +11,12 @@ const utapi = new UTApi();
 export const deleteFileFromUploadThing = internalAction({
   args: {
     pdf: v.object({
+      createdBy: v.string(),
+      classId: v.string(),
       fileUrl: v.string(),
       name: v.string(),
       size: v.number(),
+      fileType: v.union(v.literal("pdf"), v.literal("txt")),
       _creationTime: v.number(),
       _id: v.string(),
     }),
@@ -27,7 +30,10 @@ export const deleteFileFromUploadThing = internalAction({
       });
     }
     try {
+      console.log("File deleted from UploadThing", fileKey);
+
       await utapi.deleteFiles(fileKey);
+      console.log("SUCCESS", fileKey);
 
       return { success: true };
     } catch (error) {

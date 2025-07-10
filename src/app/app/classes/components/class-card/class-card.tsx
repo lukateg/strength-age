@@ -40,8 +40,8 @@ export default function ClassCard({
 
       <CardContent>
         <div className="flex justify-between text-sm text-muted-foreground mb-4">
-          <span>15 Materials</span>
-          <span>7 Tests</span>
+          <span>{classItem.materialCount} Materials</span>
+          <span>{classItem.testCount} Tests</span>
         </div>
         <div className="flex gap-2">
           <Link href={`/app/classes/${classItem._id}`}>

@@ -13,36 +13,33 @@ check before launch:
 TESTING:
 -- test prompt splitting and large loads
 
-BUGS
-- open class from dashboard and redirect back leads you to classes instead of a dashboard
-CAN'T REPRODUCE
+FUTURE BUGS:
+-- remove async from permissions to make them faster
+-- make table responsive
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
--- creating test from multiple lessons and setting the equal question per lesson returns just questions for one lesson
--- still have some bad redirects on class and test review
--- sign out displays some weird loader
--- implement permission check fix
--- add delete test from test preview
+-- still have some bad redirects on class and test review(open class from dashboard and redirect back leads you to classes instead of a dashboard)
+BUGS
+-- check all skeletons on mobile (they don't work even on full screens)
+-- fix prompting and short answer ai review, maybe add instructions why is answer wrong
+-- fix loader
 
 PLAN:
--- write down terms and conditions, privacy policy and documentation(mintlify)
--- check payment of the ai, do you need to upgrade and everything
-// add ai usage to the dashboard of posthog
-// set a rate limit for total money spent on the model
-// set error handling when token teach-me subscription for all limit is out
--- add feedback received, working on it email message
--- Add analytics
--- implement AI cost monitoring setup
+-- fix bugs
 -- SEO check
--- check free tier plan and work out permisions and free plan for max classes, lessons, pdfs in mb, tests and ai token calls
--- in bottom left corner in menu button should be "quick start" that redirects to a quick demo and instructions about the app usage and release notes that follows versions and updates
+-- add ai pricing per model by input and output to the dashboard of posthog
+-- test with new user
 -- load testing
--- check if you need terms and conditions
--- check payment subscription to gemini, will it upgrade automatically and everything needed
 -- release to prod
--- wait for the analytics results and think about the compex permisions and test sharing and start sprint 2
--- if test is deleted retry button on testReview page should be disabled
+-- remove tests3/3 and so on
+-- fix structure of the test generating functions
+
 
 FUTURE FEATURES AND ENHANCMENTS:
+-- add delete test from test preview
+-- set error handling when token teach-me subscription for all limit is out
+-- write down terms and conditions, privacy policy and documentation(mintlify)
+-- add feedback received, working on it email message
+-- add "..." on the test page and then delete, export to JSON, export to whatever
 -- remove all async logic from abacSchema so you fetch it only once in the page and pass it to the schema
 -- add feedback review page
 -- write a bit better confirm test modal text

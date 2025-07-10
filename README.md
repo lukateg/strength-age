@@ -19,10 +19,9 @@ FUTURE BUGS:
 -- redirect after test creation still doesn't work properly(test with multiple lessons)
 -- still have some bad redirects on class and test review(open class from dashboard and redirect back leads you to classes instead of a dashboard)
 BUGS
--- check all skeletons on mobile
+-- check all skeletons on mobile (they don't work even on full screens)
 -- fix prompting and short answer ai review, maybe add instructions why is answer wrong
 -- fix loader
--- fix monthly tokens used on tests page
 
 PLAN:
 -- fix bugs

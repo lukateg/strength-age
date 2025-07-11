@@ -23,7 +23,7 @@ export default function HeroSection() {
               size="lg"
               className="text-lg px-8 bg-primary hover:bg-primary/90"
             >
-              <Link href="/app/app">Get Started Free</Link>
+              <Link href="/app">Get Started Free</Link>
             </Button>
             <Button
               size="lg"

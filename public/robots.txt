@@ -1,0 +1,17 @@
+User-agent: *
+
+# Allow crawling of public pages
+Allow: /
+Allow: /api/webhooks/
+
+# Disallow all protected app pages (requires authentication)
+Disallow: /app/
+Disallow: /app/*
+
+# Disallow API routes that don't need to be indexed
+Disallow: /api/
+Disallow: /_next/
+Disallow: /ingest/
+
+# Allow sitemap if you create one in the future
+# Sitemap: https://yourdomain.com/sitemap.xml 

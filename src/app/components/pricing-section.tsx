@@ -12,18 +12,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Check, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useFeatureFlagEnabled } from "posthog-js/react";
-import { FeatureFlags, validateFeatureFlag } from "@/lib/feature-flags";
+import { FeatureFlags, isFeatureFlagEnabled } from "@/lib/feature-flags";
 import { cn } from "@/lib/utils";
 
 export default function PricingSection() {
   const router = useRouter();
-  const isBetaFeatureEnabled = useFeatureFlagEnabled(FeatureFlags.BETA_FEATURE);
-
-  // Validate and gate flag-dependent code
-  const shouldDisablePaidPlans =
-    validateFeatureFlag(FeatureFlags.BETA_FEATURE) &&
-    isBetaFeatureEnabled === true;
+  const shouldDisablePaidPlans = !isFeatureFlagEnabled(
+    FeatureFlags.SUBSCRIPTIONS
+  );
 
   const handleSubscription = (priceId: string, isDisabled: boolean) => {
     if (isDisabled) return;

@@ -23,6 +23,11 @@ BUGS
 -- fix prompting and short answer ai review, maybe add instructions why is answer wrong
 -- fix loader
 
+----TODO
+-- fix bugs in console of the prod app
+-- fix active menu item
+-- create dev branch and hook it up to netlify, prod from main should be vercel
+
 PLAN:
 -- fix bugs
 -- SEO check

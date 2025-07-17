@@ -18,7 +18,7 @@ export default function BillingInformationCard({
   isCanceling,
   hasSubscription,
 }: {
-  stripeCustomer?: Doc<"stripeCustomers">;
+  stripeCustomer?: Doc<"stripeCustomers"> | null;
   isActive: boolean;
   isCanceled: boolean;
   isCanceling: boolean;

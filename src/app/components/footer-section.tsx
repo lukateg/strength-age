@@ -60,7 +60,7 @@ export default function FooterSection() {
           </div>
 
           {/* Support */}
-          <div>
+          {/* <div>
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
@@ -88,7 +88,7 @@ export default function FooterSection() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center">

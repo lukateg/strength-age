@@ -6,19 +6,6 @@ import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import { useAuth, useUser } from "@clerk/nextjs";
 
-if (typeof window !== "undefined") {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    api_host: "/retrack0_data",
-    ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-    // api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-    capture_pageview: false, // Disable automatic pageview capture, as we capture manually
-    debug: false, // Disable all PostHog debug logging
-    loaded: (posthog) => {
-      posthog.debug(false);
-    },
-  });
-}
-
 // Component to handle page event tracking
 function PostHogPageTracker() {
   const pathname = usePathname();

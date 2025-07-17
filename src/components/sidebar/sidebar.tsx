@@ -13,6 +13,16 @@ const Sidebar = () => {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  // Helper function to check if a navigation item is active
+  // const isActive = (href: string) => {
+  //   // Handle the root path case where middleware rewrites / to /app
+  //   if (href === "/app" && (pathname === "/" || pathname === "/app")) {
+  //     return true;
+  //   }
+  //   // For other paths, check if pathname starts with href (for nested routes)
+  //   return pathname === href || pathname.startsWith(href + "/");
+  // };
+
   return (
     <aside
       className={cn("h-screen border-r pt-16 overflow-hidden flex flex-col")}
@@ -29,13 +39,12 @@ const Sidebar = () => {
 
       <nav
         className={cn(
-          "flex flex-col justify-between px-4 transition-[width] duration-200 ease-in-out",
-          isCollapsed ? "w-[75px]" : "w-[220px]"
+          "flex flex-col justify-between px-4 transition-[width] duration-100 ease-in-out",
+          isCollapsed ? "w-[73px]" : "w-[220px]"
         )}
       >
         <ul className="flex h-full grow flex-col gap-3 overflow-hidden py-2">
           {NAVIGATION.map((item) => {
-            // console.log(pathname === item.href, "[pathname === item.href]");
             return (
               <li key={item.name}>
                 <Link
@@ -62,11 +71,16 @@ const Sidebar = () => {
         </ul>
       </nav>
 
-      <div className="p-4 mt-auto space-y-2">
+      <div
+        className={cn(
+          "p-4 mt-auto space-y-2 transition-all duration-100 ease-in-out",
+          isCollapsed ? "w-[73px]" : "w-[220px]"
+        )}
+      >
         <FeedbackModal
           trigger={
             <Button
-              className="w-full"
+              className="w-full overflow-hidden whitespace-nowrap"
               size={isCollapsed ? "icon" : "default"}
               variant="outline"
             >

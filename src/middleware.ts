@@ -11,7 +11,7 @@ export default clerkMiddleware(async (auth, req) => {
     const url = req.nextUrl.clone();
     url.pathname = "/app";
 
-    return NextResponse.rewrite(url);
+    return NextResponse.redirect(url);
   }
 
   if (!userId && protectedRoute(req)) {

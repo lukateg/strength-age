@@ -10,8 +10,7 @@ import {
 import { SUBSCRIPTION_PLANS } from "@/lib/constants";
 import { SubscriptionCard } from "@/app/app/settings/components/subscription-card";
 import { useStripe } from "@/hooks/use-stripe";
-import { useFeatureFlagEnabled } from "posthog-js/react";
-import { FeatureFlags, validateFeatureFlag } from "@/lib/feature-flags";
+import { FeatureFlags, isFeatureFlagEnabled } from "@/lib/feature-flags";
 
 export default function CurrentPlanCard({
   currentPlan,
@@ -21,12 +20,9 @@ export default function CurrentPlanCard({
   isActive: boolean;
 }) {
   const { handlePlanChangeAction } = useStripe();
-  const isBetaFeatureEnabled = useFeatureFlagEnabled(FeatureFlags.BETA_FEATURE);
-
-  // Validate and gate flag-dependent code
-  const shouldDisablePaidPlans =
-    validateFeatureFlag(FeatureFlags.BETA_FEATURE) &&
-    isBetaFeatureEnabled === true;
+  const shouldDisablePaidPlans = !isFeatureFlagEnabled(
+    FeatureFlags.SUBSCRIPTIONS
+  );
 
   return (
     <Card>

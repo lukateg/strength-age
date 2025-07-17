@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Flame } from "lucide-react";
 
-export default function DashboardStreak({ streak }: { streak: number }) {
+export default function ActiveStreakWidget({ streak }: { streak: number }) {
   return (
     <Card>
       <CardHeader>

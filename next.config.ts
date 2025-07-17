@@ -12,15 +12,15 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/ingest/static/:path*",
+        source: "/retrack0_data/static/:path*",
         destination: "https://eu-assets.i.posthog.com/static/:path*",
       },
       {
-        source: "/ingest/:path*",
+        source: "/retrack0_data/:path*",
         destination: "https://eu.i.posthog.com/:path*",
       },
       {
-        source: "/ingest/decide",
+        source: "/retrack0_data/decide",
         destination: "https://eu.i.posthog.com/decide",
       },
     ];

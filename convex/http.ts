@@ -5,7 +5,6 @@ import { internal } from "./_generated/api";
 import type { WebhookEvent } from "@clerk/backend";
 
 import { Webhook } from "svix";
-import { AuthenticationRequired } from "./utils";
 
 const http = httpRouter();
 
@@ -13,8 +12,6 @@ http.route({
   path: "/clerk-users-webhook",
   method: "POST",
   handler: httpAction(async (ctx, request) => {
-    await AuthenticationRequired({ ctx });
-
     const event = await validateRequest(request);
     if (!event) {
       return new Response("Error occured", { status: 400 });

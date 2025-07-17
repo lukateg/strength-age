@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // PostHog rewrites to proxy ingest requests
   async rewrites() {
     return [
       {

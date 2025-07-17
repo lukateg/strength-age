@@ -9,7 +9,6 @@ const nextConfig = {
   serverRuntimeConfig: {
     geminiApiKey: process.env.GEMINI_API_KEY,
   },
-  // PostHog rewrites to proxy ingest requests
   async rewrites() {
     return [
       {

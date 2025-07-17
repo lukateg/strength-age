@@ -8,7 +8,8 @@ import { useAuth, useUser } from "@clerk/nextjs";
 
 if (typeof window !== "undefined") {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    api_host: "https://teach-me-app.netlify.app",
+    // api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     capture_pageview: false, // Disable automatic pageview capture, as we capture manually
     debug: false, // Disable all PostHog debug logging
     loaded: (posthog) => {

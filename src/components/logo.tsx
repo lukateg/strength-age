@@ -6,6 +6,7 @@ export default function Logo() {
     <Link
       href="/app"
       className="flex items-center justify-start space-x-3 md:flex-none flex-1 group"
+      prefetch={false}
     >
       {/* Beta Label */}
 

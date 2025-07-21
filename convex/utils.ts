@@ -50,6 +50,7 @@ export async function AuthenticationRequired({
   ctx: QueryCtx | MutationCtx | ActionCtx;
 }) {
   const identity = await ctx.auth.getUserIdentity();
+
   if (identity === null) {
     throw createAppError({
       message: "Not authenticated!",

@@ -5,8 +5,9 @@ const protectedRoute = createRouteMatcher(["/app(.*)"]);
 const publicRoute = createRouteMatcher(["/"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  const { userId, redirectToSignIn } = await auth();
-
+  const { userId, redirectToSignIn, getToken } = await auth();
+  const jwt = await getToken({ template: "convex" }); // Or omit for default
+  console.log(jwt, "[>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>jwt]");
   if (userId && publicRoute(req)) {
     const url = req.nextUrl.clone();
     url.pathname = "/app";

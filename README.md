@@ -24,8 +24,7 @@ BUGS
 -- fix loader
 
 ----TODO
--- fix bugs in console of the prod app
--- fix active menu item
+-- fix deloyed with  clerk dev keys
 -- create dev branch and hook it up to netlify, prod from main should be vercel
 
 PLAN:

@@ -1,7 +1,7 @@
 export default {
   providers: [
     {
-      domain: "https://still-civet-29.clerk.accounts.dev",
+      domain: process.env.NEXT_PUBLIC_CLERK_FRONTEND_API_URL,
       applicationID: "convex",
     },
   ],

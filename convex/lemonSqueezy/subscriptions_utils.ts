@@ -48,6 +48,7 @@ export const parseWebhookData = (payload: string) => {
       custom_data?: {
         user_id: Id<"users">;
         variant_id?: string;
+        clerk_id?: string;
       };
     };
   };
@@ -58,6 +59,7 @@ export const parseWebhookData = (payload: string) => {
         event_name: string;
         custom_data?: {
           user_id: Id<"users">;
+          clerk_id?: string;
           variant_id?: string;
         };
       };
@@ -97,6 +99,7 @@ export const parseWebhookData = (payload: string) => {
 
 export const createSubscriptionData = ({
   userId,
+  clerkId,
   customerId,
   variantId,
   status,
@@ -108,6 +111,7 @@ export const createSubscriptionData = ({
 }: {
   // rewrite this payload
   userId: Id<"users">;
+  clerkId: string;
   customerId: number;
   variantId?: number;
   status?: string;
@@ -125,6 +129,7 @@ export const createSubscriptionData = ({
 
   return {
     userId,
+    clerkId,
     customerId,
     status: status ?? "unknown",
     variantId: variantId,
@@ -148,6 +153,7 @@ export const extractWebhookRequiredFields = (webhookData: {
   meta: {
     custom_data?: {
       user_id: Id<"users">;
+      clerk_id?: string;
       variant_id?: string;
     };
   };
@@ -157,6 +163,7 @@ export const extractWebhookRequiredFields = (webhookData: {
       success: true;
       data: {
         userId: Id<"users">;
+        clerkId: string;
         customerId: number;
         subscriptionId: string;
         variantId: number;
@@ -173,6 +180,15 @@ export const extractWebhookRequiredFields = (webhookData: {
       success: false,
       error: "No user ID in webhook data",
       message: "No user ID in webhook data",
+    };
+  }
+
+  const clerkId = webhookData.meta.custom_data?.clerk_id;
+  if (!clerkId) {
+    return {
+      success: false,
+      error: "No clerk ID in webhook data",
+      message: "No clerk ID in webhook data",
     };
   }
 
@@ -253,6 +269,7 @@ export const extractWebhookRequiredFields = (webhookData: {
     data: {
       userId,
       customerId,
+      clerkId,
       subscriptionId,
       variantId,
       status,
@@ -266,10 +283,12 @@ export const extractWebhookRequiredFields = (webhookData: {
 
 export const generateCheckoutPayload = ({
   userId,
+  clerkId,
   variantId,
   embed,
 }: {
   userId: Id<"users">;
+  clerkId: string;
   variantId: number;
   embed: boolean;
 }) => {
@@ -282,6 +301,7 @@ export const generateCheckoutPayload = ({
     checkoutData: {
       custom: {
         user_id: userId,
+        clerk_id: clerkId,
         variant_id: String(variantId),
       },
     },
@@ -297,7 +317,7 @@ export const checkIfSubscribingToSamePlan = ({
   existingCustomer,
   variantId,
 }: {
-  existingCustomer: Doc<"lemonSqueezyCustomers">;
+  existingCustomer?: Doc<"lemonSqueezyCustomers">;
   variantId: number;
 }) => {
   const activeStatuses = ["active", "on_trial", "paused"];

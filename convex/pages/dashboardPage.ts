@@ -20,7 +20,7 @@ import { type QueryCtx } from "../_generated/server";
 
 import { type Doc, type Id } from "../_generated/dataModel";
 import { getMonthlyUsageRecord } from "../models/tokensModel";
-import { stripeCustomerByUserId } from "convex/models/stripeModel";
+import { getCustomerByUserId } from "convex/models/lemonModel";
 
 export interface ClassWithPermissions extends Doc<"classes"> {
   canDeleteClass: boolean;
@@ -274,7 +274,7 @@ export const getNewDashboardData = query({
       allLessons,
       monthlyRecord,
       totalStorageUsage,
-      stripeCustomer,
+      customer,
     ] = await Promise.all([
       getClassesByUser(ctx, userId),
       getTestsByUser(ctx, userId),
@@ -282,7 +282,7 @@ export const getNewDashboardData = query({
       getLessonsByUser(ctx, userId),
       getMonthlyUsageRecord(ctx, userId),
       getTotalStorageUsage(ctx, userId),
-      stripeCustomerByUserId(ctx, userId),
+      getCustomerByUserId(ctx, userId),
     ]);
 
     const allActivity = [
@@ -300,7 +300,7 @@ export const getNewDashboardData = query({
     ]);
 
     return {
-      stripeCustomer,
+      customer,
       totalClasses: allClasses.length,
       totalTests: allTests.length,
       totalTestReviews: allTestReviews.length,

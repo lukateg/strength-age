@@ -47,23 +47,12 @@ export const formatBytesToMB = (bytes: number): number => {
 };
 
 export const getSubscriptionTierByStripeRecord = (
-  stripeRecord?: Doc<"stripeCustomers"> | null
+  customer?: Doc<"lemonSqueezyCustomers"> | null
 ) => {
-  if (!stripeRecord || stripeRecord.status === "canceled") {
+  if (!customer || customer.status === "canceled") {
     return "free";
   }
-  if (stripeRecord.priceId === "free") {
-    return "free";
-  }
-  if (
-    stripeRecord.priceId === process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID
-  ) {
-    return "starter";
-  }
-  if (stripeRecord.priceId === process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID) {
-    return "pro";
-  }
-  return "free";
+  return customer.subscriptionTier ?? "free";
 };
 
 export const getSubscriptionNameByPriceId = (

@@ -10,7 +10,6 @@ import {
 import { type Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
 import { AuthenticationRequired, createAppError } from "./utils";
-import { hasPermission } from "./models/permissionsModel";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   console.error("Missing STRIPE_SECRET_KEY environment variable");

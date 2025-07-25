@@ -6,7 +6,7 @@ import { getTestsWithPermissions } from "convex/models/testsModel";
 import { getTestReviewsWithPermissions } from "convex/models/testReviewsModel";
 import { type Doc, type Id } from "convex/_generated/dataModel";
 import { getMonthlyUsageRecord } from "convex/models/tokensModel";
-import { stripeCustomerByUserId } from "convex/models/stripeModel";
+import { getCustomerByUserId } from "convex/models/lemonModel";
 
 export interface TestWithPermissions extends Doc<"tests"> {
   canDelete: boolean;
@@ -44,7 +44,7 @@ export interface NewTestsPageData {
     canGenerateTest: boolean;
   };
   tokensUsedThisMonth: number;
-  stripeCustomer: Doc<"stripeCustomers"> | null;
+  customer: Doc<"lemonSqueezyCustomers"> | null;
 }
 
 const getStartOfWeek = (date: Date) => {
@@ -71,13 +71,13 @@ export const getNewTestsPageData = query({
   handler: async (ctx): Promise<NewTestsPageData> => {
     const userId = await AuthenticationRequired({ ctx });
 
-    const [tests, monthlyRecord, testReviews, canGenerateTest, stripeCustomer] =
+    const [tests, monthlyRecord, testReviews, canGenerateTest, customer] =
       await Promise.all([
         getTestsWithPermissions(ctx, userId),
         getMonthlyUsageRecord(ctx, userId),
         getTestReviewsWithPermissions(ctx, userId),
         hasPermission<"tests">(ctx, userId, "tests", "create"),
-        stripeCustomerByUserId(ctx, userId),
+        getCustomerByUserId(ctx, userId),
       ]);
 
     // Most Active Test
@@ -149,7 +149,7 @@ export const getNewTestsPageData = query({
       permissions: {
         canGenerateTest,
       },
-      stripeCustomer,
+      customer,
     };
   },
 });

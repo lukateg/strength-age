@@ -41,6 +41,7 @@ export const createLemonSqueezyCustomer = async ({
   ctx: ActionCtx;
   data: {
     userId: Id<"users">;
+    clerkId: string;
     customerId: number;
     status: string;
     subscriptionId?: string;

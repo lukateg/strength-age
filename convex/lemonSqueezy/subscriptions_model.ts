@@ -6,15 +6,17 @@ export const syncLemonSqueezyDataToConvex = async ({
   ctx,
   userId,
   customerId,
+  clerkId,
 }: {
   ctx: ActionCtx;
   userId: Id<"users">;
   customerId: number;
+  clerkId: string;
 }) => {
   return await ctx.runAction(
     internal.lemonSqueezy.subscriptions
       .syncLemonSqueezyDataToConvexInternalAction,
-    { userId, customerId }
+    { userId, customerId, clerkId }
   );
 };
 
@@ -26,6 +28,7 @@ export const processWebhookSubscriptionData = async ({
   data: {
     userId: Id<"users">;
     customerId: number;
+    clerkId: string;
     subscriptionId?: string;
     status?: string;
     variantId?: number;
@@ -51,6 +54,7 @@ export const updateLemonSqueezyCustomerData = async ({
   data: {
     userId: Id<"users">;
     customerId: number;
+    clerkId: string;
     status: string;
     variantId?: number;
     subscriptionId?: string;

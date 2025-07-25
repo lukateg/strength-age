@@ -12,13 +12,13 @@ import { type Doc } from "../../../../../../convex/_generated/dataModel";
 import { AlertCircle } from "lucide-react";
 
 export default function BillingInformationCard({
-  stripeCustomer,
+  customer,
   isActive,
   isCanceled,
   isCanceling,
   hasSubscription,
 }: {
-  stripeCustomer?: Doc<"stripeCustomers"> | null;
+  customer?: Doc<"lemonSqueezyCustomers"> | null;
   isActive: boolean;
   isCanceled: boolean;
   isCanceling: boolean;
@@ -26,7 +26,7 @@ export default function BillingInformationCard({
 }) {
   // Show next billing date only if subscription is active and not canceling
   const shouldShowNextBilling =
-    isActive && !isCanceling && stripeCustomer?.currentPeriodEnd;
+    isActive && !isCanceling && customer?.currentPeriodEnd;
   return (
     <Card>
       <CardHeader>
@@ -45,31 +45,31 @@ export default function BillingInformationCard({
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium">Next billing date:</span>
               <span className="text-sm text-muted-foreground">
-                {new Date(
-                  stripeCustomer.currentPeriodEnd! * 1000
-                ).toLocaleDateString()}
+                {customer?.currentPeriodEnd
+                  ? new Date(customer.currentPeriodEnd).toLocaleDateString()
+                  : "N/A"}
               </span>
             </div>
           )}
 
-          {isCanceling && stripeCustomer?.currentPeriodEnd && (
+          {isCanceling && customer?.currentPeriodEnd && (
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium">Access until:</span>
               <span className="text-sm text-muted-foreground">
-                {new Date(
-                  stripeCustomer.currentPeriodEnd * 1000
-                ).toLocaleDateString()}
+                {customer?.currentPeriodEnd
+                  ? new Date(customer.currentPeriodEnd).toLocaleDateString()
+                  : "N/A"}
               </span>
             </div>
           )}
 
-          {isCanceled && stripeCustomer?.currentPeriodEnd && (
+          {isCanceled && customer?.currentPeriodEnd && (
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium">Canceled on:</span>
               <span className="text-sm text-muted-foreground">
-                {new Date(
-                  stripeCustomer.currentPeriodEnd * 1000
-                ).toLocaleDateString()}
+                {customer?.currentPeriodEnd
+                  ? new Date(customer.currentPeriodEnd).toLocaleDateString()
+                  : "N/A"}
               </span>
             </div>
           )}
@@ -77,8 +77,8 @@ export default function BillingInformationCard({
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Payment method:</span>
             <span className="text-sm text-muted-foreground">
-              {stripeCustomer?.paymentMethod?.last4
-                ? "•••• •••• •••• " + stripeCustomer.paymentMethod.last4
+              {customer?.paymentMethod?.last4
+                ? "•••• •••• •••• " + customer.paymentMethod.last4
                 : "N/A"}
             </span>
           </div>
@@ -86,8 +86,8 @@ export default function BillingInformationCard({
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Subscribed from:</span>
             <span className="text-sm text-muted-foreground">
-              {stripeCustomer?._creationTime
-                ? new Date(stripeCustomer._creationTime).toLocaleDateString()
+              {customer?._creationTime
+                ? new Date(customer._creationTime).toLocaleDateString()
                 : "N/A"}
             </span>
           </div>
@@ -98,7 +98,7 @@ export default function BillingInformationCard({
               <span className="text-sm text-muted-foreground">
                 {(() => {
                   const plan = SUBSCRIPTION_PLANS.find(
-                    (p) => p.priceId === stripeCustomer?.priceId
+                    (p) => p.priceId === customer?.variantId?.toString()
                   );
                   if (!plan) return "N/A";
                   return `$${plan.price}/month`;

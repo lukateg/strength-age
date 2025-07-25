@@ -49,9 +49,7 @@ export default function CurrentPlanCard({
                 {...plan}
                 onSelect={() => handleSelect(plan.priceId)}
                 isCurrent={currentPlan === plan.priceId && isActive}
-                isDisabled={
-                  (shouldDisablePaidPlans && plan.id !== "free") || isPending
-                }
+                isDisabled={shouldDisablePaidPlans && plan.id !== "free"}
               />
             ))}
           </div>

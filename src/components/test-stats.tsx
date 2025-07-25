@@ -22,7 +22,7 @@ type TestStatsProps = {
     trend: "higher" | "lower" | "same";
     percentageChange: number;
   };
-  stripeCustomer: Doc<"stripeCustomers"> | null;
+  customer: Doc<"lemonSqueezyCustomers"> | null;
 };
 
 export default function TestStats({
@@ -30,9 +30,9 @@ export default function TestStats({
   totalAttempts,
   tokensUsedThisMonth,
   weeklySuccess,
-  stripeCustomer,
+  customer,
 }: TestStatsProps) {
-  const subscriptionTier = getSubscriptionTierByStripeRecord(stripeCustomer);
+  const subscriptionTier = getSubscriptionTierByStripeRecord(customer);
   const tokensLimit = LIMITATIONS[subscriptionTier].tokens;
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 mb-8">

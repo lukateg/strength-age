@@ -38,11 +38,11 @@ export default function Dashboard() {
           mostActiveClass,
           tokensUsedThisMonth,
           totalStorageUsage,
-          stripeCustomer,
+          customer,
         } = data;
 
-        const subscriptionTier =
-          getSubscriptionTierByStripeRecord(stripeCustomer);
+        const subscriptionTier = getSubscriptionTierByStripeRecord(customer);
+        console.log(customer);
 
         return (
           <div className="container mx-auto p-6">
@@ -70,7 +70,7 @@ export default function Dashboard() {
                     totalTests={totalTests}
                     totalClasses={totalClasses}
                     subscriptionTier={getSubscriptionTierByStripeRecord(
-                      stripeCustomer
+                      customer
                     )}
                   />
                   <ActiveStreakWidget streak={streak} />
@@ -80,7 +80,7 @@ export default function Dashboard() {
                     totalStorageUsage={totalStorageUsage}
                     tokensUsedThisMonth={tokensUsedThisMonth}
                     subscriptionTier={getSubscriptionTierByStripeRecord(
-                      stripeCustomer
+                      customer
                     )}
                   />
                 </div>

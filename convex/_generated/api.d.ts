@@ -20,6 +20,7 @@ import type * as lemonSqueezy_subscriptions_utils from "../lemonSqueezy/subscrip
 import type * as lessons from "../lessons.js";
 import type * as materials from "../materials.js";
 import type * as models_classesModel from "../models/classesModel.js";
+import type * as models_lemonModel from "../models/lemonModel.js";
 import type * as models_lessonPdfsModel from "../models/lessonPdfsModel.js";
 import type * as models_lessonsModel from "../models/lessonsModel.js";
 import type * as models_materialsModel from "../models/materialsModel.js";
@@ -76,6 +77,7 @@ declare const fullApi: ApiFromModules<{
   lessons: typeof lessons;
   materials: typeof materials;
   "models/classesModel": typeof models_classesModel;
+  "models/lemonModel": typeof models_lemonModel;
   "models/lessonPdfsModel": typeof models_lessonPdfsModel;
   "models/lessonsModel": typeof models_lessonsModel;
   "models/materialsModel": typeof models_materialsModel;

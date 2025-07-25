@@ -40,6 +40,7 @@ export default defineSchema({
 
   lemonSqueezyCustomers: defineTable({
     userId: v.string(),
+    clerkId: v.string(),
     customerId: v.number(),
     variantId: v.optional(v.number()),
     subscriptionId: v.optional(v.string()),
@@ -58,6 +59,7 @@ export default defineSchema({
     ),
   })
     .index("by_userId", ["userId"])
+    .index("by_clerkId", ["clerkId"])
     .index("by_customerId", ["customerId"]),
 
   classes: defineTable({

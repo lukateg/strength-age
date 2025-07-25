@@ -75,6 +75,7 @@ export const handleSubscriptionWebhook = internalAction({
         ctx,
         userId: data.userId,
         customerId: data.customerId,
+        clerkId: data.clerkId,
       });
       if (!syncResult) {
         console.log(
@@ -106,6 +107,7 @@ export const handleSubscriptionWebhook = internalAction({
 export const processWebhookSubscription = internalAction({
   args: {
     userId: v.id("users"),
+    clerkId: v.string(),
     customerId: v.number(),
     subscriptionId: v.optional(v.string()),
     variantId: v.optional(v.number()),
@@ -119,6 +121,7 @@ export const processWebhookSubscription = internalAction({
     ctx,
     {
       userId,
+      clerkId,
       customerId,
       subscriptionId,
       variantId,
@@ -142,6 +145,7 @@ export const processWebhookSubscription = internalAction({
 
     const subscriptionData = createSubscriptionData({
       userId: user._id,
+      clerkId,
       customerId,
       variantId,
       status,
@@ -168,8 +172,8 @@ export const processWebhookSubscription = internalAction({
 
 // Sync subscription data from Lemon Squeezy API
 export const syncLemonSqueezyDataToConvexInternalAction = internalAction({
-  args: { userId: v.id("users"), customerId: v.number() },
-  handler: async (ctx, { userId, customerId }) => {
+  args: { userId: v.id("users"), customerId: v.number(), clerkId: v.string() },
+  handler: async (ctx, { userId, customerId, clerkId }) => {
     configureLemonSqueezy();
 
     // Check if user exists in our database first
@@ -180,6 +184,7 @@ export const syncLemonSqueezyDataToConvexInternalAction = internalAction({
         {
           userId,
           customerId,
+          clerkId,
         }
       );
       return null;
@@ -220,6 +225,7 @@ export const syncLemonSqueezyDataToConvexInternalAction = internalAction({
 
         const subData = createSubscriptionData({
           userId: user._id,
+          clerkId,
           customerId,
           status: "none",
           subscriptionId: undefined,
@@ -255,6 +261,7 @@ export const syncLemonSqueezyDataToConvexInternalAction = internalAction({
 
         const subData = createSubscriptionData({
           userId: user._id,
+          clerkId,
           customerId,
           status: "cancelled",
           subscriptionId: undefined,
@@ -331,6 +338,7 @@ export const syncLemonSqueezyDataToConvexInternalAction = internalAction({
 export const updateLemonSqueezyCustomerDataInternalAction = internalAction({
   args: {
     userId: v.id("users"),
+    clerkId: v.string(),
     customerId: v.number(),
     status: v.string(),
     variantId: v.optional(v.number()),
@@ -348,7 +356,7 @@ export const updateLemonSqueezyCustomerDataInternalAction = internalAction({
       })
     ),
   },
-  handler: async (ctx, { userId, customerId, ...data }) => {
+  handler: async (ctx, { userId, clerkId, customerId, ...data }) => {
     const existingCustomer = await getLemonSqueezyCustomerByCustomerId({
       ctx,
       customerId,
@@ -368,6 +376,7 @@ export const updateLemonSqueezyCustomerDataInternalAction = internalAction({
         ctx,
         data: {
           userId,
+          clerkId,
           customerId,
           ...data,
         },
@@ -381,6 +390,7 @@ export const updateLemonSqueezyCustomerDataInternalAction = internalAction({
 export const createLemonSqueezyCustomerInternalMutation = internalMutation({
   args: {
     userId: v.id("users"),
+    clerkId: v.string(),
     customerId: v.number(),
     status: v.string(),
     subscriptionId: v.optional(v.string()),
@@ -398,9 +408,10 @@ export const createLemonSqueezyCustomerInternalMutation = internalMutation({
       })
     ),
   },
-  handler: async (ctx, { userId, customerId, ...data }) => {
+  handler: async (ctx, { userId, customerId, clerkId, ...data }) => {
     return await ctx.db.insert("lemonSqueezyCustomers", {
       userId,
+      clerkId,
       customerId,
       ...data,
     });

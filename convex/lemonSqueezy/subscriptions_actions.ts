@@ -31,15 +31,9 @@ export const getCheckoutUrlAction = action({
       ctx,
       userId: user._id,
     });
-    if (!existingCustomer) {
-      throw createAppError({
-        message: "Customer not found",
-        statusCode: "NOT_FOUND",
-      });
-    }
 
     const isSubscribingToSamePlan = checkIfSubscribingToSamePlan({
-      existingCustomer,
+      existingCustomer: existingCustomer ?? undefined,
       variantId,
     });
     if (isSubscribingToSamePlan) {
@@ -54,6 +48,7 @@ export const getCheckoutUrlAction = action({
       variantId,
       generateCheckoutPayload({
         userId: user._id,
+        clerkId,
         variantId,
         embed: embed ?? false,
       })

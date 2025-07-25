@@ -18,12 +18,18 @@ export default function SubscriptionsPage() {
   return (
     <QueryState query={data} pending={<SettingsPageSkeleton />}>
       {(data) => {
-        const { stripeCustomer } = data;
-        const isActive = stripeCustomer?.status === "active";
-        const isCanceled = stripeCustomer?.status === "canceled";
-        const isCanceling = stripeCustomer?.cancelAtPeriodEnd === true;
-        const hasSubscription = stripeCustomer?.subscriptionId;
-
+        const { customer } = data;
+        const isActive = customer?.status === "active";
+        const isCanceled = customer?.status === "canceled";
+        const isCanceling = customer?.cancelAtPeriodEnd === true;
+        const hasSubscription = customer?.subscriptionId;
+        console.log(
+          customer,
+          isActive,
+          isCanceled,
+          isCanceling,
+          hasSubscription
+        );
         return (
           <div className="space-y-6">
             <div>
@@ -34,11 +40,11 @@ export default function SubscriptionsPage() {
             </div>
 
             <CurrentPlanCard
-              currentPlan={stripeCustomer?.priceId}
+              currentPlan={customer?.variantId?.toString()}
               isActive={isActive}
             />
             <BillingInformationCard
-              stripeCustomer={stripeCustomer}
+              customer={customer}
               isActive={isActive}
               isCanceled={isCanceled}
               isCanceling={isCanceling}

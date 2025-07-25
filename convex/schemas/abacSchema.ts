@@ -5,7 +5,7 @@ import { type GenericQueryCtx } from "convex/server";
 import { type Doc } from "../_generated/dataModel";
 import { userByClerkId } from "convex/models/userModel";
 import { getSubscriptionTierByStripeRecord } from "@/lib/utils";
-import { stripeCustomerByUserId } from "convex/models/stripeModel";
+import { getCustomerByUserId } from "convex/models/lemonModel";
 import { getMonthlyUsageRecord } from "convex/models/tokensModel";
 import { getMaterialsByUser } from "convex/models/materialsModel";
 import { getLessonsByClass } from "convex/models/lessonsModel";
@@ -166,15 +166,13 @@ export const ROLES: RolesWithPermissions = {
       create: async (data, user, ctx) => {
         const existingClasses = await getClassesByUser(ctx!, user.clerkId);
 
-        const userSubscriptionRecord = await stripeCustomerByUserId(
+        const userSubscriptionRecord = await getCustomerByUserId(
           ctx!,
           user.clerkId
         );
 
-        const subscriptionTier = getSubscriptionTierByStripeRecord(
-          userSubscriptionRecord
-        );
-
+        const subscriptionTier =
+          userSubscriptionRecord?.subscriptionTier ?? "free";
         return LIMITATIONS[subscriptionTier].classes > existingClasses.length;
       },
       update: (data, user) => {
@@ -212,14 +210,14 @@ export const ROLES: RolesWithPermissions = {
         return data.createdBy === user.clerkId;
       },
       create: async (data, user, ctx) => {
-        const userSubscriptionRecord = await stripeCustomerByUserId(
+        const userSubscriptionRecord = await getCustomerByUserId(
           ctx!,
           user.clerkId
         );
 
-        const subscriptionTier = getSubscriptionTierByStripeRecord(
-          userSubscriptionRecord
-        );
+        const subscriptionTier =
+          userSubscriptionRecord?.subscriptionTier ?? "free";
+
         const uploadedFiles = await getMaterialsByUser(ctx!, user.clerkId);
         const totalSize =
           uploadedFiles.reduce((acc, file) => acc + file.size, 0) +
@@ -236,14 +234,13 @@ export const ROLES: RolesWithPermissions = {
         return data?.createdBy === user.clerkId;
       },
       create: async (_data, user, ctx) => {
-        const userSubscriptionRecord = await stripeCustomerByUserId(
+        const userSubscriptionRecord = await getCustomerByUserId(
           ctx!,
           user.clerkId
         );
 
-        const subscriptionTier = getSubscriptionTierByStripeRecord(
-          userSubscriptionRecord
-        );
+        const subscriptionTier =
+          userSubscriptionRecord?.subscriptionTier ?? "free";
 
         const usageRecord = await getMonthlyUsageRecord(ctx!, user.clerkId);
 

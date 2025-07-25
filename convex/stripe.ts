@@ -338,9 +338,12 @@ export const syncStripeDataToConvex = internalAction({
         }
       );
       if (stripeCustomer) {
-        const user = await ctx.runQuery(internal.users.getUserByClerkId, {
-          clerkId: stripeCustomer.userId,
-        });
+        const user = await ctx.runQuery(
+          internal.users.getUserByClerkIdInternalQuery,
+          {
+            clerkId: stripeCustomer.userId,
+          }
+        );
         if (user) {
           await ctx.runMutation(internal.users.updateUser, {
             userId: user._id,
@@ -413,9 +416,12 @@ export const syncStripeDataToConvex = internalAction({
       }
     );
     if (stripeCustomer) {
-      const user = await ctx.runQuery(internal.users.getUserByClerkId, {
-        clerkId: stripeCustomer.userId,
-      });
+      const user = await ctx.runQuery(
+        internal.users.getUserByClerkIdInternalQuery,
+        {
+          clerkId: stripeCustomer.userId,
+        }
+      );
       if (user) {
         const tier = subData.priceId
           ? (tierMap[subData.priceId] ?? "free")

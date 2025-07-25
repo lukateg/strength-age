@@ -10,8 +10,13 @@
 
 import type * as classes from "../classes.js";
 import type * as crons from "../crons.js";
+import type * as customer from "../customer.js";
 import type * as feedbacks from "../feedbacks.js";
 import type * as http from "../http.js";
+import type * as lemonSqueezy_subscriptions from "../lemonSqueezy/subscriptions.js";
+import type * as lemonSqueezy_subscriptions_actions from "../lemonSqueezy/subscriptions_actions.js";
+import type * as lemonSqueezy_subscriptions_model from "../lemonSqueezy/subscriptions_model.js";
+import type * as lemonSqueezy_subscriptions_utils from "../lemonSqueezy/subscriptions_utils.js";
 import type * as lessons from "../lessons.js";
 import type * as materials from "../materials.js";
 import type * as models_classesModel from "../models/classesModel.js";
@@ -61,8 +66,13 @@ import type {
 declare const fullApi: ApiFromModules<{
   classes: typeof classes;
   crons: typeof crons;
+  customer: typeof customer;
   feedbacks: typeof feedbacks;
   http: typeof http;
+  "lemonSqueezy/subscriptions": typeof lemonSqueezy_subscriptions;
+  "lemonSqueezy/subscriptions_actions": typeof lemonSqueezy_subscriptions_actions;
+  "lemonSqueezy/subscriptions_model": typeof lemonSqueezy_subscriptions_model;
+  "lemonSqueezy/subscriptions_utils": typeof lemonSqueezy_subscriptions_utils;
   lessons: typeof lessons;
   materials: typeof materials;
   "models/classesModel": typeof models_classesModel;

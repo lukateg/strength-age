@@ -26,6 +26,7 @@ BUGS
 ----TODO
 -- fix deloyed with  clerk dev keys
 -- create dev branch and hook it up to netlify, prod from main should be vercel
+-- remove subscriptionTier from the user since it is not source of true if tier is canceled
 
 PLAN:
 -- fix bugs

@@ -1,4 +1,4 @@
-import { internalMutation, query } from "./_generated/server";
+import { type ActionCtx, internalMutation, query } from "./_generated/server";
 import { type UserJSON } from "@clerk/backend";
 import { v, type Validator } from "convex/values";
 import { internalQuery } from "./_generated/server";
@@ -7,6 +7,8 @@ import { getTotalStorageUsage } from "./models/materialsModel";
 import { userByClerkId } from "./models/userModel";
 import { mutation } from "./_generated/server";
 import { createAppError } from "./utils";
+import { internal } from "./_generated/api";
+import { type Id } from "./_generated/dataModel";
 
 export const getUserData = query({
   handler: async (ctx) => {
@@ -20,6 +22,7 @@ export const getUserData = query({
   },
 });
 
+// TODO: Move this to clerk.ts
 export const upsertFromClerk = internalMutation({
   args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
   async handler(ctx, { data }) {
@@ -61,6 +64,44 @@ export const deleteFromClerk = internalMutation({
   },
 });
 
+export const getUserByClerkId = async ({
+  ctx,
+  clerkId,
+}: {
+  ctx: ActionCtx;
+  clerkId: string;
+}) => {
+  return await ctx.runQuery(internal.users.getUserByClerkIdInternalQuery, {
+    clerkId,
+  });
+};
+
+export const getUserByUserId = async ({
+  ctx,
+  userId,
+}: {
+  ctx: ActionCtx;
+  userId: Id<"users">;
+}) => {
+  return await ctx.runQuery(internal.users.getUserByUserIdInternalQuery, {
+    userId,
+  });
+};
+
+export const getUserByUserIdInternalQuery = internalQuery({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    return await ctx.db.get(userId);
+  },
+});
+
+export const getUserByClerkIdInternalQuery = internalQuery({
+  args: { clerkId: v.string() },
+  handler: async (ctx, { clerkId }) => {
+    return userByClerkId(ctx, clerkId);
+  },
+});
+
 export const getCurrentUserQuery = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -68,13 +109,6 @@ export const getCurrentUserQuery = query({
       return null;
     }
     return await userByClerkId(ctx, identity.subject);
-  },
-});
-
-export const getUserByClerkId = internalQuery({
-  args: { clerkId: v.string() },
-  handler: async (ctx, { clerkId }) => {
-    return userByClerkId(ctx, clerkId);
   },
 });
 

@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/card";
 import { SUBSCRIPTION_PLANS } from "@/lib/constants";
 import { SubscriptionCard } from "@/app/app/settings/components/subscription-card";
-import { useStripe } from "@/hooks/use-stripe";
 import { FeatureFlags, isFeatureFlagEnabled } from "@/lib/feature-flags";
+import { useSubscriptions } from "@/hooks/use-subscriptions";
 
 export default function CurrentPlanCard({
   currentPlan,
@@ -19,10 +19,14 @@ export default function CurrentPlanCard({
   currentPlan?: string;
   isActive: boolean;
 }) {
-  const { handlePlanChangeAction } = useStripe();
-  const shouldDisablePaidPlans = !isFeatureFlagEnabled(
+  const { getCheckoutUrl, isPending } = useSubscriptions();
+  const shouldDisablePaidPlans = isFeatureFlagEnabled(
     FeatureFlags.SUBSCRIPTIONS
   );
+
+  const handleSelect = (variantId: string) => {
+    void getCheckoutUrl(parseInt(variantId));
+  };
 
   return (
     <Card>
@@ -43,9 +47,11 @@ export default function CurrentPlanCard({
               <SubscriptionCard
                 key={plan.id}
                 {...plan}
-                onSelect={() => handlePlanChangeAction(plan.priceId)}
+                onSelect={() => handleSelect(plan.priceId)}
                 isCurrent={currentPlan === plan.priceId && isActive}
-                isDisabled={shouldDisablePaidPlans && plan.id !== "free"}
+                isDisabled={
+                  (shouldDisablePaidPlans && plan.id !== "free") || isPending
+                }
               />
             ))}
           </div>

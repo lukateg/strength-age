@@ -38,6 +38,48 @@ http.route({
 });
 
 http.route({
+  path: "/lemon-squeezy-webhook",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    const signature = request.headers.get("X-Signature") ?? "";
+    const payload = await request.text();
+
+    if (!signature) {
+      console.log("[LEMONSQUEEZY WEBHOOK ROUTE] Missing signature");
+      return new Response("No signature", { status: 400 });
+    }
+
+    try {
+      const result = await ctx.runAction(
+        internal.lemonSqueezy.subscriptions.handleSubscriptionWebhook,
+        {
+          signature,
+          payload,
+        }
+      );
+
+      // Check if result is a Response object
+      if (result instanceof Response) {
+        console.log("[LEMONSQUEEZY WEBHOOK] Got Response object from handler");
+        return result;
+      }
+
+      // Otherwise check success property
+      if (result.success) {
+        console.log("[LEMONSQUEEZY WEBHOOK] Successfully processed webhook");
+        return new Response(null, { status: 200 });
+      } else {
+        console.log("[LEMONSQUEEZY WEBHOOK] Failed to process webhook");
+        return new Response("Error processing event", { status: 400 });
+      }
+    } catch (err) {
+      console.error("[LEMONSQUEEZY WEBHOOK] Error handling webhook:", err);
+      return new Response("Internal server error", { status: 500 });
+    }
+  }),
+});
+
+http.route({
   path: "/stripe-webhook",
   method: "POST",
   handler: httpAction(async (ctx, request) => {

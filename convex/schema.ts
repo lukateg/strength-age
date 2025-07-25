@@ -22,6 +22,7 @@ export default defineSchema({
     userId: v.string(),
     stripeCustomerId: v.string(),
     subscriptionId: v.optional(v.string()),
+    subscriptionStatus: v.optional(v.string()),
     status: v.optional(v.string()),
     priceId: v.optional(v.string()),
     currentPeriodStart: v.optional(v.number()),
@@ -36,6 +37,28 @@ export default defineSchema({
   })
     .index("by_userId", ["userId"])
     .index("by_stripeCustomerId", ["stripeCustomerId"]),
+
+  lemonSqueezyCustomers: defineTable({
+    userId: v.string(),
+    customerId: v.number(),
+    variantId: v.optional(v.number()),
+    subscriptionId: v.optional(v.string()),
+    subscriptionTier: v.optional(
+      v.union(v.literal("free"), v.literal("starter"), v.literal("pro"))
+    ),
+    status: v.optional(v.string()),
+    currentPeriodStart: v.optional(v.string()),
+    currentPeriodEnd: v.optional(v.string()),
+    cancelAtPeriodEnd: v.optional(v.boolean()),
+    paymentMethod: v.optional(
+      v.object({
+        brand: v.optional(v.string()),
+        last4: v.optional(v.string()),
+      })
+    ),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_customerId", ["customerId"]),
 
   classes: defineTable({
     title: v.string(),

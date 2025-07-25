@@ -54,7 +54,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     ],
     popular: true,
     isPopular: true,
-    priceId: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID!,
+    priceId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_STARTER_VARIANT!,
   },
   {
     id: "pro",
@@ -74,7 +74,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     ],
     popular: false,
     isPopular: false,
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID!,
+    priceId: process.env.NEXT_PUBLIC_LEMONSQUEEZY_PRO_VARIANT!,
   },
 ];
 

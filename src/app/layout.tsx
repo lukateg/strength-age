@@ -47,12 +47,21 @@ export const metadata: Metadata = {
     description:
       "An intelligent platform for creating and managing educational content with AI-generated tests, quizzes, and personalized learning experiences.",
     siteName: "Teach-me",
+    images: [
+      {
+        url: "/teach-me-logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Teach-me - AI-Powered Learning Platform",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Teach-me - AI-Powered Learning Platform",
     description:
       "An intelligent platform for creating and managing educational content with AI-generated tests, quizzes, and personalized learning experiences.",
+    images: ["/teach-me-logo.png"],
   },
   verification: {
     // Add your verification codes here when you get them

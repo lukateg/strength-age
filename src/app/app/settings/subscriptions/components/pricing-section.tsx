@@ -33,7 +33,7 @@ export default function PricingSection({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Current Plan</CardTitle>
+        <CardTitle>Manage your plan</CardTitle>
         <CardDescription>
           You are currently on the{" "}
           {currentPlan

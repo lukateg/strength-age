@@ -4,6 +4,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
+  CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useSubscriptions } from "@/hooks/use-subscriptions";
@@ -18,14 +19,16 @@ export default function CancelSubscriptionCard() {
   };
 
   return (
-    <Card className="flex items-center justify-between">
+    <Card className="flex flex-col ">
       <CardHeader>
         <CardTitle>Cancel Subscription</CardTitle>
+      </CardHeader>
+      <CardContent>
         <CardDescription>
           Unsubscribe from your subscription at any time.
         </CardDescription>
-      </CardHeader>
-      <CardContent className="p-6">
+      </CardContent>
+      <CardFooter>
         <AlertDialogModal
           title="Cancel Subscription"
           variant="destructive"
@@ -35,7 +38,7 @@ export default function CancelSubscriptionCard() {
             <Button variant="destructive">Cancel Subscription</Button>
           }
         />
-      </CardContent>
+      </CardFooter>
     </Card>
   );
 }

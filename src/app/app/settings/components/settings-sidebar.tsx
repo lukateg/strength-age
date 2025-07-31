@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 
-const settingsNavigation = [
+export const SETTINGS_NAVIGATION = [
   {
     name: "Subscriptions",
     href: "/app/settings/subscriptions",
@@ -19,7 +19,7 @@ export function SettingsSidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="bg-background border-r border-border h-full w-44">
+    <div className="bg-background border-r border-border h-full w-44 md:block hidden">
       <div className="">
         <div className="text-muted-foreground flex items-center gap-2 p-6">
           <Settings className="w-6 h-6" />
@@ -29,7 +29,7 @@ export function SettingsSidebar() {
 
         <nav className="flex flex-col gap-3 p-2">
           <ul className="flex h-full grow flex-col gap-3 overflow-hidden py-2">
-            {settingsNavigation.map((item) => {
+            {SETTINGS_NAVIGATION.map((item) => {
               const isActive = pathname === item.href;
 
               return (

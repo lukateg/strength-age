@@ -25,10 +25,9 @@ export default function PricingSection({
   );
 
   const handleSelect = (variantId: string) => {
+    console.log(variantId, "variantid");
     void getCheckoutUrl(parseInt(variantId));
   };
-
-  console.log(currentPlan);
 
   return (
     <Card>

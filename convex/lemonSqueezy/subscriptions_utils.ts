@@ -87,7 +87,7 @@ export const parseWebhookData = (payload: string) => {
     console.log("[LEMONSQUEEZY WEBHOOK] Ignoring untracked event type", {
       type: webhookData.meta.event_name,
     });
-    return { success: false, message: "Event type not tracked" };
+    return { success: true, message: "Event type ignored (not tracked)" };
   }
 
   return {
@@ -155,6 +155,7 @@ export const createSubscriptionData = ({
 export const extractWebhookRequiredFields = (webhookData: {
   data: Subscription["data"];
   meta: {
+    event_name?: string;
     custom_data?: {
       user_id: Id<"users">;
       clerk_id?: string;
@@ -170,10 +171,10 @@ export const extractWebhookRequiredFields = (webhookData: {
         clerkId: string;
         customerId: number;
         subscriptionId: string;
-        variantId: number;
+        variantId?: number; // Make optional since some events don't have it
         status: string;
-        cardBrand: string;
-        cardLastFour: string;
+        cardBrand?: string; // Make optional since some events don't have it
+        cardLastFour?: string; // Make optional since some events don't have it
         createdAt: string;
         updatedAt: string;
         renewsAt?: string;
@@ -199,11 +200,20 @@ export const extractWebhookRequiredFields = (webhookData: {
   }
 
   const variantId = webhookData.data.attributes.variant_id;
-  if (!variantId) {
+
+  // Some webhook events (like payment_success) don't include variant_id
+  // Only require variant_id for subscription creation/update events
+  const eventName = webhookData.meta.event_name ?? "unknown";
+  const eventsRequiringVariantId = [
+    "subscription_created",
+    "subscription_updated",
+  ];
+
+  if (!variantId && eventsRequiringVariantId.includes(eventName)) {
     return {
       success: false,
-      error: "No variant ID in webhook data",
-      message: "No variant ID in webhook data",
+      error: `No variant ID in webhook data for ${eventName}`,
+      message: `No variant ID in webhook data for ${eventName}`,
     };
   }
 
@@ -235,21 +245,25 @@ export const extractWebhookRequiredFields = (webhookData: {
   }
 
   const cardBrand = webhookData.data.attributes.card_brand;
-  if (!cardBrand) {
-    return {
-      success: false,
-      error: "No card brand in webhook data",
-      message: "No card brand in webhook data",
-    };
+  const cardLastFour = webhookData.data.attributes.card_last_four;
+
+  // Card details are optional for some webhook events
+  // Only require them for events that typically have payment info
+  const eventsRequiringCardInfo = [
+    "subscription_created",
+    "subscription_payment_success",
+  ];
+
+  if (!cardBrand && eventsRequiringCardInfo.includes(eventName)) {
+    console.warn(
+      `[LEMONSQUEEZY] Missing card brand for ${eventName}, but continuing...`
+    );
   }
 
-  const cardLastFour = webhookData.data.attributes.card_last_four;
-  if (!cardLastFour) {
-    return {
-      success: false,
-      error: "No card last four in webhook data",
-      message: "No card last four in webhook data",
-    };
+  if (!cardLastFour && eventsRequiringCardInfo.includes(eventName)) {
+    console.warn(
+      `[LEMONSQUEEZY] Missing card last four for ${eventName}, but continuing...`
+    );
   }
 
   const createdAt = webhookData.data.attributes.created_at;
@@ -282,8 +296,8 @@ export const extractWebhookRequiredFields = (webhookData: {
       subscriptionId,
       variantId,
       status,
-      cardBrand,
-      cardLastFour,
+      cardBrand: cardBrand ?? undefined,
+      cardLastFour: cardLastFour ?? undefined,
       createdAt,
       updatedAt,
       renewsAt,

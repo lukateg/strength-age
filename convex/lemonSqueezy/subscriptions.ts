@@ -44,10 +44,18 @@ export const handleSubscriptionWebhook = internalAction({
     }
 
     try {
-      const { success, webhookData } = parseWebhookData(payload);
-      if (!success || !webhookData) {
+      const { success, webhookData, message } = parseWebhookData(payload);
+      if (!success) {
         console.error("[LEMONSQUEEZY WEBHOOK] Failed to parse webhook data");
         return { success: false, error: "Failed to parse webhook data" };
+      }
+
+      // If success is true but no webhookData, it means we're ignoring this event type
+      if (!webhookData) {
+        console.log(
+          "[LEMONSQUEEZY WEBHOOK] Event type ignored, acknowledging receipt"
+        );
+        return { success: true, message: message ?? "Event type ignored" };
       }
 
       const extractionResult = extractWebhookRequiredFields(webhookData);
@@ -367,31 +375,75 @@ export const updateLemonSqueezyCustomerDataInternalAction = internalAction({
     ),
   },
   handler: async (ctx, { userId, clerkId, customerId, ...data }) => {
-    const existingCustomer = await getLemonSqueezyCustomerByCustomerId({
-      ctx,
-      customerId,
-    });
-    if (existingCustomer) {
-      // Update existing customer
-      await updateLemonSqueezyCustomer({
-        ctx,
-        data: {
-          _id: existingCustomer._id,
-          ...data,
-        },
-      });
-    } else {
-      // Create new customer record
-      await createLemonSqueezyCustomer({
-        ctx,
-        data: {
-          userId,
-          clerkId,
-          customerId,
-          ...data,
-        },
-      });
+    // Implement proper upsert logic to avoid race conditions
+    try {
+      // First, try to find existing customer
+      const existingCustomer = await ctx.runQuery(
+        internal.lemonSqueezy.subscriptions
+          .getLemonSqueezyCustomerByCustomerIdInternalQuery,
+        { customerId }
+      );
+
+      if (existingCustomer) {
+        // Customer exists, update it
+        await ctx.runMutation(
+          internal.lemonSqueezy.subscriptions
+            .updateLemonSqueezyCustomerInternalMutation,
+          {
+            _id: existingCustomer._id,
+            ...data,
+          }
+        );
+      } else {
+        // Customer doesn't exist, try to create it
+        try {
+          await ctx.runMutation(
+            internal.lemonSqueezy.subscriptions
+              .createLemonSqueezyCustomerInternalMutation,
+            {
+              userId,
+              clerkId,
+              customerId,
+              ...data,
+            }
+          );
+        } catch (error) {
+          // If creation fails due to race condition, try to update instead
+          console.log(
+            `[LEMONSQUEEZY] Customer creation failed (likely race condition), attempting update. CustomerId: ${customerId}`
+          );
+
+          // Re-query to get the customer that was created by another function
+          const newExistingCustomer = await ctx.runQuery(
+            internal.lemonSqueezy.subscriptions
+              .getLemonSqueezyCustomerByCustomerIdInternalQuery,
+            { customerId }
+          );
+
+          if (newExistingCustomer) {
+            // Update the customer that was created by another function
+            await ctx.runMutation(
+              internal.lemonSqueezy.subscriptions
+                .updateLemonSqueezyCustomerInternalMutation,
+              {
+                _id: newExistingCustomer._id,
+                ...data,
+              }
+            );
+          } else {
+            // If still no customer found, re-throw the original error
+            throw error;
+          }
+        }
+      }
+    } catch (error) {
+      console.error(
+        `[LEMONSQUEEZY] Error updating customer data for customerId ${customerId}:`,
+        error
+      );
+      throw error;
     }
+
     return data;
   },
 });

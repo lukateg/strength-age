@@ -28,19 +28,23 @@ function formatStatNumber(num: number): string {
 export default async function StatsSection() {
   const data = await fetchQuery(api.pages.landingPage.getLandingPageData);
 
+  const testsNumber = data.testsGenerated < 130 ? 130 : data.testsGenerated;
+  const userFeedback = data.userFeedback < 30 ? 30 : data.userFeedback;
+  const activeUsers = data.activeUsers < 60 ? 60 : data.activeUsers;
+
   const STATS = [
     {
-      number: formatStatNumber(data.testsGenerated),
+      number: formatStatNumber(testsNumber),
       label: "Tests Generated",
       description: "AI-powered assessments created by our users",
     },
     {
-      number: formatStatNumber(data.userFeedback),
+      number: formatStatNumber(userFeedback),
       label: "User feedbacks",
       description: "We are listening to you and improving the platform",
     },
     {
-      number: formatStatNumber(data.activeUsers),
+      number: formatStatNumber(activeUsers),
       label: "Active Users",
       description: "Students and educators using our platform",
     },

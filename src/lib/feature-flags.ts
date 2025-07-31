@@ -7,7 +7,7 @@ export enum FeatureFlags {
 // This avoids hydration issues and PostHog dependency
 export const FEATURE_FLAGS = {
   [FeatureFlags.BETA_FEATURE]: false, // Set to true to enable beta features
-  [FeatureFlags.SUBSCRIPTIONS]: false,
+  [FeatureFlags.SUBSCRIPTIONS]: true,
 } as const;
 
 export const isFeatureFlagEnabled = (flag: FeatureFlags): boolean => {

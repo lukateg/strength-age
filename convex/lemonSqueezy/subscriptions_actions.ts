@@ -2,7 +2,10 @@
 
 import { v } from "convex/values";
 import { action } from "../_generated/server";
-import { createCheckout } from "@lemonsqueezy/lemonsqueezy.js";
+import {
+  createCheckout,
+  cancelSubscription,
+} from "@lemonsqueezy/lemonsqueezy.js";
 import { AuthenticationRequired, createAppError } from "../utils";
 import { configureLemonSqueezy } from "@/config/lemonsqueezy";
 import { getUserByClerkId } from "../users";
@@ -63,5 +66,59 @@ export const getCheckoutUrlAction = action({
     }
 
     return checkout.data.data.attributes.url;
+  },
+});
+
+export const cancelSubscriptionAction = action({
+  args: {},
+  handler: async (ctx) => {
+    configureLemonSqueezy();
+    const clerkId = await AuthenticationRequired({ ctx });
+
+    const user = await getUserByClerkId({ ctx, clerkId });
+
+    if (!user) {
+      throw createAppError({
+        message: "User not found",
+        statusCode: "NOT_FOUND",
+      });
+    }
+
+    const existingCustomer = await getLemonSqueezyCustomerByUserId({
+      ctx,
+      userId: user._id,
+    });
+
+    if (!existingCustomer?.subscriptionId) {
+      throw createAppError({
+        message: "No active subscription found",
+        statusCode: "NOT_FOUND",
+      });
+    }
+
+    try {
+      const result = await cancelSubscription(existingCustomer.subscriptionId);
+
+      if (!result.data?.data) {
+        console.error("[LEMONSQUEEZY CANCEL] Failed to cancel subscription");
+        throw createAppError({
+          message: "Failed to cancel subscription",
+          statusCode: "SERVER_ERROR",
+        });
+      }
+
+      console.log("[LEMONSQUEEZY CANCEL] Subscription cancelled successfully", {
+        subscriptionId: existingCustomer.subscriptionId,
+        userId: user._id,
+      });
+
+      return { success: true, message: "Subscription cancelled successfully" };
+    } catch (err) {
+      console.error("[LEMONSQUEEZY CANCEL] Error cancelling subscription", err);
+      throw createAppError({
+        message: "Failed to cancel subscription",
+        statusCode: "SERVER_ERROR",
+      });
+    }
   },
 });

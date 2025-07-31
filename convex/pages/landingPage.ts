@@ -4,12 +4,12 @@ export const getLandingPageData = query({
   args: {},
   handler: async (ctx) => {
     const tests = await ctx.db.query("tests").collect();
-    const userFeedback = 55;
+    const userFeedback = await ctx.db.query("feedbacks").collect();
     const activeUsers = await ctx.db.query("users").collect();
 
     return {
       testsGenerated: tests.length,
-      userFeedback,
+      userFeedback: userFeedback.length,
       activeUsers: activeUsers.length,
     };
   },

@@ -6,15 +6,15 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useStripe } from "@/hooks/use-stripe";
+import { useSubscriptions } from "@/hooks/use-subscriptions";
 
 import AlertDialogModal from "@/components/alert-dialog";
 
 export default function CancelSubscriptionCard() {
-  const { cancelStripeSubscriptionAction } = useStripe();
+  const { cancelSubscription } = useSubscriptions();
 
   const handleCancelSubscription = async () => {
-    await cancelStripeSubscriptionAction();
+    await cancelSubscription();
   };
 
   return (

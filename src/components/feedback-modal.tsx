@@ -275,7 +275,7 @@ export default function FeedbackModal({
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder={`Brief summary of your ${selectedType?.label.toLowerCase().slice(2)}`}
+                      placeholder={`Brief summary of your ${selectedType?.label.toLowerCase()}`}
                       {...field}
                       className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                     />

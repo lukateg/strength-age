@@ -42,7 +42,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     name: "Starter",
     title: "Starter",
     description: "For educators with growing needs",
-    price: "7",
+    price: "6.99",
     // yearlyPrice: 76, // 7 * 12 * 0.9 (10% discount)
     buttonText: "Switch to Starter",
     features: [
@@ -61,7 +61,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     name: "Pro",
     title: "Pro",
     description: "For advanced educational needs",
-    price: "15",
+    price: "14.99",
     // yearlyPrice: 162, // 15 * 12 * 0.9 (10% discount)
     buttonText: "Switch to Pro",
     features: [

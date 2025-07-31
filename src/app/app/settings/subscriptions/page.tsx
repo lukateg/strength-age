@@ -5,7 +5,7 @@ import { api } from "../../../../../convex/_generated/api";
 
 import CancelSubscriptionCard from "./components/cancel-subscription-card";
 import BillingInformationCard from "./components/billing-information-card";
-import CurrentPlanCard from "./components/current-plan-card";
+import PricingSection from "./components/pricing-section";
 import QueryState from "@/components/data-query/query-state";
 import UndoCancelingCard from "./components/undo-canceling-card";
 import SettingsPageSkeleton from "../components/settings-page-skeleton";
@@ -23,13 +23,7 @@ export default function SubscriptionsPage() {
         const isCanceled = customer?.status === "canceled";
         const isCanceling = customer?.cancelAtPeriodEnd === true;
         const hasSubscription = customer?.subscriptionId;
-        console.log(
-          customer,
-          isActive,
-          isCanceled,
-          isCanceling,
-          hasSubscription
-        );
+
         return (
           <div className="space-y-6">
             <div>
@@ -39,8 +33,8 @@ export default function SubscriptionsPage() {
               </p>
             </div>
 
-            <CurrentPlanCard
-              currentPlan={customer?.variantId?.toString()}
+            <PricingSection
+              currentPlan={customer?.subscriptionTier}
               isActive={isActive}
             />
             <BillingInformationCard

@@ -9,6 +9,9 @@ export const useSubscriptions = () => {
   const getCheckoutUrlAction = useAction(
     api.lemonSqueezy.subscriptions_actions.getCheckoutUrlAction
   );
+  const cancelSubscriptionAction = useAction(
+    api.lemonSqueezy.subscriptions_actions.cancelSubscriptionAction
+  );
 
   const getCheckoutUrl = async (variantId: number, embed = false) => {
     setIsPending(true);
@@ -30,5 +33,28 @@ export const useSubscriptions = () => {
     }
   };
 
-  return { getCheckoutUrl, isPending };
+  const cancelSubscription = async () => {
+    setIsPending(true);
+    const toastId = toast.loading("Cancelling subscription...", {
+      description: "Please wait while we cancel your subscription.",
+      duration: Infinity,
+    });
+    try {
+      const result = await cancelSubscriptionAction();
+      toast.dismiss(toastId);
+      toast.success("Subscription cancelled successfully.", {
+        description:
+          "Your subscription will remain active until the end of your billing period.",
+      });
+      return result;
+    } catch (error) {
+      toast.dismiss(toastId);
+      toastError(error, "Failed to cancel subscription. Please try again.");
+      throw error;
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  return { getCheckoutUrl, cancelSubscription, isPending };
 };

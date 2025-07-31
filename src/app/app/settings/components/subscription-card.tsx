@@ -53,7 +53,7 @@ export function SubscriptionCard({
       )}
     >
       {/* Coming Soon Overlay */}
-      {isDisabled && (
+      {/* {isDisabled && (
         <div className="absolute inset-0 bg-background/50 backdrop-blur-sm rounded-lg z-10 flex items-center justify-center">
           <div className="text-center p-4">
             <Clock className="w-8 h-8 mx-auto mb-2 text-primary" />
@@ -63,7 +63,7 @@ export function SubscriptionCard({
             </p>
           </div>
         </div>
-      )}
+      )} */}
 
       <CardHeader className="text-center pb-2 flex-shrink-0">
         <CardTitle className="text-xl">{title}</CardTitle>

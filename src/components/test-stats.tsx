@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LIMITATIONS } from "@/lib/limitations";
 import {
   formatTokenUsageNumber,
-  getSubscriptionTierByStripeRecord,
+  getSubscriptionTierBySubscriptionRecord,
 } from "@/lib/utils";
 import { type Doc } from "convex/_generated/dataModel";
 import {
@@ -32,7 +32,7 @@ export default function TestStats({
   weeklySuccess,
   customer,
 }: TestStatsProps) {
-  const subscriptionTier = getSubscriptionTierByStripeRecord(customer);
+  const subscriptionTier = getSubscriptionTierBySubscriptionRecord(customer);
   const tokensLimit = LIMITATIONS[subscriptionTier].tokens;
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 mb-8">

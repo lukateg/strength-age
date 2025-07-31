@@ -105,7 +105,8 @@ export const createSubscriptionData = ({
   status,
   subscriptionId,
   createdAt,
-  updatedAt,
+  renewsAt,
+  endsAt,
   cardBrand,
   cardLastFour,
 }: {
@@ -118,6 +119,8 @@ export const createSubscriptionData = ({
   subscriptionId?: string;
   createdAt?: string;
   updatedAt?: string;
+  renewsAt?: string;
+  endsAt?: string;
   cardBrand?: string;
   cardLastFour?: string;
 }) => {
@@ -135,8 +138,9 @@ export const createSubscriptionData = ({
     variantId: variantId,
     subscriptionTier: tier,
     subscriptionId,
-    currentPeriodStart: createdAt,
-    currentPeriodEnd: updatedAt,
+    // Use correct billing period dates
+    currentPeriodStart: createdAt, // Keep for now, but this should ideally be the start of current billing period
+    currentPeriodEnd: renewsAt, // This is the end of current billing period (next renewal date)
     cancelAtPeriodEnd: status === "cancelled",
     paymentMethod: cardBrand
       ? {
@@ -172,6 +176,8 @@ export const extractWebhookRequiredFields = (webhookData: {
         cardLastFour: string;
         createdAt: string;
         updatedAt: string;
+        renewsAt?: string;
+        endsAt?: string;
       };
     } => {
   const userId = webhookData.meta.custom_data?.user_id;
@@ -264,6 +270,9 @@ export const extractWebhookRequiredFields = (webhookData: {
     };
   }
 
+  const renewsAt = webhookData.data.attributes.renews_at ?? undefined;
+  const endsAt = webhookData.data.attributes.ends_at ?? undefined;
+
   return {
     success: true,
     data: {
@@ -277,6 +286,8 @@ export const extractWebhookRequiredFields = (webhookData: {
       cardLastFour,
       createdAt,
       updatedAt,
+      renewsAt,
+      endsAt,
     },
   };
 };

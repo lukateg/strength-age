@@ -1,10 +1,7 @@
 "use client";
 
 import { useAuthenticatedQueryWithStatus } from "@/hooks/use-authenticated-query";
-import {
-  getSubscriptionTierButton,
-  getSubscriptionTierByStripeRecord,
-} from "@/lib/utils";
+import { getSubscriptionTierBySubscriptionRecord } from "@/lib/utils";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 
@@ -41,8 +38,8 @@ export default function Dashboard() {
           customer,
         } = data;
 
-        const subscriptionTier = getSubscriptionTierByStripeRecord(customer);
-        console.log(customer);
+        const subscriptionTier =
+          getSubscriptionTierBySubscriptionRecord(customer);
 
         return (
           <div className="container mx-auto p-6">
@@ -69,7 +66,7 @@ export default function Dashboard() {
                   <DashboardStats
                     totalTests={totalTests}
                     totalClasses={totalClasses}
-                    subscriptionTier={getSubscriptionTierByStripeRecord(
+                    subscriptionTier={getSubscriptionTierBySubscriptionRecord(
                       customer
                     )}
                   />
@@ -79,7 +76,7 @@ export default function Dashboard() {
                   <DashboardProgressWidgets
                     totalStorageUsage={totalStorageUsage}
                     tokensUsedThisMonth={tokensUsedThisMonth}
-                    subscriptionTier={getSubscriptionTierByStripeRecord(
+                    subscriptionTier={getSubscriptionTierBySubscriptionRecord(
                       customer
                     )}
                   />

@@ -46,7 +46,7 @@ export const formatBytesToMB = (bytes: number): number => {
   return Math.round(mb * 10) / 10;
 };
 
-export const getSubscriptionTierByStripeRecord = (
+export const getSubscriptionTierBySubscriptionRecord = (
   customer?: Doc<"lemonSqueezyCustomers"> | null
 ) => {
   if (!customer || customer.status === "canceled") {

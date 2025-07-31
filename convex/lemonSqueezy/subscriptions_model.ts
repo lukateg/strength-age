@@ -36,6 +36,8 @@ export const processWebhookSubscriptionData = async ({
     cardLastFour?: string;
     createdAt?: string;
     updatedAt?: string;
+    renewsAt?: string;
+    endsAt?: string;
   };
 }) => {
   return await ctx.runAction(

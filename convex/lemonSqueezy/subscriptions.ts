@@ -116,6 +116,8 @@ export const processWebhookSubscription = internalAction({
     cardLastFour: v.optional(v.string()),
     createdAt: v.optional(v.string()),
     updatedAt: v.optional(v.string()),
+    renewsAt: v.optional(v.string()),
+    endsAt: v.optional(v.string()),
   },
   handler: async (
     ctx,
@@ -130,6 +132,8 @@ export const processWebhookSubscription = internalAction({
       cardLastFour,
       createdAt,
       updatedAt,
+      renewsAt,
+      endsAt,
     }
   ) => {
     const user = await getUserByUserId({ ctx, userId });
@@ -152,6 +156,8 @@ export const processWebhookSubscription = internalAction({
       subscriptionId,
       createdAt,
       updatedAt,
+      renewsAt,
+      endsAt,
       cardBrand,
       cardLastFour,
     });
@@ -232,6 +238,8 @@ export const syncLemonSqueezyDataToConvexInternalAction = internalAction({
           variantId: undefined,
           createdAt: undefined,
           updatedAt: undefined,
+          renewsAt: undefined,
+          endsAt: undefined,
           cardBrand: undefined,
           cardLastFour: undefined,
         });
@@ -268,6 +276,8 @@ export const syncLemonSqueezyDataToConvexInternalAction = internalAction({
           variantId: undefined,
           createdAt: undefined,
           updatedAt: undefined,
+          renewsAt: undefined,
+          endsAt: undefined,
           cardBrand: undefined,
           cardLastFour: undefined,
         });

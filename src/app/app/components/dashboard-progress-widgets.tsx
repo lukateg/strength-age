@@ -36,7 +36,7 @@ export default function DashboardProgress({
     if (mb < 1) {
       return `${Math.round(bytes / 1024)} KB`;
     }
-    return `${Math.round(mb * 10) / 10}`;
+    return `${Math.round(mb * 10) / 10} MB`;
   };
 
   return (
@@ -71,13 +71,12 @@ export default function DashboardProgress({
                   {formatStorageUsage(
                     isStorageMaxed ? storageLimit : totalStorageUsage
                   )}
-                  MB
                 </span>
               </span>
               <span className="mt-2 text-muted-foreground text-sm">
                 Max Storage:{" "}
                 <span className="font-bold text-primary">
-                  {formatStorageUsage(storageLimit)} MB
+                  {formatStorageUsage(storageLimit)}
                 </span>
               </span>
             </div>

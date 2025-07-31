@@ -3,12 +3,9 @@ import { LIMITATIONS } from "@/lib/limitations";
 import { type DataModel } from "../_generated/dataModel";
 import { type GenericQueryCtx } from "convex/server";
 import { type Doc } from "../_generated/dataModel";
-import { userByClerkId } from "convex/models/userModel";
-import { getSubscriptionTierByStripeRecord } from "@/lib/utils";
 import { getCustomerByUserId } from "convex/models/lemonModel";
 import { getMonthlyUsageRecord } from "convex/models/tokensModel";
 import { getMaterialsByUser } from "convex/models/materialsModel";
-import { getLessonsByClass } from "convex/models/lessonsModel";
 import { getClassesByUser } from "convex/models/classesModel";
 import { validateTestReviewShareToken } from "convex/models/testReviewsModel";
 

@@ -22,11 +22,16 @@ BUGS
 -- check all skeletons on mobile (they don't work even on full screens)
 -- fix prompting and short answer ai review, maybe add instructions why is answer wrong
 -- fix loader
+-- deleting a class deletes a tests, maybe we do not want that
 
 ----TODO
 -- create dev branch and hook it up to netlify, prod from main should be vercel
+-- setup a feedback webhook to always email you when a feedback comes
 -- remove subscriptionTier from the user since it is not source of true if tier is canceled and always fetch customers table
 -- fix use cases for subscriptions and test on prod
+-- remove tanstack table and add custom responsive table
+-- create mobile app
+-- create voice learning
 
 PLAN:
 -- fix bugs

@@ -69,7 +69,6 @@ export function createQuizPrompt(
     description: "Generated or user-provided description",
     questions: exampleQuestions,
   };
-  // Multiple Choice (Multiple Correct Answers): Each question must include 4 answer options. If there are 2 correct answers, include both correct answers and one incorrect option. The fourth option should be either "All of the above" or "None of the above" if appropriate. If "All of the above" is used, it must not be marked as correct unless all three preceding options are correct. If there are 3 correct answers, the fourth option must be "All of the above" and it should be marked as the correct answer. If none of the first three options are correct, the fourth option must be "None of the above" and it should be marked as correct. Every question must have at least 2 correct answers unless "None of the above" is the correct answer. Ensure "All of the above" or "None of the above" are used logically and only when appropriate.
 
   // Calculate distribution for clear instruction
   const distributionInstructions = questionTypes
@@ -82,34 +81,51 @@ export function createQuizPrompt(
     })
     .join(", ");
 
+  // Build type-specific instructions
+  const typeInstructions = questionTypes
+    .map((type) => {
+      if (type === "multiple_choice") {
+        return "Multiple Choice: Each question must include exactly 4 answer options. Multiple correct answers are allowed. If there are 2 correct answers, include both correct answers and one incorrect option. The fourth option should be either 'All of the above' or 'None of the above' if appropriate. If 'All of the above' is used, it must not be marked as correct unless all three preceding options are correct. If there are 3 correct answers, the fourth option must be 'All of the above' and it should be marked as the correct answer. Every question must have at least 2 correct answers unless 'None of the above' is the correct answer.";
+      }
+      if (type === "true_false") {
+        return "True/False: Use ONLY 'True' and 'False' as the answer options. Each question must have exactly one correct answer.";
+      }
+      if (type === "short_answer") {
+        return "Short Answer: Provide a brief, accurate answer that directly addresses the question.";
+      }
+      return "";
+    })
+    .filter(Boolean);
+
   return `
-      Create a quiz with exactly ${questionAmount} questions total.
-      
-      QUESTION TYPE DISTRIBUTION REQUIREMENT:
-      You must create exactly: ${distributionInstructions}
-      
-      This distribution is mandatory. Do not create more or fewer questions of any type.
-      
-      Instructions:
-      1. Generate exactly ${questionAmount} questions total
-      2. Use only these question types: ${questionTypes.join(", ")}
-      3. Follow the exact distribution above: ${distributionInstructions}
-      4. Difficulty level: ${difficulty}%
-      5. Multiple Choice: Each question must include 4 answer options. If there are 2 correct answers, include both correct answers and one incorrect option. The fourth option should be either "All of the above" or "None of the above" if appropriate. If "All of the above" is used, it must not be marked as correct unless all three preceding options are correct. If there are 3 correct answers, the fourth option must be "All of the above" and it should be marked as the correct answer. If none of the first three options are correct, the fourth option must be "None of the above" and it should be marked as correct. Every question must have at least 2 correct answers unless "None of the above" is the correct answer. Ensure "All of the above" or "None of the above" are used logically and only when appropriate.
-      6. True/False: Use "True" and "False" as the only answer options
-      7. Base questions on the lesson material provided
-      8. Title: ${testName ? `"${testName}"` : "Generate a relevant title"}
-      9. Description: ${description ? `"${description}"` : "Generate a relevant description"}
-      ${additionalInstructions ? `10. Additional instructions: ${additionalInstructions}` : ""}
-  
-      **Example Output:**
-  
-      ${JSON.stringify(outputExample, null, 2)}
-  
-      **Lesson Materials:**
-  
-      "${successfulTexts}"
-      `;
+CRITICAL: You must create exactly ${questionAmount} questions with these EXACT types: ${distributionInstructions}
+
+QUESTION TYPE REQUIREMENTS:
+${typeInstructions.join("\n")}
+
+MANDATORY DISTRIBUTION:
+- Total questions: ${questionAmount}
+- Question types: ${questionTypes.join(", ")} ONLY
+- Distribution: ${distributionInstructions}
+
+Instructions:
+1. Generate exactly ${questionAmount} questions total
+2. Use ONLY these question types: ${questionTypes.join(", ")}
+3. Follow the exact distribution: ${distributionInstructions}
+4. Difficulty level: ${difficulty}%
+5. Base questions on the lesson material provided
+6. Title: ${testName ? `"${testName}"` : "Generate a relevant title"}
+7. Description: ${description ? `"${description}"` : "Generate a relevant description"}
+${additionalInstructions ? `8. Additional instructions: ${additionalInstructions}` : ""}
+
+**Required Output Format:**
+
+${JSON.stringify(outputExample, null, 2)}
+
+**Lesson Materials:**
+
+"${successfulTexts}"
+`;
 }
 
 export const getFormatForType = (type: string) => {

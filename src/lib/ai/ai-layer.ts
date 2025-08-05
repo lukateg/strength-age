@@ -23,6 +23,7 @@ export const anthropic = createAnthropic({
 
 export const generateTestWithLLM = async (prompt: string) => {
   try {
+    console.log("Attempting primary model [GEMINI 1.5 FLASH]");
     return await generateTestWithGemini15Flash(prompt);
   } catch (primaryError) {
     console.error(
@@ -38,7 +39,7 @@ export const generateTestWithLLM = async (prompt: string) => {
         fallbackError
       );
       try {
-        console.log("Attempting second fallback model [GEMINI 1.5 PRO]");
+        console.log("Attempting fallback model [GEMINI 1.5 PRO]");
         return await generateTestWithGemini15Pro(prompt);
       } catch (anthropicError) {
         console.error(

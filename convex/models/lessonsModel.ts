@@ -20,7 +20,8 @@ export const getLessonByTitle = async (
 ) => {
   const lesson = await ctx.db
     .query("lessons")
-    .withIndex("by_lesson_name", (q) => q.eq("title", title))
+    .withIndex("by_user", (q) => q.eq("createdBy", userId))
+    .filter((q) => q.eq(q.field("title"), title))
     .first();
 
   return lesson;

@@ -60,25 +60,57 @@ export const getTestsWithSameTitleByUser = async (
   return tests;
 };
 
+export const getTestsWithTitlePattern = async (
+  ctx: GenericQueryCtx<DataModel>,
+  baseTitle: string,
+  userId: string
+) => {
+  // Get all tests for the user and filter in JavaScript
+  const allTests = await ctx.db
+    .query("tests")
+    .withIndex("by_user", (q) => q.eq("createdBy", userId))
+    .collect();
+
+  // Filter tests that match the base title pattern
+  return allTests.filter((test) => {
+    // Exact match
+    if (test.title === baseTitle) return true;
+
+    // Pattern match: baseTitle + " #" + number
+    const pattern = new RegExp(
+      `^${baseTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} #\\d+$`
+    );
+    return pattern.test(test.title);
+  });
+};
+
 export const optionalIncrementTitle = async (
   ctx: GenericQueryCtx<DataModel>,
   title: string,
   userId: string
 ) => {
-  let newTitle = title;
-  const existingTest = await getTestsWithSameTitleByUser(ctx, title, userId);
+  // Get all tests that match the base title pattern
+  const existingTests = await getTestsWithTitlePattern(ctx, title, userId);
 
-  const exactTitleExists = existingTest.some((test) => test.title === title);
+  // Check if the exact title exists
+  const exactTitleExists = existingTests.some((test) => test.title === title);
 
-  if (exactTitleExists || existingTest.length > 0) {
-    const numbers = existingTest.map((test) => {
-      const match = /#(\d+)$/.exec(test.title);
-      return match ? parseInt(match[1] ?? "0", 10) : 0;
-    });
-    const maxNumber = Math.max(...numbers);
-    newTitle = `${title} #${maxNumber + 1}`;
+  if (exactTitleExists || existingTests.length > 0) {
+    // Extract numbers from titles that match the pattern "title #number"
+    const numbers = existingTests
+      .map((test) => {
+        const match = new RegExp(
+          `^${title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} #(\\d+)$`
+        ).exec(test.title);
+        return match?.[1] ? parseInt(match[1], 10) : 0;
+      })
+      .filter((num) => num > 0); // Only consider numbered variants
+
+    const maxNumber = numbers.length > 0 ? Math.max(...numbers) : 0;
+    return `${title} #${maxNumber + 1}`;
   }
-  return newTitle;
+
+  return title;
 };
 
 export async function getTestsWithPermissions(

@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   title: "Teach-me - AI-Powered Learning Platform",
   description:
     "An intelligent platform for creating and managing educational content with AI-generated tests, quizzes, and personalized learning experiences.",
+  icons: {
+    icon: "/icon-without-background.png",
+    shortcut: "/icon-without-background.png",
+    apple: "/icon-without-background.png",
+  },
   keywords: [
     "AI learning",
     "educational platform",

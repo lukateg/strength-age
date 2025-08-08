@@ -4,18 +4,10 @@ import { v } from "convex/values";
 export default defineSchema({
   users: defineTable({
     clerkId: v.string(),
-    name: v.string(),
-    subscriptionTier: v.union(
-      v.literal("free"),
-      v.literal("starter"),
-      v.literal("pro")
-    ),
+    firstName: v.string(),
+    lastName: v.string(),
+    email: v.string(),
     roles: v.array(v.union(v.literal("admin"), v.literal("user"))),
-    userPreferences: v.optional(
-      v.object({
-        shouldTestReviewLinksExpire: v.optional(v.boolean()),
-      })
-    ),
   }).index("by_clerkId", ["clerkId"]),
 
   stripeCustomers: defineTable({
@@ -62,112 +54,6 @@ export default defineSchema({
     .index("by_clerkId", ["clerkId"])
     .index("by_customerId", ["customerId"]),
 
-  classes: defineTable({
-    title: v.string(),
-    description: v.optional(v.string()),
-    createdBy: v.string(),
-  })
-    .index("by_user", ["createdBy"])
-    .index("by_class_name", ["title"]),
-
-  lessons: defineTable({
-    createdBy: v.string(),
-    classId: v.id("classes"),
-    title: v.string(),
-    description: v.optional(v.string()),
-  })
-    .index("by_class", ["classId"])
-    .index("by_user", ["createdBy"])
-    .index("by_lesson_name", ["title"]),
-
-  materials: defineTable({
-    createdBy: v.string(),
-    classId: v.id("classes"),
-    fileUrl: v.string(),
-    name: v.string(),
-    size: v.number(),
-    fileType: v.union(v.literal("pdf"), v.literal("txt")),
-  })
-    .index("by_class_user", ["classId", "createdBy"])
-    .index("by_user", ["createdBy"]),
-
-  lessonMaterials: defineTable({
-    lessonId: v.id("lessons"),
-    materialId: v.id("materials"),
-    classId: v.id("classes"),
-    order: v.optional(v.number()),
-  })
-    .index("by_lessonId", ["lessonId"])
-    .index("by_materialId", ["materialId"])
-    .index("by_classId", ["classId"]),
-
-  tests: defineTable({
-    createdBy: v.string(),
-    classId: v.id("classes"),
-    title: v.string(),
-    description: v.optional(v.string()),
-    difficulty: v.number(),
-    questionTypes: v.array(
-      v.union(
-        v.literal("multiple_choice"),
-        v.literal("true_false"),
-        v.literal("short_answer")
-      )
-    ),
-    questionAmount: v.number(),
-    lessons: v.array(
-      v.object({
-        lessonId: v.id("lessons"),
-        lessonTitle: v.string(),
-      })
-    ),
-    additionalInstructions: v.optional(v.string()),
-    questions: v.array(
-      v.object({
-        questionText: v.string(),
-        questionType: v.string(),
-        availableAnswers: v.optional(v.array(v.string())),
-        correctAnswer: v.array(v.string()),
-      })
-    ),
-  })
-    .index("by_user", ["createdBy"])
-    .index("by_class", ["classId"]),
-
-  testReviews: defineTable({
-    createdBy: v.string(),
-    classId: v.id("classes"),
-    title: v.string(),
-    description: v.optional(v.string()),
-    testId: v.id("tests"),
-    questions: v.array(
-      v.object({
-        questionText: v.string(),
-        questionType: v.string(),
-        availableAnswers: v.optional(v.array(v.string())),
-        correctAnswer: v.array(v.string()),
-        isCorrect: v.boolean(),
-        answer: v.union(v.array(v.string()), v.string()),
-        feedback: v.optional(v.string()),
-      })
-    ),
-  })
-    .index("by_user", ["createdBy"])
-    .index("by_class", ["classId"])
-    .index("by_test", ["testId"])
-    .index("by_title_and_user", ["title", "createdBy"]),
-
-  testReviewShares: defineTable({
-    testReviewId: v.id("testReviews"),
-    createdBy: v.string(),
-    shareToken: v.string(),
-    expiresAt: v.optional(v.number()),
-    createdAt: v.number(),
-  })
-    .index("by_shareToken", ["shareToken"])
-    .index("by_testReview", ["testReviewId"])
-    .index("expiresAt", ["expiresAt"]),
-
   feedbacks: defineTable({
     createdBy: v.string(),
     type: v.union(
@@ -186,12 +72,4 @@ export default defineSchema({
     .index("by_user", ["createdBy"])
     .index("by_type", ["type"])
     .index("by_created_at", ["createdAt"]),
-
-  userTokenUsage: defineTable({
-    userId: v.string(),
-    monthlyTokensUsed: v.number(),
-    month: v.string(), // Format "YYYY-MM"
-  })
-    .index("by_user", ["userId"])
-    .index("by_user_month", ["userId", "month"]),
 });

@@ -1,5 +1,4 @@
 import { generateObject } from "ai";
-import { generatedTestSchema } from "../schemas";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createAnthropic } from "@ai-sdk/anthropic";
 
@@ -7,7 +6,6 @@ import { withTracing } from "@posthog/ai";
 import { openai } from "@ai-sdk/openai";
 import { PostHog } from "posthog-node";
 import { auth } from "@clerk/nextjs/server";
-import { generateWithOptionalChunking } from "./ai-utils";
 
 import { MAX_GEMINI_TOKENS, MAX_HAIKU_TOKENS } from "./ai-constants";
 
@@ -21,10 +19,10 @@ export const anthropic = createAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-export const generateTestWithLLM = async (prompt: string) => {
+export const generateJSONWithLLM = async (prompt: string) => {
   try {
     console.log("Attempting primary model [GEMINI 1.5 FLASH]");
-    return await generateTestWithGemini15Flash(prompt);
+    return await generateJSONWithGemini15Flash(prompt);
   } catch (primaryError) {
     console.error(
       "Primary model [GEMINI 1.5 FLASH] failed, attempting fallback:",
@@ -32,7 +30,7 @@ export const generateTestWithLLM = async (prompt: string) => {
     );
     try {
       console.log("Attempting fallback model [CLAUDE 3 HAiku]");
-      return await generateTestWithAnthropic(prompt);
+      return await generateJSONWithAnthropic(prompt);
     } catch (fallbackError) {
       console.error(
         "Fallback model [CLAUDE 3 HAiku] also failed:",
@@ -40,7 +38,7 @@ export const generateTestWithLLM = async (prompt: string) => {
       );
       try {
         console.log("Attempting fallback model [GEMINI 1.5 PRO]");
-        return await generateTestWithGemini15Pro(prompt);
+        return await generateJSONWithGemini15Pro(prompt);
       } catch (anthropicError) {
         console.error(
           "Second fallback model [GEMINI 1.5 PRO] also failed:",
@@ -52,7 +50,7 @@ export const generateTestWithLLM = async (prompt: string) => {
   }
 };
 
-export const generateTestWithGemini15Flash = async (prompt: string) => {
+export const generateJSONWithGemini15Flash = async (prompt: string) => {
   const { userId } = await auth();
 
   if (!userId) {
@@ -67,10 +65,10 @@ export const generateTestWithGemini15Flash = async (prompt: string) => {
     }
   );
 
-  const parsedData = await generateWithOptionalChunking({
+  const parsedData = await generateObject({
     model: tracedGeminiModel,
     prompt,
-    schema: generatedTestSchema,
+    output: "no-schema",
     maxTokens: MAX_GEMINI_TOKENS,
   });
 
@@ -80,7 +78,7 @@ export const generateTestWithGemini15Flash = async (prompt: string) => {
   return parsedData;
 };
 
-export const generateTestWithAnthropic = async (prompt: string) => {
+export const generateJSONWithAnthropic = async (prompt: string) => {
   const { userId } = await auth();
 
   if (!userId) {
@@ -95,15 +93,15 @@ export const generateTestWithAnthropic = async (prompt: string) => {
     }
   );
 
-  return await generateWithOptionalChunking({
+  return await generateObject({
     prompt,
     model: tracedAnthropicModel,
-    schema: generatedTestSchema,
+    output: "no-schema",
     maxTokens: MAX_HAIKU_TOKENS,
   });
 };
 
-export const generateTestWithGemini15Pro = async (prompt: string) => {
+export const generateJSONWithGemini15Pro = async (prompt: string) => {
   const { userId } = await auth();
 
   if (!userId) {
@@ -118,10 +116,10 @@ export const generateTestWithGemini15Pro = async (prompt: string) => {
     }
   );
 
-  const parsedData = await generateWithOptionalChunking({
+  const parsedData = await generateObject({
     model: tracedGeminiModel,
     prompt,
-    schema: generatedTestSchema,
+    output: "no-schema",
     maxTokens: MAX_GEMINI_TOKENS,
   });
 
@@ -131,8 +129,7 @@ export const generateTestWithGemini15Pro = async (prompt: string) => {
   return parsedData;
 };
 
-// NOT USED
-export const generateTestWithOpenAI = async (prompt: string) => {
+export const generateJSONWithOpenAI = async (prompt: string) => {
   const { userId } = await auth();
 
   if (!userId) {
@@ -146,7 +143,7 @@ export const generateTestWithOpenAI = async (prompt: string) => {
   const { object: parsedData } = await generateObject({
     model: tracedOpenAIModel,
     prompt,
-    schema: generatedTestSchema,
+    output: "no-schema",
   });
 
   if (!parsedData) {

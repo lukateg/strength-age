@@ -2,48 +2,34 @@ import { type ActionCtx, internalMutation, query } from "./_generated/server";
 import { type UserJSON } from "@clerk/backend";
 import { v, type Validator } from "convex/values";
 import { internalQuery } from "./_generated/server";
-import { AuthenticationRequired } from "./utils";
+import { isAuthenticated } from "./utils";
 import { getTotalStorageUsage } from "./models/materialsModel";
 import { userByClerkId } from "./models/userModel";
-import { mutation } from "./_generated/server";
-import { createAppError } from "./utils";
 import { internal } from "./_generated/api";
 import { type Id } from "./_generated/dataModel";
 
-export const getUserData = query({
-  handler: async (ctx) => {
-    const userId = await AuthenticationRequired({ ctx });
-
-    const user = await userByClerkId(ctx, userId);
-
-    const totalStorageUsage = await getTotalStorageUsage(ctx, userId);
-
-    return { ...user, totalStorageUsage };
-  },
-});
-
 // TODO: Move this to clerk.ts
 export const upsertFromClerk = internalMutation({
-  args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
+  args: { data: v.any() as Validator<UserJSON> },
   async handler(ctx, { data }) {
     const userAttributes = {
-      name: `${data.first_name} ${data.last_name}`,
+      firstName: data.first_name ?? "",
+      lastName: data.last_name ?? "",
+      email: data.email_addresses[0]?.email_address ?? "",
       clerkId: data.id,
-      subscriptionTier: "free" as "free" | "starter" | "pro",
       roles: ["user"] as ("admin" | "user")[],
     };
 
     const user = await userByClerkId(ctx, data.id);
     if (user === null) {
-      // For new users, insert with free tier
       await ctx.db.insert("users", userAttributes);
     } else {
-      // For existing users, only update name and clerkId, preserve their subscription tier
       await ctx.db.patch(user._id, {
-        name: userAttributes.name,
+        firstName: userAttributes.firstName,
+        lastName: userAttributes.lastName,
         clerkId: userAttributes.clerkId,
-        subscriptionTier: userAttributes.subscriptionTier,
         roles: userAttributes.roles,
+        email: userAttributes.email,
       });
     }
   },
@@ -61,6 +47,18 @@ export const deleteFromClerk = internalMutation({
         `Can't delete user, there is none for Clerk user ID: ${clerkUserId}`
       );
     }
+  },
+});
+
+export const getUserData = query({
+  handler: async (ctx) => {
+    const userId = await isAuthenticated({ ctx });
+
+    const user = await userByClerkId(ctx, userId);
+
+    const totalStorageUsage = await getTotalStorageUsage(ctx, userId);
+
+    return { ...user, totalStorageUsage };
   },
 });
 
@@ -116,44 +114,12 @@ export const updateUser = internalMutation({
   args: {
     userId: v.id("users"),
     data: v.object({
-      subscriptionTier: v.optional(
-        v.union(v.literal("free"), v.literal("starter"), v.literal("pro"))
-      ),
+      firstName: v.optional(v.string()),
+      lastName: v.optional(v.string()),
+      email: v.optional(v.string()),
     }),
   },
   handler: async (ctx, { userId, data }) => {
     await ctx.db.patch(userId, data);
-  },
-});
-
-export const updateUserPreferences = mutation({
-  args: {
-    preferences: v.object({
-      shouldTestReviewLinksExpire: v.optional(v.boolean()),
-    }),
-  },
-  handler: async (ctx, { preferences }) => {
-    const userId = await AuthenticationRequired({ ctx });
-
-    const user = await userByClerkId(ctx, userId);
-    if (!user) {
-      throw createAppError({
-        message: "User not found",
-        statusCode: "NOT_FOUND",
-      });
-    }
-
-    // Merge with existing preferences
-    const currentPreferences = user.userPreferences ?? {};
-    const updatedPreferences = {
-      ...currentPreferences,
-      ...preferences,
-    };
-
-    await ctx.db.patch(user._id, {
-      userPreferences: updatedPreferences,
-    });
-
-    return { success: true };
   },
 });

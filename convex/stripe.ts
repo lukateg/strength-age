@@ -9,7 +9,7 @@ import {
 } from "./_generated/server";
 import { type Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
-import { AuthenticationRequired, createAppError } from "./utils";
+import { isAuthenticated, createAppError } from "./utils";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   console.error("Missing STRIPE_SECRET_KEY environment variable");
@@ -29,7 +29,7 @@ export const handleStripeCheckout = action({
     redirectRootUrl: v.string(),
   },
   handler: async (ctx, { priceId, redirectRootUrl }): Promise<string> => {
-    const userId = await AuthenticationRequired({ ctx });
+    const userId = await isAuthenticated({ ctx });
     const identity = await ctx.auth.getUserIdentity();
 
     const existingCustomer = await ctx.runQuery(
@@ -103,7 +103,7 @@ export const handleStripeCheckout = action({
 export const triggerStripeSyncForUser = action({
   args: {},
   handler: async (ctx) => {
-    const userId = await AuthenticationRequired({ ctx });
+    const userId = await isAuthenticated({ ctx });
     const stripeCustomer = await ctx.runQuery(
       internal.stripe.getStripeCustomerByUserId,
       { userId }
@@ -639,7 +639,7 @@ export const getSubscriptionStatus = query({
 export const pauseSubscription = action({
   args: {},
   handler: async (ctx) => {
-    const userId = await AuthenticationRequired({ ctx });
+    const userId = await isAuthenticated({ ctx });
 
     // Get the user's stripe customer
     const stripeCustomer = await ctx.runQuery(
@@ -686,7 +686,7 @@ export const pauseSubscription = action({
 export const resumeSubscription = action({
   args: {},
   handler: async (ctx) => {
-    const userId = await AuthenticationRequired({ ctx });
+    const userId = await isAuthenticated({ ctx });
 
     // Get the user's stripe customer
     const stripeCustomer = await ctx.runQuery(
@@ -731,7 +731,7 @@ export const resumeSubscription = action({
 export const cancelSubscription = action({
   args: {},
   handler: async (ctx) => {
-    const userId = await AuthenticationRequired({ ctx });
+    const userId = await isAuthenticated({ ctx });
 
     const stripeCustomer = await ctx.runQuery(
       internal.stripe.getStripeCustomerByUserId,
@@ -775,7 +775,7 @@ export const cancelSubscription = action({
 export const undoSubscriptionCancellation = action({
   args: {},
   handler: async (ctx) => {
-    const userId = await AuthenticationRequired({ ctx });
+    const userId = await isAuthenticated({ ctx });
 
     const stripeCustomer = await ctx.runQuery(
       internal.stripe.getStripeCustomerByUserId,

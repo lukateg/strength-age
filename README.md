@@ -106,6 +106,7 @@ src/lib/           ← Shared utilities (feature flags, AI wrappers)
 ## Removing things you don’t need
 
 • Don’t want Lemon Squeezy?  Delete `convex/lemonSqueezy` folder and hooks that reference it.
+• Need details on configuring Lemon Squeezy?  See `docs/lemon-squeezy-payments.md`.
 • No PostHog?  Remove `src/providers/post-hog-provider.tsx` and the dependency.
 • Using only Stripe?  Delete unused price/variant env vars.
 • Not building AI features?  Remove `src/lib/ai/*` and related env vars.

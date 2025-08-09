@@ -10,29 +10,28 @@ export default defineSchema({
     roles: v.array(v.union(v.literal("admin"), v.literal("user"))),
   }).index("by_clerkId", ["clerkId"]),
 
-  stripeCustomers: defineTable({
-    userId: v.string(),
-    stripeCustomerId: v.string(),
-    subscriptionId: v.optional(v.string()),
-    subscriptionStatus: v.optional(v.string()),
-    status: v.optional(v.string()),
-    priceId: v.optional(v.string()),
-    currentPeriodStart: v.optional(v.number()),
-    currentPeriodEnd: v.optional(v.number()),
-    cancelAtPeriodEnd: v.optional(v.boolean()),
-    paymentMethod: v.optional(
-      v.object({
-        brand: v.optional(v.string()),
-        last4: v.optional(v.string()),
-      })
-    ),
-  })
-    .index("by_userId", ["userId"])
-    .index("by_stripeCustomerId", ["stripeCustomerId"]),
+  // stripeCustomers: defineTable({
+  //   userId: v.string(),
+  //   stripeCustomerId: v.string(),
+  //   subscriptionId: v.optional(v.string()),
+  //   subscriptionStatus: v.optional(v.string()),
+  //   status: v.optional(v.string()),
+  //   priceId: v.optional(v.string()),
+  //   currentPeriodStart: v.optional(v.number()),
+  //   currentPeriodEnd: v.optional(v.number()),
+  //   cancelAtPeriodEnd: v.optional(v.boolean()),
+  //   paymentMethod: v.optional(
+  //     v.object({
+  //       brand: v.optional(v.string()),
+  //       last4: v.optional(v.string()),
+  //     })
+  //   ),
+  // })
+  //   .index("by_userId", ["userId"])
+  //   .index("by_stripeCustomerId", ["stripeCustomerId"]),
 
   lemonSqueezyCustomers: defineTable({
     userId: v.string(),
-    clerkId: v.string(),
     customerId: v.number(),
     variantId: v.optional(v.number()),
     subscriptionId: v.optional(v.string()),
@@ -51,7 +50,6 @@ export default defineSchema({
     ),
   })
     .index("by_userId", ["userId"])
-    .index("by_clerkId", ["clerkId"])
     .index("by_customerId", ["customerId"]),
 
   feedbacks: defineTable({

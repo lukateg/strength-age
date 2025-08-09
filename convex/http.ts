@@ -19,14 +19,14 @@ http.route({
     switch (event.type) {
       case "user.created": // intentional fallthrough
       case "user.updated":
-        await ctx.runMutation(internal.users.upsertFromClerk, {
+        await ctx.runMutation(internal.clerk.upsertFromClerk, {
           data: event.data,
         });
         break;
 
       case "user.deleted": {
         const clerkUserId = event.data.id!;
-        await ctx.runMutation(internal.users.deleteFromClerk, { clerkUserId });
+        await ctx.runMutation(internal.clerk.deleteFromClerk, { clerkUserId });
         break;
       }
       default:
@@ -41,6 +41,8 @@ http.route({
   path: "/lemon-squeezy-webhook",
   method: "POST",
   handler: httpAction(async (ctx, request) => {
+    console.log("[LEMONSQUEEZY WEBHOOK] Received webhook request");
+
     const signature = request.headers.get("X-Signature") ?? "";
     const payload = await request.text();
 
@@ -50,8 +52,12 @@ http.route({
     }
 
     try {
+      console.log(
+        "[LEMONSQUEEZY WEBHOOK] Calling internal handler with payload",
+        payload
+      );
       const result = await ctx.runAction(
-        internal.lemonSqueezy.subscriptions.handleSubscriptionWebhook,
+        internal.subscriptions.handleLemonSqueezyWebhook,
         {
           signature,
           payload,
@@ -79,49 +85,49 @@ http.route({
   }),
 });
 
-http.route({
-  path: "/stripe-webhook",
-  method: "POST",
-  handler: httpAction(async (ctx, request) => {
-    console.log("[STRIPE WEBHOOK ROUTE] Received webhook request");
+// http.route({
+//   path: "/stripe-webhook",
+//   method: "POST",
+//   handler: httpAction(async (ctx, request) => {
+//     console.log("[STRIPE WEBHOOK ROUTE] Received webhook request");
 
-    const signature = request.headers.get("stripe-signature");
-    const payload = await request.text();
+//     const signature = request.headers.get("stripe-signature");
+//     const payload = await request.text();
 
-    if (!signature) {
-      console.log("[STRIPE WEBHOOK ROUTE] Missing signature");
-      return new Response("No signature", { status: 400 });
-    }
+//     if (!signature) {
+//       console.log("[STRIPE WEBHOOK ROUTE] Missing signature");
+//       return new Response("No signature", { status: 400 });
+//     }
 
-    console.log("[STRIPE WEBHOOK ROUTE] Calling internal handler");
+//     console.log("[STRIPE WEBHOOK ROUTE] Calling internal handler");
 
-    try {
-      // Call an internal action to handle the Stripe logic
-      const result = await ctx.runAction(internal.stripe.handleStripeWebhook, {
-        signature,
-        payload,
-      });
+//     try {
+//       // Call an internal action to handle the Stripe logic
+//       const result = await ctx.runAction(internal.stripe.handleStripeWebhook, {
+//         signature,
+//         payload,
+//       });
 
-      // Check if result is a Response object
-      if (result instanceof Response) {
-        console.log("[STRIPE WEBHOOK ROUTE] Got Response object from handler");
-        return result;
-      }
+//       // Check if result is a Response object
+//       if (result instanceof Response) {
+//         console.log("[STRIPE WEBHOOK ROUTE] Got Response object from handler");
+//         return result;
+//       }
 
-      // Otherwise check success property
-      if (result.success) {
-        console.log("[STRIPE WEBHOOK ROUTE] Successfully processed webhook");
-        return new Response(null, { status: 200 });
-      } else {
-        console.log("[STRIPE WEBHOOK ROUTE] Failed to process webhook");
-        return new Response("Error processing event", { status: 400 });
-      }
-    } catch (err) {
-      console.error("[STRIPE WEBHOOK ROUTE] Error handling webhook:", err);
-      return new Response("Internal server error", { status: 500 });
-    }
-  }),
-});
+//       // Otherwise check success property
+//       if (result.success) {
+//         console.log("[STRIPE WEBHOOK ROUTE] Successfully processed webhook");
+//         return new Response(null, { status: 200 });
+//       } else {
+//         console.log("[STRIPE WEBHOOK ROUTE] Failed to process webhook");
+//         return new Response("Error processing event", { status: 400 });
+//       }
+//     } catch (err) {
+//       console.error("[STRIPE WEBHOOK ROUTE] Error handling webhook:", err);
+//       return new Response("Internal server error", { status: 500 });
+//     }
+//   }),
+// });
 
 async function validateRequest(req: Request): Promise<WebhookEvent | null> {
   const payloadString = await req.text();

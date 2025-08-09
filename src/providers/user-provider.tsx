@@ -8,13 +8,15 @@ import {
 } from "@/hooks/use-authenticated-query";
 
 interface UserContextType {
-  user: QueryStatus<typeof api.users.getUserData>;
+  user: QueryStatus<typeof api.users.getCurrentUserByClerkIdQuery>;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-  const userData = useAuthenticatedQueryWithStatus(api.users.getUserData);
+  const userData = useAuthenticatedQueryWithStatus(
+    api.users.getCurrentUserByClerkIdQuery
+  );
   return (
     <UserContext.Provider
       value={{

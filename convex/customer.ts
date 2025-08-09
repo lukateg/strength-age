@@ -2,21 +2,20 @@ import { internal } from "./_generated/api";
 import { type ActionCtx } from "./_generated/server";
 import { type Id } from "./_generated/dataModel";
 
-export const getLemonSqueezyCustomerByCustomerId = async ({
-  ctx,
-  customerId,
-}: {
-  ctx: ActionCtx;
-  customerId: number;
-}) => {
-  return await ctx.runQuery(
-    internal.lemonSqueezy.subscriptions
-      .getLemonSqueezyCustomerByCustomerIdInternalQuery,
-    {
-      customerId,
-    }
-  );
-};
+// export const getLemonSqueezyCustomerByCustomerId = async ({
+//   ctx,
+//   customerId,
+// }: {
+//   ctx: ActionCtx;
+//   customerId: number;
+// }) => {
+//   return await ctx.runQuery(
+//     internal.subscriptions.getLemonSqueezyCustomerByCustomerIdInternalQuery,
+//     {
+//       customerId,
+//     }
+//   );
+// };
 
 export const getLemonSqueezyCustomerByUserId = async ({
   ctx,
@@ -26,8 +25,7 @@ export const getLemonSqueezyCustomerByUserId = async ({
   userId: Id<"users">;
 }) => {
   return await ctx.runQuery(
-    internal.lemonSqueezy.subscriptions
-      .getLemonSqueezyCustomerByUserIdInternalQuery,
+    internal.subscriptions.getLemonSqueezyCustomerByUserIdInternalQuery,
     {
       userId,
     }
@@ -57,10 +55,13 @@ export const createLemonSqueezyCustomer = async ({
   };
 }) => {
   return await ctx.runMutation(
-    internal.lemonSqueezy.subscriptions
-      .createLemonSqueezyCustomerInternalMutation,
+    internal.subscriptions.createLemonSqueezyCustomer,
     {
-      ...data,
+      customerId: data.customerId,
+      userId: data.userId,
+      data: {
+        ...data,
+      },
     }
   );
 };
@@ -85,11 +86,10 @@ export const updateLemonSqueezyCustomer = async ({
     };
   };
 }) => {
-  await ctx.runMutation(
-    internal.lemonSqueezy.subscriptions
-      .updateLemonSqueezyCustomerInternalMutation,
-    {
+  await ctx.runMutation(internal.subscriptions.updateLemonSqueezyCustomer, {
+    customerId: data._id,
+    data: {
       ...data,
-    }
-  );
+    },
+  });
 };

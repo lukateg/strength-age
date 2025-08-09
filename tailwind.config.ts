@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import { percentageColorClasses } from "./src/lib/tailwind-safelist";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
@@ -9,7 +8,6 @@ export default {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  safelist: [...percentageColorClasses],
   theme: {
     extend: {
       colors: {

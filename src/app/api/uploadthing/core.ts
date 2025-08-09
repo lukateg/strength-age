@@ -1,14 +1,11 @@
-import { api } from "../../../../convex/_generated/api";
-import { fetchMutation, fetchQuery } from "convex/nextjs";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { z } from "zod";
 import { ConvexError } from "convex/values";
-import { getConvexToken } from "@/lib/server-utils";
 
 const f = createUploadthing();
 
 // FileRouter for your app, can contain multiple FileRoutes
-export const pdfFileRouter = {
+export const fileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
   materialUploader: f({
     pdf: {
@@ -26,68 +23,43 @@ export const pdfFileRouter = {
   })
     .input(
       z.object({
-        classId: z.string(),
-        lessonId: z.optional(z.string()),
+        userId: z.string(),
       })
     )
     // Set permissions and file types for this FileRoute
     .middleware(async ({ input, files }) => {
       // This code runs on your server before upload
-      const token = await getConvexToken();
+      // const token = await getConvexToken();
 
-      const canUpload = await fetchQuery(
-        api.permissions.canUploadMaterialsQuery,
-        {
-          newFilesSize: files.reduce((acc, file) => acc + file.size, 0),
-        },
-        { token }
-      );
+      // const canUpload = await fetchQuery(
+      //   api.permissions.checkPermission,
+      //   { token }
+      // );
 
-      if (!canUpload) {
-        throw new ConvexError({
-          message:
-            "You don't have enough storage to upload materials, please upgrade subscription.",
-        });
-      }
+      // if (!canUpload) {
+      //   throw new ConvexError({
+      //     message:
+      //       "You cannot upload materials.",
+      //   });
+      // }
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return {
-        lessonId: input.lessonId,
-        classId: input.classId,
-        token,
+        userId: input.userId,
+        // token,
       };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       try {
-        const materialId = await fetchMutation(
-          api.materials.addMaterialMutation,
-          {
-            classId: metadata.classId,
-            material: {
-              fileUrl: file.ufsUrl,
-              name: file.name,
-              size: file.size,
-            },
-          },
-          { token: metadata.token }
-        );
-
-        if (metadata.lessonId) {
-          await fetchMutation(
-            api.lessons.addMaterialToLessonMutation,
-            {
-              lessonId: metadata.lessonId,
-              materialId,
-              classId: metadata.classId,
-            },
-            { token: metadata.token }
-          );
-        }
+        // await fetchMutation(
+        //   api.materials.addFileToDatabase,
+        //   { token: metadata.token }
+        // );
       } catch (error) {
-        console.error("Error adding material", error);
-        throw new ConvexError({ message: "Error when adding material." });
+        console.error("Error adding file", error);
+        throw new ConvexError({ message: "Error when adding file." });
       }
     }),
 } satisfies FileRouter;
 
-export type OurFileRouter = typeof pdfFileRouter;
+export type OurFileRouter = typeof fileRouter;

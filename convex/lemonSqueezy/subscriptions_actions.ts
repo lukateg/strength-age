@@ -6,7 +6,7 @@ import {
   createCheckout,
   cancelSubscription,
 } from "@lemonsqueezy/lemonsqueezy.js";
-import { AuthenticationRequired, createAppError } from "../utils";
+import { isAuthenticated, createAppError } from "../utils";
 import { configureLemonSqueezy } from "@/config/lemonsqueezy";
 import { getUserByClerkId } from "../users";
 import { getLemonSqueezyCustomerByUserId } from "../customer";
@@ -19,7 +19,7 @@ export const getCheckoutUrlAction = action({
   args: { variantId: v.number(), embed: v.optional(v.boolean()) },
   handler: async (ctx, { variantId, embed }) => {
     configureLemonSqueezy();
-    const clerkId = await AuthenticationRequired({ ctx });
+    const clerkId = await isAuthenticated({ ctx });
 
     const user = await getUserByClerkId({ ctx, clerkId });
 
@@ -73,7 +73,7 @@ export const cancelSubscriptionAction = action({
   args: {},
   handler: async (ctx) => {
     configureLemonSqueezy();
-    const clerkId = await AuthenticationRequired({ ctx });
+    const clerkId = await isAuthenticated({ ctx });
 
     const user = await getUserByClerkId({ ctx, clerkId });
 

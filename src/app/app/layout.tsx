@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { useEffect } from "react";
 
@@ -16,10 +15,6 @@ import { Toaster } from "@/components/ui/sonner";
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-
-  const isActiveTestRoute = /^\/app\/tests\/[^/]+\/active$/.test(pathname);
-
   // Add noindex meta tags for protected pages
   useEffect(() => {
     // Set noindex meta tag for all protected app pages
@@ -65,13 +60,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             shallowRouting
           >
             <div className="flex h-screen">
-              <div className="hidden md:flex">
-                {/* {isActiveTestRoute ? null : <Sidebar />} */}
-              </div>
-
-              <div className="flex-1 pt-16 flex flex-col">
-                <main className="flex-1 overflow-y-auto">{children}</main>
-              </div>
+              <main className="flex-1 overflow-y-auto">{children}</main>
             </div>
           </ProgressProvider>
         </UserProvider>

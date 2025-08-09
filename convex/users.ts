@@ -3,7 +3,6 @@ import { type UserJSON } from "@clerk/backend";
 import { v, type Validator } from "convex/values";
 import { internalQuery } from "./_generated/server";
 import { isAuthenticated } from "./utils";
-import { getTotalStorageUsage } from "./models/materialsModel";
 import { userByClerkId } from "./models/userModel";
 import { internal } from "./_generated/api";
 import { type Id } from "./_generated/dataModel";
@@ -56,9 +55,7 @@ export const getUserData = query({
 
     const user = await userByClerkId(ctx, userId);
 
-    const totalStorageUsage = await getTotalStorageUsage(ctx, userId);
-
-    return { ...user, totalStorageUsage };
+    return { ...user };
   },
 });
 

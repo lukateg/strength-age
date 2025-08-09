@@ -175,11 +175,6 @@ export const processWebhookSubscription = internalAction({
       data: subscriptionData,
     });
 
-    await ctx.runMutation(internal.users.updateUser, {
-      userId: user._id,
-      data: { subscriptionTier: subscriptionData.subscriptionTier },
-    });
-
     return subscriptionData;
   },
 });
@@ -257,12 +252,6 @@ export const syncLemonSqueezyDataToConvexInternalAction = internalAction({
           data: subData,
         });
 
-        // TODO: remove this once you're sure you're not going to need it
-        await ctx.runMutation(internal.users.updateUser, {
-          userId: user._id,
-          data: { subscriptionTier: subData.subscriptionTier },
-        });
-
         return null;
       }
 
@@ -294,11 +283,6 @@ export const syncLemonSqueezyDataToConvexInternalAction = internalAction({
         await updateLemonSqueezyCustomerData({
           ctx,
           data: subData,
-        });
-
-        await ctx.runMutation(internal.users.updateUser, {
-          userId: user._id,
-          data: { subscriptionTier: subData.subscriptionTier },
         });
 
         return null;
@@ -334,12 +318,6 @@ export const syncLemonSqueezyDataToConvexInternalAction = internalAction({
           ...subData,
         }
       );
-
-      // Update user's subscription tier (tier is now stored in subData.subscriptionTier)
-      await ctx.runMutation(internal.users.updateUser, {
-        userId: user._id,
-        data: { subscriptionTier: subData.subscriptionTier },
-      });
 
       return subData;
     } catch (err) {

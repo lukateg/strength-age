@@ -3,14 +3,14 @@ import { query } from "../_generated/server";
 export const getLandingPageData = query({
   args: {},
   handler: async (ctx) => {
-    const tests = await ctx.db.query("tests").collect();
-    const userFeedback = await ctx.db.query("feedbacks").collect();
-    const activeUsers = await ctx.db.query("users").collect();
+    // const landingPageData = await ctx.db.query("landingPageData").collect();
+    // const testimonials = await ctx.db.query("testimonials").collect();
+    // const faqs = await ctx.db.query("faqs").collect();
 
     return {
-      testsGenerated: tests.length,
-      userFeedback: userFeedback.length,
-      activeUsers: activeUsers.length,
+      landingPageData: "",
+      testimonials: [""],
+      faqs: [""],
     };
   },
 });

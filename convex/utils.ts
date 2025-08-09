@@ -6,7 +6,6 @@ import {
 
 import { ConvexError } from "convex/values";
 
-/** Checks if the current user is authenticated. Throws if not */
 export async function isAuthenticated({
   ctx,
 }: {
@@ -23,7 +22,6 @@ export async function isAuthenticated({
   return identity.subject;
 }
 
-// Create a custom error function that ensures data always has a message
 export function createAppError(data: {
   message: string;
   statusCode:
@@ -36,7 +34,6 @@ export function createAppError(data: {
   return new ConvexError(data);
 }
 
-// Type guard to check and extract properly typed error data
 export function isAppError(error: unknown): error is ConvexError<{
   message: string;
   statusCode?:

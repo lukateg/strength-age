@@ -9,15 +9,15 @@
  */
 
 import type * as clerk from "../clerk.js";
-import type * as customer from "../customer.js";
+import type * as customer from "../lemonSqueezyCustomers.js";
 import type * as feedbacks from "../feedbacks.js";
 import type * as http from "../http.js";
 import type * as models_permissionsModel from "../models/permissionsModel.js";
 import type * as models_userModel from "../models/userModel.js";
 import type * as pages_landingPage from "../pages/landingPage.js";
 import type * as schemas_abacSchema from "../schemas/abacSchema.js";
-import type * as subscribeActions from "../subscribeActions.js";
-import type * as subscriptions from "../subscriptions.js";
+import type * as subscribeActions from "../lemon_squeezy/checkout_actions.js";
+import type * as subscriptions from "../lemon_squeezy/upsert_actions.js";
 import type * as uploadThing from "../uploadThing.js";
 import type * as users from "../users.js";
 import type * as utils from "../utils.js";

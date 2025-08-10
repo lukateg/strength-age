@@ -1,27 +1,12 @@
 "use node";
 
 import { v } from "convex/values";
-import { action, type ActionCtx } from "./_generated/server";
+import { action, type ActionCtx } from "../_generated/server";
 import { createCheckout } from "@lemonsqueezy/lemonsqueezy.js";
-import { isAuthenticated, createAppError } from "./utils";
+import { isAuthenticated, createAppError } from "../utils";
 import { configureLemonSqueezy } from "@/config/lemonsqueezy";
-import { internal } from "./_generated/api";
-import { type Id } from "./_generated/dataModel";
-
-export const getLemonSqueezyCustomerByUserId = async ({
-  ctx,
-  userId,
-}: {
-  ctx: ActionCtx;
-  userId: Id<"users">;
-}) => {
-  return await ctx.runQuery(
-    internal.subscriptions.getLemonSqueezyCustomerByUserIdInternalQuery,
-    {
-      userId,
-    }
-  );
-};
+import { internal } from "../_generated/api";
+import { type Id } from "../_generated/dataModel";
 
 export const checkIfSubscribingToSamePlan = async ({
   ctx,
@@ -34,10 +19,12 @@ export const checkIfSubscribingToSamePlan = async ({
 }) => {
   const activeStatuses = ["active", "on_trial", "paused"];
 
-  const existingCustomer = await getLemonSqueezyCustomerByUserId({
-    ctx,
-    userId,
-  });
+  const existingCustomer = await ctx.runQuery(
+    internal.customer.getLSCustomerByUserIdInternalQuery,
+    {
+      userId,
+    }
+  );
   if (!existingCustomer) {
     return false;
   }

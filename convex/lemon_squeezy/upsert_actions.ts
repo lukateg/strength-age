@@ -1,14 +1,10 @@
 import { v } from "convex/values";
-import {
-  internalAction,
-  internalMutation,
-  internalQuery,
-} from "./_generated/server";
+import { internalAction } from "../_generated/server";
 import { getSubscription, getCustomer } from "@lemonsqueezy/lemonsqueezy.js";
-import { createAppError } from "./utils";
+import { createAppError } from "../utils";
 import { configureLemonSqueezy } from "@/config/lemonsqueezy";
-import { internal } from "./_generated/api";
-import { type Id } from "./_generated/dataModel";
+import { internal } from "../_generated/api";
+import { type Id } from "../_generated/dataModel";
 
 type LemonSqueezyWebhookData = {
   meta: {
@@ -52,7 +48,7 @@ type LemonSqueezyWebhookData = {
   };
 };
 
-export const verifyWebhookSubscriptionSignature = async (
+export const verifyLSWebhookSignature = async (
   payload: string,
   signature: string
 ) => {
@@ -128,13 +124,10 @@ export const parseWebhookData = (payload: string) => {
   };
 };
 
-export const handleLemonSqueezyWebhook = internalAction({
+export const handleLSWebhookInternalAction = internalAction({
   args: { signature: v.string(), payload: v.string() },
   handler: async (ctx, { signature, payload }) => {
-    const verification = await verifyWebhookSubscriptionSignature(
-      payload,
-      signature
-    );
+    const verification = await verifyLSWebhookSignature(payload, signature);
     if (!verification.success) {
       console.error("[LEMONSQUEEZY WEBHOOK] Signature verification failed", {
         error: verification.error,
@@ -300,12 +293,12 @@ export const processWebhookSubscriptionData = internalAction({
       "[LEMONSQUEEZY WEBHOOK PROCESS] Updating customer with webhook data",
       {
         customerId,
-        status: subData.status, // Fix: Should log status, not entire subData object
+        status: subData.status,
       }
     );
 
     // Update the customer in Convex
-    await ctx.runAction(internal.subscriptions.updateLemonSqueezyCustomerData, {
+    await ctx.runAction(internal.subscriptions.upsertLSCustomerInternalAction, {
       userId: user._id,
       customerId,
       data: subData,
@@ -365,7 +358,7 @@ export const syncLemonSqueezyDataToConvex = internalAction({
 
       // Check if we have subscription data in our database
       const existingCustomer = await ctx.runQuery(
-        internal.subscriptions.getLemonSqueezyCustomerByCustomerIdInternalQuery,
+        internal.customer.getLSCustomerByCustomerIdInternalQuery,
         { customerId }
       );
 
@@ -380,7 +373,7 @@ export const syncLemonSqueezyDataToConvex = internalAction({
         );
 
         await ctx.runAction(
-          internal.subscriptions.updateLemonSqueezyCustomerData,
+          internal.subscriptions.upsertLSCustomerInternalAction,
           {
             userId: user._id,
             customerId,
@@ -411,7 +404,7 @@ export const syncLemonSqueezyDataToConvex = internalAction({
 
         // Subscription no longer exists, mark as cancelled
         await ctx.runAction(
-          internal.subscriptions.updateLemonSqueezyCustomerData,
+          internal.subscriptions.upsertLSCustomerInternalAction,
           {
             userId: user._id,
             customerId,
@@ -469,7 +462,7 @@ export const syncLemonSqueezyDataToConvex = internalAction({
 
       // Update the customer in Convex
       await ctx.runAction(
-        internal.subscriptions.updateLemonSqueezyCustomerData,
+        internal.subscriptions.upsertLSCustomerInternalAction,
         {
           userId: user._id,
           customerId,
@@ -489,9 +482,9 @@ export const syncLemonSqueezyDataToConvex = internalAction({
 });
 
 // Internal action to update customer data
-export const updateLemonSqueezyCustomerData = internalAction({
+export const upsertLSCustomerInternalAction = internalAction({
   args: {
-    userId: v.id("users"), // Fix: Should be ID type, not string
+    userId: v.id("users"),
     customerId: v.number(),
     data: v.object({
       status: v.string(),
@@ -510,120 +503,30 @@ export const updateLemonSqueezyCustomerData = internalAction({
   },
   handler: async (ctx, { userId, customerId, data }) => {
     const existingCustomer = await ctx.runQuery(
-      internal.subscriptions.getLemonSqueezyCustomerByCustomerIdInternalQuery,
+      internal.customer.getLSCustomerByCustomerIdInternalQuery,
       {
         customerId,
       }
     );
 
     if (existingCustomer) {
-      // Update existing customer
-      await ctx.runMutation(internal.subscriptions.updateLemonSqueezyCustomer, {
-        customerId: existingCustomer._id,
-        data,
-      });
+      await ctx.runMutation(
+        internal.customer.updateLSCustomerInternalMutation,
+        {
+          customerId: existingCustomer._id,
+          data,
+        }
+      );
     } else {
-      // Create new customer record
-      await ctx.runMutation(internal.subscriptions.createLemonSqueezyCustomer, {
-        userId,
-        customerId,
-        data,
-      });
+      await ctx.runMutation(
+        internal.customer.createLSQCustomerInternalMutation,
+        {
+          userId,
+          customerId,
+          data,
+        }
+      );
     }
     return data;
-  },
-});
-
-// Database mutations and queries
-export const createLemonSqueezyCustomer = internalMutation({
-  args: {
-    userId: v.id("users"),
-    customerId: v.number(),
-    data: v.object({
-      status: v.string(),
-      subscriptionId: v.optional(v.string()),
-      variantId: v.optional(v.number()),
-      currentPeriodStart: v.optional(v.string()),
-      currentPeriodEnd: v.optional(v.string()),
-      cancelAtPeriodEnd: v.optional(v.boolean()),
-      paymentMethod: v.optional(
-        v.object({
-          brand: v.optional(v.string()),
-          last4: v.optional(v.string()),
-        })
-      ),
-    }),
-  },
-  handler: async (ctx, { userId, customerId, data }) => {
-    return await ctx.db.insert("lemonSqueezyCustomers", {
-      userId,
-      customerId,
-      ...data,
-    });
-  },
-});
-
-export const updateLemonSqueezyCustomer = internalMutation({
-  args: {
-    customerId: v.id("lemonSqueezyCustomers"),
-    data: v.object({
-      status: v.string(),
-      subscriptionId: v.optional(v.string()),
-      variantId: v.optional(v.number()),
-      currentPeriodStart: v.optional(v.string()),
-      currentPeriodEnd: v.optional(v.string()),
-      cancelAtPeriodEnd: v.optional(v.boolean()),
-      paymentMethod: v.optional(
-        v.object({
-          brand: v.optional(v.string()),
-          last4: v.optional(v.string()),
-        })
-      ),
-    }),
-  },
-  handler: async (ctx, { customerId, data }) => {
-    return await ctx.db.patch(customerId, data);
-  },
-});
-
-export const getLemonSqueezyCustomerByCustomerIdInternalQuery = internalQuery({
-  args: { customerId: v.number() },
-  handler: async (ctx, { customerId }) => {
-    return await ctx.db
-      .query("lemonSqueezyCustomers")
-      .withIndex("by_customerId", (q) => q.eq("customerId", customerId))
-      .first();
-  },
-});
-
-export const getLemonSqueezyCustomerByUserIdInternalQuery = internalQuery({
-  args: { userId: v.id("users") },
-  handler: async (ctx, { userId }) => {
-    return await ctx.db
-      .query("lemonSqueezyCustomers")
-      .withIndex("by_userId", (q) => q.eq("userId", userId))
-      .first();
-  },
-});
-
-// Legacy function kept for compatibility (now just logs a warning)
-export const syncLemonSqueezyWebhookWithConvex = internalAction({
-  args: {
-    eventName: v.string(),
-    userId: v.string(),
-    subscription: v.any(),
-  },
-  handler: async (ctx, { eventName, userId, subscription }) => {
-    console.warn(
-      "[LEMONSQUEEZY] Legacy sync function called. Please use handleLemonSqueezyWebhook instead."
-    );
-    console.log(
-      "[LEMONSQUEEZY] Event:",
-      eventName,
-      "User:",
-      userId,
-      "Subscription:",
-      subscription
-    );
   },
 });

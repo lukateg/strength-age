@@ -1,14 +1,14 @@
 "use node";
 
-import { internalAction } from "./_generated/server";
+import { internalAction } from "../_generated/server";
 import { v } from "convex/values";
 
 import { UTApi } from "uploadthing/server";
-import { createAppError } from "./utils";
+import { createAppError } from "../utils";
 
 const utapi = new UTApi();
 
-export const deleteFileFromUploadThing = internalAction({
+export const deleteFileFromUploadThingInternalAction = internalAction({
   args: {
     pdf: v.object({
       createdBy: v.string(),

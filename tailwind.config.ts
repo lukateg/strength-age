@@ -12,14 +12,15 @@ export default {
     extend: {
       fontFamily: {
         sans: [
-          "var(--font-gabarito)",
-          "Inter",
+          "var(--font-montserrat)",
+          "Montserrat",
           "-apple-system",
           "BlinkMacSystemFont",
           "'Segoe UI'",
           "Roboto",
           "sans-serif",
         ],
+        montserrat: ["var(--font-montserrat)", "Montserrat", "sans-serif"],
       },
       colors: {
         background: "hsl(var(--background))",
@@ -35,6 +36,8 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          cream: "#f7f4f1",
+          cream2: "#fbfaf8",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -137,6 +140,7 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xs: "calc(var(--radius) - 7px)", // Added custom xs size
       },
     },
   },

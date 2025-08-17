@@ -17,7 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CheckCircle, AlertCircle } from "lucide-react";
+import { CheckCircle, AlertCircle, Rocket } from "lucide-react";
 import { useNewsletterSubscription } from "@/hooks/use-newsletter-subscription";
 
 interface NewsletterSubscriptionFormProps {
@@ -36,7 +36,7 @@ export function NewsletterSubscriptionForm({
   utmSource = "website",
   utmMedium = "form",
   placeholder = "Enter your email",
-  buttonText = "Count Me In 🚀",
+  buttonText = "Count Me In",
   className = "",
   onSuccess,
   showLabel = false,
@@ -119,11 +119,11 @@ export function NewsletterSubscriptionForm({
           <Button
             type="submit"
             disabled={isSubmitting}
-            variant="newsletter"
             size="lg"
             className="h-12 px-6"
           >
             {isSubmitting ? "Subscribing..." : buttonText}
+            <Rocket className="w-6 h-6 text-qa-neutral-white" />
           </Button>
         </form>
       </Form>

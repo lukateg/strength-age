@@ -2,12 +2,8 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 
-import { Inter } from "next/font/google";
-
 import { ClerkProvider } from "@clerk/nextjs";
 import { PHProvider } from "@/providers/post-hog-provider";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Starter Kit - Your Project Name",
@@ -85,8 +81,16 @@ export default function RootLayout({
     <ClerkProvider>
       <PHProvider>
         <html lang="en" suppressHydrationWarning>
-          <body className={`${inter.className} gradient-bg`}>
-            <div className="flex h-screen flex-col container mx-auto">
+          <head>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" />
+            <link
+              href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+              rel="stylesheet"
+            />
+          </head>
+          <body className={`gradient-bg`}>
+            <div className="flex h-screen flex-col mx-auto">
               <div className="flex-1 flex flex-col">
                 <main className="flex-1 overflow-y-auto">{children}</main>
               </div>

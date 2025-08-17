@@ -21,15 +21,14 @@ Modals/Popups: [List main interactive elements that appear as overlays]
 Technical Requirements:
 
 Use Tailwind for styling
-
+Each part of the app MUST be mobile friendly
+For handling forms use react-hook-forms and for validation
+For form validation use zod
+For form elements use Shad/cn form elements
 Each part of the app needs to be mobile fiendly
-
 Focus on component reusability
-
 Implement URL-based routing for all pages
-
 Develop a mock API store with realistic data structure for database model (including IDs)
-
 Ensure the application is fully functional end-to-end with mock data
 
 Additional Considerations: [Any specific technical or UX requirements]

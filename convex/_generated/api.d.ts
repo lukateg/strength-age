@@ -8,17 +8,16 @@
  * @module
  */
 
-import type * as clerk from "../clerk.js";
-import type * as customer from "../lemonSqueezyCustomers.js";
 import type * as feedbacks from "../feedbacks.js";
+import type * as file_storage_uploadThing from "../file_storage/uploadThing.js";
 import type * as http from "../http.js";
+import type * as lemonSqueezyCustomers from "../lemonSqueezyCustomers.js";
+import type * as lemon_squeezy_checkout_actions from "../lemon_squeezy/checkout_actions.js";
+import type * as lemon_squeezy_upsert_actions from "../lemon_squeezy/upsert_actions.js";
 import type * as models_permissionsModel from "../models/permissionsModel.js";
 import type * as models_userModel from "../models/userModel.js";
 import type * as pages_landingPage from "../pages/landingPage.js";
 import type * as schemas_abacSchema from "../schemas/abacSchema.js";
-import type * as subscribeActions from "../lemon_squeezy/checkout_actions.js";
-import type * as subscriptions from "../lemon_squeezy/upsert_actions.js";
-import type * as uploadThing from "../uploadThing.js";
 import type * as users from "../users.js";
 import type * as utils from "../utils.js";
 
@@ -37,17 +36,16 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  clerk: typeof clerk;
-  customer: typeof customer;
   feedbacks: typeof feedbacks;
+  "file_storage/uploadThing": typeof file_storage_uploadThing;
   http: typeof http;
+  lemonSqueezyCustomers: typeof lemonSqueezyCustomers;
+  "lemon_squeezy/checkout_actions": typeof lemon_squeezy_checkout_actions;
+  "lemon_squeezy/upsert_actions": typeof lemon_squeezy_upsert_actions;
   "models/permissionsModel": typeof models_permissionsModel;
   "models/userModel": typeof models_userModel;
   "pages/landingPage": typeof pages_landingPage;
   "schemas/abacSchema": typeof schemas_abacSchema;
-  subscribeActions: typeof subscribeActions;
-  subscriptions: typeof subscriptions;
-  uploadThing: typeof uploadThing;
   users: typeof users;
   utils: typeof utils;
 }>;

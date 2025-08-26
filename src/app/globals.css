@@ -19,66 +19,70 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
   :root {
-    /* Light theme - clean and modern with subtle differentiation */
-    --background: 0 0% 98%; /* Very light gray background #fafafa */
-    --foreground: 222.2 84% 4.9%; /* Very dark blue-gray */
-    --card: 0 0% 100%; /* Pure white cards for contrast */
-    --card-foreground: 222.2 84% 4.9%; /* Very dark blue-gray */
+    /* Light theme - WarmView brand colors */
+    --background: 0 0% 100%; /* Pure white background */
+    --foreground: 218 19% 27%; /* Dark navy #2B2D42 */
+    --card: 0 0% 100%; /* Pure white cards */
+    --card-foreground: 218 19% 27%; /* Dark navy #2B2D42 */
     --popover: 0 0% 100%; /* Pure white */
-    --popover-foreground: 222.2 84% 4.9%; /* Very dark blue-gray */
-    --primary: 173 100% 41%; /* Teal #00d4aa */
+    --popover-foreground: 218 19% 27%; /* Dark navy #2B2D42 */
+    --primary: 174 65% 53%; /* Sage/teal #4ECDC4 */
     --primary-foreground: 0 0% 100%; /* White */
-    --secondary: 210 40% 96%; /* Very light blue-gray for elevated surfaces */
-    --secondary-foreground: 222.2 84% 4.9%; /* Very dark blue-gray */
-    --muted: 210 40% 96%; /* Light blue-gray */
-    --muted-foreground: 215.4 16.3% 46.9%; /* Medium blue-gray */
-    --accent: 220 13% 91%; /* Subtle light gray hover #e8e9ea */
-    --accent-foreground: 222.2 84% 4.9%; /* Dark text on light hover */
-    --destructive: 0 84.2% 60.2%; /* Red */
+    --secondary: 220 13% 91%; /* Light gray #E8E9EA */
+    --secondary-foreground: 218 19% 27%; /* Dark navy #2B2D42 */
+    --muted: 210 40% 96%; /* Light cream/gray */
+    --muted-foreground: 208 10% 47%; /* Medium gray #6C757D */
+    --accent: 220 13% 91%; /* Light gray hover */
+    --accent-foreground: 218 19% 27%; /* Dark navy text */
+    --destructive: 0 79% 70%; /* Red/coral #FF6B6B */
     --destructive-foreground: 0 0% 100%; /* White */
-    --border: 214.3 31.8% 91.4%; /* Light border */
-    --input: 214.3 31.8% 91.4%; /* Light input border */
-    --ring: 173 100% 41%; /* Teal focus ring */
-    --chart-1: 173 100% 41%; /* Teal */
-    --chart-2: 217 100% 64%; /* Blue */
-    --chart-3: 262 83% 58%; /* Purple */
-    --chart-4: 43 96% 56%; /* Yellow/Orange */
-    --chart-5: 208 100% 68%; /* Light blue */
+    --border: 214 15% 88%; /* Light gray border #E0E4E7 */
+    --input: 214 15% 88%; /* Light input border #E0E4E7 */
+    --ring: 174 65% 53%; /* Sage/teal focus ring #4ECDC4 */
+    --chart-1: 174 65% 53%; /* Sage/teal #4ECDC4 */
+    --chart-2: 217 91% 60%; /* Blue #3b82f6 */
+    --chart-3: 48 100% 67%; /* Yellow #FFD23F */
+    --chart-4: 0 79% 70%; /* Red/coral #FF6B6B */
+    --chart-5: 208 10% 47%; /* Medium gray #6C757D */
     --radius: 0.75rem;
-    --pro-from: #00d4aa; /* Teal */
-    --pro-to: #7c3aed; /* Purple */
+    --pro-from: #4ECDC4; /* Sage/teal */
+    --pro-to: #2B2D42; /* Dark navy */
     --pro-gradient: linear-gradient(to right, var(--pro-from), var(--pro-to));
   }
   
   .dark {
-    /* Dark theme - matching the dashboard image exactly */
-    --background: 222.2 84% 4.9%; /* Very dark slate #0f172a */
-    --foreground: 210 40% 98%; /* Almost white #fafcfe */
-    --card: 215 28% 17%; /* Dark card background #1e293b */
-    --card-foreground: 210 40% 98%; /* Almost white */
-    --popover: 215 28% 17%; /* Dark card background */
-    --popover-foreground: 210 40% 98%; /* Almost white */
-    --primary: 173 100% 41%; /* Teal accent #00d4aa - like Set Goal button */
-    --primary-foreground: 0 0% 100%; /* White text on teal */
-    --secondary: 215 25% 27%; /* Elevated surface #334155 */
-    --secondary-foreground: 210 40% 98%; /* Almost white */
-    --muted: 215 25% 27%; /* Elevated surface */
-    --muted-foreground: 215 20.2% 65.1%; /* Light gray text #94a3b8 */
-    --accent: 215 25% 22%; /* Subtle gray hover #3d4852 - just slightly lighter than card */
-    --accent-foreground: 210 40% 98%; /* White text */
-    --destructive: 0 62.8% 30.6%; /* Red for errors */
-    --destructive-foreground: 210 40% 98%; /* Almost white */
-    --border: 215 28% 25%; /* Subtle border #2d3748 */
-    --input: 215 28% 25%; /* Input border */
-    --ring: 173 100% 41%; /* Teal focus ring */
-    --chart-1: 173 100% 41%; /* Teal #00d4aa */
+    /* Dark theme - WarmView brand in dark mode */
+    --background: 218 19% 15%; /* Dark navy background based on #2B2D42 */
+    --foreground: 0 0% 98%; /* Almost white text */
+    --card: 218 19% 20%; /* Slightly lighter navy for cards */
+    --card-foreground: 0 0% 98%; /* Almost white */
+    --popover: 218 19% 20%; /* Same as card */
+    --popover-foreground: 0 0% 98%; /* Almost white */
+    --primary: 174 65% 53%; /* Keep sage/teal #4ECDC4 */
+    --primary-foreground: 0 0% 100%; /* White text on sage */
+    --secondary: 218 19% 25%; /* Elevated navy surface */
+    --secondary-foreground: 0 0% 98%; /* Almost white */
+    --muted: 218 19% 25%; /* Elevated surface */
+    --muted-foreground: 215 20% 65%; /* Light gray text */
+    --accent: 218 19% 30%; /* Subtle navy hover */
+    --accent-foreground: 0 0% 98%; /* White text */
+    --destructive: 0 79% 70%; /* Keep red/coral #FF6B6B */
+    --destructive-foreground: 0 0% 100%; /* White */
+    --border: 218 19% 25%; /* Subtle border */
+    --input: 218 19% 25%; /* Input border */
+    --ring: 174 65% 53%; /* Sage/teal focus ring */
+    --chart-1: 174 65% 53%; /* Sage/teal #4ECDC4 */
     --chart-2: 217 91% 60%; /* Blue #3b82f6 */
-    --chart-3: 215 25% 22%; /* Subtle gray */
-    --chart-4: 43 96% 56%; /* Orange #f59e0b */
-    --chart-5: 262 83% 58%; /* Purple #7c3aed */
-    --pro-from: #00d4aa; /* Teal */
-    --pro-to: #3d4852; /* Subtle gray for minimal gradient */
+    --chart-3: 48 100% 67%; /* Yellow #FFD23F */
+    --chart-4: 0 79% 70%; /* Red/coral #FF6B6B */
+    --chart-5: 208 10% 60%; /* Medium gray */
+    --pro-from: #4ECDC4; /* Sage/teal */
+    --pro-to: #2B2D42; /* Dark navy */
     --pro-gradient: linear-gradient(to right, var(--pro-from), var(--pro-to));
   }
 }
@@ -195,6 +199,11 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+  
+  /* WarmView Brand Utilities */
+  .shadow-qa-card {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
   
   /* Additional utility classes for the dashboard design */

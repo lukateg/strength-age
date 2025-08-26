@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { PHProvider } from "@/providers/post-hog-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Starter Kit - Your Project Name",
@@ -95,6 +96,7 @@ export default function RootLayout({
                 <main className="flex-1 overflow-y-auto">{children}</main>
               </div>
             </div>
+            <Toaster />
           </body>
         </html>
       </PHProvider>

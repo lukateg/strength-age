@@ -34,10 +34,15 @@ export default {
           foreground: "hsl(var(--popover-foreground))",
         },
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#4ECDC4", // Sage/teal from landing page
+          foreground: "#ffffff",
           cream: "#f7f4f1",
           cream2: "#fbfaf8",
+          50: "#f0fdfa",
+          100: "#ccfbf1",
+          500: "#4ECDC4",
+          600: "#3BB8B5",
+          700: "#2A9D9A",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -70,21 +75,35 @@ export default {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        // WarmView Brand Colors (from landing page)
+        "qa-neutral": {
+          dark: "#2B2D42", // Main dark navy text
+          medium: "#6C757D", // Secondary gray text
+          light: "#94A3B8", // Light gray text
+          white: "#ffffff", // Pure white
+          footer: "#f8f9fa", // Light footer background
+          border: "#E0E4E7", // Light gray borders
+        },
+        "qa-success": "#4ECDC4", // Sage/teal - positive actions
+        "qa-warning": "#FFD23F", // Yellow - warnings
+        "qa-danger": "#FF6B6B", // Red/coral - negative/errors
+        "qa-blue": "#3b82f6", // Blue accents
+        // Legacy colors maintained for compatibility
         teal: {
-          DEFAULT: "#00d4aa",
+          DEFAULT: "#4ECDC4", // Updated to match primary
           50: "#f0fdfa",
           100: "#ccfbf1",
-          500: "#00d4aa",
-          600: "#00bfa5",
-          700: "#00a693",
+          500: "#4ECDC4",
+          600: "#3BB8B5",
+          700: "#2A9D9A",
         },
         green: {
-          DEFAULT: "#10b981",
-          50: "#ecfdf5",
-          100: "#d1fae5",
-          500: "#10b981",
-          600: "#059669",
-          700: "#047857",
+          DEFAULT: "#4ECDC4", // Updated to sage color
+          50: "#f0fdfa",
+          100: "#ccfbf1",
+          500: "#4ECDC4",
+          600: "#3BB8B5",
+          700: "#2A9D9A",
         },
         blue: {
           DEFAULT: "#3b82f6",
@@ -103,20 +122,28 @@ export default {
           700: "#6d28d9",
         },
         success: {
-          DEFAULT: "#10b981",
-          50: "#ecfdf5",
-          100: "#d1fae5",
-          500: "#10b981",
-          600: "#059669",
-          700: "#047857",
+          DEFAULT: "#4ECDC4", // Updated to sage color
+          50: "#f0fdfa",
+          100: "#ccfbf1",
+          500: "#4ECDC4",
+          600: "#3BB8B5",
+          700: "#2A9D9A",
         },
         warning: {
-          DEFAULT: "#f59e0b",
+          DEFAULT: "#FFD23F", // Updated to match landing page
           50: "#fffbeb",
           100: "#fef3c7",
-          500: "#f59e0b",
-          600: "#d97706",
-          700: "#b45309",
+          500: "#FFD23F",
+          600: "#F7C32E",
+          700: "#E6B800",
+        },
+        danger: {
+          DEFAULT: "#FF6B6B", // Red/coral from landing page
+          50: "#fef2f2",
+          100: "#fee2e2",
+          500: "#FF6B6B",
+          600: "#EF4444",
+          700: "#DC2626",
         },
         info: {
           DEFAULT: "#3b82f6",

@@ -1,80 +1,83 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
-  BarChart3,
-  CheckCircle2,
+  Atom,
+  Brain,
   ChevronDown,
-  CreditCard,
-  Rocket,
-  Search,
+  Clock8,
+  Cross,
+  Eye,
+  Feather,
+  HeartPulse,
   Shield,
-  TrendingDown,
-  Wrench,
-  Zap,
+  ShieldPlus,
+  Sun,
+  Timer,
+  View,
 } from "lucide-react";
 import { NewsletterSubscriptionForm } from "@/components/newsletter-subscription-form";
+import Image from "next/image";
 
 function TabbedSection() {
   const [activeTab, setActiveTab] = useState(0);
 
   const tabs = [
     {
-      id: "user-research",
-      title: "User Research",
-      icon: "📊",
-      description: "Capture user feedback at scale",
+      id: "smart-tracking",
+      title: "Smart Tracking",
+      icon: <Clock8 />,
+      description: "See exactly how long you’ve been working",
       content:
-        "Launch in-product studies in minutes with precise targeting that ensures you learn from the right users at the right time.",
+        "Time flies when you’re deep in work—and that’s when strain sneaks up. Smart Tracking keeps you aware of exactly how long you’ve been at it, so you don’t lose track of hours behind the screen. No timers to check, no mental math—just clear awareness of your work sessions.",
     },
     {
-      id: "design",
-      title: "Design",
-      icon: "🎨",
-      description: "Say goodbye to manual analysis",
+      id: "subtle-awareness",
+      title: "Subtle Awareness",
+      icon: <View />,
+      description: "A warm screen glow nudges you before fatigue builds",
       content:
-        "Let AI do the heavy lifting and surface the top actionable product opportunities from your user experience data.",
+        "Most apps either nag you with popups or block your screen completely. This tool takes a different approach: a subtle warm screen cue that gently nudges you before fatigue sets in. It doesn’t stop your work—it helps you wrap up naturally, without breaking your flow.",
     },
     {
-      id: "product-management",
-      title: "Product Management",
-      icon: "📋",
-      description: "Save time and resources",
+      id: "custom-intervals",
+      title: "Custom Intervals",
+      icon: <Timer />,
+      description: "Choose work and rest times that match your rhythm",
       content:
-        "Do more research in less time by recruiting users right in your product and instantly analyzing their feedback with AI.",
+        "Everyone works differently. Some focus best in 25-minute sprints, others in 90-minute deep work blocks. Set intervals that match your workflow, and the app will guide you to rest at the right time—whether you’re a sprinter or a marathoner.",
     },
     {
-      id: "marketing",
-      title: "Marketing",
-      icon: "📈",
-      description: "Drive growth with insights",
+      id: "health-first",
+      title: "Health-First",
+      icon: <HeartPulse />,
+      description: "Designed to protect your eyes, mind, and energy",
       content:
-        "Understand user behavior patterns and optimize your marketing campaigns with data-driven user research.",
+        "This isn’t just another productivity tracker. It’s built with your health in mind. By keeping breaks consistent and preventing overwork, it reduces eye strain, mental fatigue, and even the stress that builds up silently during long hours. Protect your energy, not just your output.",
     },
     {
-      id: "engineering",
-      title: "Engineering",
-      icon: "⚙️",
-      description: "Build better products",
+      id: "light-and-simple",
+      title: "Light & Simple",
+      icon: <Feather />,
+      description: "Runs quietly in the background, no clutter, no friction.",
       content:
-        "Get technical insights from users to prioritize features and improvements that matter most to your product success.",
+        "Forget heavy, bloated apps that slow you down or force hard stops. This one runs quietly in the background—lightweight, distraction-free, and always there when you need it. No interruptions, no overengineering—just the right level of guidance to keep you on track.",
     },
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section id="features" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-semibold text-[#2B2D42] mb-6">
-            Empower your org to create great experiences
+        <div className="text-center mb-20">
+          <h2 className="text-3xl md:text-5xl font-medium text-qa-neutral-dark mb-6">
+            Must have features for hard workers
           </h2>
         </div>
 
         {/* Tab Navigation */}
         <div className="max-w-5xl mx-auto ">
-          <div className="bg-white rounded-t-xl border border-[#E0E4E7] border-b-0">
+          <div className="bg-primary-cream2 rounded-t-xl border border-qa-neutral-border border-b-0">
             <div className="flex overflow-x-auto">
               {tabs.map((tab, index) => (
                 <button
@@ -82,12 +85,12 @@ function TabbedSection() {
                   onClick={() => setActiveTab(index)}
                   className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                     activeTab === index
-                      ? "border-[#4ECDC4] text-[#2B2D42] bg-white"
-                      : "border-transparent text-[#6C757D] hover:text-[#2B2D42] hover:border-[#E0E4E7]"
+                      ? "border-qa-success text-qa-neutral-dark bg-primary-cream2"
+                      : "border-transparent text-qa-neutral-medium hover:text-qa-neutral-dark hover:border-qa-neutral-border"
                   }`}
                 >
                   <span className="text-lg">{tab.icon}</span>
-                  {tab.title}
+                  <span>{tab.title}</span>
                 </button>
               ))}
             </div>
@@ -96,78 +99,92 @@ function TabbedSection() {
 
         {/* Tab Content */}
         <div className="max-w-5xl mx-auto">
-          <div className="bg-white rounded-b-xl border border-[#E0E4E7] border-t-0 p-8">
+          <div className="bg-primary-cream2 rounded-b-xl border border-qa-neutral-border border-t-0 p-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               {/* Left Content */}
               <div>
-                <h3 className="text-2xl font-bold text-[#2B2D42] mb-4">
+                <h3 className="text-2xl font-bold text-qa-neutral-dark mb-4">
                   {tabs[activeTab]?.description}
                 </h3>
-                <p className="text-lg text-[#6C757D] mb-6 leading-relaxed">
+                <p className="text-base text-qa-neutral-medium mb-6 leading-relaxed">
                   {tabs[activeTab]?.content}
                 </p>
-                <Button variant="ghost" className="text-[#2B2D42]">
-                  Explore ClearAudit for {tabs[activeTab]?.title} Teams
-                  <svg
-                    className="w-4 h-4 ml-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Button>
               </div>
 
               {/* Right Content - Mockup */}
               <div className="relative">
-                <div className="bg-gradient-to-br from-[#f8f6f3] to-[#ffffff] rounded-xl p-6 border border-[#E0E4E7]">
-                  {/* Mini Dashboard Mockup */}
+                <div className="bg-gradient-to-br from-primary-cream to-white rounded-xl p-6 border border-qa-neutral-border">
                   <div className="space-y-4">
-                    {/* Header */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-[#FF6B6B] rounded-full"></div>
-                        <div className="w-2 h-2 bg-[#FFD23F] rounded-full"></div>
-                        <div className="w-2 h-2 bg-[#4ECDC4] rounded-full"></div>
+                        <div className="w-2 h-2 bg-qa-danger rounded-full"></div>
+                        <div className="w-2 h-2 bg-qa-warning rounded-full"></div>
+                        <div className="w-2 h-2 bg-qa-success rounded-full"></div>
                       </div>
-                      <div className="text-xs text-[#6C757D]">ClearAudit</div>
                     </div>
 
-                    {/* Content based on active tab */}
                     {activeTab === 0 && (
                       <div className="space-y-3">
-                        <div className="text-sm font-semibold text-[#2B2D42]">
-                          SEO Research Dashboard
-                        </div>
-                        <div className="bg-white rounded-lg p-3 border border-[#E0E4E7]">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs text-[#6C757D]">
-                              User Behavior
-                            </span>
-                            <span className="text-xs text-[#4ECDC4]">+23%</span>
+                        <div className="text-sm font-semibold text-qa-neutral-dark flex justify-between">
+                          <div>Smart Tracking</div>
+
+                          <div className="text-xs text-qa-neutral-medium">
+                            Total: 4h 30m
                           </div>
-                          <div className="h-12 bg-gradient-to-r from-[#4ECDC4] to-[#3BB8B5] rounded opacity-30"></div>
+                        </div>
+                        <div className="bg-white rounded-lg p-3 border border-qa-neutral-border space-y-3">
+                          {/* X (Twitter) Progress Bar */}
+                          <div className="flex items-center gap-3">
+                            <div className="w-5 h-5 bg-black rounded-sm flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">
+                                𝕏
+                              </span>
+                            </div>
+                            <div className="flex-1">
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div
+                                  className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full transition-all duration-500 ease-out"
+                                  style={{ width: "68%" }}
+                                ></div>
+                              </div>
+                            </div>
+                            <span className="text-xs font-semibold text-qa-neutral-dark min-w-[32px]">
+                              68%
+                            </span>
+                          </div>
+
+                          {/* ChatGPT Progress Bar */}
+                          <div className="flex items-center gap-3">
+                            <div className="w-5 h-5 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-sm flex items-center justify-center">
+                              <span className="text-white text-xs">✦</span>
+                            </div>
+                            <div className="flex-1">
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div
+                                  className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2 rounded-full transition-all duration-500 ease-out"
+                                  style={{ width: "32%" }}
+                                ></div>
+                              </div>
+                            </div>
+                            <span className="text-xs font-semibold text-qa-neutral-dark min-w-[32px]">
+                              32%
+                            </span>
+                          </div>
                         </div>
                       </div>
                     )}
 
                     {activeTab === 1 && (
                       <div className="space-y-3">
-                        <div className="text-sm font-semibold text-[#2B2D42]">
-                          Design Analytics
+                        <div className="text-sm font-semibold text-qa-neutral-dark flex justify-between">
+                          Subtle awareness
                         </div>
                         <div className="grid grid-cols-2 gap-2">
-                          <div className="bg-white rounded p-2 border border-[#E0E4E7]">
-                            <div className="w-full h-6 bg-[#FFD23F] rounded opacity-40"></div>
+                          <div className="bg-white rounded p-2 border border-qa-neutral-border">
+                            <div className="w-full h-6 bg-qa-warning rounded opacity-40"></div>
                           </div>
-                          <div className="bg-white rounded p-2 border border-[#E0E4E7]">
-                            <div className="w-full h-6 bg-[#FF6B6B] rounded opacity-40"></div>
+                          <div className="bg-white rounded p-2 border border-qa-neutral-border">
+                            <div className="w-full h-6 bg-qa-danger rounded opacity-40"></div>
                           </div>
                         </div>
                       </div>
@@ -175,21 +192,70 @@ function TabbedSection() {
 
                     {activeTab === 2 && (
                       <div className="space-y-3">
-                        <div className="text-sm font-semibold text-[#2B2D42]">
-                          Product Roadmap
+                        <div className="text-sm font-semibold text-qa-neutral-dark">
+                          Session Settings
                         </div>
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 bg-[#4ECDC4] rounded-full"></div>
-                            <span className="text-xs text-[#6C757D]">
-                              Meta descriptions optimized
-                            </span>
+                        <div className="bg-white rounded-lg p-3 border border-qa-neutral-border space-y-3">
+                          {/* Work Session Setting */}
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-semibold text-qa-neutral-dark">
+                                Work Session
+                              </span>
+                              <span className="text-xs text-qa-success font-semibold">
+                                45 min
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <button className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center text-qa-neutral-dark text-sm font-bold transition-colors">
+                                −
+                              </button>
+                              <div className="flex-1 bg-gray-200 rounded-full h-2 relative">
+                                <div
+                                  className="bg-gradient-to-r from-qa-success to-primary-600 h-2 rounded-full transition-all duration-300"
+                                  style={{ width: "75%" }}
+                                ></div>
+                                <div className="absolute top-0 left-[75%] w-3 h-3 bg-white border-2 border-qa-success rounded-full transform -translate-x-1/2 -translate-y-0.5 cursor-pointer shadow-sm"></div>
+                              </div>
+                              <button className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center text-qa-neutral-dark text-sm font-bold transition-colors">
+                                +
+                              </button>
+                            </div>
+                            <div className="flex justify-between text-xs text-qa-neutral-medium">
+                              <span>15 min</span>
+                              <span>90 min</span>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 bg-[#FFD23F] rounded-full"></div>
-                            <span className="text-xs text-[#6C757D]">
-                              Page speed improvements
-                            </span>
+
+                          {/* Break Session Setting */}
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-semibold text-qa-neutral-dark">
+                                Break Session
+                              </span>
+                              <span className="text-xs text-qa-danger font-semibold">
+                                10 min
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <button className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center text-qa-neutral-dark text-sm font-bold transition-colors">
+                                −
+                              </button>
+                              <div className="flex-1 bg-gray-200 rounded-full h-2 relative">
+                                <div
+                                  className="bg-gradient-to-r from-qa-danger to-danger-600 h-2 rounded-full transition-all duration-300"
+                                  style={{ width: "33%" }}
+                                ></div>
+                                <div className="absolute top-0 left-[33%] w-3 h-3 bg-white border-2 border-qa-danger rounded-full transform -translate-x-1/2 -translate-y-0.5 cursor-pointer shadow-sm"></div>
+                              </div>
+                              <button className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center text-qa-neutral-dark text-sm font-bold transition-colors">
+                                +
+                              </button>
+                            </div>
+                            <div className="flex justify-between text-xs text-qa-neutral-medium">
+                              <span>5 min</span>
+                              <span>30 min</span>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -197,15 +263,13 @@ function TabbedSection() {
 
                     {activeTab === 3 && (
                       <div className="space-y-3">
-                        <div className="text-sm font-semibold text-[#2B2D42]">
-                          Marketing Insights
+                        <div className="text-sm font-semibold text-qa-neutral-dark">
+                          Science-backed
                         </div>
-                        <div className="bg-white rounded-lg p-3 border border-[#E0E4E7]">
-                          <div className="text-xs text-[#6C757D] mb-2">
-                            Conversion Rate
-                          </div>
-                          <div className="text-lg font-bold text-[#4ECDC4]">
-                            4.2%
+                        <div className="bg-white rounded-lg p-3 border border-qa-neutral-border">
+                          <div className="text-sm  text-qa-success">
+                            Based on legitimate scientific studies, and backed
+                            by the research
                           </div>
                         </div>
                       </div>
@@ -213,17 +277,17 @@ function TabbedSection() {
 
                     {activeTab === 4 && (
                       <div className="space-y-3">
-                        <div className="text-sm font-semibold text-[#2B2D42]">
-                          Technical SEO
+                        <div className="text-sm font-semibold text-qa-neutral-dark">
+                          Technical setup
                         </div>
                         <div className="space-y-2">
-                          <div className="bg-white rounded p-2 border border-[#E0E4E7] text-xs">
-                            <span className="text-[#4ECDC4]">✓</span> Core Web
-                            Vitals
+                          <div className="bg-white rounded p-2 border border-qa-neutral-border text-xs">
+                            <span className="text-qa-success">✓</span> Install
+                            and forget
                           </div>
-                          <div className="bg-white rounded p-2 border border-[#E0E4E7] text-xs">
-                            <span className="text-[#FFD23F]">◐</span> Schema
-                            Markup
+                          <div className="bg-white rounded p-2 border border-qa-neutral-border text-xs">
+                            <span className="text-qa-warning">◐</span> Pause
+                            when you want
                           </div>
                         </div>
                       </div>
@@ -240,52 +304,50 @@ function TabbedSection() {
 }
 
 function FAQSection() {
-  const [openItems, setOpenItems] = useState<Set<number>>(new Set());
+  const [openItem, setOpenItem] = useState<number | null>(null);
 
   const faqData = [
     {
-      question: "Do I need to involve engineers to use session replays?",
+      question: "What is WarmView and how does it work?",
       answer:
-        "Only once for the initial SDK installation. After that, Sprig automatically captures sessions across your site or app where the SDK is installed. No custom event tagging or manual setup is required for replay collection.",
+        "WarmView is a lightweight tool that helps you stay mindful of your screen time. It quietly tracks how long you've been working and gives you subtle on-screen cues—like a warm glow—when it's time to step away. No distractions, no forced lockouts, just gentle awareness.",
     },
     {
-      question: "Will session replay affect site performance or page speed?",
+      question: "Can I adjust my own work and break times?",
       answer:
-        "Our session replay technology is designed with performance in mind. The SDK has minimal impact on page load times and uses efficient compression and sampling techniques to ensure your site remains fast and responsive.",
+        "Yes. You're in control. You can set custom work and rest intervals that match your rhythm—whether you prefer short sprints or longer focus sessions.",
     },
     {
-      question:
-        "How is Sprig Replays different from tools like FullStory or Hotjar?",
+      question: "What if my working time expires?",
       answer:
-        "Sprig Replays integrates seamlessly with our user research platform, allowing you to connect session recordings directly with user feedback and surveys. This unique combination provides deeper insights into user behavior and motivation that standalone replay tools cannot offer.",
+        "Nothing is blocked. WarmView simply makes you aware that you've gone past your chosen limit with a visual nudge. It's your choice whether to continue, wrap up, or take a break.",
     },
     {
-      question: "Can I filter replays by user behavior or survey response?",
+      question: "How is WarmView different from other productivity apps?",
       answer:
-        "Yes! You can filter session replays based on survey responses, user attributes, custom events, and specific behaviors. This makes it easy to focus on the most relevant user interactions and understand patterns in user experience.",
+        "Most apps either block your screen entirely or send occasional reminders you can easily dismiss. WarmView takes a balanced approach—constant, subtle awareness that keeps you mindful without interrupting your work.",
     },
     {
-      question: "Do Replays work across mobile and desktop?",
+      question: "Is WarmView heavy on resources?",
       answer:
-        "Absolutely! Sprig Replays work seamlessly across all devices and platforms, including web browsers, mobile apps (iOS and Android), and tablet devices. You'll get consistent replay quality regardless of how users access your product.",
+        "Not at all. It runs quietly in the background with minimal CPU or memory use. You won't even notice it—until it reminds you to pause.",
+    },
+    {
+      question: "Does WarmView collect my data?",
+      answer:
+        "No. Your screen-time tracking stays on your device. WarmView does not collect browsing history, keystrokes, or personal data. Your privacy is fully protected.",
     },
   ];
 
   const toggleItem = (index: number) => {
-    const newOpenItems = new Set(openItems);
-    if (newOpenItems.has(index)) {
-      newOpenItems.delete(index);
-    } else {
-      newOpenItems.add(index);
-    }
-    setOpenItems(newOpenItems);
+    setOpenItem(openItem === index ? null : index);
   };
 
   return (
-    <section className="py-20 bg-white">
+    <section id="faq" className="py-20 bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-semibold text-[#2B2D42] mb-4">
+        <div className="text-center mb-20">
+          <h2 className="text-3xl md:text-5xl font-medium text-qa-neutral-dark mb-4">
             Frequently asked questions
           </h2>
         </div>
@@ -294,23 +356,29 @@ function FAQSection() {
           {faqData.map((item, index) => (
             <div key={index} className="border-b border-gray-200">
               <button
-                className="w-full px-6 py-6 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
+                className="w-full px-6 py-6 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200"
                 onClick={() => toggleItem(index)}
               >
                 <span className="font-medium text-gray-900 text-lg">
                   {item.question}
                 </span>
                 <ChevronDown
-                  className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
-                    openItems.has(index) ? "rotate-180" : ""
+                  className={`w-5 h-5 text-gray-500 transition-transform duration-300 ease-in-out ${
+                    openItem === index ? "rotate-180" : ""
                   }`}
                 />
               </button>
-              {openItems.has(index) && (
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  openItem === index
+                    ? "max-h-96 opacity-100"
+                    : "max-h-0 opacity-0"
+                }`}
+              >
                 <div className="px-6 pb-6 text-gray-600 leading-relaxed">
                   {item.answer}
                 </div>
-              )}
+              </div>
             </div>
           ))}
         </div>
@@ -349,6 +417,7 @@ function CTATestimonialSection() {
 
   return (
     <section
+      id="testimonials"
       className="py-20"
       style={{
         backgroundImage: "url(/gradient.svg)",
@@ -357,10 +426,9 @@ function CTATestimonialSection() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      {/* <section className="py-20 bg-gradient-to-r from-[#F5E6D3] via-[#F0D5D9] to-[#E8E9F3]"> */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-semibold text-[#2B2D42] mb-4">
+          <h2 className="text-3xl md:text-5xl font-medium text-qa-neutral-dark mb-4">
             Powering enterprise companies, startups, and everything in between
           </h2>
         </div>
@@ -374,29 +442,29 @@ function CTATestimonialSection() {
               {/* Company Logo/Name */}
               <div className="flex items-center mb-6">
                 <div className="text-3xl mr-3">{testimonial.logo}</div>
-                <h3 className="text-xl font-bold text-[#2B2D42]">
+                <h3 className="text-xl font-bold text-qa-neutral-dark">
                   {testimonial.company}
                 </h3>
               </div>
 
               {/* Quote */}
-              <blockquote className="text-[#4A5568] text-base leading-relaxed mb-8">
+              <blockquote className="text-slate-600 text-base leading-relaxed mb-8">
                 {testimonial.quote}
               </blockquote>
 
               {/* Author */}
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-[#4ECDC4] to-[#44B3AC] rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-qa-success to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
                   {testimonial.author
                     .split(" ")
                     .map((name) => name[0])
                     .join("")}
                 </div>
                 <div>
-                  <div className="font-semibold text-[#2B2D42]">
+                  <div className="font-semibold text-qa-neutral-dark">
                     {testimonial.author}
                   </div>
-                  <div className="text-[#6C757D] text-sm">
+                  <div className="text-qa-neutral-medium text-sm">
                     {testimonial.title}
                   </div>
                 </div>
@@ -417,34 +485,38 @@ export default function Home() {
       <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <div className="text-2xl font-bold text-[#2B2D42]">ClearAudit</div>
+            <div className="text-xl font-medium text-qa-neutral-dark flex items-center gap-2">
+              <Sun className="w-6 h-6 text-orange-300" />
+              WarmView
+            </div>
             <div className="hidden md:flex space-x-8">
-              <Link
+              <a
                 href="#features"
-                className="text-[#2B2D42] hover:text-[#4ECDC4] font-medium text-sm transition-colors"
+                className="text-qa-neutral-dark hover:text-qa-success font-medium text-sm transition-colors"
               >
                 Features
-              </Link>
-              <Link
-                href="#pricing"
-                className="text-[#2B2D42] hover:text-[#4ECDC4] font-medium text-sm transition-colors"
+              </a>
+              <a
+                href="#about"
+                className="text-qa-neutral-dark hover:text-qa-success font-medium text-sm transition-colors"
               >
-                Pricing
-              </Link>
-              <Link
-                href="#testimonials"
-                className="text-[#2B2D42] hover:text-[#4ECDC4] font-medium text-sm transition-colors"
+                About
+              </a>
+              <a
+                href="#faq"
+                className="text-qa-neutral-dark hover:text-qa-success font-medium text-sm transition-colors"
               >
-                Reviews
-              </Link>
+                FAQ
+              </a>
             </div>
-            <Button size="lg">Start Free Scan</Button>
+            {/* <Button size="lg">Start Free Scan</Button> */}
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
       <section
+        id="hero"
         className="pt-16 pb-24"
         style={{
           background:
@@ -452,17 +524,16 @@ export default function Home() {
         }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-12 items-center">
             {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"> */}
             {/* Left Content */}
-            <div className="">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl text-[#2B2D42] mb-6 leading-tight">
-                The Modern Research Platform for UX Teams
+            <div className="px-32 text-center flex flex-col items-center">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl text-qa-neutral-dark font-medium mb-6 leading-tight">
+                The simplest way to prevent burnout
               </h1>
-              <p className="text-xl text-[#2B2D42] mb-8 leading-relaxed max-w-lg">
-                ClearAudit takes the overwhelm out of SEO by giving you a
-                guided, always-up-to-date checklist that checks your site for
-                you.
+              <p className="text-xl text-qa-neutral-dark mb-8 leading-relaxed max-w-2xl">
+                Be constantly aware of your screen time progressing, let the
+                screen heath remind you that it&apos;s time for a cool off.
               </p>
 
               {/* <ul className="space-y-2 pb-8 hidden md:block">
@@ -486,154 +557,65 @@ export default function Home() {
                 </li>
               </ul> */}
 
-              <div className="flex flex-col sm:flex-col gap-2 mb-12 ">
+              <div className="flex flex-col items-start sm:flex-col gap-2 mb-12 ">
                 <NewsletterSubscriptionForm
                   utmCampaign="waitlist"
                   utmSource="website"
                   utmMedium="hero-form"
-                  placeholder="Enter your email"
+                  placeholder="Join the waitlist"
                   buttonText="Count Me In"
                 />
 
                 <p className="text-xs text-qa-neutral-medium">
                   {/* No credit card required • Emmediataly results */}
                   Early birds get{" "}
-                  <a href="#pricing" className="underline">
-                    additional discounts
-                  </a>
+                  {/* <a href="#pricing" className="underline"> */}
+                  additional discounts
+                  {/* </a> */}
                 </p>
               </div>
 
               <div className="flex flex-wrap items-center gap-4 justify-center md:justify-start text-xs text-qa-neutral-medium">
-                <div className="flex items-center space-x-1">
-                  <Shield className="w-4 h-4 text-qa-success" />
-                  <span>SSL Secured</span>
+                <div className="flex items-center space-x-1 text-qa-neutral-dark">
+                  <Cross className="w-4 h-4 " />
+
+                  <span>Health-oriented</span>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <CheckCircle2 className="w-4 h-4 text-qa-success" />
-                  <span>GDPR Compliant</span>
+                <div className="flex items-center space-x-1 text-qa-neutral-dark">
+                  <Shield className="w-4 h-4 " />
+
+                  <span>Privacy First</span>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <Zap className="w-4 h-4 text-qa-success" />
-                  <span>Instant Results</span>
+                <div className="flex items-center space-x-1 text-qa-neutral-dark">
+                  <Atom className="w-4 h-4" />
+                  <span>Science-backed</span>
                 </div>
               </div>
             </div>
 
             {/* Right Content - Placeholder for Image/Mockup */}
-            <div className="lg:order-2">
-              <div className="p-8">
-                <div className="space-y-6">
-                  {/* Step 1 */}
-                  <div className="flex items-center  roadmap-step-1 relative">
-                    <div className="w-12 h-12 bg-qa-neutral-medium rounded-full flex items-center justify-center flex-shrink-0 absolute -left-6">
-                      <Wrench className="w-6 h-6 text-qa-neutral-white" />
-                    </div>
-                    <div className="flex-1 bg-transparent rounded-lg p-3 border-2 border-primary-foreground pl-10">
-                      <span className="text-lg font-bold text-qa-neutral-medium">
-                        You built your dream project
-                      </span>
-                    </div>
-                  </div>
 
-                  {/* Connector 1 */}
-                  <div className="flex justify-center roadmap-connector-1">
-                    <div className="w-1 h-8 border-l-2 border-dashed border-qa-neutral-medium/30"></div>
-                  </div>
+            {/* <div className="relative"> */}
+            <div className="relative px-72">
+              <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 mb-4">
+                <div className="bg-gray-100 rounded-lg h-80 flex items-center justify-center">
+                  <video
+                    className="hero-demo"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    poster="/poster.png"
+                  >
+                    <source src="/output.webm" type="video/webm" />
+                    <source src="/output.mp4" type="video/mp4" />
+                  </video>
 
-                  {/* Step 2 */}
-                  <div className="flex items-center roadmap-step-2 relative">
-                    <div className="w-12 h-12 bg-qa-blue rounded-full flex items-center justify-center flex-shrink-0 absolute -left-6">
-                      <Rocket className="w-6 h-6 text-qa-neutral-white" />
-                    </div>
-                    <div className="flex-1 bg-transparent rounded-lg p-3 border-2 border-qa-blue/30 pl-10">
-                      <span className="text-lg font-bold text-qa-blue">
-                        You launched it, posted everywhere
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Connector 2 */}
-                  <div className="flex justify-center roadmap-connector-2">
-                    <div className="w-0.5 h-8 border-l-2 border-dashed border-qa-blue/30"></div>
-                  </div>
-
-                  {/* Step 3 */}
-                  <div className="relative">
-                    {!showPositiveOutcome ? (
-                      <div
-                        className={`flex items-center roadmap-step-3 relative ${showPositiveOutcome ? "slide-out-step" : ""}`}
-                      >
-                        <div className="w-12 h-12 bg-qa-error rounded-full flex items-center justify-center flex-shrink-0 absolute -left-6">
-                          <TrendingDown className="w-6 h-6 text-qa-neutral-white" />
-                        </div>
-                        <div className="flex-1 bg-transparent rounded-lg p-3 border-2 border-qa-error/30 pl-10">
-                          <span className="text-lg font-bold text-qa-error">
-                            Your traffic graph is flat… or falling.
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center slide-in-step relative">
-                        <div className="w-12 h-12 bg-qa-success rounded-full flex items-center justify-center flex-shrink-0 absolute -left-6">
-                          <CheckCircle2 className="w-6 h-6 text-qa-neutral-white" />
-                        </div>
-                        <div className="flex-1 bg-transparent rounded-lg p-3 border-2 border-qa-success/30 pl-10">
-                          <span className="text-lg font-bold text-qa-success">
-                            Steady organic growth, traffic graph is finally
-                            climbing.
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Refresh/New Trigger Button */}
-                  <div className="flex justify-center pt-4 roadmap-button">
-                    <button
-                      onClick={() => {}}
-                      className="flex items-center space-x-2 px-4 py-1 bg-qa-neutral-ultra-light text-qa-neutral-dark font-semibold rounded-lg shadow-qa-card hover:bg-qa-neutral-light/50 transition-all duration-200"
-                    >
-                      <Search className="w-4 h-4" />
-                      <span>Run Audit</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* <div className="relative px-72"> */}
-            {/* <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 mb-4">
-                  <div className="bg-gray-100 rounded-lg h-80 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-16 h-16 bg-[#4ECDC4] rounded-lg mx-auto mb-4 flex items-center justify-center">
-                        <svg
-                          className="w-8 h-8 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                          />
-                        </svg>
-                      </div>
-                      <p className="text-gray-500 text-sm">
-                        SEO Dashboard Mockup
-                      </p>
-                      <p className="text-gray-400 text-xs mt-1">Coming Soon</p>
-                    </div>
-                  </div>
-                </div> */}
-
-            {/* Floating card mockups */}
-            {/* <div className="absolute left-40 top-12 bg-white rounded-xl shadow-lg border border-gray-200 p-4 w-48 transform -rotate-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 bg-[#4ECDC4] rounded-full flex items-center justify-center">
+                  {/* <div className="text-center">
+                    <div className="w-16 h-16 bg-qa-success rounded-lg mx-auto mb-4 flex items-center justify-center">
                       <svg
-                        className="w-4 h-4 text-white"
+                        className="w-8 h-8 text-white"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -642,44 +624,94 @@ export default function Home() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M5 13l4 4L19 7"
+                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                         />
                       </svg>
                     </div>
-                    <span className="text-sm font-medium text-[#2B2D42]">
-                      SEO Score
+                    <p className="text-gray-500 text-sm">
+                      SEO Dashboard Mockup
+                    </p>
+                    <p className="text-gray-400 text-xs mt-1">Coming Soon</p>
+                  </div> */}
+                </div>
+              </div>
+              <p className="text-xs text-qa-neutral-dark mt-2 text-right italic">
+                *Note: Warm effects are exaggerated for demonstration purposes.
+              </p>
+
+              {/* Floating card mockups */}
+              {/* <div className="absolute -left-20 -bottom-12 bg-white rounded-xl shadow-lg border border-gray-200 p-4 w-48 transform -rotate-6"> */}
+              <div className="absolute left-40 top-60 bg-white rounded-xl shadow-lg border border-gray-200 p-4 w-48 transform -rotate-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 bg-qa-success rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-medium text-qa-neutral-dark">
+                    WarmView
+                  </span>
+                </div>
+                <div className="text-2xl font-bold text-qa-success">
+                  <span className="text-xs text-qa-neutral-medium">
+                    Total time: 4h 30m
+                  </span>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">+12% this week</div>
+              </div>
+
+              {/* <div className="absolute -right-12 -top-12 bg-white rounded-xl shadow-lg border border-gray-200 p-4 w-52 transform rotate-3"> */}
+              <div className="absolute right-40 -top-12 bg-white rounded-xl shadow-lg border border-gray-200 p-4 w-52 transform rotate-3">
+                <div className="text-sm font-medium text-qa-neutral-dark mb-2">
+                  Smart tracking
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 bg-black rounded-sm flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">𝕏</span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full transition-all duration-500 ease-out"
+                          style={{ width: "68%" }}
+                        ></div>
+                      </div>
+                    </div>
+                    <span className="text-xs font-semibold text-qa-neutral-dark min-w-[32px]">
+                      68%
                     </span>
                   </div>
-                  <div className="text-2xl font-bold text-[#4ECDC4]">
-                    85/100
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    +12 this week
-                  </div>
-                </div> */}
 
-            {/* <div className="absolute right-40 bottom-12 bg-white rounded-xl shadow-lg border border-gray-200 p-4 w-52 transform rotate-3">
-                  <div className="text-sm font-medium text-[#2B2D42] mb-2">
-                    Next Steps
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-sm flex items-center justify-center">
+                      <span className="text-white text-xs">✦</span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2 rounded-full transition-all duration-500 ease-out"
+                          style={{ width: "32%" }}
+                        ></div>
+                      </div>
+                    </div>
+                    <span className="text-xs font-semibold text-qa-neutral-dark min-w-[32px]">
+                      32%
+                    </span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-xs">
-                      <div className="w-2 h-2 bg-[#4ECDC4] rounded-full"></div>
-                      <span className="text-gray-600">
-                        Optimize meta descriptions
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs">
-                      <div className="w-2 h-2 bg-[#FFD23F] rounded-full"></div>
-                      <span className="text-gray-600">Improve page speed</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs">
-                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                      <span className="text-gray-600">Add schema markup</span>
-                    </div>
-                  </div>
-                </div> */}
-            {/* </div> */}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -687,71 +719,171 @@ export default function Home() {
       {/* Problem Pitch Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-semibold text-[#2B2D42] mb-6">
-              Most small site owners waste months chasing SEO advice that's
-              outdated, incomplete, or just too technical to follow.
+          <div className="text-center mb-20">
+            <h2 className="text-3xl md:text-5xl font-medium text-qa-neutral-dark mb-6">
+              Working without a break has its consequences
             </h2>
-            <p className="text-xl text-[#6C757D] max-w-3xl mx-auto">
-              You've got a site to run — but SEO feels like a moving target. One
-              day it's about speed, the next it's schema, and next month it's a
-              brand-new ranking factor. Meanwhile, your competitors keep showing
-              up above you.
+            <p className="text-xl text-qa-neutral-medium max-w-3xl mx-auto">
+              What feels like small sacrifices today turns into real health
+              costs tomorrow
             </p>
           </div>
 
-          {/* Comparison Table */}
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-[#f7f4f1] rounded-xl border border-[#E0E4E7]">
-                <div className="relative">
-                  <h3 className="relative text-2xl font-bold text-[#2B2D42] text-center py-3 px-6 rounded-t-lg bg-[#FF6B6B]/10 backdrop-blur-sm ">
-                    Other Tools ❌
-                  </h3>
-                </div>
-                <ul className="space-y-4 p-4">
-                  {[
-                    "Overwhelming dashboards",
-                    "Jargon you need to Google",
-                    "Requires juggling 5–10 tools",
-                    "Monthly learning curve",
-                    "Generic reports",
-                  ].map((item, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center text-[#6C757D]"
-                    >
-                      <span className="text-[#FF6B6B] mr-3">❌</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+          {/* Three Column Benefits */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Column 1 */}
+            <div className="text-left">
+              <div className="text-left relative">
+                <div
+                  className="w-20 h-20 rounded-full mb-6"
+                  style={{
+                    background:
+                      "radial-gradient(circle, rgba(78, 205, 196, 0.5), transparent)",
+                    filter: "blur(8px)",
+                  }}
+                ></div>
+                <Brain className="w-10 h-10 text-qa-neutral-dark absolute top-[21px] left-[21px]" />
               </div>
 
-              <div className="bg-[#f7f4f1] rounded-xl border border-[#E0E4E7]">
-                <div className="relative">
-                  <h3 className="relative text-2xl font-bold text-[#2B2D42] text-center py-3 px-6 rounded-t-lg bg-[#4ECDC4]/10 backdrop-blur-sm ">
-                    Our Tool ✅
-                  </h3>
-                </div>
-                <ul className="space-y-4 p-4">
-                  {[
-                    "Simple step-by-step roadmap",
-                    "Plain English explanations",
-                    "All checks in one place",
-                    "Fixes you can do today",
-                    "Action items for your site",
-                  ].map((item, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center text-[#6C757D]"
-                    >
-                      <span className="text-[#4ECDC4] mr-3">✅</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+              <h3 className="text-xl font-semibold text-qa-neutral-dark mb-4 text-left">
+                Prevent Screen-Time Anxiety
+              </h3>
+
+              <p className="text-qa-neutral-medium leading-relaxed italic">
+                “The relationship between screen time and mental health is
+                dose-dependent—more time, worse outcomes.”
+              </p>
+              <p className="text-qa-neutral-medium  text-sm pt-4 leading-relaxed text-right">
+                - Published via{" "}
+                <span className="underline font-semibold">
+                  ResearchGate, 2024
+                </span>
+              </p>
+            </div>
+
+            {/* Column 2 */}
+            <div className="text-left">
+              <div className="text-left relative">
+                <div
+                  className="w-20 h-20 rounded-full mb-6"
+                  style={{
+                    background:
+                      "radial-gradient(circle, rgba(255, 217, 61, 0.5), transparent)",
+                    filter: "blur(8px)",
+                  }}
+                ></div>
+                <ShieldPlus className="w-10 h-10 text-qa-neutral-dark absolute top-[21px] left-[21px]" />
               </div>
+              <h3 className="text-xl font-semibold text-qa-neutral-dark mb-4">
+                Your Gut Feels Your Screen Hours
+              </h3>
+              <p className="text-qa-neutral-medium leading-relaxed">
+                “Having high levels of LST (leisure sedentary behavior) is
+                connected with an increased chance of developing IBS.”
+              </p>
+              <p className="text-qa-neutral-medium  text-sm pt-4 leading-relaxed text-right">
+                - Published via{" "}
+                <span className="underline font-semibold">
+                  Scientific Reports, 2023
+                </span>
+              </p>
+            </div>
+
+            {/* Column 3 */}
+            <div className="text-left">
+              <div className="text-left relative">
+                <div
+                  className="w-20 h-20 rounded-full mb-6"
+                  style={{
+                    background:
+                      "radial-gradient(circle, rgb(164,121,148), transparent)",
+                    filter: "blur(8px)",
+                  }}
+                ></div>
+                <Eye className="w-10 h-10 text-qa-neutral-dark absolute top-[21px] left-[21px]" />
+              </div>
+              <h3 className="text-xl font-semibold text-qa-neutral-dark mb-4">
+                Science-Backed Eye Relief
+              </h3>
+              <p className="text-qa-neutral-medium leading-relaxed">
+                “The findings suggest that lighting at 3000​K (warm light) is
+                conducive to visual fatigue recovery.”
+              </p>
+              <p className="text-qa-neutral-medium  text-sm pt-4 leading-relaxed text-right">
+                - Published via{" "}
+                <span className="underline font-semibold">
+                  Science Direct, 2024
+                </span>
+              </p>
+            </div>
+          </div>
+
+          {/* Customer Testimonials Section */}
+          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Coinbase */}
+            <div className="bg-primary-cream2 rounded-2xl p-8 shadow-sm border border-qa-neutral-border flex flex-col justify-between">
+              <div>
+                <div className="mb-6">
+                  <div className="text-2xl font-bold text-qa-neutral-dark mb-2">
+                    ResearchGate
+                  </div>
+                </div>
+                <p className="text-qa-neutral-medium leading-relaxed">
+                  The Associations Between Screen Time and Mental Health in
+                  Adults: A Systematic Review.
+                </p>
+              </div>
+              <Link
+                href="https://www.researchgate.net/publication/378291048_The_Associations_Between_Screen_Time_and_Mental_Health_in_Adults_A_Systematic_Review"
+                className="text-qa-neutral-dark font-medium hover:underline inline-flex items-center mt-auto"
+                target="_blank"
+              >
+                Read Case Study →
+              </Link>
+            </div>
+
+            {/* Ramp */}
+            <div className="bg-primary-cream2 rounded-2xl p-8 shadow-sm border border-qa-neutral-border flex flex-col justify-between">
+              <div>
+                <div className="mb-6">
+                  <div className="text-2xl  text-qa-neutral-dark mb-2">
+                    <span className="font-bold">Scientific</span> Reports
+                  </div>
+                </div>
+                <p className="text-qa-neutral-medium mb-6 leading-relaxed">
+                  The causal effects of leisure screen time on irritable bowel
+                  syndrome risk from a Mendelian randomization study.
+                </p>
+              </div>
+              <Link
+                href="https://www.nature.com/articles/s41598-023-40153-1"
+                className="text-qa-neutral-dark font-medium hover:underline inline-flex items-center mt-auto"
+                target="_blank"
+              >
+                Read Case Study →
+              </Link>
+            </div>
+
+            {/* Square */}
+            <div className="bg-primary-cream2 rounded-2xl p-8 shadow-sm border border-qa-neutral-border flex flex-col justify-between">
+              <div>
+                <div className="mb-6">
+                  <div className="text-2xl text-qa-neutral-dark mb-2 flex items-center">
+                    ScienceDirect
+                  </div>
+                </div>
+                <p className="text-qa-neutral-medium mb-6 leading-relaxed">
+                  Square uncovered 100+ actionable customer insights within the
+                  first 6 months.
+                </p>
+              </div>
+              <Link
+                href="https://www.sciencedirect.com/science/article/pii/S2949782524000124?utm_source=chatgpt.com"
+                target="_blank"
+                className="text-qa-neutral-dark font-medium hover:underline inline-flex items-center"
+              >
+                Read Case Study →
+              </Link>
             </div>
           </div>
         </div>
@@ -761,163 +893,158 @@ export default function Home() {
       <TabbedSection />
 
       {/* About me Section */}
-      <section className="py-20 bg-primary-cream2">
+      <section id="about" className="py-20 bg-primary-cream2">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="px-12 flex">
             {/* Right Content - Story */}
 
-            <div className="text-[#2B2D42]">
-              <div className="flex items-center gap-2">
-                <div className="w-16 h-16 bg-[#4ECDC4] m-2 rounded-full flex items-center justify-center">
-                  <span className="text-[#2B2D42] text-2xl font-bold">LT</span>
+            <div className="text-qa-neutral-dark">
+              <div className="grid grid-cols-4 gap-2">
+                <div className="col-span-1 flex justify-center">
+                  <Image
+                    src="/LukaAvatar.webp"
+                    className="w-24 h-24 m-2 rounded-full object-cover object-center"
+                    alt="Luka's Avatar image"
+                    width={96}
+                    height={96}
+                    quality={100}
+                  />
                 </div>
-                <div>
-                  <div className="flex flex-col">
-                    <span className="text-[#2B2D42] text-lg font-medium">
-                      SEO Warrior
-                    </span>
-                  </div>
-
-                  <div className="mb-6">
-                    <span className="text-[#4ECDC4] text-lg">Hey, </span>
-                    <span className="text-[#2B2D42] text-lg font-medium">
-                      SEO Warrior
-                    </span>
-                    <span className="text-[#4ECDC4] text-lg"> from </span>
-                    <span className="text-[#2B2D42] text-lg font-medium">
-                      Everywhere 🌍
-                    </span>
+                <div className="col-span-3">
+                  <div className="mb-6 space-y-4">
+                    Hey, it&apos;s{" "}
+                    <a
+                      href="https://x.com/geopard__"
+                      target="_blank"
+                      className="underline"
+                    >
+                      Luka
+                    </a>
+                    <p>
+                      <span className="text-qa-neutral-dark font-semibold">
+                        Six months ago, I went on a chase of the solopreneur
+                        dream while working full-time.
+                      </span>{" "}
+                      The result? Burnout, stomach issues, and an IBS diagnosis.
+                    </p>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-4 text-[#2B2D42] leading-relaxed">
-                <p>
-                  I'm Luka, the creator of ClearAudit. I've also built{" "}
-                  <span className="text-[#2B2D42] font-semibold">
-                    12 successful websites
+              <div className="space-y-4 text-qa-neutral-dark leading-relaxed">
+                {/* <p>
+                  <span className="text-qa-neutral-dark font-semibold">
+                    Six months ago, I went on a chase of the solopreneur dream
+                    while working full-time.
                   </span>{" "}
-                  and helped businesses earn{" "}
-                  <span className="text-[#2B2D42] font-semibold">
-                    $10M+ through SEO
-                  </span>
-                  .
-                </p>
+                  The result? Burnout, stomach issues, and an IBS diagnosis.
+                </p> */}
 
-                <p>
-                  I learned that{" "}
-                  <span className="text-[#2B2D42] font-semibold">
-                    SEO is a goldmine of opportunities
-                  </span>
-                  . But most website owners just struggle with{" "}
-                  <span className="text-[#2B2D42] italic">
-                    confusing tools...
-                  </span>
-                </p>
+                <p>Doctors told me that each time I forced myself to:</p>
 
-                <p className="text-[#2B2D42] italic">
-                  Meta tags, Core Web Vitals, schema markup... but do any of
-                  these actually tell you{" "}
-                  <span className="text-[#2B2D42]">
-                    where your biggest SEO wins are hiding?
-                  </span>
-                </p>
-
-                <p className="text-[#2B2D42] font-medium">
-                  So I built ClearAudit for 3 reasons:
-                </p>
-
-                <div className="space-y-3 ml-4">
+                <div className="space-y-2 ml-4">
                   <div className="flex items-start gap-3">
-                    <span className="text-[#4ECDC4] font-bold">1.</span>
-                    <p>
-                      <span className="text-[#2B2D42] font-semibold">
-                        Find SEO wins that drive REAL traffic
-                      </span>
-                      , not just vanity metrics.
+                    <span className="text-qa-danger">•</span>
+                    <p className="text-qa-neutral-dark italic">
+                      finish &quot;just one more thing&quot;
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="text-[#4ECDC4] font-bold">2.</span>
-                    <p>
-                      <span className="text-[#2B2D42] font-semibold">
-                        Discover what makes visitors convert
-                      </span>{" "}
-                      and turn more clicks into customers.
+                    <span className="text-qa-danger">•</span>
+                    <p className="text-qa-neutral-dark italic">
+                      push through heavy tasks
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="text-[#4ECDC4] font-bold">3.</span>
-                    <p>
-                      <span className="text-[#2B2D42] font-semibold">
-                        Make data-driven SEO decisions
-                      </span>{" "}
-                      and work on the right optimizations.
+                    <span className="text-qa-danger">•</span>
+                    <p className="text-qa-neutral-dark italic">
+                      avoid leaving work for tomorrow
                     </p>
                   </div>
                 </div>
 
-                <p className="text-[#2B2D42] pt-4">
-                  I'm building ClearAudit in front of{" "}
-                  <span className="text-[#2B2D42] font-semibold underline">
-                    50,000+ SEO professionals
+                <p className="text-qa-neutral-dark">
+                  …I was{" "}
+                  <span className="font-semibold">
+                    stressing my body until it made me sick.
+                  </span>
+                </p>
+
+                <p>
+                  They insisted I limit screen time, split work into chunks, and
+                  take real breaks.
+                </p>
+
+                <p className="text-qa-neutral-dark italic">
+                  But every app I tried either{" "}
+                  <span className="text-qa-danger font-semibold">
+                    blocked me completely
                   </span>{" "}
-                  on Twitter. Let's rank! 🚀
+                  or sent{" "}
+                  <span className="text-qa-danger font-semibold">
+                    weak reminders I ignored.
+                  </span>
+                </p>
+
+                <p className="text-qa-neutral-dark font-semibold">
+                  So I decided to build my own tool—one that keeps me aware when
+                  I&apos;ve gone too far, without stopping me from getting
+                  things done.
                 </p>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      {/* Pricing Section */}
+      {/* 
       <section id="pricing" className="py-20 px-6 bg-cream">
         <div className="max-w-6xl mx-auto space-y-12">
-          <div className="text-center space-y-4">
-            <h2 className="text-4xl md:text-5xl text-qa-neutral-dark tracking-tight leading-tight">
-              Skip{" "}
+          <div className="text-center space-y-4 mb-20">
+            <h2 className="text-4xl md:text-5xl font-medium text-qa-neutral-dark tracking-tight leading-tight">
+              Try{" "}
               <span className="bg-qa-neutral-dark underline text-qa-neutral-white px-1">
-                commitments
+                3 days free
               </span>{" "}
-              and subscriptions
+              then choose your plan
             </h2>
             <p className="text-base md:text-xl text-qa-neutral-medium max-w-2xl mx-auto">
-              Tired of committing to pricey monthly subscriptions just to use a
-              tool once in a while?
+              Start with a full trial, then pick the plan that works for you. No
+              hidden fees.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 ">
             <div className="flex items-center space-x-3 p-4 mx-auto">
               <Zap className="w-6 h-6 text-qa-success" />
-              <span className="text-qa-neutral-dark">1 free full audit</span>
+              <span className="text-qa-neutral-dark">
+                3-day full trial access
+              </span>
             </div>
             <div className="flex items-center space-x-3 p-4 mx-auto">
-              <CreditCard className="w-6 h-6 text-qa-blue" />
+              <Eye className="w-6 h-6 text-qa-blue" />
               <span className="text-qa-neutral-dark">
-                Pay-as-you-need SEO audits
+                Visual screen heat tracking
               </span>
             </div>
             <div className="flex items-center space-x-3 p-4 mx-auto">
               <Shield className="w-6 h-6 text-qa-success" />
               <span className="text-qa-neutral-dark">
-                No obligations, no recurring bills
+                No forced breaks, just awareness
               </span>
             </div>
           </div>
 
-          {/* Discount Notification Banner */}
           <div>
-            <div className="bg-qa-neutral-custom-bg py-8 px-6 w-fit mx-auto">
+            <div className="py-8 px-6 w-fit mx-auto">
               <div className="max-w-4xl mx-auto">
-                <div className="bg-qa-accent-pink rounded-2xl p-2 relative">
+                <div className="bg-primary/20 rounded-2xl p-2 relative">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
-                      <span className="text-3xl">🍦</span>
+                      <span className="text-3xl">💰</span>
                       <div className="text-qa-neutral-dark ">
                         <p className="text-base font-semibold">
-                          All early waitlist users get promocodes for -10%
-                          yearly plan or 5 free credits.
+                          Early Birds get a coupon code for 50% off for a
+                          lifetime.
                         </p>
                       </div>
                     </div>
@@ -927,117 +1054,78 @@ export default function Home() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
-              {/* Free Plan */}
-              <div className="bg-qa-neutral-white rounded-xl p-6 shadow-qa-card">
+              <div className="bg-primary-cream2 border-2 border-qa-neutral-dark m-2 rounded-xl p-6 shadow-qa-card">
                 <div className="text-center space-y-4">
                   <h3 className="text-xl font-bold text-qa-neutral-dark">
-                    Free Audit
+                    3-Day Trial
                   </h3>
                   <div className="text-3xl font-bold text-qa-neutral-dark">
                     $0
                   </div>
-                  <p className="text-qa-neutral-medium">Try it risk-free</p>
+                  <p className="text-qa-neutral-medium">
+                    Try all features free
+                  </p>
                 </div>
                 <ul className="space-y-3 mt-6">
                   <li className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-qa-success" />
                     <span className="text-sm text-qa-neutral-dark">
-                      1 full website audit
+                      Visual heat overlay
                     </span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-qa-success" />
                     <span className="text-sm text-qa-neutral-dark">
-                      Up to 20 pages scanned
+                      Time tracking dashboard
                     </span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-qa-success" />
                     <span className="text-sm text-qa-neutral-dark">
-                      PDF report download
+                      Per-site multipliers
                     </span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-qa-success" />
                     <span className="text-sm text-qa-neutral-dark">
-                      No signup required
+                      Night-shift mode
                     </span>
                   </li>
                 </ul>
-                <button className="w-full mt-6 px-4 py-3 border border-qa-blue text-qa-blue rounded-lg font-semibold hover:bg-qa-neutral-ultra-light transition-colors">
-                  Start Free Audit
-                </button>
+                <a href="#hero">
+                  <Button className="w-full mt-6">Notify me on launch</Button>
+                </a>
               </div>
 
-              {/* Credit Plan */}
-              <div className="bg-qa-neutral-white rounded-xl p-6 shadow-qa-card border-2 border-qa-blue relative">
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-qa-blue text-qa-neutral-white px-4 py-1 rounded-full text-sm font-semibold">
-                    Most Popular
-                  </span>
-                </div>
+              <div className="bg-primary-cream2 border-2 border-qa-neutral-dark m-2 rounded-xl p-6 shadow-qa-card">
                 <div className="text-center space-y-4">
                   <h3 className="text-xl font-bold text-qa-neutral-dark">
-                    Credit Packs
+                    Pro Monthly
                   </h3>
                   <div className="text-3xl font-bold text-qa-neutral-dark">
-                    $5 - $25
+                    $3.99
                   </div>
-                  <p className="text-qa-neutral-medium">Pay as you need</p>
+                  <p className="text-qa-neutral-medium">
+                    Per month, cancel anytime
+                  </p>
                 </div>
                 <ul className="space-y-3 mt-6">
                   <li className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-qa-success" />
                     <span className="text-sm text-qa-neutral-dark">
-                      $5 = 3 audits
+                      All trial features included
                     </span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-qa-success" />
                     <span className="text-sm text-qa-neutral-dark">
-                      $12 = 10 audits
+                      Unlimited time tracking
                     </span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-qa-success" />
                     <span className="text-sm text-qa-neutral-dark">
-                      $25 = 25 audits
-                    </span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle2 className="w-4 h-4 text-qa-success" />
-                    <span className="text-sm text-qa-neutral-dark">
-                      Credits never expire
-                    </span>
-                  </li>
-                </ul>
-                <button className="w-full mt-6 px-4 py-3 bg-qa-blue text-qa-neutral-white rounded-lg font-semibold shadow-qa-button hover:bg-qa-blue-hover hover:shadow-qa-button-hover transition-all duration-200">
-                  Buy Credits
-                </button>
-              </div>
-
-              {/* Yearly Plan */}
-              <div className="bg-qa-neutral-white rounded-xl p-6 shadow-qa-card">
-                <div className="text-center space-y-4">
-                  <h3 className="text-xl font-bold text-qa-neutral-dark">
-                    Yearly Plan
-                  </h3>
-                  <div className="text-3xl font-bold text-qa-neutral-dark">
-                    $99
-                  </div>
-                  <p className="text-qa-neutral-medium">For active users</p>
-                </div>
-                <ul className="space-y-3 mt-6">
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle2 className="w-4 h-4 text-qa-success" />
-                    <span className="text-sm text-qa-neutral-dark">
-                      120 audits per year
-                    </span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle2 className="w-4 h-4 text-qa-success" />
-                    <span className="text-sm text-qa-neutral-dark">
-                      Weekly auto-rescans
+                      Custom heat sensitivity
                     </span>
                   </li>
                   <li className="flex items-center space-x-2">
@@ -1046,30 +1134,74 @@ export default function Home() {
                       Priority support
                     </span>
                   </li>
+                </ul>
+                <Button className="w-full mt-6">Notify me on launch</Button>
+              </div>
+
+              <div className="bg-primary-cream2 border-2 border-primary m-2 rounded-xl p-6 shadow-qa-card relative">
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-primary text-qa-neutral-white px-4 py-1 rounded-full text-sm font-semibold">
+                    Most Popular
+                  </span>
+                </div>
+                <div className="text-center space-y-4">
+                  <h3 className="text-xl font-bold text-qa-neutral-dark">
+                    Pro Yearly
+                  </h3>
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="text-3xl font-bold text-qa-neutral-dark">
+                      $29.99
+                    </div>
+                    <div className="text-sm text-qa-neutral-medium">
+                      <div className="line-through">$47.88</div>
+                      <div className="text-green-600 font-semibold">
+                        Save 37%
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-qa-neutral-medium">Per year, best value</p>
+                </div>
+                <ul className="space-y-3 mt-6">
                   <li className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-qa-success" />
                     <span className="text-sm text-qa-neutral-dark">
-                      Team features
+                      All Pro features included
+                    </span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <CheckCircle2 className="w-4 h-4 text-qa-success" />
+                    <span className="text-sm text-qa-neutral-dark">
+                      Save $17.89 vs monthly
+                    </span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <CheckCircle2 className="w-4 h-4 text-qa-success" />
+                    <span className="text-sm text-qa-neutral-dark">
+                      Future updates included
+                    </span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <CheckCircle2 className="w-4 h-4 text-qa-success" />
+                    <span className="text-sm text-qa-neutral-dark">
+                      Priority support
                     </span>
                   </li>
                 </ul>
-                <button className="w-full mt-6 px-4 py-3 border border-qa-blue text-qa-blue rounded-lg font-semibold hover:bg-qa-neutral-ultra-light transition-colors">
-                  Choose Yearly
-                </button>
+                <Button className="w-full mt-6">Notify me on launch</Button>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Frequently Asked Questions section */}
       <FAQSection />
 
       {/* CTA Testimonial Section */}
-      <CTATestimonialSection />
+      {/* <CTATestimonialSection /> */}
 
       {/* Final CTA Section */}
-      {/* <section className="py-20 bg-[#2B2D42]">
+      {/* <section className="py-20 bg-qa-neutral-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
             Ready to Stop Guessing and Start Ranking?
@@ -1082,14 +1214,14 @@ export default function Home() {
             <Button
               variant="default"
               size="lg"
-              className="bg-[#4ECDC4] hover:bg-[#3BB8B5] px-8 py-4 text-lg"
+              className="bg-qa-success hover:bg-primary-600 px-8 py-4 text-lg"
             >
               Scan My Site in 60 Seconds
             </Button>
             <Button
               variant="outline"
               size="lg"
-              className="border-white text-white hover:bg-white hover:text-[#2B2D42] px-8 py-4 text-lg"
+              className="border-white text-white hover:bg-white hover:text-qa-neutral-dark px-8 py-4 text-lg"
             >
               See Why My Competitors Rank Higher
             </Button>
@@ -1106,24 +1238,21 @@ export default function Home() {
           {/* Logo and Description */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-qa-blue rounded-lg flex items-center justify-center">
-                <BarChart3 className="w-5 h-5 text-qa-neutral-white" />
-              </div>
-              <span className="text-lg font-bold text-qa-neutral-dark">
-                Quick-Audit
+              <span className="text-lg font-bold text-qa-neutral-dark flex items-center gap-2">
+                <Sun className="w-6 h-6 text-orange-300" />
+                WarmView
               </span>
             </div>
             <p className="text-sm text-qa-neutral-medium">
-              The SEO audit tool for non-SEO experts. Get clear, actionable
-              insights in plain English.
+              The chrome extension that helps you stay aware of your screen
+              time.
             </p>
             <p className="text-xs text-qa-neutral-light">
-              © 2025 Quick-Audit. All rights reserved.
+              © 2025 WarmView. All rights reserved.
             </p>
           </div>
 
-          {/* Links */}
-          <div className="space-y-4">
+          {/* <div className="space-y-4">
             <h4 className="text-sm font-semibold text-qa-neutral-dark uppercase tracking-wide">
               Links
             </h4>
@@ -1144,32 +1273,32 @@ export default function Home() {
                   Pricing
                 </a>
               </li>
-              {/* <li>
+              <li>
                 <a
                   href="#"
                   className="text-sm text-qa-neutral-medium hover:text-qa-blue transition-colors"
                 >
                   Dashboard
                 </a>
-              </li> */}
-              {/* <li>
+              </li>
+              <li>
                 <a
                   href="#"
                   className="text-sm text-qa-neutral-medium hover:text-qa-blue transition-colors"
                 >
                   Blog
                 </a>
-              </li> */}
-              {/* <li>
+              </li>
+              <li>
                 <a
                   href="#"
                   className="text-sm text-qa-neutral-medium hover:text-qa-blue transition-colors"
                 >
                   Affiliates
                 </a>
-              </li> */}
+              </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Legal */}
           {/* <div className="space-y-4">

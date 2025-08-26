@@ -41,7 +41,7 @@ export function NewsletterSubscriptionForm({
   onSuccess,
   showLabel = false,
 }: NewsletterSubscriptionFormProps) {
-  const { subscribe, clearMessage, isSubmitting, message, isSuccess } =
+  const { subscribe, clearMessage, isSubmitting, isSuccess } =
     useNewsletterSubscription({
       utmSource,
       utmCampaign,
@@ -65,27 +65,6 @@ export function NewsletterSubscriptionForm({
     }
   };
 
-  // Clear form on success
-  useEffect(() => {
-    if (isSuccess) {
-      form.reset();
-    }
-  }, [isSuccess, form]);
-
-  const getMessageIcon = (isSuccess: boolean) => {
-    if (isSuccess) {
-      return <CheckCircle className="w-4 h-4" />;
-    }
-    return <AlertCircle className="w-4 h-4" />;
-  };
-
-  const getMessageStyles = (isSuccess: boolean) => {
-    if (isSuccess) {
-      return "bg-qa-success/10 text-qa-success border border-qa-success/20";
-    }
-    return "bg-qa-error/10 text-qa-error border border-qa-error/20";
-  };
-
   return (
     <div className={className}>
       <Form {...form}>
@@ -106,7 +85,6 @@ export function NewsletterSubscriptionForm({
                 <FormControl>
                   <Input
                     placeholder={placeholder}
-                    type="email"
                     disabled={isSubmitting}
                     className="h-12 px-4 border-qa-neutral-border focus:ring-qa-blue focus:border-qa-blue"
                     {...field}
@@ -127,15 +105,6 @@ export function NewsletterSubscriptionForm({
           </Button>
         </form>
       </Form>
-
-      {message && (
-        <div
-          className={`mt-4 p-3 rounded-lg text-sm flex items-center gap-2 ${getMessageStyles(isSuccess)}`}
-        >
-          {getMessageIcon(isSuccess)}
-          <span>{message}</span>
-        </div>
-      )}
     </div>
   );
 }

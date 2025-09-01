@@ -1,18 +1,18 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
+// import { useAuth } from "@clerk/nextjs";
 import { useEffect } from "react";
 
-import { ConvexQueryCacheProvider } from "convex-helpers/react/cache/provider";
+// import { ConvexQueryCacheProvider } from "convex-helpers/react/cache/provider";
 import { AppProgressProvider as ProgressProvider } from "@bprogress/next";
 import { UserProvider } from "@/providers/user-provider";
 
-import { ConvexProviderWithClerk } from "convex/react-clerk";
-import { ConvexReactClient } from "convex/react";
+// import { ConvexProviderWithClerk } from "convex/react-clerk";
+// import { ConvexReactClient } from "convex/react";
 
 import { Toaster } from "@/components/ui/sonner";
 
-const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+// const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   // Add noindex meta tags for protected pages
@@ -51,7 +51,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     // <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
     //   <ConvexQueryCacheProvider>
-    <>
+    <div>
       {/* <ErrorBoundary> */}
       <UserProvider>
         <ProgressProvider
@@ -67,7 +67,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </UserProvider>
       {/* </ErrorBoundary> */}
       <Toaster expand={true} visibleToasts={4} />
-    </>
+    </div>
     //   </ConvexQueryCacheProvider>
     // </ConvexProviderWithClerk>
   );

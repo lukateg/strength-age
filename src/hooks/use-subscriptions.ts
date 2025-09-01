@@ -6,9 +6,9 @@ import { toastError } from "@/lib/utils";
 
 export const useSubscriptions = () => {
   const [isPending, setIsPending] = useState(false);
-  const getCheckoutUrlAction = useAction(
-    api.subscribeActions.getCheckoutUrlAction
-  );
+  // const getCheckoutUrlAction = useAction(
+  //   api.subscribeActions.getCheckoutUrlAction
+  // );
   // const cancelSubscriptionAction = useAction(
   //   api.subscribeActions.cancelSubscriptionAction
   // );
@@ -20,10 +20,10 @@ export const useSubscriptions = () => {
       duration: Infinity,
     });
     try {
-      const url = await getCheckoutUrlAction({ variantId, embed });
-      if (url) {
-        window.location.href = url;
-      }
+      // const url = await getCheckoutUrlAction({ variantId, embed });
+      // if (url) {
+      //   window.location.href = url;
+      // }
     } catch (error) {
       toastError(error, "Failed to redirect to checkout. Please try again.");
     } finally {

@@ -298,24 +298,25 @@ const placeholderArticles: { [key: string]: any } = {
 };
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
-export default function BlogArticle({ params }: PageProps) {
+export default async function BlogArticle({ params }: PageProps) {
+  const { slug } = await params;
   // First try to get from published articles
-  let article = getArticleContent(params.slug);
+  let article = getArticleContent(slug);
 
   // If not found in published articles, check placeholders
   if (!article) {
-    const placeholderData = placeholderArticles[params.slug];
+    const placeholderData = placeholderArticles[slug];
     if (!placeholderData) {
       notFound();
     }
     // Convert placeholder to BlogArticle format
     article = {
-      slug: params.slug,
+      slug: slug,
       title: placeholderData.title,
       excerpt: placeholderData.description,
       content: placeholderData.content,
@@ -329,7 +330,7 @@ export default function BlogArticle({ params }: PageProps) {
 
   // Get smart related articles based on category and keywords
   const allPublishedArticles = getAllPublishedArticles();
-  const relatedArticles = getRelatedArticles(params.slug, 2);
+  const relatedArticles = getRelatedArticles(slug, 2);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">

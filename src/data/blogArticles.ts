@@ -194,7 +194,7 @@ export function getAllPublishedArticles(): BlogArticle[] {
 
 // Function to get article by slug
 export function getArticleBySlug(slug: string): BlogArticle | null {
-  return publishedArticles.find((article) => article.slug === slug) || null;
+  return publishedArticles.find((article) => article.slug === slug) ?? null;
 }
 
 // Function to get featured articles
@@ -203,7 +203,7 @@ export function getFeaturedArticles(): BlogArticle[] {
 }
 
 // Function to get recent articles (for footer links)
-export function getPopularArticles(limit: number = 5): BlogArticle[] {
+export function getPopularArticles(limit = 5): BlogArticle[] {
   return publishedArticles
     .sort(
       (a, b) =>
@@ -215,7 +215,7 @@ export function getPopularArticles(limit: number = 5): BlogArticle[] {
 // Function to get related articles based on category and keywords
 export function getRelatedArticles(
   currentSlug: string,
-  limit: number = 2
+  limit = 2
 ): BlogArticle[] {
   const currentArticle = getArticleBySlug(currentSlug);
   if (!currentArticle) return [];

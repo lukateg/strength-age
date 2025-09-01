@@ -82,7 +82,7 @@ export async function subscribeToNewsletter(
         return {
           success: true,
           message:
-            "You're already subscribed! Thanks for your continued interest.",
+            "You&apos;re already subscribed! Thanks for your continued interest.",
         };
       }
 

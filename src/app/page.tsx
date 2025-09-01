@@ -55,7 +55,7 @@ function FAQSection() {
     {
       question: "What is a strength age test?",
       answer:
-        "A strength age test is a fitness assessment that compares your functional strength and health metrics to others your age. Our test uses validated senior fitness tests including chair stands, balance, heart rate, and waist measurements to estimate your 'strength age' - which may be higher or lower than your actual age.",
+        "A strength age test is a fitness assessment that compares your functional strength and health metrics to others your age. Our test uses validated senior fitness tests including chair stands, balance, heart rate, and waist measurements to estimate your &apos;strength age&apos; - which may be higher or lower than your actual age.",
     },
     {
       question: "Is this accurate for seniors?",
@@ -70,7 +70,7 @@ function FAQSection() {
     {
       question: "What does my result mean?",
       answer:
-        "Your strength age result shows how your functional fitness compares to age norms. If your strength age is lower than your real age, you're performing above average for your age group. If it's higher, there may be areas for improvement. The test shows which specific factors (strength, balance, heart health) contribute most to your result.",
+        "Your strength age result shows how your functional fitness compares to age norms. If your strength age is lower than your real age, you&apos;re performing above average for your age group. If it&apos;s higher, there may be areas for improvement. The test shows which specific factors (strength, balance, heart health) contribute most to your result.",
     },
     {
       question: "How accurate are senior fitness tests?",
@@ -133,7 +133,7 @@ function CTATestimonialSection() {
       company: "HelloFresh",
       logo: "🥗", // Using emoji as dummy logo
       quote:
-        "By studying customers with Sprig, we're able to remove the risk around business decisions and new features.",
+        "By studying customers with Sprig, we&apos;re able to remove the risk around business decisions and new features.",
       author: "James Villacci",
       title: "Head of Research",
     },
@@ -141,7 +141,7 @@ function CTATestimonialSection() {
       company: "Square",
       logo: "⬜", // Using emoji as dummy logo
       quote:
-        "Sprig has been extremely useful in scaling the research team's impact by providing highly relevant insights.",
+        "Sprig has been extremely useful in scaling the research team&apos;s impact by providing highly relevant insights.",
       author: "Jewel Seperson",
       title: "Head of Research",
     },
@@ -228,7 +228,7 @@ export default function Home() {
         name: "What is a strength age test?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "A strength age test is a fitness assessment that compares your functional strength and health metrics to others your age. Our test uses validated senior fitness tests including chair stands, balance, heart rate, and waist measurements to estimate your 'strength age' - which may be higher or lower than your actual age.",
+          text: "A strength age test is a fitness assessment that compares your functional strength and health metrics to others your age. Our test uses validated senior fitness tests including chair stands, balance, heart rate, and waist measurements to estimate your &apos;strength age&apos; - which may be higher or lower than your actual age.",
         },
       },
       {
@@ -252,7 +252,7 @@ export default function Home() {
         name: "What does my result mean?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Your strength age result shows how your functional fitness compares to age norms. If your strength age is lower than your real age, you're performing above average for your age group. If it's higher, there may be areas for improvement.",
+          text: "Your strength age result shows how your functional fitness compares to age norms. If your strength age is lower than your real age, you&apos;re performing above average for your age group. If it&apos;s higher, there may be areas for improvement.",
         },
       },
     ],
@@ -337,7 +337,7 @@ export default function Home() {
                     {/* Rating and Text */}
                     <div className="flex flex-col">
                       <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
+                        {Array.from({ length: 5 }, (_, i) => (
                           <svg
                             key={i}
                             className="w-4 h-4 text-yellow-400 fill-current"

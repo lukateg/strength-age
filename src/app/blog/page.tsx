@@ -187,9 +187,9 @@ export default function BlogPage() {
                 Articles Coming Soon
               </h2>
               <p className="text-gray-500 mb-8">
-                We're working on comprehensive guides for senior fitness and
-                health. Check back soon for expert articles on strength testing,
-                balance assessments, and more.
+                We&apos;re working on comprehensive guides for senior fitness
+                and health. Check back soon for expert articles on strength
+                testing, balance assessments, and more.
               </p>
               <Link href="/test">
                 <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg">

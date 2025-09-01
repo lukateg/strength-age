@@ -38,7 +38,7 @@ export default function PrivacyPolicyPage() {
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               We respect your privacy and are committed to protecting your
-              personal information. Here's how we handle your data with
+              personal information. Here&apos;s how we handle your data with
               transparency and care.
             </p>
             <p className="text-sm text-gray-500 mt-4">
@@ -62,7 +62,7 @@ export default function PrivacyPolicyPage() {
                       </strong>{" "}
                       Your personal information is used only to provide you with
                       your fitness assessment results and occasional helpful
-                      content. That's it.
+                      content. That&apos;s it.
                     </p>
                   </div>
                 </div>
@@ -201,7 +201,7 @@ export default function PrivacyPolicyPage() {
               <CardContent className="space-y-4">
                 <p className="text-gray-700">
                   You have complete control over your personal information.
-                  Here's what you can do:
+                  Here&apos;s what you can do:
                 </p>
 
                 <div className="grid md:grid-cols-2 gap-4">
@@ -250,7 +250,7 @@ export default function PrivacyPolicyPage() {
                     support@strengthage.com
                   </p>
                   <p className="text-blue-700 text-sm mt-1">
-                    We'll respond to all requests within 30 days.
+                    We&apos;ll respond to all requests within 30 days.
                   </p>
                 </div>
               </CardContent>
@@ -267,9 +267,9 @@ export default function PrivacyPolicyPage() {
                     GDPR Compliance (European Users)
                   </h3>
                   <p className="text-gray-700">
-                    If you're in the EU, you have additional rights under the
-                    General Data Protection Regulation, including the right to
-                    data portability and the right to object to processing.
+                    If you&apos;re in the EU, you have additional rights under
+                    the General Data Protection Regulation, including the right
+                    to data portability and the right to object to processing.
                   </p>
                 </div>
 
@@ -295,8 +295,9 @@ export default function PrivacyPolicyPage() {
                     Questions About Your Privacy?
                   </h2>
                   <p className="text-gray-700 mb-4">
-                    We're here to help. If you have any questions about this
-                    privacy policy or how we handle your data, please reach out.
+                    We&apos;re here to help. If you have any questions about
+                    this privacy policy or how we handle your data, please reach
+                    out.
                   </p>
                   <div className="bg-gray-50 rounded-lg p-4 inline-block">
                     <p className="text-lg">

@@ -25,7 +25,18 @@ function getArticleContent(slug: string): BlogArticle | null {
 }
 
 // Fallback data for articles that don't have full content yet
-const placeholderArticles: { [key: string]: any } = {
+const placeholderArticles: Record<
+  string,
+  {
+    title: string;
+    description: string;
+    category: string;
+    readTime: string;
+    publishDate: string;
+    keywords: string[];
+    content: string;
+  }
+> = {
   "senior-fitness-test-at-home": {
     title: "Senior Fitness Tests You Can Do at Home",
     description:
@@ -41,7 +52,7 @@ const placeholderArticles: { [key: string]: any } = {
     content: `
       <h1>Senior Fitness Tests You Can Do at Home</h1>
       
-      <p>As we age, staying on top of our physical fitness becomes more crucial than ever. Regular fitness testing helps seniors monitor their functional capacity, identify areas for improvement, and track progress over time. The good news? You don't need a gym or expensive equipment to assess your fitness level.</p>
+      <p>As we age, staying on top of our physical fitness becomes more crucial than ever. Regular fitness testing helps seniors monitor their functional capacity, identify areas for improvement, and track progress over time. The good news? You don&apos;t need a gym or expensive equipment to assess your fitness level.</p>
       
       <h2>Why Test Your Fitness at Home?</h2>
       
@@ -86,9 +97,9 @@ const placeholderArticles: { [key: string]: any } = {
       
       <h3>Safety Tips:</h3>
       <ul>
-        <li>Always have support within arm's reach</li>
+        <li>Always have support within arm&apos;s reach</li>
         <li>Test on a non-slip surface</li>
-        <li>Don't attempt if you have severe balance issues</li>
+        <li>Don&apos;t attempt if you have severe balance issues</li>
       </ul>
       
       <h2>Resting Heart Rate</h2>
@@ -129,7 +140,7 @@ const placeholderArticles: { [key: string]: any } = {
       
       <h2>How to Use These Tests Together</h2>
       
-      <p>These tests work best when used as a complete assessment battery. Here's how to get started:</p>
+      <p>These tests work best when used as a complete assessment battery. Here&apos;s how to get started:</p>
       
       <ol>
         <li><strong>Baseline Testing:</strong> Complete all tests to establish your starting point</li>
@@ -144,7 +155,7 @@ const placeholderArticles: { [key: string]: any } = {
         <li>Consult your doctor before starting any fitness testing</li>
         <li>Stop immediately if you experience pain, dizziness, or shortness of breath</li>
         <li>Have someone nearby when testing, especially for balance tests</li>
-        <li>Don't test when you're feeling unwell</li>
+        <li>Don&apos;t test when you&apos;re feeling unwell</li>
         <li>These tests are screening tools, not medical diagnoses</li>
       </ul>
       
@@ -181,7 +192,7 @@ const placeholderArticles: { [key: string]: any } = {
       
       <h2>What is the Chair Stand Test?</h2>
       
-      <p>The chair stand test, also known as the sit-to-stand test, measures how many times you can stand up from a seated position in 30 seconds. It's part of the validated Rikli & Jones Senior Fitness Test battery and is widely used by healthcare professionals to assess functional fitness in older adults.</p>
+      <p>The chair stand test, also known as the sit-to-stand test, measures how many times you can stand up from a seated position in 30 seconds. It&apos;s part of the validated Rikli & Jones Senior Fitness Test battery and is widely used by healthcare professionals to assess functional fitness in older adults.</p>
       
       <h2>Why This Test Matters</h2>
       
@@ -240,9 +251,9 @@ const placeholderArticles: { [key: string]: any } = {
       
       <ul>
         <li><strong>Not standing fully:</strong> Ensure you reach complete hip and knee extension</li>
-        <li><strong>Using momentum:</strong> Rise with control, don't bounce off the chair</li>
+        <li><strong>Using momentum:</strong> Rise with control, don&apos;t bounce off the chair</li>
         <li><strong>Wrong chair height:</strong> Seat should be 16-17 inches high</li>
-        <li><strong>Rushing:</strong> Quality over speed - full stands count, partial ones don't</li>
+        <li><strong>Rushing:</strong> Quality over speed - full stands count, partial ones don&apos;t</li>
         <li><strong>Wrong arm position:</strong> Keep arms crossed throughout the test</li>
         <li><strong>Leaning forward excessively:</strong> Some forward lean is normal, but avoid extreme positioning</li>
       </ul>
@@ -252,8 +263,8 @@ const placeholderArticles: { [key: string]: any } = {
       <ul>
         <li>Stop immediately if you experience pain, dizziness, or shortness of breath</li>
         <li>Have someone nearby during the test</li>
-        <li>Ensure the chair is stable and won't slide</li>
-        <li>Don't perform this test if you have recent injuries or severe balance problems</li>
+        <li>Ensure the chair is stable and won&apos;t slide</li>
+        <li>Don&apos;t perform this test if you have recent injuries or severe balance problems</li>
         <li>Consult your healthcare provider before testing if you have concerns</li>
       </ul>
       
@@ -280,7 +291,7 @@ const placeholderArticles: { [key: string]: any } = {
       
       <h2>When to Retest</h2>
       
-      <p>Retest every 3-6 months to monitor progress. If you're following an exercise program, you may see improvements in 6-8 weeks of consistent training.</p>
+      <p>Retest every 3-6 months to monitor progress. If you&apos;re following an exercise program, you may see improvements in 6-8 weeks of consistent training.</p>
       
       <h2>What Your Score Means</h2>
       

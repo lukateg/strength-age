@@ -13,9 +13,9 @@ interface SEOHeadProps {
   articleAuthor?: string;
   articleSection?: string;
   articleTags?: string[];
-  breadcrumbSchema?: any;
-  faqSchema?: any;
-  articleSchema?: any;
+  breadcrumbSchema?: Record<string, unknown>;
+  faqSchema?: Record<string, unknown>;
+  articleSchema?: Record<string, unknown>;
 }
 
 export default function SEOHead({
@@ -89,10 +89,9 @@ export default function SEOHead({
       {articleSection && (
         <meta property="article:section" content={articleSection} />
       )}
-      {articleTags &&
-        articleTags.map((tag, index) => (
-          <meta key={index} property="article:tag" content={tag} />
-        ))}
+      {articleTags?.map((tag, index) => (
+        <meta key={index} property="article:tag" content={tag} />
+      ))}
 
       {/* Additional SEO Tags */}
       <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -58,10 +58,10 @@ export default function AboutPage() {
                 completed safely at home with no special equipment.
               </p>
               <p className="text-gray-600 text-lg leading-relaxed">
-                Too many older adults don't know their functional fitness level
-                until problems arise. Our strength test for seniors at home
-                helps identify potential issues early, when interventions can
-                still make a difference.
+                Too many older adults don&apos;t know their functional fitness
+                level until problems arise. Our strength test for seniors at
+                home helps identify potential issues early, when interventions
+                can still make a difference.
               </p>
             </CardContent>
           </Card>

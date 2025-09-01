@@ -3,6 +3,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
+import Link from "next/link";
 import { Mail, MessageCircle, Clock, HelpCircle } from "lucide-react";
 import {
   Card,
@@ -37,9 +38,9 @@ export default function ContactPage() {
               Contact Us
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              We're here to help! Whether you have questions about your fitness
-              assessment, need technical support, or want to share feedback,
-              we'd love to hear from you.
+              We&apos;re here to help! Whether you have questions about your
+              fitness assessment, need technical support, or want to share
+              feedback, we&apos;d love to hear from you.
             </p>
           </div>
 
@@ -118,7 +119,7 @@ export default function ContactPage() {
                 <CardContent className="space-y-2 text-sm">
                   <p>• Website not loading properly</p>
                   <p>• Assessment not working</p>
-                  <p>• Didn't receive results email</p>
+                  <p>• Didn&apos;t receive results email</p>
                   <p>• Mobile device issues</p>
                   <p>• Browser compatibility</p>
                 </CardContent>
@@ -188,12 +189,12 @@ export default function ContactPage() {
                   >
                     View Research & Methods
                   </a>
-                  <a
+                  <Link
                     href="/blog"
                     className="border border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 px-6 py-3 rounded-lg font-semibold transition-colors"
                   >
                     Browse Articles
-                  </a>
+                  </Link>
                 </div>
               </CardContent>
             </Card>

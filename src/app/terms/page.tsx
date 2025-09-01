@@ -193,7 +193,7 @@ export default function TermsOfServicePage() {
                   <p className="text-gray-700">
                     You agree not to use the service for any unlawful purpose or
                     in any way that could damage, disable, or impair the service
-                    or interfere with other users' access.
+                    or interfere with other users&apos; access.
                   </p>
                 </div>
               </CardContent>
@@ -295,8 +295,9 @@ export default function TermsOfServicePage() {
                 <p className="text-gray-700 leading-relaxed">
                   We may update these Terms of Service from time to time. When
                   we do, we will post the updated terms on this page and update
-                  the "Last updated" date. Your continued use of the service
-                  after any changes constitutes acceptance of the new terms.
+                  the &ldquo;Last updated&rdquo; date. Your continued use of the
+                  service after any changes constitutes acceptance of the new
+                  terms.
                 </p>
               </CardContent>
             </Card>
@@ -310,7 +311,7 @@ export default function TermsOfServicePage() {
                   </h2>
                   <p className="text-gray-700 mb-4">
                     If you have any questions about these Terms of Service,
-                    please don't hesitate to contact us.
+                    please don&apos;t hesitate to contact us.
                   </p>
                   <div className="bg-gray-50 rounded-lg p-4 inline-block">
                     <p className="text-lg">

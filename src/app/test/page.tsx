@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
 import { Progress } from "@/components/ui/progress";
 import {
   Tooltip,
@@ -56,13 +56,22 @@ const fullSchema = step1Schema.merge(step2Schema).merge(step3Schema);
 
 type FormData = z.infer<typeof fullSchema>;
 
+interface StrengthAgeResult {
+  range: string;
+  realAge: number;
+  drivers: Array<{
+    factor: string;
+    impact: string;
+  }>;
+}
+
 interface StepProps {
   currentStep: number;
   totalSteps: number;
   onNext: () => void;
   onPrev: () => void;
   onSubmit: (data: FormData) => void;
-  form: any;
+  form: UseFormReturn<FormData>;
 }
 
 function Step1({ currentStep, totalSteps, onNext, form }: StepProps) {
@@ -112,7 +121,7 @@ function Step1({ currentStep, totalSteps, onNext, form }: StepProps) {
                   <Input
                     type="number"
                     {...field}
-                    value={field.value || ""}
+                    value={field.value ?? ""}
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(
@@ -148,7 +157,7 @@ function Step1({ currentStep, totalSteps, onNext, form }: StepProps) {
                 <FormControl>
                   <select
                     {...field}
-                    value={field.value || ""}
+                    value={field.value ?? ""}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
                     <option value="">Select...</option>
@@ -186,7 +195,7 @@ function Step1({ currentStep, totalSteps, onNext, form }: StepProps) {
                   <Input
                     type="number"
                     {...field}
-                    value={field.value || ""}
+                    value={field.value ?? ""}
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(
@@ -226,7 +235,7 @@ function Step1({ currentStep, totalSteps, onNext, form }: StepProps) {
                   <Input
                     type="number"
                     {...field}
-                    value={field.value || ""}
+                    value={field.value ?? ""}
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(
@@ -305,7 +314,7 @@ function Step2({ currentStep, totalSteps, onNext, onPrev, form }: StepProps) {
                   <Input
                     type="number"
                     {...field}
-                    value={field.value || ""}
+                    value={field.value ?? ""}
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(
@@ -349,7 +358,7 @@ function Step2({ currentStep, totalSteps, onNext, onPrev, form }: StepProps) {
                   <Input
                     type="number"
                     {...field}
-                    value={field.value || ""}
+                    value={field.value ?? ""}
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(
@@ -437,7 +446,7 @@ function Step3({ currentStep, totalSteps, onPrev, onSubmit, form }: StepProps) {
                   <Input
                     type="number"
                     {...field}
-                    value={field.value || ""}
+                    value={field.value ?? ""}
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(
@@ -480,7 +489,7 @@ function Step3({ currentStep, totalSteps, onPrev, onSubmit, form }: StepProps) {
                 <FormControl>
                   <select
                     {...field}
-                    value={field.value || ""}
+                    value={field.value ?? ""}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
                     <option value="">Select...</option>
@@ -522,7 +531,9 @@ function Step3({ currentStep, totalSteps, onPrev, onSubmit, form }: StepProps) {
 export default function TestPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [showEmailGate, setShowEmailGate] = useState(false);
-  const [strengthAge, setStrengthAge] = useState<any>(null);
+  const [strengthAge, setStrengthAge] = useState<StrengthAgeResult | null>(
+    null
+  );
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -542,7 +553,7 @@ export default function TestPage() {
     },
   });
 
-  const calculateStrengthAge = (data: FormData) => {
+  const calculateStrengthAge = (data: FormData): StrengthAgeResult => {
     let ageAdjustment = 0;
     const realAge = data.age;
 
@@ -553,7 +564,7 @@ export default function TestPage() {
 
     // Chair stand adjustment (using simplified norms)
     const chairNorms = { male: 14, female: 12 }; // simplified average norms
-    const chairNorm = chairNorms[data.sex as keyof typeof chairNorms];
+    const chairNorm = chairNorms[data.sex];
     if (data.chairStand > chairNorm + 2) ageAdjustment -= 2;
     else if (data.chairStand < chairNorm - 2) ageAdjustment += 2;
 
@@ -631,7 +642,7 @@ export default function TestPage() {
   };
 
   const handleEmailSubmit = async () => {
-    if (!email || !email.includes("@")) {
+    if (!email?.includes("@")) {
       alert("Please enter a valid email address");
       return;
     }
@@ -704,7 +715,7 @@ export default function TestPage() {
                   What drives your Strength Age:
                 </h3>
                 <div className="space-y-3">
-                  {strengthAge.drivers.map((driver: any, index: number) => (
+                  {strengthAge.drivers.map((driver, index: number) => (
                     <div
                       key={index}
                       className="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0"
@@ -730,12 +741,11 @@ export default function TestPage() {
               <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
                 <h3 className="text-xl font-semibold mb-3 text-green-800">
                   {strengthAge.drivers.some(
-                    (d: any) =>
-                      d.factor === "Chair Stand" && d.impact.includes("+")
+                    (d) => d.factor === "Chair Stand" && d.impact.includes("+")
                   )
                     ? "Leg Strength Starter Plan — 20% OFF Today"
                     : strengthAge.drivers.some(
-                          (d: any) =>
+                          (d) =>
                             d.factor === "Balance" && d.impact.includes("+")
                         )
                       ? "Balance & Fall-Prevention Plan — 20% OFF"
@@ -743,12 +753,11 @@ export default function TestPage() {
                 </h3>
                 <p className="text-gray-700 mb-4">
                   {strengthAge.drivers.some(
-                    (d: any) =>
-                      d.factor === "Chair Stand" && d.impact.includes("+")
+                    (d) => d.factor === "Chair Stand" && d.impact.includes("+")
                   )
                     ? "Your leg strength is below your age group. Improve it safely in 4 weeks."
                     : strengthAge.drivers.some(
-                          (d: any) =>
+                          (d) =>
                             d.factor === "Balance" && d.impact.includes("+")
                         )
                       ? "Focus on balance and stability to reduce fall risk and improve confidence."
@@ -815,9 +824,9 @@ export default function TestPage() {
                   </Button>
                 </div>
                 <p className="text-sm text-gray-600 text-center">
-                  We'll email your detailed results so you can keep and print
-                  them—plus a limited-time 20% discount on your Senior Strength
-                  Plan.
+                  We&apos;ll email your detailed results so you can keep and
+                  print them—plus a limited-time 20% discount on your Senior
+                  Strength Plan.
                 </p>
               </div>
 

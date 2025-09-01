@@ -1,12 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as {
+      email: string;
+      strengthAge: unknown;
+    };
     const { email, strengthAge } = body;
 
     // Validate email
-    if (!email || !email.includes("@")) {
+    if (!email || typeof email !== "string" || !email.includes("@")) {
       return NextResponse.json(
         { error: "Valid email address is required" },
         { status: 400 }

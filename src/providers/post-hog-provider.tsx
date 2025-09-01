@@ -12,8 +12,8 @@ function PostHogPageTracker() {
   const searchParams = useSearchParams();
 
   // 👉 Add the hooks into the component
-  const { isSignedIn, userId } = useAuth();
-  const { user } = useUser();
+  // const { isSignedIn, userId } = useAuth();
+  // const { user } = useUser();
 
   useEffect(() => {
     if (pathname) {
@@ -74,22 +74,22 @@ function PostHogPageTracker() {
     };
   }, [pathname, searchParams]);
 
-  useEffect(() => {
-    // 👉 Check the sign in status and user info,
-    //    and identify the user if they aren't already
-    if (isSignedIn && userId && user && !posthog._isIdentified()) {
-      // 👉 Identify the user
-      posthog.identify(userId, {
-        email: user.primaryEmailAddress?.emailAddress,
-        username: user.username,
-      });
-    }
+  // useEffect(() => {
+  //   // 👉 Check the sign in status and user info,
+  //   //    and identify the user if they aren't already
+  //   if (isSignedIn && userId && user && !posthog._isIdentified()) {
+  //     // 👉 Identify the user
+  //     posthog.identify(userId, {
+  //       email: user.primaryEmailAddress?.emailAddress,
+  //       username: user.username,
+  //     });
+  //   }
 
-    // 👉 Reset the user if they sign out
-    if (!isSignedIn && posthog._isIdentified()) {
-      posthog.reset();
-    }
-  }, [user, isSignedIn, userId]);
+  //   // 👉 Reset the user if they sign out
+  //   if (!isSignedIn && posthog._isIdentified()) {
+  //     posthog.reset();
+  //   }
+  // }, [user, isSignedIn, userId]);
   return null;
 }
 

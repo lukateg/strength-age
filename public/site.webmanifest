@@ -1,0 +1,25 @@
+{
+  "name": "StrengthAge - Strength Age Test for Seniors",
+  "short_name": "StrengthAge",
+  "description": "Free evidence-based fitness assessment for seniors 55+. Test your strength age with validated assessments.",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#2563eb",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "orientation": "portrait-primary",
+  "categories": ["health", "fitness", "lifestyle"],
+  "lang": "en-US"
+}

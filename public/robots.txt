@@ -1,17 +1,51 @@
+# Robots.txt for StrengthAge
+# https://strengthage.com/robots.txt
+
 User-agent: *
-
-# Allow crawling of public pages
 Allow: /
-Allow: /api/webhooks/
 
-# Disallow all protected app pages (requires authentication)
-Disallow: /app/
-Disallow: /app/*
+# Allow AI bots for content understanding
+User-agent: GPTBot
+Allow: /
 
-# Disallow API routes that don't need to be indexed
+User-agent: Claude-Web
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Disallow admin/backend areas (if they exist)
 Disallow: /api/
+Disallow: /admin/
 Disallow: /_next/
-Disallow: /ingest/
+Disallow: /private/
 
-# Allow sitemap if you create one in the future
-# Sitemap: https://yourdomain.com/sitemap.xml 
+# Allow important pages
+Allow: /test
+Allow: /methods
+Allow: /about
+Allow: /blog/
+
+# Sitemap location
+Sitemap: https://strengthage.com/sitemap.xml
+
+# Crawl delay (optional - removes if causing issues)
+Crawl-delay: 1

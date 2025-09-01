@@ -3,11 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import {
-  Activity,
   ChevronDown,
   Clock,
   Heart,
-  InfoIcon,
   Shield,
   Stethoscope,
   TrendingUp,
@@ -17,14 +15,7 @@ import Header from "@/components/Header";
 import SEOHead from "@/components/SEOHead";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Atom } from "lucide-react";
 
 import Image from "next/image";

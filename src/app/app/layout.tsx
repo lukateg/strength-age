@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 // import { ConvexQueryCacheProvider } from "convex-helpers/react/cache/provider";
 import { AppProgressProvider as ProgressProvider } from "@bprogress/next";
-import { UserProvider } from "@/providers/user-provider";
+// import { UserProvider } from "@/providers/user-provider";
 
 // import { ConvexProviderWithClerk } from "convex/react-clerk";
 // import { ConvexReactClient } from "convex/react";
@@ -53,18 +53,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     //   <ConvexQueryCacheProvider>
     <div>
       {/* <ErrorBoundary> */}
-      <UserProvider>
-        <ProgressProvider
-          height="4px"
-          color="#CF9FFF"
-          options={{ showSpinner: false }}
-          shallowRouting
-        >
-          <div className="flex h-screen">
-            <main className="flex-1 overflow-y-auto">{children}</main>
-          </div>
-        </ProgressProvider>
-      </UserProvider>
+      {/* <UserProvider> */}
+      <ProgressProvider
+        height="4px"
+        color="#CF9FFF"
+        options={{ showSpinner: false }}
+        shallowRouting
+      >
+        <div className="flex h-screen">
+          <main className="flex-1 overflow-y-auto">{children}</main>
+        </div>
+      </ProgressProvider>
+      {/* </UserProvider> */}
       {/* </ErrorBoundary> */}
       <Toaster expand={true} visibleToasts={4} />
     </div>
